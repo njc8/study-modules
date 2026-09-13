@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MATH 102 · Study Modules</title>
+<link rel="stylesheet" href="../assets/study.css">
+<script src="../assets/m102-deck.js"></script>
+<style>
+body{padding:0}
+.wrap{max-width:1100px;margin:0 auto;padding:48px 40px 80px}
+.wrap h1{font-size:36px;letter-spacing:-.02em;margin:0 0 6px}
+.wrap .lead{margin-bottom:6px}
+.back{display:inline-block;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:14px}
+.back:hover{color:var(--accent)}
+.group{margin-top:34px}
+.group h3{margin:0 0 4px;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.group p{margin:0 0 4px;color:var(--muted);font-size:14px}
+.memory{display:flex;gap:22px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:22px;text-decoration:none;color:var(--ink);flex-wrap:wrap}
+.memory:hover{box-shadow:0 6px 18px rgba(0,0,0,.06)}
+.memory .glyph{width:44px;height:44px;border-radius:12px;background:#ede9fe;color:#6d28d9;display:grid;place-items:center;font-weight:700;font-size:18px;flex:none}
+.memory .txt{flex:1;min-width:240px}
+.memory .txt b{display:block;font-size:17px;letter-spacing:-.01em}
+.memory .txt span{font-size:14px;color:var(--muted)}
+.memory .nums{display:flex;gap:18px}
+.memory .nums div{text-align:center}
+.memory .nums b{display:block;font-size:22px;letter-spacing:-.02em}
+.memory .nums span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.hub-card .wa{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">◀ All courses</a>
+  <h1>MATH 102 · Single Variable Calculus II</h1>
+  <p class="lead">Interactive lessons for MATH 102 (Fall 2026, Xiang Yao), following the lecture order: techniques of integration, polar and parametric curves, improper integrals, sequences and series, Taylor series, and complex numbers. Stewart 9e, sections 5.5, 7.1 to 7.4, 7.8, 10.1 to 10.4, 11.1 to 11.11, and Appendix H.</p>
+  <p class="hint">Answer boxes work like WebAssign's calcPad: typing <code>sqrt</code>, <code>/</code>, <code>^</code>, <code>pi</code> builds the math as you type; <code>|</code> gives absolute value; <code>n!</code> is a factorial; <code>+ C</code> is optional on antiderivatives. Use the right arrow key to step out of a radical, fraction, or exponent.</p>
+
+  <a class="memory" href="memory.html" id="memoryCard">
+    <div class="glyph">M</div>
+    <div class="txt"><b>Memory trainer</b><span>Spaced-repetition cards for every fact this course expects you to know cold: antiderivative tables, identities, tests, series, formulas. Typed recall, graded, scheduled so you only review what is fading.</span></div>
+    <div class="nums" id="memNums"></div>
+  </a>
+
+  <div class="group">
+    <h3>Prerequisite: what MATH 101 left you with</h3>
+    <div class="hub-grid" id="g0"></div>
+  </div>
+  <div class="group">
+    <h3>Midterm 1 (Sep 29): techniques of integration, polar coordinates, parametric curves</h3>
+    <p>WebAssign order: integration review, u-substitution, partial fractions, integration by parts, polar coordinates, polar area, trigonometric integrals, parametric curves, trigonometric substitution.</p>
+    <div class="hub-grid" id="g1"></div>
+  </div>
+  <div class="group">
+    <h3>Midterm 2 (Nov 3): improper integrals, sequences, series, and the convergence tests</h3>
+    <div class="hub-grid" id="g2"></div>
+  </div>
+  <div class="group">
+    <h3>Final: Taylor series and complex numbers (plus everything above)</h3>
+    <div class="hub-grid" id="g3"></div>
+  </div>
+  <p class="hint" style="margin-top:36px">Files live in the math102 folder. Open any module directly, or come back here with the "All modules" link in each module's sidebar.</p>
+</div>
+<script>
+const MODULES=[
+  {g:'g0',num:'Module 0',file:'00-integration-foundations.html',key:'c2-found',title:'Integration Foundations',desc:'The antiderivative table, both parts of the Fundamental Theorem, definite integrals, net change, and integrals you can read off as areas. Stewart 5.3 to 5.4, the WebAssign integration review.'},
+  {g:'g1',num:'Module 1',file:'01-substitution.html',key:'c2-usub',title:'Substitution',desc:'Spotting u, changing the limits of a definite integral, symmetry, and splitting an integral so part of it is a known area. Stewart 5.5.'},
+  {g:'g1',num:'Module 2',file:'02-integration-by-parts.html',key:'c2-parts',title:'Integration by Parts',desc:'Choosing u and dv, repeated and tabular parts, the cyclic trick for e^x sin x, definite integrals, and substitution followed by parts. Stewart 7.1.'},
+  {g:'g1',num:'Module 3',file:'03-partial-fractions.html',key:'c2-pf',title:'Partial Fractions',desc:'Long division first, the form of the decomposition, distinct and repeated linear factors, irreducible quadratics, and rationalizing substitutions. Stewart 7.4.'},
+  {g:'g1',num:'Module 4',file:'04-polar-coordinates.html',key:'c2-polar',title:'Polar Coordinates',desc:'Points and conversions, the curve zoo (circles, cardioids, limaçons, roses, lemniscates), tangents, and area and arc length in polar form. Stewart 10.3 to 10.4.'},
+  {g:'g1',num:'Module 5',file:'05-trig-integrals.html',key:'c2-trigint',title:'Trigonometric Integrals',desc:'The identities that do the work, powers of sine and cosine, powers of tangent and secant, and products with different frequencies. Stewart 7.2.'},
+  {g:'g1',num:'Module 6',file:'06-parametric-curves.html',key:'c2-param',title:'Parametric Curves',desc:'Curves that are not graphs, eliminating the parameter, parametrizing circles, tangents and concavity, and areas and arc length. Stewart 10.1 to 10.2.'},
+  {g:'g1',num:'Module 7',file:'07-trig-substitution.html',key:'c2-trigsub',title:'Trigonometric Substitution',desc:'The three substitutions, the reference triangle for converting back, working an integral end to end, and completing the square first. Stewart 7.3.'},
+  {g:'g2',num:'Module 8',file:'08-improper-integrals.html',key:'c2-improper',title:'Improper Integrals',desc:'Infinite intervals, discontinuous integrands, the p-integral facts, and the comparison test for convergence. Stewart 7.8.'},
+  {g:'g2',num:'Module 9',file:'09-sequences-series.html',key:'c2-series',title:'Sequences and Series',desc:'Limits of sequences, partial sums, geometric and telescoping series, the test for divergence, the integral test, p-series, and remainder estimates. Stewart 11.1 to 11.3.'},
+  {g:'g2',num:'Module 10',file:'10-series-tests.html',key:'c2-tests',title:'Series Tests',desc:'Comparison and limit comparison, alternating series and their error bound, absolute versus conditional convergence, the ratio and root tests, and a strategy for choosing. Stewart 11.4 to 11.7.'},
+  {g:'g3',num:'Module 11',file:'11-power-taylor-series.html',key:'c2-taylor',title:'Power Series and Taylor Series',desc:'Radius and interval of convergence, functions as power series, Taylor and Maclaurin series, the table you must know, error bounds, and applications. Stewart 11.8 to 11.11.'},
+  {g:'g3',num:'Module 12',file:'12-complex-numbers.html',key:'c2-complex',title:'Complex Numbers',desc:'Arithmetic in the complex plane, polar form and De Moivre, roots, and why Euler’s formula holds. Stewart Appendix H.'},
+];
+function progressOf(m){
+  try{const raw=localStorage.getItem('sm-progress-'+m.key);const p=raw?JSON.parse(raw):{};const done=Object.values(p).filter(Boolean).length;
+    const total=m.sections||parseInt(localStorage.getItem('sm-sections-'+m.key)||'0')||0;return {done,total};}catch(e){return {done:0,total:0};}
+}
+MODULES.forEach(m=>{
+  const {done,total}=progressOf(m);const pct=total?Math.round(100*done/total):0;
+  const a=document.createElement('a');a.className='hub-card';a.href=m.file;
+  a.innerHTML=`<div class="num">${m.num}</div><div class="title">${m.title}</div><div class="desc">${m.desc}</div>
+    <div class="prog"><span class="goalbar"><i style="width:${pct}%"></i></span><span>${total?`${done}/${total}`:'new'}</span></div>`;
+  document.getElementById(m.g).appendChild(a);
+});
+/* memory trainer summary */
+(function(){
+  let st={cards:{}};try{st=JSON.parse(localStorage.getItem('m102-memory')||'{"cards":{}}');}catch(e){}
+  const cards=window.MEM_CARDS||[];const now=Date.now();let due=0,fresh=0,mastered=0;
+  cards.forEach(c=>{const s=st.cards&&st.cards[c.id];if(!s||s.status==='new')fresh++;else if(s.status==='suspended')return;else{if(s.due<=now)due++;if(s.status==='known'||s.ivl>=21)mastered++;}});
+  document.getElementById('memNums').innerHTML=`<div><b>${due}</b><span>due now</span></div><div><b>${fresh}</b><span>unseen</span></div><div><b>${mastered}</b><span>mastered</span></div><div><b>${cards.length}</b><span>cards</span></div>`;
+})();
+</script>
+</body>
+</html>

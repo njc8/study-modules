@@ -10,64 +10,49 @@ body{padding:0}
 .wrap{max-width:1100px;margin:0 auto;padding:48px 40px 80px}
 .wrap h1{font-size:36px;letter-spacing:-.02em;margin:0 0 6px}
 .wrap .lead{margin-bottom:6px}
-.group{margin-top:34px}
-.group h3{margin:0 0 4px;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.group p{margin:0 0 4px;color:var(--muted);font-size:14px}
+.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;margin-top:28px}
+.course{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px 26px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:8px;transition:transform .08s,box-shadow .12s}
+.course:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.07)}
+.course .code{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.course .title{font-size:24px;font-weight:700;letter-spacing:-.015em;line-height:1.15}
+.course .desc{font-size:15px;color:var(--muted);flex:1;line-height:1.5}
+.course .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:4px}
+.course .meta b{color:var(--ink)}
+.course .prog{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin-top:8px}
+.course .prog .goalbar{flex:1;width:auto}
+.tools{margin-top:40px}
+.tools h3{margin:0 0 4px;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Custom Study Modules</h1>
-  <p class="lead">Interactive lessons for MATH 212 (Multivariable Calculus, Stewart chapters 12 to 16). Each module teaches, lets you explore, then drills. Progress is saved in this browser.</p>
+  <p class="lead">Interactive lessons for Nolan's Rice math courses, Fall 2026. Each module teaches, lets you explore, then drills with endless fresh problems. Progress is saved in this browser.</p>
   <p class="hint">Answer boxes work like WebAssign's calcPad: typing <code>sqrt</code>, <code>/</code>, <code>^</code>, <code>pi</code>, or <code>&lt; &gt;</code> builds the math as you type. Use the right arrow key to step out of a radical, fraction, or exponent.</p>
-  <div class="group">
-    <h3>Prerequisite</h3>
-    <div class="hub-grid" id="g0"></div>
-  </div>
-  <div class="group">
-    <h3>Midterm 1 material: vectors, curves, scalar line integrals, partial derivatives</h3>
-    <div class="hub-grid" id="g1"></div>
-  </div>
-  <div class="group">
-    <h3>Midterm 2 material: optimization and multiple integrals</h3>
-    <div class="hub-grid" id="g2"></div>
-  </div>
-  <div class="group">
-    <h3>Final material: vector calculus</h3>
-    <div class="hub-grid" id="g3"></div>
-  </div>
-  <p class="hint" style="margin-top:36px">Files live in this folder. Open any module directly, or come back here with the "All modules" link in each module's sidebar.</p>
+  <div class="courses" id="courses"></div>
+  <p class="hint" style="margin-top:36px">Each course has its own module list. Inside a module, the sidebar's "All modules" link returns to that course's list.</p>
 </div>
 <script>
-const MODULES=[
-  {g:'g0',num:'Module 0',file:'matrix-foundations.html',key:'mf',title:'Matrix Foundations',desc:'Matrices, multiplication, determinants, and matrices as transformations. Useful background for cross products, Jacobians, and the Hessian test.',sections:11},
-  {g:'g1',num:'Module 1',file:'01-vectors.html',key:'vectors',title:'Vectors in Space',desc:'3D coordinates, vector arithmetic, the dot product with angles and projections, and the cross product with areas and normals. Stewart 12.1 to 12.4.'},
-  {g:'g1',num:'Module 2',file:'02-lines-planes-surfaces.html',key:'lines-planes',title:'Lines, Planes, and Surfaces',desc:'Parametric and symmetric lines, plane equations (including planes perpendicular to a given plane), intersections, every distance formula including skew lines, and the quadric surface zoo. Stewart 12.5 to 12.6.'},
-  {g:'g1',num:'Module 3',file:'03-vector-functions.html',key:'curves',title:'Vector Functions and Space Curves',desc:'Parametrized curves and intersection curves, tangent vectors and lines, comparing parametrizations of one curve, arc length, curvature, velocity and acceleration, then scalar line integrals along segments, circles, graphs, and helices. Stewart 13.1 to 13.4, then 16.2.'},
-  {g:'g1',num:'Module 4',file:'04-partial-derivatives.html',key:'partials',title:'Functions of Several Variables',desc:'Domains, level curves and contour maps, limits, partial derivatives, tangent planes, and linear approximation. Stewart 14.1 to 14.4.'},
-  {g:'g1',num:'Module 5',file:'05-gradient.html',key:'gradient',title:'Gradient, Directional Derivatives, Chain Rule',desc:'The gradient vector, directional derivatives, tangent planes to level surfaces, then the multivariable chain rule with tree diagrams and implicit differentiation. Stewart 14.6, then 14.5.'},
-  {g:'g2',num:'Module 6',file:'06-optimization.html',key:'optimization',title:'Optimization',desc:'Critical points and the second derivative test, absolute extrema on closed regions, and Lagrange multipliers. Stewart 14.7 to 14.8.'},
-  {g:'g2',num:'Module 7',file:'07-double-integrals.html',key:'double-integrals',title:'Double Integrals',desc:'Iterated integrals, general regions and order of integration, polar coordinates, applications, and change of variables. Stewart 15.1 to 15.4 and 15.9.'},
-  {g:'g2',num:'Module 8',file:'08-triple-integrals.html',key:'triple-integrals',title:'Triple Integrals',desc:'Triple integrals in rectangular, cylindrical, and spherical coordinates, and how to choose. Stewart 15.6 to 15.8.'},
-  {g:'g3',num:'Module 9',file:'09-line-integrals.html',key:'line-integrals',title:'Vector Fields and Line Integrals',desc:'Vector fields, line integrals of vector fields and work, the Fundamental Theorem for line integrals, and conservative fields. Scalar line integrals are in Module 3. Stewart 16.1 to 16.3.'},
-  {g:'g3',num:'Module 10',file:'10-greens-curl-div.html',key:'greens',title:"Green's Theorem, Curl, and Divergence",desc:"Green's theorem in both forms, area by line integrals, curl and divergence and what they measure. Stewart 16.4 to 16.5."},
-  {g:'g3',num:'Module 11',file:'11-surface-integrals.html',key:'surfaces',title:'Surface Integrals, Stokes, Divergence Theorem',desc:'Parametric surfaces, surface area, scalar and flux surface integrals, Stokes’ theorem, and the Divergence theorem. Stewart 16.6 to 16.9.'},
+const COURSES=[
+  {file:'math212.html',code:'MATH 212 · Section 02',title:'Multivariable Calculus',desc:'Vectors, curves, partial derivatives, optimization, multiple integrals, and vector calculus. Stewart chapters 12 to 16.',
+   meta:['12 modules','Midterms Oct and Nov','Gwaltney'],
+   keys:[['mf','mf-progress',11],['vectors'],['lines-planes'],['curves'],['partials'],['gradient'],['optimization'],['double-integrals'],['triple-integrals'],['line-integrals'],['greens'],['surfaces']]},
+  {file:'math102/index.html',code:'MATH 102 · Section 01',title:'Single Variable Calculus II',desc:'Techniques of integration, polar and parametric curves, improper integrals, sequences and series, Taylor series, and complex numbers. Stewart 5.5, 7, 10, 11, and Appendix H, plus a spaced-repetition memory trainer for the facts.',
+   meta:['13 modules + memory trainer','Midterms Sep 29 and Nov 3','Yao'],
+   keys:[['c2-found'],['c2-usub'],['c2-parts'],['c2-pf'],['c2-polar'],['c2-trigint'],['c2-param'],['c2-trigsub'],['c2-improper'],['c2-series'],['c2-tests'],['c2-taylor'],['c2-complex']]},
 ];
-function progressOf(m){
-  try{
-    const raw=localStorage.getItem(m.key==='mf'?'mf-progress':'sm-progress-'+m.key);
-    const p=raw?JSON.parse(raw):{};const done=Object.values(p).filter(Boolean).length;
-    const total=m.sections||parseInt(localStorage.getItem('sm-sections-'+m.key)||'0')||0;
-    return {done,total};
-  }catch(e){return {done:0,total:m.sections||0};}
+function progressOf(keys){
+  let done=0,total=0;
+  keys.forEach(([key,storeKey,fixed])=>{try{const raw=localStorage.getItem(storeKey||('sm-progress-'+key));const p=raw?JSON.parse(raw):{};done+=Object.values(p).filter(Boolean).length;total+=fixed||parseInt(localStorage.getItem('sm-sections-'+key)||'0')||0;}catch(e){}});
+  return {done,total};
 }
-MODULES.forEach(m=>{
-  const {done,total}=progressOf(m);
-  const a=document.createElement('a');a.className='hub-card';a.href=m.file;
-  const pct=total?Math.round(100*done/total):0;
-  a.innerHTML=`<div class="num">${m.num}</div><div class="title">${m.title}</div><div class="desc">${m.desc}</div>
-    <div class="prog"><span class="goalbar"><i style="width:${pct}%"></i></span><span>${total?`${done}/${total}`:'new'}</span></div>`;
-  document.getElementById(m.g).appendChild(a);
+COURSES.forEach(c=>{
+  const {done,total}=progressOf(c.keys);const pct=total?Math.round(100*done/total):0;
+  const a=document.createElement('a');a.className='course';a.href=c.file;
+  a.innerHTML=`<div class="code">${c.code}</div><div class="title">${c.title}</div><div class="desc">${c.desc}</div>
+    <div class="meta">${c.meta.map(m=>`<span>${m}</span>`).join('')}</div>
+    <div class="prog"><span class="goalbar"><i style="width:${pct}%"></i></span><span>${total?`${done}/${total} chapters`:'not started'}</span></div>`;
+  document.getElementById('courses').appendChild(a);
 });
 </script>
 </body>
