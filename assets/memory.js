@@ -176,9 +176,10 @@ class MemoryTrainer{
   }
   key(e){
     if(e.key==='Enter'){
-      if(this.phase==='ask'){if(e.target.tagName==='INPUT'){e.preventDefault();this.check();}else if(e.target.tagName==='TEXTAREA'&&!e.shiftKey){e.preventDefault();this.reveal();}}
+      const recall=e.target.classList&&e.target.classList.contains('mem-recall');
+      if(this.phase==='ask'){if(recall){if(!e.shiftKey){e.preventDefault();this.reveal();}}else{e.preventDefault();if(!this._enterAt||Date.now()-this._enterAt>150){this._enterAt=Date.now();this.check();}}}
       else if(this.phase==='rate'){e.preventDefault();const c=$('.cont',this.box);if(c)c.click();else this.rate(2);}
-    }else if(this.phase==='rate'&&/^[1-4]$/.test(e.key)&&e.target.tagName!=='TEXTAREA'){const b=$(`button[data-g="${+e.key-1}"]`,this.box);if(b){e.preventDefault();b.click();}}
+    }else if(this.phase==='rate'&&/^[1-4]$/.test(e.key)&&!(e.target.classList&&e.target.classList.contains('mem-recall'))){const b=$(`button[data-g="${+e.key-1}"]`,this.box);if(b){e.preventDefault();b.click();}}
   }
   finish(){
     const n=this.seen;const mins=Math.max(1,Math.round((Date.now()-this.startedAt)/60000));
