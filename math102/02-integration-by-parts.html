@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integration by Parts</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+<style>
+/* two-column comparison of the two ways to split one integrand */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:900px){.cmp{grid-template-columns:1fr}}
+.cmp .pane{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+.cmp .pane h5{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.cmp .pane .ln{margin:7px 0;font-size:16px}
+.verdict{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;margin-top:10px}
+.verdict.good{background:var(--cell);color:#14532d}
+.verdict.poor{background:#fde68a;color:#92400e}
+/* the tabular-method table */
+.tabtab{border-collapse:collapse;font-size:17px;margin:8px 0;width:100%}
+.tabtab th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;padding:6px 12px;text-align:left;border-bottom:1px solid var(--line)}
+.tabtab td{padding:9px 12px;border-bottom:1px solid var(--line)}
+.tabtab td.sgn{font-family:ui-monospace,Menlo,monospace;font-weight:700;width:30px;text-align:center;color:var(--muted)}
+.tabtab tr.pending td{opacity:.22}
+.tabtab tr.now td{background:#fbfaf6}
+.tabtab td.prod{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 2 · Stewart 7.1</p>
+  <h2>Integration by parts</h2>
+  <p class="lead">The product rule, run backwards. It trades the integral you cannot do for one you can, and the whole skill is choosing the trade well.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answers are exact unless a problem says otherwise. Antiderivatives are graded up to a constant, so <code>+ C</code> is optional. Type things like <code>x*ln(x)-x</code>, <code>(x-1)e^x</code>, <code>pi/4-ln(2)/2</code>, <code>2ln(2)-3/4</code>, or <code>1-5e^(-4)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>Answer boxes work like WebAssign's calcPad: type <code>sqrt</code> and a radical appears, <code>/</code> makes a fraction, <code>^</code> an exponent, <code>pi</code> the symbol, <code>|</code> absolute value. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the part you call \(u\)</span>
+      <span><i class="dot" style="background:var(--b)"></i> the part you call \(dv\)</span>
+      <span><i class="dot" style="background:var(--c)"></i> the finished answer</span>
+      <span><i class="dot" style="background:var(--d)"></i> curves and marked points</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Split an integrand into \(u\) and \(dv\) with LIATE, and say why the other split is worse.</li>
+      <li>Run the formula cleanly: write \(du\) and \(v\), assemble \(uv-\int v\,du\), finish the leftover integral.</li>
+      <li>Repeat parts when one round is not enough, and use the tabular shortcut for \(x^n\) against \(e^{ax}\), \(\sin bx\), \(\cos bx\).</li>
+      <li>Close the loop on \(\int e^{ax}\sin bx\,dx\), where the original integral comes back and you solve for it.</li>
+      <li>Do definite integrals by parts, and combine a substitution with parts when the integrand has an inner function.</li>
+      <li>Turn a velocity into a distance and an integrand into an area.</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 THE FORMULA -->
+<section data-id="formula" data-title="The formula and the choice of u" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 7.1</p>
+  <h2>The formula and the choice of \(u\)</h2>
+  <p class="lead">Substitution undoes the chain rule. Integration by parts undoes the product rule.</p>
+
+  <p>Start from the product rule for two differentiable functions \(u(x)\) and \(v(x)\):</p>
+  <div class="formula">\(\dfrac{d}{dx}\big[u v\big]=u'v+uv'\)<span class="cap">The derivative of a product differentiates one factor at a time.</span></div>
+  <p>Integrate both sides. On the left the integral and the derivative cancel, leaving \(uv\):</p>
+  <div class="formula">\(uv=\displaystyle\int u'v\,dx+\int uv'\,dx\qquad\Longrightarrow\qquad \int uv'\,dx=uv-\int u'v\,dx\)<span class="cap">Now rename: \(dv=v'\,dx\) and \(du=u'\,dx\). That is the formula.</span></div>
+  <div class="formula">\(\displaystyle\int u\,dv=uv-\int v\,du\)<span class="cap">You do not get an answer. You get a <b>different integral</b>. The method pays off only when \(\int v\,du\) is easier than \(\int u\,dv\).</span></div>
+  <p>For a definite integral the same derivation gives the same formula with the boundary term evaluated:</p>
+  <div class="formula">\(\displaystyle\int_a^b u\,dv=\Big[\,uv\,\Big]_a^b-\int_a^b v\,du\)<span class="cap">Evaluate \(uv\) at both limits and subtract, then subtract the remaining integral. The limits go on that one too.</span></div>
+
+  <div class="card">
+    <h4>Explore: why the formula is \(uv-\int v\,du\)</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="areaPlot"></canvas><p class="plotcap">One increasing curve through the origin, drawn in the \(u\)-\(v\) plane. Blue is the area under it, orange is the area to the left of it.</p></div>
+      <div>
+        <div class="presets" id="areaPresets"></div>
+        <div class="sliders" id="areaSliders"></div>
+        <div class="controls"><button class="btn" id="areaPlay">▶ Play</button></div>
+        <div class="readout" id="areaOut"></div>
+        <p class="hint">The two shaded pieces tile the rectangle exactly, so \(uv=\int v\,du+\int u\,dv\). Rearranged, that is the formula. Slide the point along the curve and watch the two areas trade off while their sum stays equal to \(uv\). Press Play to sweep it.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Choosing \(u\): LIATE</h3>
+  <p>You choose \(u\); everything left over, including \(dx\), is \(dv\). Two rules decide the choice.</p>
+  <ol>
+    <li><b>You must be able to integrate \(dv\).</b> If you cannot find \(v\), the split is dead on arrival.</li>
+    <li><b>\(du\) should be simpler than \(u\).</b> Differentiating should make progress: \(x\to 1\), \(\ln x\to 1/x\), \(\arctan x\to 1/(1+x^2)\).</li>
+  </ol>
+  <p><b>LIATE</b> is the priority list that gets this right almost every time. Pick as \(u\) the <b>first</b> category on the list that appears in the integrand:</p>
+  <div class="formula">\(\underbrace{\textbf{L}}_{\ln x}\;\;\underbrace{\textbf{I}}_{\arctan x,\ \arcsin x}\;\;\underbrace{\textbf{A}}_{x,\ x^2,\ \text{polynomials}}\;\;\underbrace{\textbf{T}}_{\sin x,\ \cos x,\ \sec^2 x}\;\;\underbrace{\textbf{E}}_{e^{x},\ 2^{x}}\)<span class="cap">Logs, Inverse trig, Algebraic, Trig, Exponential. Whatever is left, together with \(dx\), is \(dv\).</span></div>
+  <p>The list is ordered by how much differentiating helps and how easy the leftovers are to integrate. Logs and inverse trig turn into algebraic fractions, which is a huge win, and neither is pleasant to integrate anyway, so they go first. Exponentials integrate to themselves, so they make ideal \(dv\) and come last.</p>
+  <div class="note"><b>The sanity check.</b> After you write \(uv-\int v\,du\), look at the new integral. Is it simpler than the one you started with? If it is worse, back up and swap the choice. One glance saves a page of algebra.</div>
+
+  <div class="card">
+    <h4>Explore: what each choice does</h4>
+    <p class="small muted">The same integral, split two ways. The left column follows LIATE; the right column swaps \(u\) and \(dv\).</p>
+    <div id="cmpBox"></div>
+    <div class="controls"><button class="btn primary" id="cmpNew">New integrand</button></div>
+    <p class="hint">Look only at the new integral in each column. The good split lowers a power or kills a logarithm; the bad split raises a power or, worse, asks you to integrate the very thing you started with. Press the button a few times until you can call the winner before you read the tags.</p>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: one round of parts</h4>
+    <div class="expr" id="wtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wtPrev">◀ Back</button>
+      <button class="btn primary" id="wtNext">Next step ▶</button>
+      <button class="btn" id="wtNew">New problem</button>
+      <span class="status" id="wtStatus"></span>
+    </div>
+    <p class="hint">Write the four pieces \(u\), \(dv\), \(du\), \(v\) in a little block before you touch the formula. Nearly every wrong answer in this chapter is a sign error that came from assembling \(uv-\int v\,du\) out of memory instead of out of that block.</p>
+  </div>
+
+  <div class="warn"><b>Two traps.</b> First, the minus sign in front of the remaining integral distributes: \(-\int(-\cos x)\,dx=+\int\cos x\,dx\). Second, \(v\) is <b>any one</b> antiderivative of \(dv\), so take the simplest, with no \(+C\). Carrying a constant through just cancels itself and gives you two more chances to slip.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-formula"></div>
+</section>
+
+<!-- ============================================================ 2 REPEAT, TABULATE, CYCLE -->
+<section data-id="repeat" data-title="Repeat, tabulate, and cycle" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 7.1</p>
+  <h2>Repeat, tabulate, and go around in a circle</h2>
+  <p class="lead">One round is often not enough. Sometimes you run parts again, sometimes you run it until the original integral comes back and you solve for it.</p>
+
+  <h3>Running parts twice</h3>
+  <p>Take \(\int x^2e^x\,dx\). LIATE says \(u=x^2\), \(dv=e^x\,dx\), so \(du=2x\,dx\) and \(v=e^x\):</p>
+  <div class="formula">\(\displaystyle\int x^2e^x\,dx=x^2e^x-2\int xe^x\,dx\)<span class="cap">The power dropped from 2 to 1. That is progress, not an answer.</span></div>
+  <p>The new integral is the one from chapter 1: \(\int xe^x\,dx=(x-1)e^x\). Substituting it back,</p>
+  <div class="formula">\(\displaystyle\int x^2e^x\,dx=x^2e^x-2(x-1)e^x+C=(x^2-2x+2)e^x+C\)<span class="cap">Each round of parts knocks one off the power. A power of \(n\) against \(e^{ax}\) needs \(n\) rounds.</span></div>
+  <div class="warn"><b>Keep the same direction.</b> On the second round choose \(u\) the same way you did on the first. If you swap the roles halfway through, parts undoes itself and you land back on \(\int x^2e^x\,dx=\int x^2e^x\,dx\), which is true and useless.</div>
+
+  <h3>The tabular shortcut</h3>
+  <p>When \(u\) is a polynomial that eventually differentiates to zero and \(dv\) is something you can integrate over and over (\(e^{ax}\), \(\sin bx\), \(\cos bx\)), you can skip the bookkeeping. Make two columns: derivatives of \(u\) going down the left, antiderivatives of \(dv\) going down the right. Multiply along the diagonals, alternating the signs \(+,-,+,-\), and stop when the left column hits 0.</p>
+
+  <div class="card">
+    <h4>Explore: build the table</h4>
+    <div class="controls">
+      <span>\(u=x^n\) with \(n=\)</span><span id="tabN"></span>
+      <span style="margin-left:10px">\(dv=\)</span>
+    </div>
+    <div class="presets" id="tabPartner"></div>
+    <div id="tabTable"></div>
+    <div class="controls">
+      <button class="btn" id="tabBack">◀ Back</button>
+      <button class="btn primary" id="tabNext">Next row ▶</button>
+      <button class="btn" id="tabReset">Reset</button>
+      <span class="status" id="tabStatus"></span>
+    </div>
+    <div class="readout" id="tabOut"></div>
+    <p class="hint">Watch the signs: they alternate starting with \(+\) on the top diagonal, and each diagonal pairs a left entry with the right entry <b>one row below it</b>. Try \(n=3\) against \(e^{-x}\) and notice every term comes out negative, then switch to \(\sin x\) and watch the four-step cycle in the right column.</p>
+  </div>
+
+  <div class="note"><b>When the table does not apply.</b> The left column has to reach 0, so \(u\) must be a polynomial. For \(\int x^2\ln x\,dx\) the left column would be \(\ln x,\ 1/x,\ -1/x^2,\dots\), which never terminates. Use one plain round of parts there instead.</div>
+
+  <h3>When the integral comes back: cyclic integrals</h3>
+  <p>Now take \(I=\int e^{ax}\sin bx\,dx\). Neither factor ever simplifies, so no number of rounds will finish it. Run parts twice anyway, keeping \(u\) exponential both times, and the original integral reappears on the right:</p>
+  <div class="formula">\(I=\text{(boundary terms)}-\dfrac{a^2}{b^2}\,I\)<span class="cap">Keeping \(u=e^{ax}\) both rounds produces the factor \(a^2/b^2\). The exact constant depends on the split, but the shape is always this: \(I=\text{something}+kI\) with \(k\neq 1\).</span></div>
+  <p>Now it is algebra, not calculus. Move the \(I\) to the left, divide, and you are done:</p>
+  <div class="formula">\(\displaystyle\int e^{ax}\sin bx\,dx=\frac{e^{ax}\big(a\sin bx-b\cos bx\big)}{a^2+b^2}+C\qquad \int e^{ax}\cos bx\,dx=\frac{e^{ax}\big(a\cos bx+b\sin bx\big)}{a^2+b^2}+C\)<span class="cap">Two formulas worth knowing cold. Check them by differentiating: the \(a^2+b^2\) in the denominator is exactly what the product rule regenerates.</span></div>
+  <div class="warn"><b>Do not lose the constant.</b> Solving \(I=F-kI\) gives \(I=\dfrac{F}{1+k}\), and only then do you add \(+C\). And if you ever get \(I=F+I\), you ran the second round in the opposite direction and undid your own work: go back and keep \(u\) the same kind of function both times.</div>
+  <p>The same trick handles \(\int\sec^3x\,dx\), which returns in the trigonometric integrals module: parts with \(u=\sec x\) and \(dv=\sec^2x\,dx\) brings \(\int\sec^3x\,dx\) back on the right, and you solve for it.</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-repeat"></div>
+</section>
+
+<!-- ============================================================ 3 SUBSTITUTION FIRST, APPLICATIONS -->
+<section data-id="combine" data-title="Substitution first, then parts" data-goal="5">
+  <p class="eyebrow">Chapter 3 · Stewart 7.1</p>
+  <h2>Substitution first, then parts, and applications</h2>
+  <p class="lead">If there is an inner function, clean it up with a substitution before you reach for parts.</p>
+
+  <p>Integration by parts expects a product of two <b>plain</b> functions. When one factor has something stuffed inside it, like \(e^{x^2}\) or \(\sin\sqrt{x}\), substitute first and do parts second.</p>
+  <div class="formula">\(\displaystyle\int x^3e^{x^2}dx \;\overset{w=x^2}{=}\; \tfrac12\int w\,e^{w}\,dw=\tfrac12(w-1)e^{w}+C=\tfrac12\big(x^2-1\big)e^{x^2}+C\)<span class="cap">With \(w=x^2\), \(dw=2x\,dx\). One factor of \(x\) pairs with \(dx\) to make \(dw\); the remaining \(x^2\) becomes \(w\). Now it is the standard \(\int we^w\,dw\).</span></div>
+  <p>The same move handles a root inside a function. For \(\int\sin\sqrt{x}\,dx\) put \(w=\sqrt{x}\), so \(x=w^2\) and \(dx=2w\,dw\):</p>
+  <div class="formula">\(\displaystyle\int\sin\sqrt{x}\,dx=\int 2w\sin w\,dw=-2w\cos w+2\sin w+C=2\sin\sqrt{x}-2\sqrt{x}\cos\sqrt{x}+C\)<span class="cap">The substitution creates the extra factor \(2w\) that makes parts possible. Without it there is nothing to split.</span></div>
+  <p>Two more worth recognizing: \(\int e^{\sqrt{x}}dx=2(\sqrt{x}-1)e^{\sqrt{x}}+C\) with the same \(w=\sqrt x\), and \(\int\cos(\ln x)\,dx=\tfrac{x}{2}\big(\cos(\ln x)+\sin(\ln x)\big)+C\), where \(w=\ln x\) turns the integral into the cyclic \(\int e^{w}\cos w\,dw\).</p>
+  <div class="note"><b>Which comes first.</b> Ask what is inside what. An inner function (a square, a root, a log in an argument) is a substitution signal. A product of two unrelated functions is a parts signal. If you see both, substitute first: it almost never hurts, and it usually leaves a clean parts problem.</div>
+
+  <h3>Reduction formulas</h3>
+  <p>Doing one round in general, with \(u=x^n\) and \(dv=e^x\,dx\), gives a formula that steps the exponent down by one:</p>
+  <div class="formula">\(\displaystyle\int x^ne^x\,dx=x^ne^x-n\int x^{n-1}e^x\,dx\)<span class="cap">A <b>reduction formula</b>: apply it \(n\) times and you reach \(\int e^x\,dx\). The tabular method is this formula run to the end in one picture.</span></div>
+
+  <h3>Distance from a velocity</h3>
+  <p>A particle moving with velocity \(v(t)\ge 0\) travels \(\int_0^T v(t)\,dt\) in the first \(T\) seconds. When the velocity is a product like \(te^{-t}\), that integral is a parts problem:</p>
+  <div class="formula">\(\displaystyle\int_0^T te^{-t}\,dt=\Big[-te^{-t}\Big]_0^T+\int_0^T e^{-t}dt=1-(T+1)e^{-T}\)<span class="cap">Here \(u=t\), \(dv=e^{-t}dt\), \(v=-e^{-t}\). The boundary term is negative and the leftover integral flips sign, which is where the \(+1\) comes from.</span></div>
+
+  <div class="card">
+    <h4>Explore: velocity to distance</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="velPlot"></canvas><p class="plotcap">The curve is the speed \(v(t)\). The shaded area from \(0\) to \(T\) is the distance travelled.</p></div>
+      <div>
+        <div class="presets" id="velPresets"></div>
+        <div class="sliders" id="velSliders"></div>
+        <div class="controls"><button class="btn" id="velPlay">▶ Play</button></div>
+        <div class="readout" id="velOut"></div>
+        <p class="hint">Push \(T\) out to the right. The particle never quite stops, but the distance flattens against a ceiling: the area keeps growing and still stays finite. That is the whole idea of an improper integral, a few modules ahead.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Distance or displacement.</b> \(\int_0^T v\,dt\) is displacement. It equals the distance travelled only while \(v\ge 0\). Every velocity in this chapter is non-negative on the interval given, so the two agree here, but check the sign before you assume it.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-combine"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions drawn from all three chapters. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+const hintBox=el2=>{let h=$('.hintbox',el2);if(!h){h=el2.appendChild(document.createElement('div'));h.className='hintbox expr';}return h;};
+
+/* TeX shorthands */
+const axT=a=>a===1?'x':a===-1?'-x':`${a}x`;                 /* 2x, x, -x */
+const eaxT=a=>`e^{${axT(a)}}`;
+const bxT=b=>b===1?'x':`${b}x`;
+const overT=(n,d)=>d===1?n:`\\dfrac{${n}}{${d}}`;
+const powT=(c,p)=>{const b=p===0?'':p===1?'x':`x^{${p}}`;return b?((c===1?'':String(c))+b):String(c);};
+const intT=(body,lo,hi)=>(lo==null?'\\int':`\\int_{${lo}}^{${hi}}`)+' '+body+'\\,dx';
+
+/* ============================================================ numeric self-checks (run inside gen)
+   Every stored antiderivative is differentiated numerically and compared with the integrand;
+   every stored definite value is compared with a Simpson approximation. Bad draws are rejected. */
+function simpson(f,a,b,n=3000){if(n%2)n++;const h=(b-a)/n;let s=f(a)+f(b);
+  for(let i=1;i<n;i++)s+=(i%2?4:2)*f(a+i*h);return s*h/3;}
+function verifyAnti(ansStr,fStr,dom){
+  let F,f;try{F=Expr.compile(ansStr);f=Expr.compile(fStr);}catch(e){return false;}
+  const [lo,hi]=dom,h=1e-5;
+  for(let i=1;i<=4;i++){
+    const x=lo+(hi-lo)*i/5;
+    const d=(F({x:x+h})-F({x:x-h}))/(2*h),v=f({x});
+    if(!Number.isFinite(d)||!Number.isFinite(v))return false;
+    if(Math.abs(d-v)>2e-4*Math.max(1,Math.abs(v)))return false;
+  }
+  return true;
+}
+function verifyDef(fStr,lo,hi,val){
+  let f;try{f=Expr.compile(fStr);}catch(e){return false;}
+  const s=simpson(x=>f({x}),lo,hi,4000);
+  return Number.isFinite(s)&&Math.abs(s-val)<=1e-6*Math.max(1,Math.abs(val));
+}
+/* draw from a list of builders until the built entry verifies */
+function drawVerified(builders,test){
+  let last=null;
+  for(let i=0;i<60;i++){const e=pick(builders)();last=e;if(test(e))return e;}
+  return last;
+}
+
+/* ============================================================ chapter 1: the single-round pool
+   Each entry carries the integral, the integrand string (for verification), the four pieces of the
+   split (as TeX and as parseable strings), the antiderivative, and a sampling domain. */
+const ONCE=[
+  ()=>{const a=pick([1,2,3,-1,-2]);const d=a*a;return {
+    key:'xexp',fT:`x${eaxT(a)}`,fStr:`x*e^(${a}*x)`,dom:[-1.2,1.2],
+    uT:'x',dvT:`${eaxT(a)}\\,dx`,duT:'dx',vT:`${texCoef(1/a)}${eaxT(a)}`,
+    uvT:`${texCoef(1/a)}x${eaxT(a)}`,vduT:`${texCoef(1/a)}${eaxT(a)}\\,dx`,
+    uStr:'x',dvStr:`e^(${a}*x)`,duStr:'1',vStr:`e^(${a}*x)/(${a})`,
+    ansStr:`((${a})*x-1)*e^(${a}*x)/(${d})`,ansT:overT(`\\left(${axT(a)}-1\\right)${eaxT(a)}`,d)};},
+  ()=>{const b=pick([1,2,3]);return {
+    key:'xcos',fT:`x\\cos ${bxT(b)}`,fStr:`x*cos(${b}*x)`,dom:[-2,2],
+    uT:'x',dvT:`\\cos ${bxT(b)}\\,dx`,duT:'dx',vT:`${texCoef(1/b)}\\sin ${bxT(b)}`,
+    uvT:`${texCoef(1/b)}x\\sin ${bxT(b)}`,vduT:`${texCoef(1/b)}\\sin ${bxT(b)}\\,dx`,
+    uStr:'x',dvStr:`cos(${b}*x)`,duStr:'1',vStr:`sin(${b}*x)/${b}`,
+    ansStr:`x*sin(${b}*x)/${b}+cos(${b}*x)/${b*b}`,
+    ansT:`${texCoef(1/b)}x\\sin ${bxT(b)}+${texCoef(1/(b*b))}\\cos ${bxT(b)}`};},
+  ()=>{const b=pick([1,2,3]);return {
+    key:'xsin',fT:`x\\sin ${bxT(b)}`,fStr:`x*sin(${b}*x)`,dom:[-2,2],
+    uT:'x',dvT:`\\sin ${bxT(b)}\\,dx`,duT:'dx',vT:`-${texCoef(1/b)}\\cos ${bxT(b)}`,
+    uvT:`-${texCoef(1/b)}x\\cos ${bxT(b)}`,vduT:`-${texCoef(1/b)}\\cos ${bxT(b)}\\,dx`,
+    uStr:'x',dvStr:`sin(${b}*x)`,duStr:'1',vStr:`-cos(${b}*x)/${b}`,
+    ansStr:`-x*cos(${b}*x)/${b}+sin(${b}*x)/${b*b}`,
+    ansT:`-${texCoef(1/b)}x\\cos ${bxT(b)}+${texCoef(1/(b*b))}\\sin ${bxT(b)}`};},
+  ()=>({key:'ln',fT:'\\ln x',fStr:'ln(x)',dom:[0.3,2.5],
+    uT:'\\ln x',dvT:'dx',duT:'\\dfrac{dx}{x}',vT:'x',uvT:'x\\ln x',vduT:'dx',
+    uStr:'ln(x)',dvStr:'1',duStr:'1/x',vStr:'x',
+    ansStr:'x*ln(x)-x',ansT:'x\\ln x-x'}),
+  ()=>({key:'xln',fT:'x\\ln x',fStr:'x*ln(x)',dom:[0.3,2.5],
+    uT:'\\ln x',dvT:'x\\,dx',duT:'\\dfrac{dx}{x}',vT:'\\dfrac{x^2}{2}',uvT:'\\dfrac{x^2}{2}\\ln x',vduT:'\\dfrac{x}{2}\\,dx',
+    uStr:'ln(x)',dvStr:'x',duStr:'1/x',vStr:'x^2/2',
+    ansStr:'x^2*ln(x)/2-x^2/4',ansT:'\\dfrac{x^2}{2}\\ln x-\\dfrac{x^2}{4}'}),
+  ()=>{const n=pick([2,3]);const m=n+1;return {
+    key:'xnln',fT:`x^{${n}}\\ln x`,fStr:`x^${n}*ln(x)`,dom:[0.3,2],
+    uT:'\\ln x',dvT:`x^{${n}}\\,dx`,duT:'\\dfrac{dx}{x}',vT:`\\dfrac{x^{${m}}}{${m}}`,
+    uvT:`\\dfrac{x^{${m}}}{${m}}\\ln x`,vduT:`\\dfrac{x^{${n}}}{${m}}\\,dx`,
+    uStr:'ln(x)',dvStr:`x^${n}`,duStr:'1/x',vStr:`x^${m}/${m}`,
+    ansStr:`x^${m}*ln(x)/${m}-x^${m}/${m*m}`,
+    ansT:`\\dfrac{x^{${m}}}{${m}}\\ln x-\\dfrac{x^{${m}}}{${m*m}}`};},
+  ()=>({key:'arctan',fT:'\\arctan x',fStr:'arctan(x)',dom:[-2,2],
+    uT:'\\arctan x',dvT:'dx',duT:'\\dfrac{dx}{1+x^2}',vT:'x',uvT:'x\\arctan x',vduT:'\\dfrac{x}{1+x^2}\\,dx',
+    uStr:'arctan(x)',dvStr:'1',duStr:'1/(1+x^2)',vStr:'x',
+    ansStr:'x*arctan(x)-ln(1+x^2)/2',ansT:'x\\arctan x-\\tfrac12\\ln\\left(1+x^2\\right)'}),
+  ()=>({key:'arcsin',fT:'\\arcsin x',fStr:'arcsin(x)',dom:[-0.8,0.8],
+    uT:'\\arcsin x',dvT:'dx',duT:'\\dfrac{dx}{\\sqrt{1-x^2}}',vT:'x',uvT:'x\\arcsin x',vduT:'\\dfrac{x}{\\sqrt{1-x^2}}\\,dx',
+    uStr:'arcsin(x)',dvStr:'1',duStr:'1/sqrt(1-x^2)',vStr:'x',
+    ansStr:'x*arcsin(x)+sqrt(1-x^2)',ansT:'x\\arcsin x+\\sqrt{1-x^2}'}),
+  ()=>({key:'xsec2',fT:'x\\sec^2 x',fStr:'x*sec(x)^2',dom:[-1,1],
+    uT:'x',dvT:'\\sec^2 x\\,dx',duT:'dx',vT:'\\tan x',uvT:'x\\tan x',vduT:'\\tan x\\,dx',
+    uStr:'x',dvStr:'sec(x)^2',duStr:'1',vStr:'tan(x)',
+    ansStr:'x*tan(x)+ln(abs(cos(x)))',ansT:'x\\tan x+\\ln\\left|\\cos x\\right|'})
+];
+const onceDraw=()=>drawVerified(ONCE,e=>verifyAnti(e.ansStr,e.fStr,e.dom));
+
+/* ============================================================ question types */
+const Q={};
+
+Q.chooseUdv={name:'choose u and dv',
+  gen(){return onceDraw();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Set up integration by parts for the integral below. Use LIATE to pick ${M('u')}. For ${M('dv')} and ${M('du')}, type only the factor that multiplies ${M('dx')}. For ${M('v')} use the antiderivative with no constant.</p>${D(intT(q.fT,null))}`;
+    numIn(el,'u',M('u='),{wide:true});
+    numIn(el,'dv',M('dv='),{wide:true,after:M('dx')});
+    numIn(el,'du',M('du='),{wide:true,after:M('dx')});
+    numIn(el,'v',M('v='),{wide:true});},
+  check(q,el){const d={x:q.dom};return Gall(el,[
+    ['u',checkExpr($('[data-k=u]',el).value,q.uStr,['x'],{domain:d})],
+    ['dv',checkExpr($('[data-k=dv]',el).value,q.dvStr,['x'],{domain:d})],
+    ['du',checkExpr($('[data-k=du]',el).value,q.duStr,['x'],{domain:d})],
+    ['v',checkExpr($('[data-k=v]',el).value,q.vStr,['x'],{domain:d})]]);},
+  hint(q,el){hintBox(el).innerHTML=`LIATE: take as ${M('u')} the first of Log, Inverse trig, Algebraic, Trig, Exponential that appears. Here that is ${M('u='+q.uT)}.`;},
+  solution(q){
+    return `LIATE picks ${M('u='+q.uT)}, so everything else is ${M('dv='+q.dvT)}. Differentiate ${M('u')} and integrate ${M('dv')}: `+
+      D(R`u=${q.uT},\quad dv=${q.dvT},\quad du=${q.duT},\quad v=${q.vT}`)+
+      `The formula then gives ${M(R`${intT(q.fT,null)}=${q.uvT}-\int ${q.vduT}`)}.`;}
+};
+
+Q.partsOnce={name:'one round of parts',
+  gen(){return onceDraw();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate the indefinite integral. One round of parts is enough. Writing ${M('+C')} is optional.</p>${D(intT(q.fT,null))}`;
+    numIn(el,'F','=',{xwide:true,placeholder:'antiderivative'});},
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){hintBox(el).innerHTML=`Take ${M('u='+q.uT)} and ${M('dv='+q.dvT)}, so ${M('du='+q.duT)} and ${M('v='+q.vT)}.`;},
+  solution(q){
+    return `With ${M('u='+q.uT)} and ${M('dv='+q.dvT)} you get ${M('du='+q.duT)} and ${M('v='+q.vT)}, so`+
+      D(R`${intT(q.fT,null)}=${q.uvT}-\int ${q.vduT}=${q.ansT}+C`)+
+      `Check it by differentiating: the product rule on ${M(q.uvT)} regenerates the integrand plus exactly the piece you subtracted.`;}
+};
+
+/* definite integrals done by one or two rounds of parts, with a scalar multiplier out front */
+const DEFS=[
+  {bT:'xe^{x}',fStr:'x*e^x',lo:0,hi:1,loT:'0',hiT:'1',valStr:'1',val:1,
+   uT:'x',dvT:'e^{x}dx',workT:R`\Big[xe^{x}\Big]_0^1-\int_0^1 e^{x}dx=e-(e-1)=1`},
+  {bT:'\\ln x',fStr:'ln(x)',lo:1,hi:Math.E,loT:'1',hiT:'e',valStr:'1',val:1,
+   uT:'\\ln x',dvT:'dx',workT:R`\Big[x\ln x-x\Big]_1^{e}=(e-e)-(0-1)=1`},
+  {bT:'x\\sin x',fStr:'x*sin(x)',lo:0,hi:PI,loT:'0',hiT:'\\pi',valStr:'pi',val:PI,
+   uT:'x',dvT:'\\sin x\\,dx',workT:R`\Big[-x\cos x+\sin x\Big]_0^{\pi}=\pi+0=\pi`},
+  {bT:'x\\cos x',fStr:'x*cos(x)',lo:0,hi:PI/2,loT:'0',hiT:'\\tfrac{\\pi}{2}',valStr:'pi/2-1',val:PI/2-1,
+   uT:'x',dvT:'\\cos x\\,dx',workT:R`\Big[x\sin x+\cos x\Big]_0^{\pi/2}=\tfrac{\pi}{2}+0-(0+1)=\tfrac{\pi}{2}-1`},
+  {bT:'x\\sin x',fStr:'x*sin(x)',lo:0,hi:PI/2,loT:'0',hiT:'\\tfrac{\\pi}{2}',valStr:'1',val:1,
+   uT:'x',dvT:'\\sin x\\,dx',workT:R`\Big[-x\cos x+\sin x\Big]_0^{\pi/2}=0+1=1`},
+  {bT:'x\\ln x',fStr:'x*ln(x)',lo:1,hi:2,loT:'1',hiT:'2',valStr:'2*ln(2)-3/4',val:2*Math.LN2-0.75,
+   uT:'\\ln x',dvT:'x\\,dx',workT:R`\Big[\tfrac{x^2}{2}\ln x-\tfrac{x^2}{4}\Big]_1^{2}=(2\ln 2-1)-(0-\tfrac14)=2\ln 2-\tfrac34`},
+  {bT:'x\\ln x',fStr:'x*ln(x)',lo:1,hi:Math.E,loT:'1',hiT:'e',valStr:'(e^2+1)/4',val:(Math.E*Math.E+1)/4,
+   uT:'\\ln x',dvT:'x\\,dx',workT:R`\Big[\tfrac{x^2}{2}\ln x-\tfrac{x^2}{4}\Big]_1^{e}=\tfrac{e^2}{4}+\tfrac14=\tfrac{e^2+1}{4}`},
+  {bT:'\\arctan x',fStr:'arctan(x)',lo:0,hi:1,loT:'0',hiT:'1',valStr:'pi/4-ln(2)/2',val:PI/4-Math.LN2/2,
+   uT:'\\arctan x',dvT:'dx',workT:R`\Big[x\arctan x-\tfrac12\ln(1+x^2)\Big]_0^{1}=\tfrac{\pi}{4}-\tfrac{\ln 2}{2}`},
+  {bT:'\\arcsin x',fStr:'arcsin(x)',lo:0,hi:0.5,loT:'0',hiT:'\\tfrac12',valStr:'pi/12+sqrt(3)/2-1',val:PI/12+Math.sqrt(3)/2-1,
+   uT:'\\arcsin x',dvT:'dx',workT:R`\Big[x\arcsin x+\sqrt{1-x^2}\Big]_0^{1/2}=\left(\tfrac{\pi}{12}+\tfrac{\sqrt3}{2}\right)-1`},
+  {bT:'xe^{-x}',fStr:'x*e^(-x)',lo:0,hi:1,loT:'0',hiT:'1',valStr:'1-2/e',val:1-2/Math.E,
+   uT:'x',dvT:'e^{-x}dx',workT:R`\Big[-(x+1)e^{-x}\Big]_0^{1}=-\tfrac{2}{e}+1`},
+  {bT:'\\ln x',fStr:'ln(x)',lo:1,hi:2,loT:'1',hiT:'2',valStr:'2*ln(2)-1',val:2*Math.LN2-1,
+   uT:'\\ln x',dvT:'dx',workT:R`\Big[x\ln x-x\Big]_1^{2}=(2\ln 2-2)-(-1)=2\ln 2-1`},
+  {bT:'xe^{2x}',fStr:'x*e^(2*x)',lo:0,hi:1,loT:'0',hiT:'1',valStr:'(e^2+1)/4',val:(Math.E*Math.E+1)/4,
+   uT:'x',dvT:'e^{2x}dx',workT:R`\Big[\tfrac{(2x-1)e^{2x}}{4}\Big]_0^{1}=\tfrac{e^2}{4}+\tfrac14=\tfrac{e^2+1}{4}`}
+];
+Q.partsDefinite={name:'definite integral by parts',
+  gen(){
+    const build=()=>{const e=pick(DEFS),k=rint(1,5);
+      return {...e,k,val:k*e.val,ansStr:k===1?e.valStr:`${k}*(${e.valStr})`};};
+    let q=null;for(let i=0;i<40;i++){q=build();if(verifyDef(q.fStr,q.lo,q.hi,q.val/q.k))return q;}
+    return q;},
+  render(q,el){
+    const kt=q.k===1?'':String(q.k);
+    el.innerHTML=`<p class="prompt">Evaluate the definite integral. Give the exact value; ${M('e')}, ${M('\\ln')}, ${M('\\pi')} and radicals may stay in the answer.</p>${D(R`\int_{${q.loT}}^{${q.hiT}} ${kt}${q.bT}\,dx`)}`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}));},
+  hint(q,el){hintBox(el).innerHTML=`Take ${M('u='+q.uT)} and ${M('dv='+q.dvT)}. Pull the ${M(String(q.k))} out front and put the limits on both pieces.`;},
+  solution(q){
+    const kt=q.k===1?'':String(q.k);const valT=q.workT.split('=').pop();
+    return `Parts with ${M('u='+q.uT)} and ${M('dv='+q.dvT)} gives the antiderivative, then evaluate at both limits:`+
+      D(R`\int_{${q.loT}}^{${q.hiT}} ${q.bT}\,dx=${q.workT}`)+
+      (q.k===1?'The value is ':`The constant comes straight out front, so the value is `)+
+      M(q.k===1?valT:R`${kt}\left(${valT}\right)`)+' '+M(R`\approx ${fmtDec(q.val,4)}`)+'.';}
+};
+
+/* ============================================================ chapter 2: two rounds, tabular, cyclic */
+const TWICE=[
+  ()=>{const a=pick([1,2]);return {
+    fT:`x^2${eaxT(a)}`,fStr:`x^2*e^(${a}*x)`,dom:[-1.2,1.2],
+    u1T:'x^2',dv1T:`${eaxT(a)}\\,dx`,
+    ansStr:`e^(${a}*x)*((${a*a})*x^2+(${-2*a})*x+2)/(${a*a*a})`,
+    ansT:overT(`${eaxT(a)}\\left(${texPoly([a*a,-2*a,2],'x')}\\right)`,a*a*a),
+    workT:R`${intT(`x^2${eaxT(a)}`,null)}=${texCoef(1/a)}x^2${eaxT(a)}-${texCoef(2/a)}\int x${eaxT(a)}\,dx=${overT(`${eaxT(a)}\\left(${texPoly([a*a,-2*a,2],'x')}\\right)`,a*a*a)}`};},
+  ()=>({fT:'x^2e^{-x}',fStr:'x^2*e^(-x)',dom:[-1.2,1.2],
+    u1T:'x^2',dv1T:'e^{-x}dx',
+    ansStr:'-(x^2+2*x+2)*e^(-x)',ansT:R`-\left(x^2+2x+2\right)e^{-x}`,
+    workT:R`\int x^2e^{-x}\,dx=-x^2e^{-x}+2\int xe^{-x}\,dx=-x^2e^{-x}-2(x+1)e^{-x}=-\left(x^2+2x+2\right)e^{-x}`}),
+  ()=>{const b=pick([1,2]);return {
+    fT:`x^2\\cos ${bxT(b)}`,fStr:`x^2*cos(${b}*x)`,dom:[-2,2],
+    u1T:'x^2',dv1T:`\\cos ${bxT(b)}\\,dx`,
+    ansStr:`x^2*sin(${b}*x)/${b}+2*x*cos(${b}*x)/${b*b}-2*sin(${b}*x)/${b*b*b}`,
+    ansT:`${texCoef(1/b)}x^2\\sin ${bxT(b)}+${texCoef(2/(b*b))}x\\cos ${bxT(b)}-${texCoef(2/(b*b*b))}\\sin ${bxT(b)}`,
+    workT:R`${intT(`x^2\\cos ${bxT(b)}`,null)}=${texCoef(1/b)}x^2\sin ${bxT(b)}-${texCoef(2/b)}\int x\sin ${bxT(b)}\,dx=${texCoef(1/b)}x^2\sin ${bxT(b)}+${texCoef(2/(b*b))}x\cos ${bxT(b)}-${texCoef(2/(b*b*b))}\sin ${bxT(b)}`};},
+  ()=>{const b=pick([1,2]);return {
+    fT:`x^2\\sin ${bxT(b)}`,fStr:`x^2*sin(${b}*x)`,dom:[-2,2],
+    u1T:'x^2',dv1T:`\\sin ${bxT(b)}\\,dx`,
+    ansStr:`-x^2*cos(${b}*x)/${b}+2*x*sin(${b}*x)/${b*b}+2*cos(${b}*x)/${b*b*b}`,
+    ansT:`-${texCoef(1/b)}x^2\\cos ${bxT(b)}+${texCoef(2/(b*b))}x\\sin ${bxT(b)}+${texCoef(2/(b*b*b))}\\cos ${bxT(b)}`,
+    workT:R`${intT(`x^2\\sin ${bxT(b)}`,null)}=-${texCoef(1/b)}x^2\cos ${bxT(b)}+${texCoef(2/b)}\int x\cos ${bxT(b)}\,dx=-${texCoef(1/b)}x^2\cos ${bxT(b)}+${texCoef(2/(b*b))}x\sin ${bxT(b)}+${texCoef(2/(b*b*b))}\cos ${bxT(b)}`};},
+  ()=>({fT:'\\left(\\ln x\\right)^2',fStr:'ln(x)^2',dom:[0.3,3],
+    u1T:'(\\ln x)^2',dv1T:'dx',
+    ansStr:'x*ln(x)^2-2*x*ln(x)+2*x',ansT:R`x\left(\ln x\right)^2-2x\ln x+2x`,
+    workT:R`\int\left(\ln x\right)^2dx=x\left(\ln x\right)^2-2\int\ln x\,dx=x\left(\ln x\right)^2-2\left(x\ln x-x\right)`})
+];
+Q.partsTwice={name:'two rounds of parts',
+  gen(){return drawVerified(TWICE,e=>verifyAnti(e.ansStr,e.fStr,e.dom));},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate the indefinite integral. One round will not finish it: run parts again on what is left. ${M('+C')} is optional.</p>${D(intT(q.fT,null))}`;
+    numIn(el,'F','=',{xwide:true,placeholder:'antiderivative'});},
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){hintBox(el).innerHTML=`Round one: ${M('u='+q.u1T)}, ${M('dv='+q.dv1T)}. That leaves a chapter 1 integral. Keep ${M('u')} the same kind of function on round two.`;},
+  solution(q){
+    return `Round one takes ${M('u='+q.u1T)} and ${M('dv='+q.dv1T)}, which drops the power by one. Round two finishes the leftover integral:`+
+      D(q.workT)+`So the antiderivative is ${M(q.ansT+'+C')}.`;}
+};
+
+/* ---------- tabular method: one builder shared by the explore widget and the drill ---------- */
+const expPartner=a=>({name:a===1?'e^x':a===-1?'e^(-x)':`e^(${a}x)`,dvT:eaxT(a),dvStr:`e^(${a}*x)`,
+  I:k=>({c:1/Math.pow(a,k),fT:eaxT(a),fStr:`e^(${a}*x)`})});
+const sinPartner={name:'sin x',dvT:'\\sin x',dvStr:'sin(x)',
+  I:k=>{const t=[[1,'\\sin x','sin(x)'],[-1,'\\cos x','cos(x)'],[-1,'\\sin x','sin(x)'],[1,'\\cos x','cos(x)']][k%4];return {c:t[0],fT:t[1],fStr:t[2]};}};
+const cosPartner={name:'cos x',dvT:'\\cos x',dvStr:'cos(x)',
+  I:k=>{const t=[[1,'\\cos x','cos(x)'],[1,'\\sin x','sin(x)'],[-1,'\\cos x','cos(x)'],[-1,'\\sin x','sin(x)']][k%4];return {c:t[0],fT:t[1],fStr:t[2]};}};
+/* rows: n+2 of them (the last derivative is 0); terms: n+1 diagonal products */
+function tabBuild(n,P){
+  const rows=[],terms=[];let c=1;
+  for(let k=0;k<=n+1;k++){
+    const p=n-k,I=P.I(k);
+    rows.push({sign:k%2?'-':'+',derivT:k<=n?powT(c,p):'0',intT:texTerm(I.c,I.fT,true)});
+    if(k<=n){
+      const J=P.I(k+1),coef=(k%2?-1:1)*c*J.c;
+      const bodyT=(p===0?'':p===1?'x':`x^{${p}}`)+J.fT;
+      const bodyS=(p===0?'':`x^${p}*`)+J.fStr;
+      terms.push({coef,bodyT,bodyS});
+      c=c*(n-k);
+    }
+  }
+  return {rows,terms,
+    ansT:terms.map((t,i)=>texTerm(t.coef,t.bodyT,i===0)).join(''),
+    ansStr:terms.map(t=>`(${t.coef})*${t.bodyS}`).join('+'),
+    fT:(n===1?'x':`x^{${n}}`)+P.dvT,fStr:`x^${n}*${P.dvStr}`};
+}
+Q.tabular={name:'tabular method',
+  gen(){
+    const build=()=>{const P=pick([expPartner(1),expPartner(-1),expPartner(2),sinPartner,cosPartner]);
+      const t=tabBuild(3,P);return {...t,P,dom:P.dvStr.indexOf('e')===0?[-1.2,1.2]:[-2,2]};};
+    let q=null;for(let i=0;i<40;i++){q=build();if(verifyAnti(q.ansStr,q.fStr,q.dom))return q;}
+    return q;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate the integral. The tabular method is fastest here: derivatives of ${M('x^3')} down one column, antiderivatives of ${M('dv')} down the other, signs alternating. ${M('+C')} is optional.</p>${D(intT(q.fT,null))}`;
+    numIn(el,'F','=',{xwide:true,placeholder:'antiderivative'});},
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){hintBox(el).innerHTML=`Left column: ${M('x^3,\\ 3x^2,\\ 6x,\\ 6,\\ 0')}. Right column starts at ${M(q.P.dvT)} and you integrate downward. First diagonal: ${M(texTerm(q.terms[0].coef,q.terms[0].bodyT,true))}.`;},
+  solution(q){
+    const L=q.rows.map(r=>`${r.sign}\\;&\\;${r.derivT}\\;&\\;${r.intT}`).join('\\\\');
+    return `Derivatives of ${M('x^3')} on the left, antiderivatives of ${M(q.P.dvT)} on the right, signs ${M('+,-,+,-')}:`+
+      D(R`\begin{array}{ccc}\text{sign}&\text{derivatives}&\text{integrals}\\ ${L}\end{array}`)+
+      `Multiply along the diagonals, each left entry against the right entry one row below it, and add:`+
+      D(q.ansT+'+C');}
+};
+
+/* ---------- cyclic integrals ---------- */
+const CYCDEF=[
+  {fT:'e^{x}\\sin x',fStr:'e^x*sin(x)',lo:0,hi:PI,loT:'0',hiT:'\\pi',
+   FT:R`\tfrac{e^{x}\left(\sin x-\cos x\right)}{2}`,ansStr:'(e^(pi)+1)/2',val:(Math.exp(PI)+1)/2,ansT:R`\tfrac{e^{\pi}+1}{2}`},
+  {fT:'e^{x}\\cos x',fStr:'e^x*cos(x)',lo:0,hi:PI/2,loT:'0',hiT:'\\tfrac{\\pi}{2}',
+   FT:R`\tfrac{e^{x}\left(\cos x+\sin x\right)}{2}`,ansStr:'(e^(pi/2)-1)/2',val:(Math.exp(PI/2)-1)/2,ansT:R`\tfrac{e^{\pi/2}-1}{2}`},
+  {fT:'e^{-x}\\sin x',fStr:'e^(-x)*sin(x)',lo:0,hi:PI,loT:'0',hiT:'\\pi',
+   FT:R`\tfrac{e^{-x}\left(-\sin x-\cos x\right)}{2}`,ansStr:'(e^(-pi)+1)/2',val:(Math.exp(-PI)+1)/2,ansT:R`\tfrac{e^{-\pi}+1}{2}`}
+];
+Q.cyclic={name:'the loop closes',
+  gen(){
+    if(Math.random()<0.32){
+      const e=pick(CYCDEF);
+      if(verifyDef(e.fStr,e.lo,e.hi,e.val))return {mode:'def',...e};
+    }
+    const build=()=>{
+      const a=pick([1,2,3,-1]),b=pick([1,2,3]),isSin=Math.random()<0.5,d=a*a+b*b;
+      const trig=isSin?`\\sin ${bxT(b)}`:`\\cos ${bxT(b)}`;
+      const numT=isSin?R`${texCoef(a)}\sin ${bxT(b)}-${texCoef(b)}\cos ${bxT(b)}`:R`${texCoef(a)}\cos ${bxT(b)}+${texCoef(b)}\sin ${bxT(b)}`;
+      return {mode:'ind',a,b,isSin,d,
+        fT:`${eaxT(a)}${trig}`,fStr:`e^(${a}*x)*${isSin?'sin':'cos'}(${b}*x)`,dom:[-1,1],
+        ansStr:isSin?`e^(${a}*x)*((${a})*sin(${b}*x)-(${b})*cos(${b}*x))/${d}`
+                    :`e^(${a}*x)*((${a})*cos(${b}*x)+(${b})*sin(${b}*x))/${d}`,
+        ansT:overT(`${eaxT(a)}\\left(${numT}\\right)`,d)};};
+    let q=null;for(let i=0;i<40;i++){q=build();if(verifyAnti(q.ansStr,q.fStr,q.dom))return q;}
+    return q;},
+  render(q,el){
+    if(q.mode==='def'){
+      el.innerHTML=`<p class="prompt">Two rounds of parts bring the original integral back. Solve for it, then evaluate. Exact value; ${M('e')} and ${M('\\pi')} may stay in the answer.</p>${D(R`\int_{${q.loT}}^{${q.hiT}} ${q.fT}\,dx`)}`;
+      numIn(el,'v','Value =',{wide:true});
+    }else{
+      el.innerHTML=`<p class="prompt">Neither factor ever simplifies. Run parts twice, then solve algebraically for the integral. ${M('+C')} is optional.</p>${D(intT(q.fT,null))}`;
+      numIn(el,'F','=',{xwide:true,placeholder:'antiderivative'});
+    }},
+  check(q,el){return q.mode==='def'
+    ?G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}))
+    :G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){hintBox(el).innerHTML=q.mode==='def'
+    ?`The antiderivative is ${M(q.FT)}. Evaluate it at both limits.`
+    :`Call the integral ${M('I')}. Take ${M('u='+eaxT(q.a))} both times. After two rounds you get ${M(R`I=\text{(terms)}-\tfrac{${q.a*q.a}}{${q.b*q.b}}I`)}, which you solve for ${M('I')}.`;},
+  solution(q){
+    if(q.mode==='def')return `Parts twice closes the loop and gives the antiderivative ${M(q.FT)}. Evaluating:`+
+      D(R`\int_{${q.loT}}^{${q.hiT}} ${q.fT}\,dx=\Big[${q.FT}\Big]_{${q.loT}}^{${q.hiT}}=${q.ansT}\approx ${fmtDec(q.val,4)}`);
+    return `Let ${M('I='+intT(q.fT,null))}. Two rounds of parts, keeping ${M('u='+eaxT(q.a))} each time, return a multiple of ${M('I')} on the right; solving for ${M('I')} divides by ${M(String(q.d))}, which is ${M(R`a^2+b^2`)} with ${M(`a=${q.a}`)} and ${M(`b=${q.b}`)}:`+
+      D(R`${intT(q.fT,null)}=${q.ansT}+C`)+
+      `Differentiate it to check: the product rule gives back ${M(q.fT)} and the cross terms cancel.`;}
+};
+
+/* ---------- definite integrals needing more than one round ---------- */
+const DEFREP=[
+  {bT:'x^2e^{x}',fStr:'x^2*e^x',lo:0,hi:1,loT:'0',hiT:'1',valStr:'e-2',val:Math.E-2,
+   FT:R`\left(x^2-2x+2\right)e^{x}`},
+  {bT:'x^2e^{-x}',fStr:'x^2*e^(-x)',lo:0,hi:1,loT:'0',hiT:'1',valStr:'2-5/e',val:2-5/Math.E,
+   FT:R`-\left(x^2+2x+2\right)e^{-x}`},
+  {bT:'x^2\\cos x',fStr:'x^2*cos(x)',lo:0,hi:PI,loT:'0',hiT:'\\pi',valStr:'-2*pi',val:-2*PI,
+   FT:R`x^2\sin x+2x\cos x-2\sin x`},
+  {bT:'x^2\\sin x',fStr:'x^2*sin(x)',lo:0,hi:PI,loT:'0',hiT:'\\pi',valStr:'pi^2-4',val:PI*PI-4,
+   FT:R`-x^2\cos x+2x\sin x+2\cos x`},
+  {bT:'x^2\\sin x',fStr:'x^2*sin(x)',lo:0,hi:PI/2,loT:'0',hiT:'\\tfrac{\\pi}{2}',valStr:'pi-2',val:PI-2,
+   FT:R`-x^2\cos x+2x\sin x+2\cos x`},
+  {bT:'x^2\\cos x',fStr:'x^2*cos(x)',lo:0,hi:PI/2,loT:'0',hiT:'\\tfrac{\\pi}{2}',valStr:'pi^2/4-2',val:PI*PI/4-2,
+   FT:R`x^2\sin x+2x\cos x-2\sin x`},
+  {bT:'\\left(\\ln x\\right)^2',fStr:'ln(x)^2',lo:1,hi:Math.E,loT:'1',hiT:'e',valStr:'e-2',val:Math.E-2,
+   FT:R`x\left(\ln x\right)^2-2x\ln x+2x`}
+];
+Q.definiteRepeat={name:'definite, more than one round',
+  gen(){
+    const build=()=>{const e=pick(DEFREP),k=rint(1,4);
+      return {...e,k,val:k*e.val,ansStr:k===1?e.valStr:`${k}*(${e.valStr})`};};
+    let q=null;for(let i=0;i<40;i++){q=build();if(verifyDef(q.fStr,q.lo,q.hi,q.val/q.k))return q;}
+    return q;},
+  render(q,el){
+    const kt=q.k===1?'':String(q.k);
+    el.innerHTML=`<p class="prompt">Evaluate the definite integral. It takes two rounds of parts. Exact value; ${M('e')} and ${M('\\pi')} may stay in the answer.</p>${D(R`\int_{${q.loT}}^{${q.hiT}} ${kt}${q.bT}\,dx`)}`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}));},
+  hint(q,el){hintBox(el).innerHTML=`Two rounds give the antiderivative ${M(q.FT)}. Now put in the limits, and do not forget the factor ${M(String(q.k))}.`;},
+  solution(q){
+    const kt=q.k===1?'':String(q.k);
+    return `Parts twice (or the tabular method) gives ${M(R`\int ${q.bT}\,dx=`+q.FT)}. Evaluate at both limits and multiply by the constant:`+
+      D(R`\int_{${q.loT}}^{${q.hiT}} ${kt}${q.bT}\,dx=${kt}\Big[${q.FT}\Big]_{${q.loT}}^{${q.hiT}}=${kt===''?'':kt+R`\left(`}${q.valStr.replace(/pi/g,'\\pi').replace(/\*/g,'')}${kt===''?'':R`\right)`}\approx ${fmtDec(q.val,4)}`);}
+};
+
+/* ============================================================ chapter 3: substitution first, applications */
+const SUBP=[
+  {fT:'x^3e^{x^2}',fStr:'x^3*e^(x^2)',dom:[-1.2,1.2],subT:'w=x^2,\\quad dw=2x\\,dx',
+   midT:R`\tfrac12\int we^{w}\,dw`,backT:R`\tfrac12(w-1)e^{w}`,
+   ansStr:'(x^2-1)*e^(x^2)/2',ansT:R`\tfrac12\left(x^2-1\right)e^{x^2}`},
+  {fT:'x^3e^{-x^2}',fStr:'x^3*e^(-x^2)',dom:[-1.2,1.2],subT:'w=x^2,\\quad dw=2x\\,dx',
+   midT:R`\tfrac12\int we^{-w}\,dw`,backT:R`-\tfrac12(w+1)e^{-w}`,
+   ansStr:'-(x^2+1)*e^(-x^2)/2',ansT:R`-\tfrac12\left(x^2+1\right)e^{-x^2}`},
+  {fT:'x^3\\cos\\left(x^2\\right)',fStr:'x^3*cos(x^2)',dom:[-1.4,1.4],subT:'w=x^2,\\quad dw=2x\\,dx',
+   midT:R`\tfrac12\int w\cos w\,dw`,backT:R`\tfrac12\left(w\sin w+\cos w\right)`,
+   ansStr:'(x^2*sin(x^2)+cos(x^2))/2',ansT:R`\tfrac12\left(x^2\sin\left(x^2\right)+\cos\left(x^2\right)\right)`},
+  {fT:'x^3\\sin\\left(x^2\\right)',fStr:'x^3*sin(x^2)',dom:[-1.4,1.4],subT:'w=x^2,\\quad dw=2x\\,dx',
+   midT:R`\tfrac12\int w\sin w\,dw`,backT:R`\tfrac12\left(\sin w-w\cos w\right)`,
+   ansStr:'(sin(x^2)-x^2*cos(x^2))/2',ansT:R`\tfrac12\left(\sin\left(x^2\right)-x^2\cos\left(x^2\right)\right)`},
+  {fT:'\\sin\\sqrt{x}',fStr:'sin(sqrt(x))',dom:[0.5,3],subT:'w=\\sqrt{x},\\quad x=w^2,\\quad dx=2w\\,dw',
+   midT:R`\int 2w\sin w\,dw`,backT:R`-2w\cos w+2\sin w`,
+   ansStr:'2*sin(sqrt(x))-2*sqrt(x)*cos(sqrt(x))',ansT:R`2\sin\sqrt{x}-2\sqrt{x}\cos\sqrt{x}`},
+  {fT:'\\cos\\sqrt{x}',fStr:'cos(sqrt(x))',dom:[0.5,3],subT:'w=\\sqrt{x},\\quad x=w^2,\\quad dx=2w\\,dw',
+   midT:R`\int 2w\cos w\,dw`,backT:R`2w\sin w+2\cos w`,
+   ansStr:'2*sqrt(x)*sin(sqrt(x))+2*cos(sqrt(x))',ansT:R`2\sqrt{x}\sin\sqrt{x}+2\cos\sqrt{x}`},
+  {fT:'e^{\\sqrt{x}}',fStr:'e^(sqrt(x))',dom:[0.5,3],subT:'w=\\sqrt{x},\\quad x=w^2,\\quad dx=2w\\,dw',
+   midT:R`\int 2we^{w}\,dw`,backT:R`2(w-1)e^{w}`,
+   ansStr:'2*(sqrt(x)-1)*e^(sqrt(x))',ansT:R`2\left(\sqrt{x}-1\right)e^{\sqrt{x}}`},
+  {fT:'\\cos\\left(\\ln x\\right)',fStr:'cos(ln(x))',dom:[0.4,3],subT:'w=\\ln x,\\quad x=e^{w},\\quad dx=e^{w}dw',
+   midT:R`\int e^{w}\cos w\,dw`,backT:R`\tfrac12 e^{w}\left(\cos w+\sin w\right)`,
+   ansStr:'x*(cos(ln(x))+sin(ln(x)))/2',ansT:R`\tfrac{x}{2}\left(\cos\left(\ln x\right)+\sin\left(\ln x\right)\right)`},
+  {fT:'\\sin\\left(\\ln x\\right)',fStr:'sin(ln(x))',dom:[0.4,3],subT:'w=\\ln x,\\quad x=e^{w},\\quad dx=e^{w}dw',
+   midT:R`\int e^{w}\sin w\,dw`,backT:R`\tfrac12 e^{w}\left(\sin w-\cos w\right)`,
+   ansStr:'x*(sin(ln(x))-cos(ln(x)))/2',ansT:R`\tfrac{x}{2}\left(\sin\left(\ln x\right)-\cos\left(\ln x\right)\right)`}
+];
+Q.subThenParts={name:'substitute, then parts',
+  gen(){return drawVerified(SUBP.map(e=>()=>e),e=>verifyAnti(e.ansStr,e.fStr,e.dom));},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">There is an inner function here, so substitute first and use parts on what is left. ${M('+C')} is optional.</p>${D(intT(q.fT,null))}`;
+    numIn(el,'F','=',{xwide:true,placeholder:'antiderivative in x'});},
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){hintBox(el).innerHTML=`Substitute ${M(q.subT)}. The integral becomes ${M(q.midT)}, which is a one-round parts problem.`;},
+  solution(q){
+    return `Substitute ${M(q.subT)}, which turns the integral into a plain product:`+
+      D(R`${intT(q.fT,null)}=${q.midT}=${q.backT}`)+
+      `Now put ${M('w')} back in terms of ${M('x')}:`+D(q.ansT+'+C');}
+};
+
+const VELS=[
+  ()=>{const T=rint(1,4);return {vT:'te^{-t}',fStr:'x*e^(-x)',T,TT:String(T),
+    FT:R`-(t+1)e^{-t}`,ansStr:`1-${T+1}*e^(-${T})`,val:1-(T+1)*Math.exp(-T),
+    ansT:R`1-${T+1}e^{-${T}}`};},
+  ()=>{const T=rint(1,4);return {vT:'te^{-t/2}',fStr:'x*e^(-x/2)',T,TT:String(T),
+    FT:R`-(2t+4)e^{-t/2}`,ansStr:`4-${2*T+4}*e^(-${T}/2)`,val:4-(2*T+4)*Math.exp(-T/2),
+    ansT:R`4-${2*T+4}e^{-${T}/2}`};},
+  ()=>{const T=rint(1,3);return {vT:'t^2e^{-t}',fStr:'x^2*e^(-x)',T,TT:String(T),
+    FT:R`-\left(t^2+2t+2\right)e^{-t}`,ansStr:`2-${T*T+2*T+2}*e^(-${T})`,val:2-(T*T+2*T+2)*Math.exp(-T),
+    ansT:R`2-${T*T+2*T+2}e^{-${T}}`};},
+  ()=>{const half=Math.random()<0.5;const T=half?PI/2:PI;return {vT:'t\\sin t',fStr:'x*sin(x)',T,
+    TT:half?'\\tfrac{\\pi}{2}':'\\pi',FT:R`-t\cos t+\sin t`,
+    ansStr:half?'1':'pi',val:half?1:PI,ansT:half?'1':'\\pi'};}
+];
+Q.distance={name:'distance from a velocity',
+  gen(){
+    let q=null;for(let i=0;i<40;i++){q=pick(VELS)();if(verifyDef(q.fStr,0,q.T,q.val))return q;}
+    return q;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">A particle moves along a line with velocity ${M(`v(t)=${q.vT}`)} metres per second, ${M('t\\ge 0')}. How far does it travel during the first ${M(q.TT)} seconds? Exact value; ${M('e')} and ${M('\\pi')} may stay in the answer.</p>`;
+    numIn(el,'d','distance =',{wide:true,after:'m'});},
+  check(q,el){return G(el,'d',checkNumber($('[data-k=d]',el).value,q.val,{rel:1e-6}));},
+  hint(q,el){hintBox(el).innerHTML=`The velocity is never negative here, so the distance is ${M(R`\int_0^{${q.TT}} ${q.vT}\,dt`)}. Parts gives the antiderivative ${M(q.FT)}.`;},
+  solution(q){
+    return `The velocity stays non-negative, so distance equals ${M(R`\int_0^{${q.TT}} v\,dt`)}. Integration by parts with ${M('u=t')} (or ${M('u=t^2')}) gives the antiderivative ${M(q.FT)}, so`+
+      D(R`\int_0^{${q.TT}} ${q.vT}\,dt=\Big[${q.FT}\Big]_0^{${q.TT}}=${q.ansT}\approx ${fmtDec(q.val,4)}`)+
+      `metres.`;}
+};
+
+const AREAS=[
+  ()=>{const a=rint(1,4);return {yT:'xe^{-x}',fStr:'x*e^(-x)',loT:'0',hiT:String(a),lo:0,hi:a,
+    FT:R`-(x+1)e^{-x}`,ansStr:`1-${a+1}*e^(-${a})`,val:1-(a+1)*Math.exp(-a),ansT:R`1-${a+1}e^{-${a}}`};},
+  ()=>{const a=rint(2,5);return {yT:'\\ln x',fStr:'ln(x)',loT:'1',hiT:String(a),lo:1,hi:a,
+    FT:R`x\ln x-x`,ansStr:`${a}*ln(${a})-${a-1}`,val:a*Math.log(a)-a+1,ansT:R`${a}\ln ${a}-${a-1}`};},
+  ()=>({yT:'x\\sin x',fStr:'x*sin(x)',loT:'0',hiT:'\\pi',lo:0,hi:PI,
+    FT:R`-x\cos x+\sin x`,ansStr:'pi',val:PI,ansT:'\\pi'}),
+  ()=>({yT:'x\\cos x',fStr:'x*cos(x)',loT:'0',hiT:'\\tfrac{\\pi}{2}',lo:0,hi:PI/2,
+    FT:R`x\sin x+\cos x`,ansStr:'pi/2-1',val:PI/2-1,ansT:R`\tfrac{\pi}{2}-1`}),
+  ()=>{const a=rint(1,3);return {yT:'xe^{x}',fStr:'x*e^x',loT:'0',hiT:String(a),lo:0,hi:a,
+    FT:R`(x-1)e^{x}`,ansStr:`${a-1}*e^(${a})+1`,val:(a-1)*Math.exp(a)+1,
+    ansT:a===1?'1':R`${a-1}e^{${a}}+1`};},
+  ()=>({yT:'\\arctan x',fStr:'arctan(x)',loT:'0',hiT:'1',lo:0,hi:1,
+    FT:R`x\arctan x-\tfrac12\ln\left(1+x^2\right)`,ansStr:'pi/4-ln(2)/2',val:PI/4-Math.LN2/2,ansT:R`\tfrac{\pi}{4}-\tfrac{\ln 2}{2}`}),
+  ()=>{const a=rint(1,3);return {yT:'x^2e^{-x}',fStr:'x^2*e^(-x)',loT:'0',hiT:String(a),lo:0,hi:a,
+    FT:R`-\left(x^2+2x+2\right)e^{-x}`,ansStr:`2-${a*a+2*a+2}*e^(-${a})`,val:2-(a*a+2*a+2)*Math.exp(-a),
+    ansT:R`2-${a*a+2*a+2}e^{-${a}}`};}
+];
+Q.wordArea={name:'area under a parts-integrand',
+  gen(){
+    let q=null;for(let i=0;i<40;i++){q=pick(AREAS)();if(verifyDef(q.fStr,q.lo,q.hi,q.val))return q;}
+    return q;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the area of the region under the graph of ${M(`y=${q.yT}`)} from ${M(`x=${q.loT}`)} to ${M(`x=${q.hiT}`)}. The curve stays above the axis there. Exact value.</p>`;
+    numIn(el,'a','Area =',{wide:true});},
+  check(q,el){return G(el,'a',checkNumber($('[data-k=a]',el).value,q.val,{rel:1e-6}));},
+  hint(q,el){hintBox(el).innerHTML=`Area is ${M(R`\int_{${q.loT}}^{${q.hiT}} ${q.yT}\,dx`)}, and parts gives the antiderivative ${M(q.FT)}.`;},
+  solution(q){
+    return `The graph is above the axis on the interval, so the area is the integral. Parts gives ${M(R`\int ${q.yT}\,dx=`+q.FT)}, and then`+
+      D(R`\int_{${q.loT}}^{${q.hiT}} ${q.yT}\,dx=\Big[${q.FT}\Big]_{${q.loT}}^{${q.hiT}}=${q.ansT}\approx ${fmtDec(q.val,4)}`);}
+};
+
+/* ============================================================ chapter 1 widgets */
+(function(){
+  /* ---------- the area picture behind uv - int v du ---------- */
+  const plot=new Plot2D('#areaPlot',{xmin:-0.3,xmax:1.9,ymin:-0.35,ymax:2.7});
+  const CURVES=[
+    {n:'v = u²',f:u=>u*u,umax:1.5,win:{xmin:-0.3,xmax:1.9,ymin:-0.4,ymax:2.7},T:'v=u^2'},
+    {n:'v = √u',f:u=>Math.sqrt(u),umax:2.5,win:{xmin:-0.45,xmax:3,ymin:-0.35,ymax:2.1},T:'v=\\sqrt{u}'},
+    {n:'v = eᵘ − 1',f:u=>Math.exp(u)-1,umax:1.4,win:{xmin:-0.3,xmax:1.8,ymin:-0.45,ymax:3.4},T:'v=e^{u}-1'},
+    {n:'v = sin u',f:u=>Math.sin(u),umax:PI/2,win:{xmin:-0.28,xmax:1.9,ymin:-0.28,ymax:1.45},T:'v=\\sin u'}
+  ];
+  let cur=CURVES[0],u1=0.9,slider=null;
+  const pbox=$('#areaPresets'),sbox=$('#areaSliders');
+  CURVES.forEach(c=>{const b=el('button',{class:'btn small'},c.n);
+    b.onclick=()=>{cur=c;$$('.btn',pbox).forEach(x=>x.classList.remove('on'));b.classList.add('on');build();draw();};
+    pbox.appendChild(b);});
+  $$('.btn',pbox)[0].classList.add('on');
+  function build(){sbox.innerHTML='';u1=cur.umax*0.62;
+    slider=sliderRow(sbox,{label:'u',min:cur.umax*0.08,max:cur.umax,step:cur.umax/120,value:u1,onInput:v=>{u1=v;draw();}});}
+  function draw(){
+    Object.assign(plot.o,cur.win);plot.begin();
+    const f=cur.f,v1=f(u1);
+    plot.region(0,u1,()=>0,f,{fill:'rgba(37,99,235,.20)',stroke:'rgba(37,99,235,.45)'});
+    const left=[[0,0],[0,v1]];const N=90;
+    for(let i=0;i<=N;i++){const u=u1*(1-i/N);left.push([u,f(u)]);}
+    plot.poly(left,{fill:'rgba(217,119,6,.28)',stroke:'rgba(217,119,6,.5)',width:1});
+    plot.poly([[0,0],[u1,0],[u1,v1],[0,v1]],{fill:null,stroke:'#16a34a',width:1.6});
+    plot.fn(f,{color:'#7c3aed',width:2.6,xmin:0,xmax:cur.umax});
+    plot.point([u1,v1],{color:'#7c3aed',r:5,ring:true,label:'(u, v)'});
+    plot.text([u1*0.55,v1*0.28],'∫ v du',{color:'#1d4ed8'});
+    plot.text([u1*0.09,v1*0.82],'∫ u dv',{color:'#b45309'});
+    const A1=simpson(f,0,u1,400),A2=u1*v1-A1;
+    $('#areaOut').innerHTML=`curve ${cur.n}<br>u = ${fmtDec(u1,3)}, v = ${fmtDec(v1,3)}<br>`+
+      `blue ∫ v du = <b>${fmtDec(A1,4)}</b><br>orange ∫ u dv = <b>${fmtDec(A2,4)}</b><br>`+
+      `sum = ${fmtDec(A1+A2,4)} = u·v = <b>${fmtDec(u1*v1,4)}</b>`;
+  }
+  const anim=animator('formula',dt=>{const lo=cur.umax*0.08;u1+=dt*cur.umax*0.42;
+    if(u1>cur.umax){u1=lo;}if(slider)slider.set(u1);draw();});
+  $('#areaPlay').onclick=()=>{anim.toggle();$('#areaPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  onShow('*',id=>{if(id!=='formula')$('#areaPlay').textContent='▶ Play';});
+  build();redrawOnShow('formula',draw);draw();
+
+  /* ---------- LIATE: the same integral split two ways ---------- */
+  const CMP=[
+    ()=>{const a=pick([1,2]);return {fT:`x${eaxT(a)}`,
+      A:{uT:'x',dvT:`${eaxT(a)}\\,dx`,duT:'dx',vT:`${texCoef(1/a)}${eaxT(a)}`,
+         resT:`${texCoef(1/a)}x${eaxT(a)}-${texCoef(1/a)}\\displaystyle\\int ${eaxT(a)}\\,dx`,
+         newT:`\\int ${eaxT(a)}\\,dx`,why:'no \\(x\\) left, just a basic exponential'},
+      B:{uT:eaxT(a),dvT:'x\\,dx',duT:`${texCoef(a)}${eaxT(a)}dx`,vT:'\\tfrac{x^2}{2}',
+         resT:`\\tfrac{x^2}{2}${eaxT(a)}-${texCoef(a/2)}\\displaystyle\\int x^2${eaxT(a)}\\,dx`,
+         newT:`\\int x^2${eaxT(a)}\\,dx`,why:'the power climbed from 1 to 2'}};},
+    ()=>{const b=pick([1,2]);return {fT:`x\\cos ${bxT(b)}`,
+      A:{uT:'x',dvT:`\\cos ${bxT(b)}\\,dx`,duT:'dx',vT:`${texCoef(1/b)}\\sin ${bxT(b)}`,
+         resT:`${texCoef(1/b)}x\\sin ${bxT(b)}-${texCoef(1/b)}\\displaystyle\\int \\sin ${bxT(b)}\\,dx`,
+         newT:`\\int \\sin ${bxT(b)}\\,dx`,why:'no \\(x\\) left, just a basic trig integral'},
+      B:{uT:`\\cos ${bxT(b)}`,dvT:'x\\,dx',duT:`-${texCoef(b)}\\sin ${bxT(b)}dx`,vT:'\\tfrac{x^2}{2}',
+         resT:`\\tfrac{x^2}{2}\\cos ${bxT(b)}+${texCoef(b/2)}\\displaystyle\\int x^2\\sin ${bxT(b)}\\,dx`,
+         newT:`\\int x^2\\sin ${bxT(b)}\\,dx`,why:'the power climbed from 1 to 2'}};},
+    ()=>({fT:'x^2e^{x}',
+      A:{uT:'x^2',dvT:'e^{x}dx',duT:'2x\\,dx',vT:'e^{x}',
+         resT:'x^2e^{x}-2\\displaystyle\\int xe^{x}\\,dx',newT:'\\int xe^{x}\\,dx',
+         why:'the power dropped from 2 to 1, so one more round finishes it'},
+      B:{uT:'e^{x}',dvT:'x^2dx',duT:'e^{x}dx',vT:'\\tfrac{x^3}{3}',
+         resT:'\\tfrac{x^3}{3}e^{x}-\\tfrac13\\displaystyle\\int x^3e^{x}\\,dx',newT:'\\int x^3e^{x}\\,dx',
+         why:'the power climbed from 2 to 3, and it will keep climbing'}}),
+    ()=>({fT:'x\\ln x',
+      A:{uT:'\\ln x',dvT:'x\\,dx',duT:'\\tfrac{dx}{x}',vT:'\\tfrac{x^2}{2}',
+         resT:'\\tfrac{x^2}{2}\\ln x-\\tfrac12\\displaystyle\\int x\\,dx',newT:'\\int x\\,dx',
+         why:'the logarithm is gone, which is the whole point'},
+      B:{uT:'x',dvT:'\\ln x\\,dx',duT:'dx',vT:'x\\ln x-x',
+         resT:'x\\left(x\\ln x-x\\right)-\\displaystyle\\int\\left(x\\ln x-x\\right)dx',
+         newT:'\\int\\left(x\\ln x-x\\right)dx',
+         why:'finding \\(v\\) already needed parts, and the new integral contains the original one'}}),
+    ()=>({fT:'\\ln x',
+      A:{uT:'\\ln x',dvT:'dx',duT:'\\tfrac{dx}{x}',vT:'x',
+         resT:'x\\ln x-\\displaystyle\\int 1\\,dx',newT:'\\int 1\\,dx',
+         why:'the only split there is, and it works: the leftover is trivial'},
+      B:{uT:'1',dvT:'\\ln x\\,dx',duT:'0\\,dx',vT:'\\displaystyle\\int\\ln x\\,dx',
+         resT:'1\\cdot\\displaystyle\\int\\ln x\\,dx-\\int 0\\,dx',newT:'\\int\\ln x\\,dx',
+         why:'you cannot write \\(v\\) without already knowing the answer'}})
+  ];
+  function drawCmp(){
+    const c=pick(CMP)();
+    const pane=(p,label,good)=>`<div class="pane"><h5>${label}</h5>
+      <div class="ln">${M(`u=${p.uT}`)} &nbsp; ${M(`dv=${p.dvT}`)}</div>
+      <div class="ln">${M(`du=${p.duT}`)} &nbsp; ${M(`v=${p.vT}`)}</div>
+      <div class="ln">${M(`uv-\\int v\\,du=${p.resT}`)}</div>
+      <div class="ln small muted">new integral: ${M(p.newT)}</div>
+      <span class="verdict ${good?'good':'poor'}">${good?'simpler':'worse'}</span>
+      <div class="small muted" style="margin-top:6px">${p.why}</div></div>`;
+    $('#cmpBox').innerHTML=`<div class="ln" style="font-size:18px;margin-bottom:10px">${D(intT(c.fT,null))}</div>
+      <div class="cmp">${pane(c.A,'LIATE choice',true)}${pane(c.B,'swapped',false)}</div>`;
+    typeset($('#cmpBox'));
+  }
+  $('#cmpNew').onclick=drawCmp;drawCmp();
+
+  /* ---------- step-by-step walkthrough ---------- */
+  const WALK=[
+    ()=>{const a=pick([1,2,3,-1]);return {fT:`x${eaxT(a)}`,uT:'x',dvT:`${eaxT(a)}\\,dx`,duT:'dx',
+      vT:`${texCoef(1/a)}${eaxT(a)}`,uvT:`${texCoef(1/a)}x${eaxT(a)}`,vduT:`${texCoef(1/a)}${eaxT(a)}\\,dx`,
+      remT:overT(eaxT(a),a*a),ansT:overT(`\\left(${axT(a)}-1\\right)${eaxT(a)}`,a*a)};},
+    ()=>{const b=pick([1,2,3]);return {fT:`x\\cos ${bxT(b)}`,uT:'x',dvT:`\\cos ${bxT(b)}\\,dx`,duT:'dx',
+      vT:`${texCoef(1/b)}\\sin ${bxT(b)}`,uvT:`${texCoef(1/b)}x\\sin ${bxT(b)}`,vduT:`${texCoef(1/b)}\\sin ${bxT(b)}\\,dx`,
+      remT:`-${texCoef(1/(b*b))}\\cos ${bxT(b)}`,
+      ansT:`${texCoef(1/b)}x\\sin ${bxT(b)}+${texCoef(1/(b*b))}\\cos ${bxT(b)}`};},
+    ()=>{const b=pick([1,2,3]);return {fT:`x\\sin ${bxT(b)}`,uT:'x',dvT:`\\sin ${bxT(b)}\\,dx`,duT:'dx',
+      vT:`-${texCoef(1/b)}\\cos ${bxT(b)}`,uvT:`-${texCoef(1/b)}x\\cos ${bxT(b)}`,vduT:`-${texCoef(1/b)}\\cos ${bxT(b)}\\,dx`,
+      remT:`-${texCoef(1/(b*b))}\\sin ${bxT(b)}`,
+      ansT:`-${texCoef(1/b)}x\\cos ${bxT(b)}+${texCoef(1/(b*b))}\\sin ${bxT(b)}`};},
+    ()=>({fT:'\\ln x',uT:'\\ln x',dvT:'dx',duT:'\\dfrac{dx}{x}',vT:'x',uvT:'x\\ln x',vduT:'dx',
+      remT:'x',ansT:'x\\ln x-x'}),
+    ()=>({fT:'x\\ln x',uT:'\\ln x',dvT:'x\\,dx',duT:'\\dfrac{dx}{x}',vT:'\\dfrac{x^2}{2}',
+      uvT:'\\dfrac{x^2}{2}\\ln x',vduT:'\\dfrac{x}{2}\\,dx',remT:'\\dfrac{x^2}{4}',
+      ansT:'\\dfrac{x^2}{2}\\ln x-\\dfrac{x^2}{4}'}),
+    ()=>({fT:'\\arctan x',uT:'\\arctan x',dvT:'dx',duT:'\\dfrac{dx}{1+x^2}',vT:'x',uvT:'x\\arctan x',
+      vduT:'\\dfrac{x}{1+x^2}\\,dx',remT:'\\tfrac12\\ln\\left(1+x^2\\right)',
+      ansT:'x\\arctan x-\\tfrac12\\ln\\left(1+x^2\\right)'}),
+    ()=>({fT:'x\\sec^2 x',uT:'x',dvT:'\\sec^2 x\\,dx',duT:'dx',vT:'\\tan x',uvT:'x\\tan x',
+      vduT:'\\tan x\\,dx',remT:'-\\ln\\left|\\cos x\\right|',ansT:'x\\tan x+\\ln\\left|\\cos x\\right|'})
+  ];
+  let W=WALK[0](),step=0;
+  function drawW(){
+    const L=[];
+    L.push(`<span class="t b">${M(intT(W.fT,null))}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}">Choose: <span class="t ${step===1?'now':''} a">${M(`u=${W.uT}`)}</span> and <span class="t ${step===1?'now':''} b">${M(`dv=${W.dvT}`)}</span></span>`);
+    L.push(`<span class="${step>=2?'':'faint'}">Then: <span class="t ${step===2?'now':''} a">${M(`du=${W.duT}`)}</span> and <span class="t ${step===2?'now':''} b">${M(`v=${W.vT}`)}</span></span>`);
+    L.push(`<span class="${step>=3?'':'faint'}">= <span class="t ${step===3?'now':''} a">${M(R`${W.uvT}-\int ${W.vduT}`)}</span></span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">= <span class="t ${step===4?'now':''} b">${M(`${W.uvT}-\\left(${W.remT}\\right)`)}</span></span>`);
+    L.push(`<span class="${step>=5?'':'faint'}">= <span class="t ${step===5?'now':''} c">${M(W.ansT+'+C')}</span></span>`);
+    $('#wtExpr').innerHTML=L.join('<br>');
+    const st=['Look at the integrand and name the two factors. Press Next.',
+      'LIATE picks u. Everything else, including dx, is dv.',
+      'Differentiate u to get du. Integrate dv to get v, with no constant.',
+      'Assemble the formula: uv minus the integral of v du.',
+      'Do the leftover integral. It is one of the basic ones.',
+      'Simplify, and add the constant. Differentiate it mentally to check.'];
+    $('#wtStatus').textContent=st[step];
+    $('#wtPrev').disabled=step===0;$('#wtNext').disabled=step===5;
+    typeset($('#wtExpr'));
+  }
+  $('#wtNext').onclick=()=>{step=Math.min(5,step+1);drawW();};
+  $('#wtPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#wtNew').onclick=()=>{W=pick(WALK)();step=0;drawW();};
+  drawW();
+
+  new Drill({mount:'#drill-formula',section:'formula',goal:7,
+    ...mixDrill([Q.chooseUdv,Q.chooseUdv,Q.partsOnce,Q.partsOnce,Q.partsOnce,Q.partsDefinite,Q.partsDefinite])});
+})();
+
+/* ============================================================ chapter 2 widgets */
+(function(){
+  const PLIST=[expPartner(1),expPartner(-1),expPartner(2),sinPartner,cosPartner];
+  let n=3,P=PLIST[0],step=0,nStep=null;
+  nStep=stepper('#tabN',3,1,4,v=>{n=v;step=0;draw();});
+  const pb=$('#tabPartner');
+  PLIST.forEach(p=>{const b=el('button',{class:'btn small'},p.name);
+    b.onclick=()=>{P=p;step=0;$$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};
+    pb.appendChild(b);});
+  $$('.btn',pb)[0].classList.add('on');
+  function draw(){
+    const T=tabBuild(n,P);
+    const rows=T.rows.map((r,k)=>{
+      const shown=k<=step;
+      const diag=(k<=step-1&&k<=n)?M(texTerm(T.terms[k].coef,T.terms[k].bodyT,true)):'';
+      return `<tr class="${shown?(k===step?'now':''):'pending'}"><td class="sgn">${k<=n?r.sign:''}</td><td>${M(r.derivT)}</td><td>${M(r.intT)}</td><td class="prod">${diag}</td></tr>`;
+    }).join('');
+    $('#tabTable').innerHTML=`<table class="tabtab"><thead><tr><th>sign</th><th>derivatives of \\(u=${n===1?'x':'x^{'+n+'}'}\\)</th><th>integrals of \\(dv=${P.dvT}\\)</th><th>diagonal product</th></tr></thead><tbody>${rows}</tbody></table>`;
+    const done=step>=n+1;
+    const partial=T.terms.slice(0,Math.max(0,Math.min(step,n+1))).map((t,i)=>texTerm(t.coef,t.bodyT,i===0)).join('');
+    $('#tabOut').innerHTML=D(R`\int ${T.fT}\,dx=${done?T.ansT+'+C':(partial||'\\;?')+(done?'':'\\;+\\;\\cdots')}`);
+    typeset($('#tabOut'));typeset($('#tabTable'));
+    $('#tabStatus').textContent=step===0
+      ?'Row 0 is u itself and dv itself. Press Next row.'
+      :(done?'The left column reached 0, so the table stops. Add the diagonal products.'
+            :`Row ${step}: differentiate on the left, integrate on the right, and the sign flips. The new diagonal pairs row ${step-1} on the left with row ${step} on the right.`);
+    $('#tabBack').disabled=step===0;$('#tabNext').disabled=done;
+  }
+  $('#tabNext').onclick=()=>{step=Math.min(n+1,step+1);draw();};
+  $('#tabBack').onclick=()=>{step=Math.max(0,step-1);draw();};
+  $('#tabReset').onclick=()=>{step=0;draw();};
+  draw();
+
+  new Drill({mount:'#drill-repeat',section:'repeat',goal:6,
+    ...mixDrill([Q.partsTwice,Q.partsTwice,Q.tabular,Q.cyclic,Q.cyclic,Q.definiteRepeat])});
+})();
+
+/* ============================================================ chapter 3 widgets */
+(function(){
+  const plot=new Plot2D('#velPlot',{xmin:-0.6,xmax:10,ymin:-0.06,ymax:0.45,labels:true});
+  const VS=[
+    {n:'v = t e^(−t)',f:t=>t*Math.exp(-t),Dst:T=>1-(T+1)*Math.exp(-T),vT:'te^{-t}',
+     FT:'1-(T+1)e^{-T}',limT:'1',lim:1,tmax:10,ymax:0.46,T0:2},
+    {n:'v = t e^(−t/2)',f:t=>t*Math.exp(-t/2),Dst:T=>4-(2*T+4)*Math.exp(-T/2),vT:'te^{-t/2}',
+     FT:'4-(2T+4)e^{-T/2}',limT:'4',lim:4,tmax:16,ymax:0.82,T0:3},
+    {n:'v = t² e^(−t)',f:t=>t*t*Math.exp(-t),Dst:T=>2-(T*T+2*T+2)*Math.exp(-T),vT:'t^2e^{-t}',
+     FT:R`2-\left(T^2+2T+2\right)e^{-T}`,limT:'2',lim:2,tmax:14,ymax:0.62,T0:3},
+    {n:'v = t sin t on [0, π]',f:t=>t*Math.sin(t),Dst:T=>Math.sin(T)-T*Math.cos(T),vT:'t\\sin t',
+     FT:R`\sin T-T\cos T`,limT:'\\pi',lim:PI,tmax:PI,ymax:2.1,T0:1.6}
+  ];
+  let cur=VS[0],T=2,slider=null;
+  const pbox=$('#velPresets'),sbox=$('#velSliders');
+  VS.forEach(c=>{const b=el('button',{class:'btn small'},c.n);
+    b.onclick=()=>{cur=c;$$('.btn',pbox).forEach(x=>x.classList.remove('on'));b.classList.add('on');build();draw();};
+    pbox.appendChild(b);});
+  $$('.btn',pbox)[0].classList.add('on');
+  function build(){sbox.innerHTML='';T=cur.T0;
+    slider=sliderRow(sbox,{label:'T (seconds)',min:0.05,max:cur.tmax,step:cur.tmax/200,value:T,onInput:v=>{T=v;draw();}});}
+  function draw(){
+    Object.assign(plot.o,{xmin:-cur.tmax*0.06,xmax:cur.tmax*1.04,ymin:-cur.ymax*0.12,ymax:cur.ymax});
+    plot.begin();
+    plot.region(0,T,()=>0,cur.f,{fill:'rgba(217,119,6,.26)',stroke:'rgba(217,119,6,.5)'});
+    plot.fn(cur.f,{color:'#7c3aed',width:2.6,xmin:0,xmax:cur.tmax});
+    plot.param(s=>[T,s*cur.f(T)],0,1,{color:'#d97706',width:1.4,dash:[4,3],n:20});
+    plot.point([T,cur.f(T)],{color:'#7c3aed',r:5,ring:true,label:'v(T)'});
+    const d=cur.Dst(T);
+    $('#velOut').innerHTML=`T = ${fmtDec(T,3)} s, v(T) = ${fmtDec(cur.f(T),4)} m/s<br>`+
+      `distance = ∫₀ᵀ v dt = <b>${fmtDec(d,4)}</b> m<br>`+
+      `exact: ${M(cur.FT)}<br>ceiling as T → ∞: <b>${fmtDec(cur.lim,4)}</b> m (${fmtDec(100*d/cur.lim,1)}% covered)`;
+    typeset($('#velOut'));
+  }
+  const anim=animator('combine',dt=>{T+=dt*cur.tmax*0.28;if(T>cur.tmax)T=0.05;if(slider)slider.set(T);draw();});
+  $('#velPlay').onclick=()=>{anim.toggle();$('#velPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  onShow('*',id=>{if(id!=='combine')$('#velPlay').textContent='▶ Play';});
+  build();redrawOnShow('combine',draw);draw();
+
+  new Drill({mount:'#drill-combine',section:'combine',goal:5,
+    ...mixDrill([Q.subThenParts,Q.subThenParts,Q.distance,Q.wordArea,Q.wordArea])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.chooseUdv,Q.partsOnce,Q.partsOnce,Q.partsDefinite,
+  Q.partsTwice,Q.tabular,Q.cyclic,Q.definiteRepeat,
+  Q.subThenParts,Q.subThenParts,Q.distance,Q.wordArea]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-parts',[
+  R`\(\displaystyle\int u\,dv=uv-\int v\,du\), and the definite form \(\displaystyle\int_a^b u\,dv=\Big[uv\Big]_a^b-\int_a^b v\,du\)`,
+  R`<b>LIATE</b>: pick \(u\) as the first that appears among Logs, Inverse trig, Algebraic, Trig, Exponential. Everything else, with \(dx\), is \(dv\).`,
+  R`\(\displaystyle\int\ln x\,dx=x\ln x-x+C\)`,
+  R`\(\displaystyle\int xe^{x}\,dx=(x-1)e^{x}+C\)`,
+  R`\(\displaystyle\int\arctan x\,dx=x\arctan x-\tfrac12\ln\left(1+x^2\right)+C\)`,
+  R`\(\displaystyle\int x^2e^{x}\,dx=\left(x^2-2x+2\right)e^{x}+C\)`,
+  R`\(\displaystyle\int e^{ax}\sin bx\,dx=\frac{e^{ax}\left(a\sin bx-b\cos bx\right)}{a^2+b^2}+C\)`,
+  R`\(\displaystyle\int e^{ax}\cos bx\,dx=\frac{e^{ax}\left(a\cos bx+b\sin bx\right)}{a^2+b^2}+C\)`
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'choose u and dv':q=>({u:q.uStr,dv:q.dvStr,du:q.duStr,v:q.vStr}),
+  'one round of parts':q=>({F:q.ansStr}),
+  'definite integral by parts':q=>({v:q.ansStr}),
+  'two rounds of parts':q=>({F:q.ansStr}),
+  'tabular method':q=>({F:q.ansStr}),
+  'the loop closes':q=>q.mode==='def'?{v:q.ansStr}:{F:q.ansStr},
+  'definite, more than one round':q=>({v:q.ansStr}),
+  'substitute, then parts':q=>({F:q.ansStr}),
+  'distance from a velocity':q=>({d:q.ansStr}),
+  'area under a parts-integrand':q=>({a:q.ansStr})
+};
+
+initModule({key:'c2-parts',title:'Integration by Parts',sub:'Module 2 · Stewart 7.1'});
+</script>
+</body>
+</html>
