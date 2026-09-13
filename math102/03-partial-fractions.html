@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Partial Fractions</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 3 · Stewart 7.4</p>
+  <h2>Partial fractions</h2>
+  <p class="lead">Every rational function is a sum of pieces you already know how to integrate. The work is algebra, and it happens in a fixed order.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches a step of the procedure, gives you something to drag or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answers are exact unless a problem says otherwise. Decompositions may be typed as sums of fractions, like <code>3/(x-1) - 2/(x+4)</code>. When a problem asks for the <b>form</b> of a decomposition, use capital letters <code>A</code>, <code>B</code>, <code>C</code>, ... for the unknown constants and do not solve for them. Antiderivatives may be written with <code>ln|x-2|</code> or <code>ln(abs(x-2))</code>, and <code>+ C</code> is optional. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>Answer boxes work like WebAssign's calcPad: type <code>sqrt</code> and a radical appears, <code>/</code> makes a fraction, <code>^</code> an exponent, <code>|</code> absolute value bars. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the first piece of the decomposition</span>
+      <span><i class="dot" style="background:var(--b)"></i> the second piece</span>
+      <span><i class="dot" style="background:var(--c)"></i> the finished result</span>
+      <span><i class="dot" style="background:var(--d)"></i> the original rational function</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Recognize an improper rational function and divide before doing anything else.</li>
+      <li>Write the correct form of the decomposition for any denominator: distinct linear, repeated linear, irreducible quadratic, repeated quadratic.</li>
+      <li>Solve for the constants two ways: the cover-up trick for linear factors, equating coefficients for everything else.</li>
+      <li>Integrate each piece, giving logs, powers, and arctangents, and combine logs into a single exact answer.</li>
+      <li>Turn an integrand with a radical into a rational one with the substitution \(u=\sqrt{ax+b}\).</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 DIVIDE -->
+<section data-id="divide" data-title="Proper first: long division" data-goal="5">
+  <p class="eyebrow">Chapter 1 · Stewart 7.4</p>
+  <h2>Proper first: polynomial long division</h2>
+  <p class="lead">Partial fractions only works on a <b>proper</b> fraction. If the top is not smaller than the bottom, divide.</p>
+
+  <p>A rational function \(f(x)=P(x)/Q(x)\) is <b>proper</b> when \(\deg P&lt;\deg Q\), and <b>improper</b> otherwise. Improper fractions have no decomposition into simple pieces, because the pieces all die off at infinity and an improper fraction does not. The fix is division:</p>
+  <div class="formula">\(\dfrac{P(x)}{Q(x)}=S(x)+\dfrac{R(x)}{Q(x)},\qquad \deg R&lt;\deg Q\)<span class="cap">\(S\) is the quotient, \(R\) the remainder. \(S\) is a polynomial, so you integrate it on sight. Only \(R/Q\) needs partial fractions, and it is proper by construction.</span></div>
+  <p>The division itself is the long division you learned for numbers. At each step you ask what the leading term of the divisor must be multiplied by to match the leading term of what is left, write that down as the next term of the quotient, multiply back, and subtract. Take \((x^3+x)/(x-1)\):</p>
+  <div class="formula">\(\dfrac{x^3+x}{x-1}=x^2+x+2+\dfrac{2}{x-1}\)<span class="cap">Check it by multiplying out: \((x^2+x+2)(x-1)+2=x^3-1+2\cdot 1+\ldots\) or faster, plug in a number. At \(x=2\): left \(=10/1=10\), right \(=4+2+2+2=10\).</span></div>
+  <div class="warn"><b>Degree check first, every time.</b> Before you write a single \(A\) or \(B\), compare the degrees. Decomposing an improper fraction produces an unsolvable system, and the usual symptom is that the coefficients cannot be made to match no matter what you try.</div>
+
+  <div class="card">
+    <h4>Explore: the quotient is the shape at infinity</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="divPlot"></canvas><p class="plotcap">Purple: \(f(x)=(x^2+ax+b)/(x-c)\). Orange dashed: the quotient \(S(x)\). Gray dashed: the vertical asymptote \(x=c\).</p></div>
+      <div>
+        <div class="sliders three" id="divSliders"></div>
+        <div class="readout" id="divOut"></div>
+        <p class="hint">Slide anything and watch the two curves pull together at the edges of the window. The gap between them is exactly the remainder term \(R/(x-c)\), which goes to zero as \(|x|\) grows. Set the sliders so the remainder is 0 and the purple curve lands exactly on the orange line: the division came out even and there is nothing left to decompose.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: long division</h4>
+    <div class="expr" id="ldExpr"></div>
+    <div class="controls">
+      <button class="btn" id="ldPrev">◀ Back</button>
+      <button class="btn primary" id="ldNext">Next step ▶</button>
+      <button class="btn" id="ldNew">New problem</button>
+      <span class="status" id="ldStatus"></span>
+    </div>
+    <p class="hint">Only the leading terms decide the next quotient term. Everything else just comes along for the subtraction. Stop as soon as what is left has lower degree than the divisor: that is the remainder.</p>
+  </div>
+
+  <div class="note"><b>Integrating the quotient is free.</b> Once you have \(P/Q=S+R/Q\), the \(S\) part integrates term by term with the power rule. Only \(R/Q\) goes on to the next chapter.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-divide"></div>
+</section>
+
+<!-- ============================================================ 2 DISTINCT LINEAR -->
+<section data-id="linear" data-title="Distinct linear factors" data-goal="7">
+  <p class="eyebrow">Chapter 2 · Stewart 7.4</p>
+  <h2>Distinct linear factors</h2>
+  <p class="lead">When the denominator factors into different linear pieces, each piece gets one constant over it, and each constant falls out of a single substitution.</p>
+
+  <p>If \(Q(x)=(x-a)(x-b)\) with \(a\ne b\) and the fraction is proper, then there are numbers \(A\) and \(B\) with</p>
+  <div class="formula">\(\dfrac{px+q}{(x-a)(x-b)}=\dfrac{A}{x-a}+\dfrac{B}{x-b}\)<span class="cap">One term per factor, and the numerator over a linear factor is a plain constant. The claim that such \(A\) and \(B\) always exist is the theorem; finding them is arithmetic.</span></div>
+  <p>Multiply both sides by \(Q(x)\) to <b>clear denominators</b>:</p>
+  <div class="formula">\(px+q=A(x-b)+B(x-a)\)<span class="cap">This is an identity: it holds for every \(x\), not just for some special one. That is what lets you substitute whatever value you like.</span></div>
+  <p>Now the trick. Substituting \(x=a\) kills the \(B\) term, because \((x-a)\) is zero there:</p>
+  <div class="formula">\(A=\dfrac{pa+q}{a-b},\qquad B=\dfrac{pb+q}{b-a}\)<span class="cap">The <b>cover-up</b> (Heaviside) method: to get \(A\), cover the factor \((x-a)\) in the original fraction and evaluate everything else at \(x=a\). To get \(B\), cover \((x-b)\) and evaluate at \(x=b\).</span></div>
+  <p>The fallback that always works is <b>equating coefficients</b>: expand the right side into \((A+B)x-(Ab+Ba)\) and match it against \(px+q\), giving \(A+B=p\) and \(Ab+Ba=-q\). Cover-up is faster; coefficient matching is what you use once quadratic factors show up.</p>
+
+  <div class="card">
+    <h4>Explore: the cover-up method, step by step</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="pfPlot"></canvas><p class="plotcap">Purple: the original rational function. Orange and blue: the two simple pieces, drawn as you find them. Gray dashed: the vertical asymptotes.</p></div>
+      <div>
+        <div class="expr" id="cuExpr"></div>
+        <div class="controls">
+          <button class="btn" id="cuPrev">◀ Back</button>
+          <button class="btn primary" id="cuNext">Next step ▶</button>
+          <button class="btn" id="cuNew">New problem</button>
+          <span class="status" id="cuStatus"></span>
+        </div>
+        <div class="readout" id="cuOut"></div>
+        <p class="hint">Watch the picture as the two pieces appear. Each one has a single vertical asymptote, and away from the asymptotes the orange and blue heights add up to the purple height at every \(x\). That addition is what the decomposition says.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Proper first.</b> The numerator degree must already be smaller than the denominator degree. If it is not, go back to chapter 1 and divide, then decompose the remainder term.</div>
+
+  <h3>Integrating the pieces</h3>
+  <p>Each piece is a log, and that is the whole point of the method:</p>
+  <div class="formula">\(\displaystyle\int\frac{px+q}{(x-a)(x-b)}\,dx=A\ln|x-a|+B\ln|x-b|+C\)<span class="cap">Every \(\int dx/(x-r)\) is \(\ln|x-r|\). The absolute value matters: the antiderivative has to work on both sides of the asymptote.</span></div>
+  <p>For a definite integral, evaluate and then <b>combine the logs</b>. An answer like \(2\ln 3-2\ln 2\) is correct but not finished; \(\ln\tfrac94\) is the form WebAssign wants.</p>
+  <div class="warn"><b>Not every linear factor is monic.</b> \(2x^2+3x+1=(2x+1)(x+1)\), and the piece over \(2x+1\) integrates to \(\tfrac12\ln|2x+1|\), not \(\ln|2x+1|\). The chain rule charges you a \(1/2\) for the inner derivative.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-linear"></div>
+</section>
+
+<!-- ============================================================ 3 REPEATED AND QUADRATIC -->
+<section data-id="repeated" data-title="Repeated and quadratic factors" data-goal="7">
+  <p class="eyebrow">Chapter 3 · Stewart 7.4</p>
+  <h2>Repeated and irreducible quadratic factors</h2>
+  <p class="lead">Two new cases, two new rules. Get the form right and the rest is the same algebra.</p>
+
+  <p>A <b>repeated linear factor</b> \((x-a)^k\) does not contribute one term. It contributes \(k\) of them, one for every power up to \(k\):</p>
+  <div class="formula">\((x-a)^k\;\Longrightarrow\;\dfrac{A_1}{x-a}+\dfrac{A_2}{(x-a)^2}+\cdots+\dfrac{A_k}{(x-a)^k}\)<span class="cap">You need all \(k\) terms. Dropping the lower powers leaves a system with no solution, which is the usual way this mistake announces itself.</span></div>
+  <p>An <b>irreducible quadratic</b> \(x^2+bx+c\) (one with \(b^2-4c<0\), so it has no real roots) gets a <b>linear</b> numerator, not a constant:</p>
+  <div class="formula">\(x^2+bx+c\;\Longrightarrow\;\dfrac{Bx+C}{x^2+bx+c}\)<span class="cap">Two unknowns for one factor. The rule of thumb: the numerator over a factor of degree \(d\) has degree \(d-1\).</span></div>
+  <p>A <b>repeated quadratic</b> \((x^2+bx+c)^m\) follows the same pattern as the repeated linear factor, with a linear numerator over each power:</p>
+  <div class="formula">\((x^2+bx+c)^m\;\Longrightarrow\;\dfrac{B_1x+C_1}{x^2+bx+c}+\cdots+\dfrac{B_mx+C_m}{(x^2+bx+c)^m}\)<span class="cap">Count before you solve: the number of unknown constants always equals the degree of the denominator.</span></div>
+
+  <div class="card">
+    <h4>Explore: how many unknowns?</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="unkPlot"></canvas><p class="plotcap">One curve per unknown constant. These are the building blocks the decomposition is made of, and every one of them has an antiderivative you know.</p></div>
+      <div>
+        <div class="minis" id="unkSteppers"></div>
+        <div class="readout" id="unkOut"></div>
+        <p class="hint">Build a denominator and read off the form. Notice that the count of unknowns always matches the degree of the denominator, and that pushing the repeated power up by one adds exactly one curve, while adding a quadratic adds two.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Integrating the quadratic pieces</h3>
+  <p>A term \(\dfrac{Bx+C}{x^2+a^2}\) is two integrals wearing one coat. Split it:</p>
+  <div class="formula">\(\displaystyle\int\frac{Bx+C}{x^2+a^2}\,dx=\frac{B}{2}\ln(x^2+a^2)+\frac{C}{a}\arctan\frac{x}{a}+K\)<span class="cap">The \(Bx\) part is a substitution \(u=x^2+a^2\) and gives a log, with no absolute value needed since \(x^2+a^2>0\). The constant part is the arctangent formula. Two different antiderivatives, so you must separate them.</span></div>
+  <p>Repeated linear pieces are just the power rule:</p>
+  <div class="formula">\(\displaystyle\int\frac{dx}{(x-a)^j}=\frac{-1}{(j-1)(x-a)^{j-1}}+K\quad (j\ge 2)\)<span class="cap">Only \(j=1\) gives a logarithm. Every higher power gives a negative power back.</span></div>
+  <p>When the quadratic has a middle term, <b>complete the square</b> first: \(x^2+4x+13=(x+2)^2+9\), then substitute \(u=x+2\) and you are back to the standard shapes above.</p>
+  <div class="warn"><b>Do not force a quadratic to factor.</b> Check the discriminant. \(x^2+4\) is irreducible and takes \((Bx+C)/(x^2+4)\); \(x^2-4\) factors into \((x-2)(x+2)\) and takes two constants. Treating one like the other is the most expensive slip in this section.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-repeated"></div>
+</section>
+
+<!-- ============================================================ 4 RATIONALIZING SUBSTITUTIONS -->
+<section data-id="rationalize" data-title="Rationalizing substitutions" data-goal="4">
+  <p class="eyebrow">Chapter 4 · Stewart 7.4</p>
+  <h2>Rationalizing substitutions</h2>
+  <p class="lead">A radical of a linear expression is not a rational function. One substitution turns it into one, and then this whole chapter applies.</p>
+
+  <p>When the integrand contains \(\sqrt[n]{ax+b}\), let \(u\) be that radical. Everything becomes polynomial:</p>
+  <div class="formula">\(u=\sqrt{ax+b}\;\Longrightarrow\; u^2=ax+b,\quad x=\dfrac{u^2-b}{a},\quad dx=\dfrac{2u}{a}\,du\)<span class="cap">Solve for \(x\) and differentiate. The \(2u\) in \(dx\) is what cancels the radical in the denominator and leaves a rational function of \(u\).</span></div>
+  <p>Then decompose in \(u\), integrate in \(u\), and <b>back-substitute</b> at the very end. The worked example is Stewart's:</p>
+  <div class="formula">\(\displaystyle\int\frac{\sqrt{x+4}}{x}\,dx=2\sqrt{x+4}+2\ln\left|\frac{\sqrt{x+4}-2}{\sqrt{x+4}+2}\right|+C\)<span class="cap">With \(u=\sqrt{x+4}\) the integrand becomes \(\dfrac{2u^2}{u^2-4}\), which is improper: divide to get \(2+\dfrac{8}{u^2-4}\), then decompose \(\dfrac{8}{(u-2)(u+2)}=\dfrac{2}{u-2}-\dfrac{2}{u+2}\).</span></div>
+
+  <div class="card">
+    <h4>Step-by-step: the whole substitution</h4>
+    <div class="expr" id="rsExpr"></div>
+    <div class="controls">
+      <button class="btn" id="rsPrev">◀ Back</button>
+      <button class="btn primary" id="rsNext">Next step ▶</button>
+      <button class="btn" id="rsNew">New problem</button>
+      <span class="status" id="rsStatus"></span>
+    </div>
+    <p class="hint">Three families run through here. Two of them need partial fractions after the substitution and one does not: watch for the step where the \(u\) in \(dx=2u\,du\) cancels something and the integrand collapses to a polynomial. Recognizing which case you are in before you start saves the most time.</p>
+  </div>
+
+  <div class="note"><b>Change the limits or change back.</b> For a definite integral you may either convert the limits to \(u\) values right away, or keep them in \(x\) and back-substitute before evaluating. Mixing the two, evaluating a \(u\) antiderivative at \(x\) limits, is the classic error.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-rationalize"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions drawn from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+/* S(n): a signed integer safe to drop into an expression string */
+const S=c=>c<0?`(${c})`:String(c);
+/* bare(r): "x-2", "x+3", "x" ; par(r): the same wrapped for use in a product or a denominator */
+const bare=r=>r===0?'x':(r>0?`x-${r}`:`x+${-r}`);
+const par=r=>r===0?'x':`(${bare(r)})`;
+const COLORS=['#d97706','#2563eb','#16a34a','#7c3aed','#db2777','#0891b2'];
+/* sfrac(n, denTex, first): a signed fraction term with the sign pulled out front, like " - \frac{3}{x-2}" */
+function sfrac(n,den,first){
+  if(Math.abs(n)<1e-12)return '';
+  const sign=first?(n<0?'-':''):(n<0?' - ':' + ');
+  return sign+`\\frac{${texNum(Math.abs(n))}}{${den}}`;
+}
+
+/* ---------- polynomials as coefficient arrays, highest degree first ---------- */
+const pAdd=(A,B)=>{const n=Math.max(A.length,B.length),out=Array(n).fill(0);
+  for(let i=0;i<A.length;i++)out[n-A.length+i]+=A[i];
+  for(let i=0;i<B.length;i++)out[n-B.length+i]+=B[i];return out;};
+const pMul=(A,B)=>{const out=Array(A.length+B.length-1).fill(0);
+  A.forEach((a,i)=>B.forEach((b,j)=>{out[i+j]+=a*b;}));return out;};
+const pVal=(A,x)=>A.reduce((s,c)=>s*x+c,0);
+/* plain expression string for a coefficient array */
+function polyStr(A,v='x'){let s='';const n=A.length-1;
+  A.forEach((c,i)=>{const k=n-i;if(!c)return;const body=k===0?'':k===1?v:`${v}^${k}`;
+    s+=(s===''?(c<0?'-':''):(c<0?'-':'+'))+((Math.abs(c)===1&&body)?'':String(Math.abs(c)))+body;});
+  return s||'0';}
+/* qfrac(B, C, denTex, first): the (Bx+C)/den term with a leading minus pulled out front */
+function qfrac(B,C,den,first){
+  const neg=(B!==0?B<0:C<0);
+  const sign=first?(neg?'-':''):(neg?' - ':' + ');
+  return sign+`\\frac{${texPoly(neg?[-B,-C]:[B,C])}}{${den}}`;
+}
+/* remainder term of a division, signed: a constant remainder gets its sign pulled out front */
+const remTerm=(rArr,den)=>rArr.length===1?sfrac(rArr[0],den):`+\\frac{${texPoly(rArr)}}{${den}}`;
+/* a sum of logarithms, skipping the ones whose argument is 1 */
+function logSum(parts){let out='';
+  parts.forEach(([c,arg])=>{if(arg===1||c===0)return;out+=texTerm(c,`\\ln ${arg}`,out==='');});
+  return out||'0';}
+/* one term c*x^k as TeX */
+const termTex=(c,k)=>texTerm(c,k===0?'':k===1?'x':`x^{${k}}`,true)||'0';
+/* long division with the steps recorded */
+function polyDivSteps(N,Dv){
+  let r=N.slice();const q=[],steps=[];
+  while(r.length>=Dv.length){
+    const c=r[0]/Dv[0],k=r.length-Dv.length;
+    q.push(c);
+    const prod=pMul(Dv,[c].concat(Array(k).fill(0)));
+    const diff=r.map((v,i)=>v-prod[i]);diff[0]=0;
+    const after=diff.slice(1);
+    steps.push({c,k,prod,before:r.slice(),after:after.slice()});
+    r=after;
+  }
+  return {q,r,steps};
+}
+
+/* ---------- numeric verification, run inside every gen() ---------- */
+const dAt=(f,x)=>{const h=1e-5;return (f(x+h)-f(x-h))/(2*h);};
+/* antiOK: does d/dx of the stored answer string really equal the integrand on this domain */
+function antiOK(str,integ,dom){
+  let F;try{F=Expr.compile(str);}catch(e){return false;}
+  for(let i=0;i<8;i++){
+    const x=dom[0]+(dom[1]-dom[0])*(i+0.5)/8;
+    const d=dAt(t=>F({x:t}),x),g=integ(x);
+    if(!Number.isFinite(d)||!Number.isFinite(g))return false;
+    if(Math.abs(d-g)>1e-4*Math.max(1,Math.abs(g)))return false;
+  }
+  return true;
+}
+/* simpson: definite integrals, for checking stored numeric answers */
+function simpson(f,a,b,n=2000){const h=(b-a)/n;let s=f(a)+f(b);
+  for(let i=1;i<n;i++)s+=f(a+i*h)*(i%2?4:2);return s*h/3;}
+/* sameFn: two functions agree at the given sample points */
+const sameFn=(f,g,xs)=>xs.every(x=>{const u=f(x),v=g(x);
+  return Number.isFinite(u)&&Number.isFinite(v)&&Math.abs(u-v)<=1e-7*Math.max(1,Math.abs(v));});
+/* exact rationals, for combining logs into one */
+const frPow=(f,k)=>{let out=[1,1];const g=k<0?fr(Math.abs(f[1]),Math.abs(f[0])):fr(Math.abs(f[0]),Math.abs(f[1]));
+  for(let i=0;i<Math.abs(k);i++)out=frMul(out,g);return out;};
+
+const Q={};
+
+/* ============================================================ chapter 1 question types */
+Q.longDivide={name:'divide',
+  gen(){
+    for(;;){
+      const a=rnz(-4,4);
+      const Dv=pick([[1,-a],[1,-a],[1,-a],[2,1]]);
+      const deg=pick([1,1,2]);
+      const Sq=[rnz(-3,4)].concat(Array.from({length:deg},()=>rint(-4,4)));
+      const Rc=rnz(-6,6);
+      const N=pAdd(pMul(Sq,Dv),[Rc]);
+      if(N.some(c=>Math.abs(c)>40))continue;
+      if(!sameFn(x=>pVal(N,x),x=>pVal(Sq,x)*pVal(Dv,x)+Rc,[1.7,-2.3,3.1,0.4]))continue;
+      const div=polyDivSteps(N,Dv);
+      if(div.q.length!==Sq.length||!sameFn(x=>pVal(div.q,x),x=>pVal(Sq,x),[1.3,-2.1,2.7]))continue;
+      if(Math.abs(pVal(div.r,0)-Rc)>1e-9)continue;
+      return {N,Dv,Sq,Rc,div,nTex:texPoly(N),dTex:texPoly(Dv),sTex:texPoly(Sq),
+        sStr:polyStr(Sq),rStr:String(Rc)};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Divide, then write the result in the form ${M(R`S(x)+\dfrac{R}{${q.dTex}}`)}. Give the quotient ${M('S(x)')} and the remainder ${M('R')} (a number).</p>
+      ${D(R`\frac{${q.nTex}}{${q.dTex}}`)}`;
+    numIn(el,'sq',M('S(x)='),{wide:true,placeholder:'a polynomial in x'});
+    numIn(el,'rm',M('R='));
+  },
+  check(q,el){return Gall(el,[
+    ['sq',checkExpr($('[data-k=sq]',el).value,q.sStr,['x'])],
+    ['rm',checkExpr($('[data-k=rm]',el).value,q.rStr,['x'])]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    const s=q.div.steps[0];
+    h.innerHTML=`First term of the quotient: ${M(R`\frac{${termTex(q.N[0],q.N.length-1)}}{${termTex(q.Dv[0],q.Dv.length-1)}}=${termTex(s.c,s.k)}`)}. Multiply back and subtract to get ${M(texPoly(s.after))}.`;},
+  solution(q){
+    const lines=q.div.steps.map((s,i)=>
+      `Step ${i+1}: the quotient term is ${M(termTex(s.c,s.k))}, and ${M(R`\left(${termTex(s.c,s.k)}\right)\left(${q.dTex}\right)=${texPoly(s.prod)}`)}, leaving ${M(texPoly(s.after))}.`).join(' ');
+    return lines+' What is left has lower degree than the divisor, so it is the remainder.'+
+      D(R`\frac{${q.nTex}}{${q.dTex}}=${q.sTex}${remTerm(q.div.r,q.dTex)}`);}
+};
+
+Q.improperIntegral={name:'integrate an improper rational function',
+  gen(){
+    for(;;){
+      const c=rnz(-3,3),a=rint(-4,4),b=rint(-5,5);
+      const Rr=c*c+a*c+b;
+      if(Rr===0)continue;
+      const s=a+c;
+      const dom=[c+0.5,c+3];
+      const integ=x=>(x*x+a*x+b)/(x-c);
+      const ansStr=`x^2/2+${S(s)}*x+${S(Rr)}*ln(abs(x-${S(c)}))`;
+      if(!antiOK(ansStr,integ,dom))continue;
+      const ansTex=R`\frac{x^2}{2}`+texTerm(s,'x')+texTerm(Rr,`\\ln\\left|${bare(c)}\\right|`);
+      const divTex=`x${texTerm(s,'')}${sfrac(Rr,bare(c))}`;
+      return {a,b,c,s,Rr,dom,ansStr,ansTex,divTex,nTex:texPoly([1,a,b]),dTex:bare(c)};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The integrand is improper, so divide first. Evaluate the integral. Write logs as <code>ln|x-2|</code>; the constant of integration is optional.</p>
+      ${D(R`\int\frac{${q.nTex}}{${q.dTex}}\,dx`)}`;
+    numIn(el,'v','= ',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'v',checkExprUpToConstant($('[data-k=v]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Long division gives ${M(R`\frac{${q.nTex}}{${q.dTex}}=${q.divTex}`)}. Now integrate three easy pieces.`;},
+  solution(q){
+    return `The numerator has degree 2 and the denominator degree 1, so divide before anything else:`+
+      D(R`\frac{${q.nTex}}{${q.dTex}}=${q.divTex}`)+
+      `The first two terms use the power rule and the last is a logarithm:`+
+      D(R`\int\frac{${q.nTex}}{${q.dTex}}\,dx=${q.ansTex}+C`);}
+};
+/* ============================================================ chapter 2 question types */
+/* two distinct linear factors: pick A, B, a, b first, then build the numerator px+q */
+function twoLin(){
+  for(;;){
+    const A=rnz(-6,6),B=rnz(-6,6);
+    let a=rint(-4,4),b=rint(-4,4);
+    if(a===b)continue;
+    if(a>b){const t=a;a=b;b=t;}
+    const p=A+B,q=-(A*b+B*a);
+    if(p===0&&q===0)continue;
+    const f=x=>(p*x+q)/((x-a)*(x-b)),g=x=>A/(x-a)+B/(x-b);
+    if(!sameFn(f,g,[0.3,1.7,-2.1,5.3,-6.4]))continue;
+    return {A,B,a,b,p,q,nTex:texPoly([p,q]),
+      facTex:`${par(a)}${par(b)}`,expTex:texPoly([1,-(a+b),a*b])};
+  }
+}
+Q.decompose2={name:'decompose with two distinct linear factors',
+  gen(){const t=twoLin();return {...t,expanded:Math.random()<0.45};},
+  render(q,el){
+    const den=q.expanded?q.expTex:q.facTex;
+    el.innerHTML=`<p class="prompt">Find the constants in the partial fraction decomposition. ${q.expanded?'Factor the denominator first. ':''}Fractions like <code>3/2</code> are fine.</p>
+      ${D(R`\frac{${q.nTex}}{${den}}=\frac{A}{${bare(q.a)}}+\frac{B}{${bare(q.b)}}`)}`;
+    numIn(el,'ca',M('A='));numIn(el,'cb',M('B='));
+  },
+  check(q,el){return Gall(el,[
+    ['ca',checkNumber($('[data-k=ca]',el).value,q.A)],
+    ['cb',checkNumber($('[data-k=cb]',el).value,q.B)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Clear denominators: ${M(R`${q.nTex}=A\left(${bare(q.b)}\right)+B\left(${bare(q.a)}\right)`)}. Now put ${M(`x=${q.a}`)} in to kill the ${M('B')} term.`;},
+  solution(q){
+    return `Cover-up. Multiply through by the denominator to get ${M(R`${q.nTex}=A\left(${bare(q.b)}\right)+B\left(${bare(q.a)}\right)`)}. `+
+      `Setting ${M(`x=${q.a}`)} kills the ${M('B')} term: ${M(R`${q.p*q.a+q.q}=A\left(${q.a-q.b}\right)`)}, so ${M(`A=${texNum(q.A)}`)}. `+
+      `Setting ${M(`x=${q.b}`)} kills the ${M('A')} term: ${M(R`${q.p*q.b+q.q}=B\left(${q.b-q.a}\right)`)}, so ${M(`B=${texNum(q.B)}`)}.`+
+      D(R`\frac{${q.nTex}}{${q.facTex}}=${sfrac(q.A,bare(q.a),true)}${sfrac(q.B,bare(q.b))}`);}
+};
+
+Q.decompose3={name:'three distinct linear factors',
+  gen(){
+    for(;;){
+      const A=rnz(-5,5),B=rnz(-5,5),C=rnz(-5,5);
+      const a=rnz(-4,4),b=rnz(-4,4);
+      if(a===b)continue;
+      const p=A+B+C,q=-A*(a+b)-B*b-C*a,r=A*a*b;
+      const f=x=>(p*x*x+q*x+r)/(x*(x-a)*(x-b)),g=x=>A/x+B/(x-a)+C/(x-b);
+      if(!sameFn(f,g,[0.3,1.7,-2.1,5.3,-6.4]))continue;
+      return {A,B,C,a,b,p,q,r,nTex:texPoly([p,q,r]),denTex:`x${par(a)}${par(b)}`};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the three constants. Fractions are fine.</p>
+      ${D(R`\frac{${q.nTex}}{${q.denTex}}=\frac{A}{x}+\frac{B}{${bare(q.a)}}+\frac{C}{${bare(q.b)}}`)}`;
+    numIn(el,'ca',M('A='));numIn(el,'cb',M('B='));numIn(el,'cc',M('C='));
+  },
+  check(q,el){return Gall(el,[
+    ['ca',checkNumber($('[data-k=ca]',el).value,q.A)],
+    ['cb',checkNumber($('[data-k=cb]',el).value,q.B)],
+    ['cc',checkNumber($('[data-k=cc]',el).value,q.C)]]);},
+  solution(q){
+    const N=x=>q.p*x*x+q.q*x+q.r;
+    return `Clear denominators: ${M(R`${q.nTex}=A${par(q.a)}${par(q.b)}+Bx${par(q.b)}+Cx${par(q.a)}`)}. Then cover up one factor at a time. `+
+      `${M('x=0')} gives ${M(R`${N(0)}=A\left(${-q.a}\right)\left(${-q.b}\right)`)}, so ${M(`A=${texNum(q.A)}`)}. `+
+      `${M(`x=${q.a}`)} gives ${M(`B=${texNum(q.B)}`)}, and ${M(`x=${q.b}`)} gives ${M(`C=${texNum(q.C)}`)}.`+
+      D(R`\frac{${q.nTex}}{${q.denTex}}=${sfrac(q.A,'x',true)}${sfrac(q.B,bare(q.a))}${sfrac(q.C,bare(q.b))}`);}
+};
+
+Q.integrateLinear={name:'integrate',
+  gen(){
+    for(;;){
+      const t=twoLin();
+      const hi=Math.max(t.a,t.b),dom=[hi+0.5,hi+3];
+      const ansStr=`${S(t.A)}*ln(abs(x-${S(t.a)}))+${S(t.B)}*ln(abs(x-${S(t.b)}))`;
+      if(!antiOK(ansStr,x=>(t.p*x+t.q)/((x-t.a)*(x-t.b)),dom))continue;
+      const ansTex=texTerm(t.A,`\\ln\\left|${bare(t.a)}\\right|`,true)+texTerm(t.B,`\\ln\\left|${bare(t.b)}\\right|`);
+      return {...t,dom,ansStr,ansTex};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Decompose, then integrate. Write logs as <code>ln|x-3|</code>; the constant of integration is optional.</p>
+      ${D(R`\int\frac{${q.nTex}}{${q.facTex}}\,dx`)}`;
+    numIn(el,'v','= ',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'v',checkExprUpToConstant($('[data-k=v]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Cover-up gives ${M(R`\frac{${q.nTex}}{${q.facTex}}=${sfrac(q.A,bare(q.a),true)}${sfrac(q.B,bare(q.b))}`)}. Each piece is a logarithm.`;},
+  solution(q){
+    return `Cover up ${M(par(q.a))} and put ${M(`x=${q.a}`)} in to get ${M(`A=${texNum(q.A)}`)}; cover up ${M(par(q.b))} and put ${M(`x=${q.b}`)} in to get ${M(`B=${texNum(q.B)}`)}.`+
+      D(R`\int\frac{${q.nTex}}{${q.facTex}}\,dx=\int\left(${sfrac(q.A,bare(q.a),true)}${sfrac(q.B,bare(q.b))}\right)dx=${q.ansTex}+C`);}
+};
+
+Q.definiteLinear={name:'definite integral, answer as a single log',
+  gen(){
+    if(Math.random()<0.25){
+      /* WebAssign 7.4.11 */
+      return {special:true,c:0,d:1,val:Math.log(9/4),ansStr:'ln(9/4)',
+        nTex:'2',denTex:'2x^2+3x+1',logTex:R`\ln\frac94`};
+    }
+    for(;;){
+      const c=rint(0,2),d=c+rint(1,2);
+      const out=[];for(let k=-5;k<=7;k++)if(k<c||k>d)out.push(k);
+      const sh=shuffle(out);const a=sh[0],b=sh[1];
+      const A=pick([-2,-1,1,2]),B=pick([-2,-1,1,2]);
+      const p=A+B,q=-(A*b+B*a);
+      if(p===0&&q===0)continue;
+      const r1=fr(Math.abs(d-a),Math.abs(c-a)),r2=fr(Math.abs(d-b),Math.abs(c-b));
+      const tot=frMul(frPow(r1,A),frPow(r2,B));
+      if(tot[0]===tot[1])continue;
+      if(tot[0]>20000||tot[1]>20000)continue;
+      const val=Math.log(tot[0]/tot[1]);
+      const num=simpson(x=>(p*x+q)/((x-a)*(x-b)),c,d,4000);
+      if(Math.abs(num-val)>1e-6*Math.max(1,Math.abs(val)))continue;
+      return {special:false,A,B,a,b,c,d,p,q,tot,val,
+        ansStr:tot[1]===1?`ln(${tot[0]})`:`ln(${tot[0]}/${tot[1]})`,
+        logTex:tot[1]===1?`\\ln ${tot[0]}`:R`\ln\frac{${tot[0]}}{${tot[1]}}`,
+        nTex:texPoly([p,q]),denTex:`${par(a)}${par(b)}`};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate. Give an exact answer; a single logarithm is nicest, like <code>ln(9/4)</code>, but <code>2ln(3)-2ln(2)</code> is accepted too.</p>
+      ${D(R`\int_{${q.c}}^{${q.d}}\frac{${q.nTex}}{${q.denTex}}\,dx`)}`;
+    numIn(el,'v','Value = ',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=q.special
+      ?`Factor: ${M(R`2x^2+3x+1=(2x+1)(x+1)`)}. The piece over ${M('2x+1')} integrates to ${M(R`\tfrac12\ln|2x+1|`)}.`
+      :`The decomposition is ${M(R`${sfrac(q.A,bare(q.a),true)}${sfrac(q.B,bare(q.b))}`)}. Evaluate each log at both limits, then combine.`;},
+  solution(q){
+    if(q.special)return `Factor the denominator: ${M(R`2x^2+3x+1=(2x+1)(x+1)`)}. Cover-up gives `+
+      D(R`\frac{2}{(2x+1)(x+1)}=\frac{4}{2x+1}-\frac{2}{x+1}`)+
+      `Integrating, and remembering the ${M(R`\tfrac12`)} from the chain rule on ${M('2x+1')}:`+
+      D(R`\int_0^1\left(\frac{4}{2x+1}-\frac{2}{x+1}\right)dx=\Big[2\ln|2x+1|-2\ln|x+1|\Big]_0^1=2\ln 3-2\ln 2=\ln\frac94\approx ${fmtDec(q.val,4)}`);
+    return `Cover-up gives ${M(`A=${texNum(q.A)}`)} and ${M(`B=${texNum(q.B)}`)}, so`+
+      D(R`\int_{${q.c}}^{${q.d}}\frac{${q.nTex}}{${q.denTex}}\,dx=\Big[${texTerm(q.A,`\\ln\\left|${bare(q.a)}\\right|`,true)}${texTerm(q.B,`\\ln\\left|${bare(q.b)}\\right|`)}\Big]_{${q.c}}^{${q.d}}`)+
+      `Both factors keep the same sign on the interval, so the absolute values just become numbers. Collecting the logs into one:`+
+      D(R`=${logSum([[q.A,Math.abs(q.d-q.a)],[-q.A,Math.abs(q.c-q.a)],[q.B,Math.abs(q.d-q.b)],[-q.B,Math.abs(q.c-q.b)]])}=${q.logTex}\approx ${fmtDec(q.val,4)}`);}
+};
+/* ============================================================ chapter 3 question types */
+/* shapes: nD simple linear factors, one factor repeated to power k (0 = none),
+   one irreducible quadratic x^2+c to power m (0 = none). Unknowns = nD + k + 2m. */
+const SHAPES=[{nD:1,k:2,m:0},{nD:1,k:3,m:0},{nD:2,k:2,m:0},{nD:2,k:3,m:0},
+  {nD:1,k:0,m:1},{nD:2,k:0,m:1},{nD:1,k:2,m:1},{nD:0,k:2,m:1},{nD:0,k:3,m:1},
+  {nD:1,k:0,m:2},{nD:2,k:0,m:2}];
+const LETTERS=['A','B','C','D','E','F'];
+Q.formOnly={name:'write the form',
+  gen(){
+    for(;;){
+      const sh=pick(SHAPES);
+      const roots=shuffle([-3,-2,-1,0,1,2,3]);
+      const simple=roots.slice(0,sh.nD);
+      const rr=sh.k?roots[sh.nD]:null;
+      const c=sh.m?pick([1,4,9]):0;
+      const deg=sh.nD+sh.k+2*sh.m;
+      if(deg<3||deg>6)continue;
+      let li=0;const refParts=[],basis=[],formTex=[],denTex=[];
+      simple.forEach(r=>{const L=LETTERS[li++];
+        refParts.push(`${L}/${par(r)}`);basis.push((rt=>x=>1/(x-rt))(r));
+        formTex.push(R`\frac{${L}}{${bare(r)}}`);denTex.push(par(r));});
+      if(sh.k){denTex.push(`${par(rr)}^{${sh.k}}`);
+        for(let j=1;j<=sh.k;j++){const L=LETTERS[li++];
+          refParts.push(`${L}/${par(rr)}^${j}`);basis.push(((rt,jj)=>x=>1/Math.pow(x-rt,jj))(rr,j));
+          formTex.push(R`\frac{${L}}{${j===1?bare(rr):`${par(rr)}^{${j}}`}}`);}}
+      if(sh.m){denTex.push(sh.m===1?`(x^2+${c})`:`(x^2+${c})^{${sh.m}}`);
+        for(let j=1;j<=sh.m;j++){const L1=LETTERS[li++],L2=LETTERS[li++];
+          refParts.push(`(${L1}x+${L2})/(x^2+${c})^${j}`);
+          basis.push(((jj)=>x=>x/Math.pow(x*x+c,jj))(j));
+          basis.push(((jj)=>x=>1/Math.pow(x*x+c,jj))(j));
+          formTex.push(R`\frac{${L1}x+${L2}}{${j===1?`x^2+${c}`:`(x^2+${c})^{${j}}`}}`);}}
+      if(li>6)continue;
+      const num=[rnz(-4,4)].concat(Array.from({length:deg-1},()=>rint(-6,6)));
+      return {sh,simple,rr,c,deg,nUnknown:li,basis,refStr:refParts.join('+'),
+        formTex:formTex.join('+'),denTex:denTex.join(''),numTex:texPoly(num)};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Write the <b>form</b> of the partial fraction decomposition. Do not solve for the constants: use ${M('A')}, ${M('B')}, ${M('C')}, ... in any order. Type it as a sum of fractions, for example <code>A/(x-1)+B/(x-1)^2+(Cx+D)/(x^2+4)</code>.</p>
+      ${D(R`\frac{${q.numTex}}{${q.denTex}}`)}`;
+    numIn(el,'fm','= ',{xwide:true,placeholder:'a sum of fractions in A, B, C, ...'});
+  },
+  check(q,el){return G(el,'fm',checkPFForm($('[data-k=fm]',el).value,q.basis));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`The denominator has degree ${q.deg}, so the form has exactly ${q.nUnknown} unknown constants.`+
+      (q.sh.k?` The repeated factor ${M(`${par(q.rr)}^{${q.sh.k}}`)} contributes ${q.sh.k} terms, one for each power.`:'')+
+      (q.sh.m?` The quadratic ${M(`x^2+${q.c}`)} is irreducible, so its numerators are linear.`:'');},
+  solution(q){
+    return `Every distinct linear factor gets one constant, a factor repeated to the power ${M('k')} gets one term for each power up to ${M('k')}, and an irreducible quadratic gets a linear numerator over each of its powers. The denominator has degree ${q.deg}, so there are ${q.nUnknown} unknowns.`+
+      D(R`\frac{${q.numTex}}{${q.denTex}}=${q.formTex}`);}
+};
+
+Q.decomposeRepeated={name:'repeated factor',
+  gen(){
+    for(;;){
+      const three=Math.random()<0.5;
+      const a=rnz(-4,4);
+      if(three){
+        const A=rnz(-5,5),B=rnz(-5,5),C=rnz(-6,6);
+        const p=A+B,q=-2*a*A-a*B+C,r=A*a*a;
+        const f=x=>(p*x*x+q*x+r)/(x*(x-a)*(x-a)),g=x=>A/x+B/(x-a)+C/((x-a)*(x-a));
+        if(!sameFn(f,g,[0.3,1.7,-2.1,5.3,-6.4]))continue;
+        return {three:true,a,A,B,C,p,q,r,nTex:texPoly([p,q,r]),denTex:`x${par(a)}^2`};
+      }
+      const A=rnz(-6,6),B=rnz(-8,8);
+      const p=A,q=B-A*a;
+      const f=x=>(p*x+q)/((x-a)*(x-a)),g=x=>A/(x-a)+B/((x-a)*(x-a));
+      if(!sameFn(f,g,[0.3,1.7,-2.1,5.3,-6.4]))continue;
+      return {three:false,a,A,B,p,q,nTex:texPoly([p,q]),denTex:`${par(a)}^2`};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the constants. Remember that a repeated factor needs one term for every power. Fractions are fine.</p>
+      ${D(q.three
+        ?R`\frac{${q.nTex}}{${q.denTex}}=\frac{A}{x}+\frac{B}{${bare(q.a)}}+\frac{C}{${par(q.a)}^2}`
+        :R`\frac{${q.nTex}}{${q.denTex}}=\frac{A}{${bare(q.a)}}+\frac{B}{${par(q.a)}^2}`)}`;
+    numIn(el,'ca',M('A='));numIn(el,'cb',M('B='));
+    if(q.three)numIn(el,'cc',M('C='));
+  },
+  check(q,el){
+    const pairs=[['ca',checkNumber($('[data-k=ca]',el).value,q.A)],
+                 ['cb',checkNumber($('[data-k=cb]',el).value,q.B)]];
+    if(q.three)pairs.push(['cc',checkNumber($('[data-k=cc]',el).value,q.C)]);
+    return Gall(el,pairs);},
+  solution(q){
+    if(q.three)return `Clear denominators: ${M(R`${q.nTex}=A${par(q.a)}^2+Bx${par(q.a)}+Cx`)}. `+
+      `Put ${M('x=0')} in: ${M(`${q.r}=A\\cdot ${q.a*q.a}`)}, so ${M(`A=${texNum(q.A)}`)}. Put ${M(`x=${q.a}`)} in: ${M(`C=${texNum(q.C)}`)}. `+
+      `Then match the ${M('x^2')} coefficients, ${M(`A+B=${q.p}`)}, to get ${M(`B=${texNum(q.B)}`)}.`+
+      D(R`\frac{${q.nTex}}{${q.denTex}}=${sfrac(q.A,'x',true)}${sfrac(q.B,bare(q.a))}${sfrac(q.C,`${par(q.a)}^2`)}`);
+    return `Clear denominators: ${M(R`${q.nTex}=A\left(${bare(q.a)}\right)+B`)}. Matching the ${M('x')} coefficients gives ${M(`A=${texNum(q.A)}`)} directly, and putting ${M(`x=${q.a}`)} in gives ${M(`B=${texNum(q.B)}`)}. `+
+      `A faster route: write the numerator as ${M(R`${texCoef(q.A)}\left(${bare(q.a)}\right)${texTerm(q.B,'')}`)} and split the fraction.`+
+      D(R`\frac{${q.nTex}}{${q.denTex}}=${sfrac(q.A,bare(q.a),true)}${sfrac(q.B,`${par(q.a)}^2`)}`);}
+};
+
+Q.decomposeQuadratic={name:'quadratic factor',
+  gen(){
+    for(;;){
+      const a=rnz(-4,4),c=pick([1,4,9]);
+      const A=rnz(-5,5),B=rnz(-5,5),Cc=rnz(-6,6);
+      const p=A+B,q=Cc-B*a,r=A*c-Cc*a;
+      const f=x=>(p*x*x+q*x+r)/((x-a)*(x*x+c)),g=x=>A/(x-a)+(B*x+Cc)/(x*x+c);
+      if(!sameFn(f,g,[0.3,1.7,-2.1,5.3,-6.4]))continue;
+      return {a,c,A,B,C:Cc,p,q,r,nTex:texPoly([p,q,r]),denTex:`${par(a)}(x^2+${c})`};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The quadratic factor is irreducible, so its numerator is linear. Find the three constants.</p>
+      ${D(R`\frac{${q.nTex}}{${q.denTex}}=\frac{A}{${bare(q.a)}}+\frac{Bx+C}{x^2+${q.c}}`)}`;
+    numIn(el,'ca',M('A='));numIn(el,'cb',M('B='));numIn(el,'cc',M('C='));
+  },
+  check(q,el){return Gall(el,[
+    ['ca',checkNumber($('[data-k=ca]',el).value,q.A)],
+    ['cb',checkNumber($('[data-k=cb]',el).value,q.B)],
+    ['cc',checkNumber($('[data-k=cc]',el).value,q.C)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Clear denominators: ${M(R`${q.nTex}=A(x^2+${q.c})+(Bx+C)\left(${bare(q.a)}\right)`)}. Put ${M(`x=${q.a}`)} in for ${M('A')}, then match the ${M('x^2')} and constant coefficients.`;},
+  solution(q){
+    return `Clear denominators: ${M(R`${q.nTex}=A(x^2+${q.c})+(Bx+C)\left(${bare(q.a)}\right)`)}. `+
+      `Cover-up still works on the linear factor: ${M(`x=${q.a}`)} gives ${M(`A=${texNum(q.A)}`)}. `+
+      `Matching ${M('x^2')} coefficients, ${M(`A+B=${q.p}`)}, gives ${M(`B=${texNum(q.B)}`)}; matching constants, ${M(`${q.c}A${texTerm(-q.a,'C')}=${q.r}`)}, gives ${M(`C=${texNum(q.C)}`)}.`+
+      D(R`\frac{${q.nTex}}{${q.denTex}}=${sfrac(q.A,bare(q.a),true)}${qfrac(q.B,q.C,`x^2+${q.c}`)}`);}
+};
+
+Q.integrateRepeated={name:'integrate with a repeated factor',
+  gen(){
+    for(;;){
+      const a=rnz(-4,4),p=rnz(-5,5),q=rint(-6,6);
+      const B=p*a+q;
+      if(B===0)continue;
+      const dom=[a+0.5,a+3];
+      const ansStr=`${S(p)}*ln(abs(x-${S(a)}))-${S(B)}/(x-${S(a)})`;
+      if(!antiOK(ansStr,x=>(p*x+q)/((x-a)*(x-a)),dom))continue;
+      return {a,p,q,B,dom,ansStr,nTex:texPoly([p,q]),denTex:`${par(a)}^2`,
+        ansTex:texTerm(p,`\\ln\\left|${bare(a)}\\right|`,true)+sfrac(-B,bare(a))};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Decompose over the repeated factor, then integrate. Only the first power gives a logarithm.</p>
+      ${D(R`\int\frac{${q.nTex}}{${q.denTex}}\,dx`)}`;
+    numIn(el,'v','= ',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'v',checkExprUpToConstant($('[data-k=v]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Write it as ${M(R`${sfrac(q.p,bare(q.a),true)}${sfrac(q.B,`${par(q.a)}^2`)}`)}, then integrate each piece.`;},
+  solution(q){
+    return `The decomposition is`+
+      D(R`\frac{${q.nTex}}{${q.denTex}}=${sfrac(q.p,bare(q.a),true)}${sfrac(q.B,`${par(q.a)}^2`)}`)+
+      `The first piece is a logarithm and the second is the power rule, ${M(R`\int (x-a)^{-2}dx=-(x-a)^{-1}`)}:`+
+      D(R`\int\frac{${q.nTex}}{${q.denTex}}\,dx=${q.ansTex}+C`);}
+};
+
+Q.integrateQuadratic={name:'integrate with a quadratic factor',
+  gen(){
+    for(;;){
+      const a=rnz(-4,4),c=pick([1,4,9]),s=Math.round(Math.sqrt(c));
+      const A=rnz(-4,4),B=rnz(-4,4),Cc=rnz(-5,5);
+      const p=A+B,q=Cc-B*a,r=A*c-Cc*a;
+      const dom=[a+0.5,a+3];
+      const ansStr=`${S(A)}*ln(abs(x-${S(a)}))+${S(B)}/2*ln(x^2+${c})+${S(Cc)}/${s}*arctan(x/${s})`;
+      if(!antiOK(ansStr,x=>(p*x*x+q*x+r)/((x-a)*(x*x+c)),dom))continue;
+      return {a,c,s,A,B,C:Cc,p,q,r,dom,ansStr,
+        nTex:texPoly([p,q,r]),denTex:`${par(a)}(x^2+${c})`,
+        atanTex:s===1?'\\arctan x':`\\arctan\\dfrac{x}{${s}}`,
+        ansTex:texTerm(A,`\\ln\\left|${bare(a)}\\right|`,true)+
+          texTerm(B/2,`\\ln\\left(x^2+${c}\\right)`)+
+          texTerm(Cc/s,s===1?'\\arctan x':`\\arctan\\dfrac{x}{${s}}`)};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Decompose, split the linear numerator into its ${M('x')} part and its constant part, then integrate. Expect a log and an arctangent.</p>
+      ${D(R`\int\frac{${q.nTex}}{${q.denTex}}\,dx`)}`;
+    numIn(el,'v','= ',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'v',checkExprUpToConstant($('[data-k=v]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`The decomposition is ${M(R`${sfrac(q.A,bare(q.a),true)}${qfrac(q.B,q.C,`x^2+${q.c}`)}`)}. Split the second piece into ${M(R`\frac{${texPoly([q.B,0])}}{x^2+${q.c}}`)} (a log) and ${M(R`\frac{${texNum(q.C)}}{x^2+${q.c}}`)} (an arctangent).`;},
+  solution(q){
+    return `Cover-up on the linear factor gives ${M(`A=${texNum(q.A)}`)}, and matching coefficients gives ${M(`B=${texNum(q.B)}`)}, ${M(`C=${texNum(q.C)}`)}:`+
+      D(R`\frac{${q.nTex}}{${q.denTex}}=${sfrac(q.A,bare(q.a),true)}${qfrac(q.B,q.C,`x^2+${q.c}`)}`)+
+      `Now split the quadratic piece. The ${M('x')} part is the substitution ${M(`u=x^2+${q.c}`)} and gives ${M(R`\tfrac12\ln(x^2+${q.c})`)}; the constant part is the arctangent formula with ${M(`a=${q.s}`)}:`+
+      D(R`\int\frac{${q.nTex}}{${q.denTex}}\,dx=${q.ansTex}+C`);}
+};
+/* ============================================================ chapter 4 question types */
+Q.rationalSetup={name:'set up the substitution',
+  gen(){
+    for(;;){
+      const a=pick([1,1,2,3]),b=pick([1,4,9]);
+      const s=Math.sqrt(b);
+      const dom=[s+0.6,s+2.6];
+      const xStr=`(u^2-${b})/${a}`,dxStr=`2*u/${a}`,igStr=`2*u^2/(u^2-${b})`;
+      const X=Expr.compile(xStr),DX=Expr.compile(dxStr),IG=Expr.compile(igStr);
+      let bad=false;
+      for(let i=0;i<6;i++){
+        const u=dom[0]+(dom[1]-dom[0])*(i+0.5)/6;
+        const x=X({u});
+        if(Math.abs(Math.sqrt(a*x+b)-u)>1e-9){bad=true;break;}
+        if(Math.abs(Math.sqrt(a*x+b)/x*DX({u})-IG({u}))>1e-8){bad=true;break;}
+      }
+      if(bad)continue;
+      return {a,b,dom,xStr,dxStr,igStr,
+        aTex:a===1?'':String(a),
+        xTex:a===1?`u^2-${b}`:R`\frac{u^2-${b}}{${a}}`,
+        dxTex:a===1?'2u':a===2?'u':R`\frac{2u}{${a}}`,
+        radTex:`\\sqrt{${a===1?'x':`${a}x`}+${b}}`};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Set up the rationalizing substitution ${M(`u=${q.radTex}`)} for the integral below. Give ${M('x')} in terms of ${M('u')}, the factor in ${M('dx')}, and the new integrand. Every answer is an expression in <code>u</code>; you do not have to simplify the integrand.</p>
+      ${D(R`\int\frac{${q.radTex}}{x}\,dx,\qquad u=${q.radTex}`)}`;
+    numIn(el,'xu',M('x='),{wide:true,placeholder:'expression in u'});
+    numIn(el,'dxu',M('dx='),{wide:true,placeholder:'expression in u',after:M('du')});
+    numIn(el,'igu','new integrand =',{wide:true,placeholder:'expression in u'});
+  },
+  check(q,el){return Gall(el,[
+    ['xu',checkExpr($('[data-k=xu]',el).value,q.xStr,['u'],{domain:{u:q.dom}})],
+    ['dxu',checkExpr($('[data-k=dxu]',el).value,q.dxStr,['u'],{domain:{u:q.dom}})],
+    ['igu',checkExpr($('[data-k=igu]',el).value,q.igStr,['u'],{domain:{u:q.dom}})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Square both sides: ${M(`u^2=${q.aTex}x+${q.b}`)}. Solve that for ${M('x')}, then differentiate it to get ${M('dx')}.`;},
+  solution(q){
+    return `Square the substitution: ${M(`u^2=${q.aTex}x+${q.b}`)}, so ${M(`x=${q.xTex}`)} and ${M(`dx=${q.dxTex}\\,du`)}. The radical itself is just ${M('u')}. Substituting all three:`+
+      D(R`\int\frac{${q.radTex}}{x}\,dx=\int\frac{u}{${q.xTex}}\cdot ${q.dxTex}\,du=\int\frac{2u^2}{u^2-${q.b}}\,du`)+
+      `The two copies of the leading coefficient cancel, which is why the new integrand never depends on it. It is improper in ${M('u')}, so the next move is long division.`;}
+};
+
+Q.rationalEval={name:'finish it',
+  gen(){
+    for(;;){
+      const fam=pick(['A','B','C']);
+      const dom=[1,4];
+      let integ,ansStr,intTex,ansTex,sub,k=0,b=0;
+      if(fam==='A'){
+        k=pick([1,2,3]);b=k*k;
+        integ=x=>Math.sqrt(x+b)/x;
+        ansStr=`2*sqrt(x+${b})+${k}*ln(abs((sqrt(x+${b})-${k})/(sqrt(x+${b})+${k})))`;
+        intTex=R`\int\frac{\sqrt{x+${b}}}{x}\,dx`;
+        ansTex=R`2\sqrt{x+${b}}+${k===1?'':k}\ln\left|\frac{\sqrt{x+${b}}-${k}}{\sqrt{x+${b}}+${k}}\right|`;
+        sub=`u=\\sqrt{x+${b}}`;
+      }else if(fam==='B'){
+        integ=x=>1/(1+Math.sqrt(x));
+        ansStr='2*sqrt(x)-2*ln(1+sqrt(x))';
+        intTex=R`\int\frac{dx}{1+\sqrt{x}}`;
+        ansTex=R`2\sqrt{x}-2\ln\left(1+\sqrt{x}\right)`;
+        sub='u=\\sqrt{x}';
+      }else{
+        integ=x=>1/(Math.sqrt(x)*(1+Math.sqrt(x)));
+        ansStr='2*ln(1+sqrt(x))';
+        intTex=R`\int\frac{dx}{\sqrt{x}\left(1+\sqrt{x}\right)}`;
+        ansTex=R`2\ln\left(1+\sqrt{x}\right)`;
+        sub='u=\\sqrt{x}';
+      }
+      if(!antiOK(ansStr,integ,dom))continue;
+      return {fam,k,b,dom,ansStr,intTex,ansTex,sub};
+    }
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate with a rationalizing substitution. You may leave ${M(R`\ln`)} and radicals in the answer; the constant of integration is optional.</p>
+      ${D(q.intTex)}`;
+    numIn(el,'v','= ',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'v',checkExprUpToConstant($('[data-k=v]',el).value,q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Take ${M(q.sub)}. Then `+(q.fam==='A'
+      ?`the integrand becomes ${M(R`\frac{2u^2}{u^2-${q.b}}`)}, which is improper: divide first.`
+      :q.fam==='B'?`the integrand becomes ${M(R`\frac{2u}{1+u}`)}, which is improper: divide first.`
+      :`the ${M('u')} in ${M('dx=2u\\,du')} cancels the ${M(R`\sqrt{x}`)} and you are left with ${M(R`\frac{2}{1+u}`)}.`);},
+  solution(q){
+    if(q.fam==='A')return `With ${M(q.sub)} you get ${M(`x=u^2-${q.b}`)} and ${M('dx=2u\\,du')}, so`+
+      D(R`\int\frac{\sqrt{x+${q.b}}}{x}\,dx=\int\frac{u}{u^2-${q.b}}\cdot 2u\,du=\int\frac{2u^2}{u^2-${q.b}}\,du=\int\left(2+\frac{${2*q.b}}{u^2-${q.b}}\right)du`)+
+      `The leftover is a distinct-linear-factor problem: ${M(R`\frac{${2*q.b}}{(u-${q.k})(u+${q.k})}=\frac{${q.k}}{u-${q.k}}-\frac{${q.k}}{u+${q.k}}`)}. Integrating and putting ${M(`u=\\sqrt{x+${q.b}}`)} back:`+
+      D(R`=2u+${q.k===1?'':q.k}\ln\left|\frac{u-${q.k}}{u+${q.k}}\right|+C=${q.ansTex}+C`);
+    if(q.fam==='B')return `With ${M(q.sub)} you get ${M('x=u^2')} and ${M('dx=2u\\,du')}, so`+
+      D(R`\int\frac{dx}{1+\sqrt{x}}=\int\frac{2u}{1+u}\,du=\int\left(2-\frac{2}{1+u}\right)du=2u-2\ln|1+u|+C`)+
+      `Back-substituting ${M(R`u=\sqrt{x}`)}, and noting ${M(R`1+\sqrt{x}>0`)} so the bars are not needed:`+D(q.ansTex+'+C');
+    return `With ${M(q.sub)} you get ${M('dx=2u\\,du')}, and the ${M('u')} cancels the ${M(R`\sqrt{x}=u`)} in the denominator:`+
+      D(R`\int\frac{dx}{\sqrt{x}\left(1+\sqrt{x}\right)}=\int\frac{2u}{u(1+u)}\,du=\int\frac{2}{1+u}\,du=2\ln|1+u|+C`)+
+      `No partial fractions were needed at all. Back-substituting:`+D(q.ansTex+'+C');}
+};
+/* ============================================================ shared plotting helper
+   draw y=f(x) as separate branches so the curve does not jump across a vertical asymptote */
+function branchFn(p,f,cuts,opts){
+  const xs=[p.o.xmin].concat(cuts.slice().sort((u,v)=>u-v)).concat([p.o.xmax]);
+  for(let i=0;i<xs.length-1;i++){
+    const lo=xs[i]+(i===0?0:0.05),hi=xs[i+1]-(i===xs.length-2?0:0.05);
+    if(hi>lo)p.fn(f,Object.assign({},opts,{xmin:lo,xmax:hi}));
+  }
+}
+const vline=(p,x,color)=>p.param(t=>[x,t],p.o.ymin,p.o.ymax,{color:color||'#c9c5bb',width:1.2,dash:[5,4],n:2});
+
+/* ============================================================ chapter 1: quotient plot + long division walkthrough */
+(function(){
+  const plot=new Plot2D('#divPlot',{xmin:-7,xmax:7,ymin:-14,ymax:14});
+  let a=2,b=-3,c=1;
+  const sb=$('#divSliders');
+  sliderRow(sb,{label:'a',min:-4,max:4,step:1,value:a,fmt:v=>String(v),onInput:v=>{a=v;draw();}});
+  sliderRow(sb,{label:'b',min:-6,max:6,step:1,value:b,fmt:v=>String(v),onInput:v=>{b=v;draw();}});
+  sliderRow(sb,{label:'c',min:-3,max:3,step:1,value:c,fmt:v=>String(v),onInput:v=>{c=v;draw();}});
+  function draw(){
+    const Rr=c*c+a*c+b,s=a+c;
+    const f=x=>(x*x+a*x+b)/(x-c),Sx=x=>x+s;
+    plot.begin();
+    vline(plot,c);
+    plot.fn(Sx,{color:'#d97706',width:2,dash:[7,5]});
+    branchFn(plot,f,[c],{color:'#7c3aed',width:2.4});
+    plot.point([c,0],{color:'#b9b5ab',r:3});
+    const gap=x=>Rr/(x-c);
+    $('#divOut').innerHTML=D(R`\frac{x^2${texTerm(a,'x')}${texTerm(b,'')}}{${bare(c)}}=x${texTerm(s,'')}${Rr===0?'':sfrac(Rr,bare(c))}`)+
+      `quotient S(x) = x ${s<0?'−':'+'} ${Math.abs(s)} &nbsp;·&nbsp; remainder R = <b>${Rr}</b><br>`+
+      `gap at x = 7: f − S = ${fmtDec(gap(7),4)} &nbsp;·&nbsp; at x = 40: ${fmtDec(gap(40),4)}`+
+      (Rr===0?'<br><b>remainder 0: the division is exact and f is just the line</b>':'');
+    typeset($('#divOut'));
+  }
+  redrawOnShow('divide',draw);draw();
+
+  /* long division walkthrough */
+  let N,Dv,div,step=0;
+  function newLD(){
+    const quad=Math.random()<0.35;
+    Dv=quad?[1,rint(-3,3),rnz(-4,4)]:[1,-rnz(-4,4)];
+    const Sq=[rnz(-3,4)].concat(Array.from({length:pick([1,2])},()=>rint(-4,4)));
+    const Rem=quad?[rint(-5,5),rnz(-6,6)]:[rnz(-6,6)];
+    N=pAdd(pMul(Sq,Dv),Rem);
+    div=polyDivSteps(N,Dv);
+    step=0;drawLD();
+  }
+  function drawLD(){
+    const dT=texPoly(Dv),L=[];
+    L.push(`<span class="t b">${M(R`\frac{${texPoly(N)}}{${dT}}`)}</span>`);
+    div.steps.forEach((s,i)=>{
+      const on=step>=i+1,now=step===i+1;
+      L.push(`<span class="${on?'':'faint'}">quotient term <span class="t ${now?'now':''} a">${M(termTex(s.c,s.k))}</span>`+
+        (on?` &nbsp; subtract ${M(R`\left(${termTex(s.c,s.k)}\right)\left(${dT}\right)=${texPoly(s.prod)}`)} &nbsp;&rarr;&nbsp; ${M(texPoly(s.after))}`:'')+`</span>`);
+    });
+    const last=div.steps.length+1;
+    L.push(`<span class="${step>=last?'':'faint'}">= <span class="t ${step===last?'now':''} c">${M(R`${texPoly(div.q)}${remTerm(div.r,dT)}`)}</span></span>`);
+    $('#ldExpr').innerHTML=L.join('<br>');
+    const st=['Compare degrees. The top is at least as big as the bottom, so divide. Press Next.']
+      .concat(div.steps.map((s,i)=>`Step ${i+1}: what is left has degree ${s.before.length-1}. Divide its leading term by the leading term of the divisor, then multiply back and subtract.`))
+      .concat(['What is left has lower degree than the divisor. That is the remainder, and the fraction is now proper.']);
+    $('#ldStatus').textContent=st[step];
+    $('#ldPrev').disabled=step===0;$('#ldNext').disabled=step===last;
+    typeset($('#ldExpr'));
+  }
+  $('#ldNext').onclick=()=>{step=Math.min(div.steps.length+1,step+1);drawLD();};
+  $('#ldPrev').onclick=()=>{step=Math.max(0,step-1);drawLD();};
+  $('#ldNew').onclick=newLD;
+  newLD();
+
+  new Drill({mount:'#drill-divide',section:'divide',goal:5,
+    ...mixDrill([Q.longDivide,Q.longDivide,Q.improperIntegral,Q.improperIntegral])});
+})();
+
+/* ============================================================ chapter 2: cover-up walkthrough + piece plot */
+(function(){
+  const plot=new Plot2D('#pfPlot',{xmin:-8,xmax:8,ymin:-8,ymax:8});
+  let cur=null,step=0;
+  function newCU(){cur=twoLin();step=0;drawCU();}
+  function drawCU(){
+    const {A,B,a,b,p,q}=cur;
+    plot.begin();
+    vline(plot,a);vline(plot,b);
+    if(step>=2)branchFn(plot,x=>A/(x-a),[a],{color:'#d97706',width:2});
+    if(step>=3)branchFn(plot,x=>B/(x-b),[b],{color:'#2563eb',width:2});
+    branchFn(plot,x=>(p*x+q)/((x-a)*(x-b)),[a,b],{color:'#7c3aed',width:2.6});
+    const L=[];
+    L.push(`<span class="t b">${M(R`\frac{${cur.nTex}}{${cur.facTex}}`)}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}">= <span class="t ${step===1?'now':''}">${M(R`\frac{A}{${bare(a)}}+\frac{B}{${bare(b)}}`)}</span></span>`);
+    const cover=(L0,root,other,val)=>{
+      const top=cur.nTex.replace(/x/g,`(${root})`),bot=root-other;
+      return M(bot===1?R`${L0}=${top}=${texNum(val)}`:R`${L0}=\frac{${top}}{${bot}}=${texNum(val)}`);};
+    L.push(`<span class="${step>=2?'':'faint'}">cover <span class="t a ${step===2?'now':''}">${M(par(a))}</span>, put <span class="t b">${M(`x=${a}`)}</span> in what is left: `+
+      (step>=2?cover('A',a,b,A):'')+`</span>`);
+    L.push(`<span class="${step>=3?'':'faint'}">cover <span class="t a ${step===3?'now':''}">${M(par(b))}</span>, put <span class="t b">${M(`x=${b}`)}</span> in what is left: `+
+      (step>=3?cover('B',b,a,B):'')+`</span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">= <span class="t c ${step===4?'now':''}">${step>=4?M(R`${sfrac(A,bare(a),true)}${sfrac(B,bare(b))}`):'the decomposition'}</span></span>`);
+    L.push(`<span class="${step>=5?'':'faint'}">${M(R`\int`)} = <span class="t c ${step===5?'now':''}">${step>=5?M(texTerm(A,`\\ln\\left|${bare(a)}\\right|`,true)+texTerm(B,`\\ln\\left|${bare(b)}\\right|`)+'+C'):'two logarithms'}</span></span>`);
+    $('#cuExpr').innerHTML=L.join('<br>');
+    const st=['A proper fraction over two different linear factors. Press Next.',
+      'One constant over each factor. That is the form, and the theorem says it always exists.',
+      'Cover up the first factor and evaluate the rest at its root. Only A survives.',
+      'Same move on the second factor. Only B survives.',
+      'The decomposition is finished. Check it against the picture: orange plus blue equals purple.',
+      'Each piece integrates to a logarithm.'];
+    $('#cuStatus').textContent=st[step];
+    $('#cuPrev').disabled=step===0;$('#cuNext').disabled=step===5;
+    const x0=Math.max(a,b)+2;
+    $('#cuOut').innerHTML=`at x = ${x0}: &nbsp; orange ${fmtDec(A/(x0-a),3)} + blue ${fmtDec(B/(x0-b),3)} = <b>${fmtDec((p*x0+q)/((x0-a)*(x0-b)),3)}</b> (purple)<br>`+
+      `asymptotes at x = ${a} and x = ${b}`;
+    typeset($('#cuExpr'));
+  }
+  $('#cuNext').onclick=()=>{step=Math.min(5,step+1);drawCU();};
+  $('#cuPrev').onclick=()=>{step=Math.max(0,step-1);drawCU();};
+  $('#cuNew').onclick=newCU;
+  redrawOnShow('linear',drawCU);
+  newCU();
+
+  new Drill({mount:'#drill-linear',section:'linear',goal:7,
+    ...mixDrill([Q.decompose2,Q.decompose2,Q.decompose3,Q.integrateLinear,Q.integrateLinear,Q.definiteLinear,Q.definiteLinear])});
+})();
+
+/* ============================================================ chapter 3: how many unknowns */
+(function(){
+  const plot=new Plot2D('#unkPlot',{xmin:-5,xmax:5,ymin:-5,ymax:5});
+  const AL='ABCDEFGHIJKL'.split('');
+  let nLin=1,k=2,nQ=1,qp=1;
+  $('#unkSteppers').innerHTML=
+    `<div><div class="cap">distinct linear factors</div><div id="stLin"></div></div>
+     <div><div class="cap">repeated factor: power k</div><div id="stRep"></div></div>
+     <div><div class="cap">irreducible quadratics</div><div id="stQ"></div></div>
+     <div><div class="cap">power of the first quadratic</div><div id="stQp"></div></div>`;
+  stepper('#stLin',nLin,0,3,v=>{nLin=v;draw();});
+  stepper('#stRep',k,0,3,v=>{k=v;draw();});
+  stepper('#stQ',nQ,0,2,v=>{nQ=v;draw();});
+  stepper('#stQp',qp,1,2,v=>{qp=v;draw();});
+  const LINR=[1,2,3],QC=[1,4];
+  function build(){
+    const den=[],form=[],curves=[],kinds=[];let li=0;
+    for(let i=0;i<nLin;i++){const r=LINR[i];den.push(`(x-${r})`);
+      form.push(R`\frac{${AL[li++]}}{x-${r}}`);curves.push({f:x=>1/(x-r),cut:[r],lab:`1/(x−${r})`});
+      kinds.push('logarithm');}
+    if(k){den.push(k===1?'(x+1)':`(x+1)^{${k}}`);
+      for(let j=1;j<=k;j++){form.push(R`\frac{${AL[li++]}}{${j===1?'x+1':`(x+1)^{${j}}`}}`);
+        curves.push({f:((jj)=>x=>1/Math.pow(x+1,jj))(j),cut:[-1],lab:`1/(x+1)${j>1?'^'+j:''}`});
+        kinds.push(j===1?'logarithm':'a negative power');}}
+    for(let i=0;i<nQ;i++){const c=QC[i],m=i===0?qp:1;
+      den.push(m===1?`(x^2+${c})`:`(x^2+${c})^{${m}}`);
+      for(let j=1;j<=m;j++){const L1=AL[li++],L2=AL[li++];
+        form.push(R`\frac{${L1}x+${L2}}{${j===1?`x^2+${c}`:`(x^2+${c})^{${j}}`}}`);
+        curves.push({f:((cc,jj)=>x=>x/Math.pow(x*x+cc,jj))(c,j),cut:[],lab:`x/(x²+${c})${j>1?'^'+j:''}`});
+        curves.push({f:((cc,jj)=>x=>1/Math.pow(x*x+cc,jj))(c,j),cut:[],lab:`1/(x²+${c})${j>1?'^'+j:''}`});
+        kinds.push(j===1?'logarithm':'a reduction step');kinds.push(j===1?'arctangent':'a reduction step');}}
+    return {den:den.join(''),form:form.join('+'),curves,kinds,n:li};
+  }
+  function draw(){
+    const B=build();
+    plot.begin();
+    B.curves.slice(0,6).forEach((cv,i)=>branchFn(plot,cv.f,cv.cut,{color:COLORS[i%COLORS.length],width:2}));
+    if(!B.n){
+      $('#unkOut').innerHTML='Pick at least one factor.';return;
+    }
+    const counts={};B.kinds.forEach(t=>counts[t]=(counts[t]||0)+1);
+    const legend=B.curves.slice(0,6).map((cv,i)=>`<span><i class="dot" style="background:${COLORS[i%COLORS.length]}"></i> ${cv.lab}</span>`).join(' ');
+    $('#unkOut').innerHTML=D(R`\frac{P(x)}{${B.den}}=${B.form}`)+
+      `denominator degree <b>${B.n}</b> &nbsp;·&nbsp; unknown constants <b>${B.n}</b><br>`+
+      Object.entries(counts).map(([t,c])=>`${c} piece${c>1?'s':''} integrating to ${t}`).join(', ')+
+      `<div class="legend" style="margin-top:8px">${legend}</div>`+
+      (B.curves.length>6?`<span class="small muted">plot shows the first 6 of ${B.curves.length} building blocks</span>`:'');
+    typeset($('#unkOut'));
+  }
+  redrawOnShow('repeated',draw);draw();
+
+  new Drill({mount:'#drill-repeated',section:'repeated',goal:7,
+    ...mixDrill([Q.formOnly,Q.formOnly,Q.decomposeRepeated,Q.decomposeQuadratic,Q.integrateRepeated,Q.integrateQuadratic,Q.integrateQuadratic])});
+})();
+
+/* ============================================================ chapter 4: substitution walkthrough */
+(function(){
+  let cur=null,step=0;
+  function newRS(){
+    const fam=pick(['A','B','C']);
+    if(fam==='A'){
+      const kk=pick([1,2,3]),bb=kk*kk;
+      cur={fam,title:R`\int\frac{\sqrt{x+${bb}}}{x}\,dx`,
+        lines:[
+          [`substitute`,`u=\\sqrt{x+${bb}},\\quad u^2=x+${bb},\\quad x=u^2-${bb},\\quad dx=2u\\,du`],
+          [`rewrite`,`\\int\\frac{u}{u^2-${bb}}\\cdot 2u\\,du=\\int\\frac{2u^2}{u^2-${bb}}\\,du`],
+          [`improper in u, so divide`,`\\frac{2u^2}{u^2-${bb}}=2+\\frac{${2*bb}}{u^2-${bb}}`],
+          [`partial fractions`,`\\frac{${2*bb}}{(u-${kk})(u+${kk})}=\\frac{${kk}}{u-${kk}}-\\frac{${kk}}{u+${kk}}`],
+          [`integrate in u`,`2u+${kk===1?'':kk}\\ln\\left|\\frac{u-${kk}}{u+${kk}}\\right|+C`],
+          [`back-substitute`,`2\\sqrt{x+${bb}}+${kk===1?'':kk}\\ln\\left|\\frac{\\sqrt{x+${bb}}-${kk}}{\\sqrt{x+${bb}}+${kk}}\\right|+C`]],
+        note:'Family A: the radical sits over an x, so after the substitution you get an improper rational function and then a distinct-linear-factor decomposition.'};
+    }else if(fam==='B'){
+      cur={fam,title:R`\int\frac{dx}{1+\sqrt{x}}`,
+        lines:[
+          ['substitute','u=\\sqrt{x},\\quad x=u^2,\\quad dx=2u\\,du'],
+          ['rewrite','\\int\\frac{2u}{1+u}\\,du'],
+          ['improper in u, so divide','\\frac{2u}{1+u}=2-\\frac{2}{1+u}'],
+          ['no decomposition needed','\\text{the denominator is a single linear factor}'],
+          ['integrate in u','2u-2\\ln|1+u|+C'],
+          ['back-substitute','2\\sqrt{x}-2\\ln\\left(1+\\sqrt{x}\\right)+C']],
+        note:'Family B: the division is the whole job. One linear factor means there is nothing to decompose.'};
+    }else{
+      const bb=pick([1,4,9]);
+      cur={fam,title:R`\int\frac{x}{\sqrt{x+${bb}}}\,dx`,
+        lines:[
+          ['substitute',`u=\\sqrt{x+${bb}},\\quad x=u^2-${bb},\\quad dx=2u\\,du`],
+          ['rewrite',`\\int\\frac{u^2-${bb}}{u}\\cdot 2u\\,du=\\int 2\\left(u^2-${bb}\\right)du`],
+          ['the u cancels','\\text{the integrand is a polynomial, not a fraction}'],
+          ['no decomposition needed','\\text{nothing to divide, nothing to decompose}'],
+          ['integrate in u',`\\tfrac{2}{3}u^3-${2*bb}u+C`],
+          ['back-substitute',`\\tfrac{2}{3}\\left(x+${bb}\\right)^{3/2}-${2*bb}\\sqrt{x+${bb}}+C`]],
+        note:'Family C, the contrast: here the 2u in dx cancels the radical completely and you never need partial fractions. Spot this before you start.'};
+    }
+    step=0;drawRS();
+  }
+  function drawRS(){
+    const L=[`<span class="t b">${M(cur.title)}</span>`];
+    cur.lines.forEach((ln,i)=>{
+      const on=step>=i+1,now=step===i+1;
+      L.push(`<span class="${on?'':'faint'}">${ln[0]}: <span class="t ${now?'now':''} ${i<2?'a':i<4?'b':'c'}">${M(ln[1])}</span></span>`);
+    });
+    $('#rsExpr').innerHTML=L.join('<br>');
+    const st=[cur.note].concat(['Solve the substitution for x, then differentiate it to get dx.',
+      'Put x, dx, and the radical all in terms of u. The integrand is now rational in u.',
+      'Compare degrees in u before decomposing.',
+      'Decompose the proper part, if there is one.',
+      'Integrate term by term in u.',
+      'Put the radical back. The answer must be a function of x.']);
+    $('#rsStatus').textContent=st[step];
+    $('#rsPrev').disabled=step===0;$('#rsNext').disabled=step===cur.lines.length;
+    typeset($('#rsExpr'));
+  }
+  $('#rsNext').onclick=()=>{step=Math.min(cur.lines.length,step+1);drawRS();};
+  $('#rsPrev').onclick=()=>{step=Math.max(0,step-1);drawRS();};
+  $('#rsNew').onclick=newRS;
+  newRS();
+
+  new Drill({mount:'#drill-rationalize',section:'rationalize',goal:4,
+    ...mixDrill([Q.rationalSetup,Q.rationalSetup,Q.rationalEval,Q.rationalEval,Q.rationalEval])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.longDivide,Q.improperIntegral,
+  Q.decompose2,Q.decompose3,Q.integrateLinear,Q.definiteLinear,
+  Q.formOnly,Q.decomposeRepeated,Q.decomposeQuadratic,Q.integrateRepeated,Q.integrateQuadratic,
+  Q.rationalSetup,Q.rationalEval]});
+
+/* ============================================================ memory deck card */
+$('#memcard').replaceWith(memoryCard('c2-pf',[
+  R`The four cases: distinct linear \((x-a)\) gives \(\frac{A}{x-a}\); repeated \((x-a)^k\) gives \(\frac{A_1}{x-a}+\cdots+\frac{A_k}{(x-a)^k}\); irreducible quadratic gives \(\frac{Bx+C}{x^2+bx+c}\); a repeated quadratic adds \(\frac{Dx+E}{(x^2+bx+c)^2}\).`,
+  R`\(\displaystyle\int\frac{dx}{x-a}=\ln|x-a|+C\)`,
+  R`\(\displaystyle\int\frac{dx}{(x-a)^2}=-\frac{1}{x-a}+C\)`,
+  R`\(\displaystyle\int\frac{dx}{x^2+a^2}=\frac{1}{a}\arctan\frac{x}{a}+C\)`,
+  R`\(\displaystyle\int\frac{x\,dx}{x^2+a^2}=\tfrac12\ln(x^2+a^2)+C\)`,
+  R`Divide first whenever \(\deg P\ge\deg Q\). Cover-up: to get the constant over \((x-a)\), cover that factor and evaluate the rest at \(x=a\).`,
+  R`\(u=\sqrt{ax+b}\Rightarrow x=\frac{u^2-b}{a},\; dx=\frac{2u}{a}\,du\)`
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'divide':q=>({sq:q.sStr,rm:q.rStr}),
+  'integrate an improper rational function':q=>({v:q.ansStr}),
+  'decompose with two distinct linear factors':q=>({ca:String(q.A),cb:String(q.B)}),
+  'three distinct linear factors':q=>({ca:String(q.A),cb:String(q.B),cc:String(q.C)}),
+  'integrate':q=>({v:q.ansStr}),
+  'definite integral, answer as a single log':q=>({v:q.ansStr}),
+  'write the form':q=>({fm:q.refStr}),
+  'repeated factor':q=>(q.three?{ca:String(q.A),cb:String(q.B),cc:String(q.C)}:{ca:String(q.A),cb:String(q.B)}),
+  'quadratic factor':q=>({ca:String(q.A),cb:String(q.B),cc:String(q.C)}),
+  'integrate with a repeated factor':q=>({v:q.ansStr}),
+  'integrate with a quadratic factor':q=>({v:q.ansStr}),
+  'set up the substitution':q=>({xu:q.xStr,dxu:q.dxStr,igu:q.igStr}),
+  'finish it':q=>({v:q.ansStr})
+};
+
+initModule({key:'c2-pf',title:'Partial Fractions',sub:'Module 3 · Stewart 7.4'});
+</script>
+</body>
+</html>
