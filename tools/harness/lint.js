@@ -18,7 +18,7 @@ lines.forEach((l,i)=>{
 const secs=[...src.matchAll(/<section\s+data-id="([^"]+)"([^>]*)>/g)].map(m=>({id:m[1],attrs:m[2]}));
 const drills=[...src.matchAll(/new Drill\(\{mount:'#([^']+)',\s*section:'([^']+)'/g)].map(m=>({mount:m[1],section:m[2]}));
 drills.forEach(d=>{if(!new RegExp(`id="${d.mount}"`).test(src))problems.push(`drill mount #${d.mount} not in HTML`);const s=secs.find(x=>x.id===d.section);if(!s)problems.push(`drill section ${d.section} not found`);else if(!/data-goal=/.test(s.attrs))problems.push(`section ${d.section} has a drill but no data-goal`);});
-const canv=[...src.matchAll(/new (?:Plot2D|Scene3D)\('#([^']+)'/g)].map(m=>m[1]);
+const canv=[...src.matchAll(/new (?:Plot2D|Scene3D)\('#([^']+)'\s*[,)]/g)].map(m=>m[1]);
 canv.forEach(c=>{if(!new RegExp(`id="${c}"`).test(src))problems.push(`canvas #${c} not in HTML`);});
 if(!/initModule\(\{[^\n]*\}\);\s*<\/script>/.test(src))problems.push('initModule is not the last statement before </script>');
 if(!/window\.__solvers/.test(src))problems.push('no window.__solvers');
