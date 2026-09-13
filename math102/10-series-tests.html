@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Series Tests</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 10 · Stewart 11.4 to 11.7</p>
+  <h2>Series tests</h2>
+  <p class="lead">Five tests, each built for a shape. The skill is matching the series to the test, then producing the one number that settles it.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches a test, gives you something to slide or animate, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>On an exam the question is always the same: <b>does it converge, and how do you know?</b> So every drill here asks for the evidence first and the verdict second. You type the comparison series, the limit, or the ratio, and then press a verdict button. A verdict with no evidence behind it is worth nothing, and this module will not let you give one.</p>
+    <p>Answer formats: a comparison series is a formula in \(n\), typed like <code>1/n^2</code>, <code>1/sqrt(n)</code>, <code>(2/3)^n</code>, or <code>1/n!</code>, and any positive constant multiple is accepted. Limits are numbers (<code>0</code>, <code>2/3</code>, <code>e</code>, <code>pi/2</code>) or the word <code>inf</code> when the limit is infinite. Conditions on \(p\) are typed like <code>p &gt; 1</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the series you are testing, \(a_n\)</span>
+      <span><i class="dot" style="background:var(--b)"></i> the comparison series \(b_n\)</span>
+      <span><i class="dot" style="background:var(--c)"></i> the number that settles it: \(c\), \(L\), the bound</span>
+      <span><i class="dot" style="background:var(--d)"></i> partial sums and the sum itself</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Choose and apply the comparison test and the limit comparison test, including picking \(b_n\) from the dominant terms.</li>
+      <li>Apply the alternating series test, and bound the error of an alternating partial sum with \(|R_N|\le b_{N+1}\).</li>
+      <li>Distinguish absolute convergence from conditional convergence, and say why absolute convergence is stronger.</li>
+      <li>Compute the ratio and root limits cleanly, including factorials and \(n\)th powers, and know that \(L=1\) tells you nothing.</li>
+      <li>Follow a strategy for an unfamiliar series: read its shape, pick the test that shape was built for, produce the evidence.</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 COMPARISON -->
+<section data-id="comparison" data-title="Comparison and limit comparison" data-goal="8">
+  <p class="eyebrow">Chapter 1 · Stewart 11.4</p>
+  <h2>Comparison and limit comparison</h2>
+  <p class="lead">You already know two families cold: \(\sum 1/n^p\) and \(\sum r^n\). Every comparison test says the same thing: your series behaves like the family member it sits next to.</p>
+
+  <p>Both tests in this chapter require <b>positive terms</b>. That is what makes partial sums increasing, and an increasing sequence either climbs to a finite limit or runs off to infinity, with nothing in between.</p>
+
+  <div class="formula">\(\text{If } 0\le a_n\le b_n \text{ and } \sum b_n \text{ converges, then } \sum a_n \text{ converges.}\)<span class="cap">Trapped under something finite. The partial sums of \(\sum a_n\) are increasing and bounded above by \(\sum b_n\), so they have a limit.</span></div>
+  <div class="formula">\(\text{If } 0\le b_n\le a_n \text{ and } \sum b_n \text{ diverges, then } \sum a_n \text{ diverges.}\)<span class="cap">Pushed up by something infinite. The partial sums of \(\sum a_n\) are at least those of \(\sum b_n\), which already run to infinity.</span></div>
+
+  <div class="warn"><b>The two useless combinations.</b> Bigger than a convergent series tells you nothing. Smaller than a divergent series tells you nothing. Before you write anything down, decide which way your inequality points and whether that direction is the useful one.</div>
+
+  <p>The inequality only has to hold <b>eventually</b>, that is for all \(n\ge N\) for some \(N\). Changing or dropping finitely many terms cannot change convergence, only the value of the sum.</p>
+
+  <h3>Choosing \(b_n\): keep only the dominant terms</h3>
+  <p>To pick the comparison series, throw away everything that does not matter as \(n\to\infty\), then simplify:</p>
+  <div class="formula">\(\dfrac{3n^2+2}{n^4+n}\;\longrightarrow\;\dfrac{3n^2}{n^4}=\dfrac{3}{n^2}\;\longrightarrow\; b_n=\dfrac{1}{n^2}\qquad\qquad \dfrac{1}{2^n+n}\;\longrightarrow\;b_n=\left(\tfrac12\right)^{\!n}\)<span class="cap">Highest power on top over highest power on the bottom for a rational function. For a sum of an exponential and a polynomial, the exponential wins. Constant multiples never matter, so drop the 3.</span></div>
+  <p>Radicals count fractional powers: \(\sqrt{n^3+1}\) behaves like \(n^{3/2}\), so \(1/\sqrt{n^3+1}\) is compared with \(1/n^{3/2}\), a convergent \(p\)-series. Then check the direction: \(\sqrt{n^3+1}>\sqrt{n^3}\), so \(a_n<1/n^{3/2}\), and the comparison test finishes it.</p>
+
+  <h3>When the inequality points the wrong way</h3>
+  <p>Take \(\sum \dfrac{1}{n-1}\) (for \(n\ge 2\)). The obvious comparison is \(b_n=1/n\), but \(\dfrac{1}{n-1}>\dfrac{1}{n}\), and \(\sum 1/n\) diverges, so this time the direction <em>is</em> useful. Now take \(\sum \dfrac{1}{n+1}\): here \(a_n<1/n\) with \(\sum 1/n\) divergent, which is the useless combination. The fix is the <b>limit comparison test</b>, which does not care about the direction at all.</p>
+  <div class="formula">\(\text{If } a_n,b_n>0 \text{ and } \displaystyle\lim_{n\to\infty}\frac{a_n}{b_n}=c \text{ with } 0\lt c\lt\infty, \text{ then } \sum a_n \text{ and } \sum b_n \text{ both converge or both diverge.}\)<span class="cap">A finite positive \(c\) means the two sequences are eventually within a constant factor of each other in both directions. Constant factors cannot change convergence.</span></div>
+  <p>In practice: pick \(b_n\) from the dominant terms, compute \(c=\lim a_n/b_n\) (usually by dividing top and bottom by the highest power), check that \(c\) is a positive number, and then quote what you know about \(\sum b_n\).</p>
+
+  <div class="card">
+    <h4>Explore: the ratio settles at \(c\)</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="lcPlot"></canvas><p class="plotcap">Orange dots are \(a_n\), blue dots are \(b_n\). Switch to partial sums to see the two totals move together or apart.</p></div>
+      <div>
+        <div class="presets" id="lcPresets"></div>
+        <div class="presets" id="lcMode"></div>
+        <div class="sliders" id="lcSliders"></div>
+        <div class="readout" id="lcOut"></div>
+        <p class="hint">Watch the last column of the readout. The ratio \(a_n/b_n\) settling at a positive number is the whole test: after that point the two series are within a constant factor of each other forever, so they live or die together. Try the last preset, where the ratio runs off to infinity: limit comparison does not apply, but the one-sided comparison \(a_n\ge b_n\) still works.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Bounded factors are free.</b> \(2+\cos n\) is stuck between 1 and 3, so \(\dfrac{2+\cos n}{n^2}\le\dfrac{3}{n^2}\) and the series converges. Any factor that is trapped between two positive constants can be replaced by a constant when you choose \(b_n\).</div>
+  <div class="note"><b>Logs lose to every power.</b> For any \(\varepsilon>0\), \(\ln n\lt n^{\varepsilon}\) eventually. So \(\sum \dfrac{\ln n}{n^p}\) converges exactly when \(p>1\), and so does \(\sum\dfrac{(\ln n)^k}{n^p}\) for any fixed \(k\). A logarithm never changes the threshold, it only slows the approach to it.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-comparison"></div>
+</section>
+
+<!-- ============================================================ 2 ALTERNATING -->
+<section data-id="alternating" data-title="Alternating series" data-goal="7">
+  <p class="eyebrow">Chapter 2 · Stewart 11.5</p>
+  <h2>Alternating series</h2>
+  <p class="lead">Signs that flip make the partial sums close in on the answer from both sides. That is the one test where you get an error bound for free.</p>
+
+  <p>An <b>alternating series</b> is \(\sum(-1)^{n-1}b_n=b_1-b_2+b_3-b_4+\cdots\) with every \(b_n>0\). Write the series that way first: pull the sign out, and let \(b_n=|a_n|\) be the positive size of the term.</p>
+
+  <div class="formula">\(\text{Alternating series test: if } b_{n+1}\le b_n \text{ eventually and } \lim_{n\to\infty}b_n=0, \text{ then } \sum(-1)^{n-1}b_n \text{ converges.}\)<span class="cap">Two conditions: the sizes decrease, and they go to zero. Nothing about how fast.</span></div>
+
+  <p>Why it works: \(s_2\le s_4\le s_6\le\cdots\) climbs and \(s_1\ge s_3\ge s_5\ge\cdots\) falls, and every even partial sum sits below every odd one. The two sequences squeeze together because the gap between consecutive partial sums is \(b_{n+1}\to 0\). The sum is caught between them.</p>
+  <p>That squeeze gives the estimate you actually use:</p>
+  <div class="formula">\(|R_N|=|s-s_N|\le b_{N+1}\)<span class="cap">Stop after \(N\) terms and the error is no bigger than the first term you left out, and it has that term's sign. No other elementary test hands you an error bound this cheaply.</span></div>
+
+  <div class="card">
+    <h4>Explore: bracketing the sum</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="astPlot"></canvas><p class="plotcap">Purple dots are the partial sums \(s_N\). The dashed line is the sum \(s\). The orange band is \(s_N\pm b_{N+1}\).</p></div>
+      <div>
+        <div class="presets" id="astPresets"></div>
+        <div class="sliders" id="astSliders"></div>
+        <div class="controls"><button class="btn primary" id="astPlay">▶ Play</button><span class="status" id="astStatus"></span></div>
+        <div class="readout" id="astOut"></div>
+        <p class="hint">Press Play and watch the dots hop over the dashed line, never twice on the same side. The true sum is always between two consecutive partial sums, which is exactly why the leftover term bounds the error. Now try the preset that fails: the terms do not shrink to zero, the dots never settle, and the series diverges by the test for divergence.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Checking "decreasing" when it is not obvious</h3>
+  <p>For \(b_n=\dfrac{n^2}{n^3+1}\) you cannot see it at a glance. Treat \(n\) as a real variable and differentiate \(f(x)=\dfrac{x^2}{x^3+1}\):</p>
+  <div class="formula">\(f'(x)=\dfrac{2x(x^3+1)-x^2(3x^2)}{(x^3+1)^2}=\dfrac{x(2-x^3)}{(x^3+1)^2}<0 \text{ for } x>2^{1/3}\)<span class="cap">Negative derivative from some point on is exactly "eventually decreasing", which is all the test needs.</span></div>
+  <p>The other honest option is to check \(b_{n+1}/b_n\le 1\) or \(b_{n+1}-b_n\le 0\) directly.</p>
+
+  <div class="warn"><b>The limit condition is not optional, and it is the first thing to check.</b> If \(b_n\not\to 0\) then \(a_n\not\to 0\), so the series <b>diverges by the test for divergence</b>. Do not write "the alternating series test fails, so it diverges": the test never proves divergence. The divergence test does. For \(\sum(-1)^n\dfrac{n}{n+1}\) the terms approach \(\pm 1\), so it diverges.</div>
+  <div class="note"><b>The alternating harmonic series.</b> \(\sum_{n=1}^{\infty}\dfrac{(-1)^{n-1}}{n}=1-\tfrac12+\tfrac13-\tfrac14+\cdots=\ln 2\) converges, while \(\sum 1/n\) diverges. Flipping signs can rescue a divergent series. That gap is what the next chapter is about.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-alternating"></div>
+</section>
+
+<!-- ============================================================ 3 RATIO AND ROOT -->
+<section data-id="ratioroot" data-title="Absolute convergence, ratio, root" data-goal="8">
+  <p class="eyebrow">Chapter 3 · Stewart 11.6</p>
+  <h2>Absolute convergence, the ratio test, and the root test</h2>
+  <p class="lead">Take absolute values and the series becomes a positive-term series, where every test you own applies. If that stronger series converges, the original one had no chance to diverge.</p>
+
+  <p>\(\sum a_n\) is <b>absolutely convergent</b> when \(\sum|a_n|\) converges, and <b>conditionally convergent</b> when \(\sum a_n\) converges but \(\sum|a_n|\) does not.</p>
+  <div class="formula">\(\sum|a_n| \text{ converges}\;\Longrightarrow\;\sum a_n \text{ converges}\)<span class="cap">Absolute convergence implies convergence. The converse is false: \(\sum(-1)^{n-1}/n\) converges, \(\sum 1/n\) does not.</span></div>
+  <p>So the practical order is: take absolute values first and test \(\sum|a_n|\). If that converges you are finished, with the stronger conclusion. Only if \(\sum|a_n|\) diverges do you go back to the alternating series test to see whether the original series is conditionally convergent.</p>
+
+  <h3>The ratio test</h3>
+  <div class="formula">\(L=\lim_{n\to\infty}\left|\dfrac{a_{n+1}}{a_n}\right|:\qquad L<1\Rightarrow \sum a_n \text{ converges absolutely};\qquad L>1 \text{ or } L=\infty\Rightarrow \text{diverges};\qquad L=1\Rightarrow \text{no information.}\)<span class="cap">The series is eventually compared with a geometric series of ratio \(L\). When \(L>1\) the terms grow, so they cannot go to zero, which is why divergence follows.</span></div>
+  <p>The cancellations you need are always the same three:</p>
+  <div class="formula">\(\dfrac{(n+1)!}{n!}=n+1,\qquad \dfrac{c^{\,n+1}}{c^{\,n}}=c,\qquad \dfrac{(n+1)^k}{n^k}=\left(1+\tfrac1n\right)^{k}\to 1\)<span class="cap">Factorials leave one factor, powers leave the base, and polynomial pieces leave 1. Write \(a_{n+1}\) by replacing every \(n\) with \(n+1\), then divide and cancel before taking any limit.</span></div>
+  <div class="warn"><b>\(L=1\) is not a verdict.</b> Every \(p\)-series gives \(L=1\): \(\sum 1/n\) diverges and \(\sum 1/n^2\) converges, and the ratio test cannot tell them apart. If you land on \(L=1\), the ratio test is over and you go back to comparison, the integral test, or the alternating series test.</div>
+
+  <h3>The root test</h3>
+  <div class="formula">\(L=\lim_{n\to\infty}\sqrt[n]{|a_n|}:\qquad L<1\Rightarrow \text{converges absolutely};\qquad L>1 \text{ or } L=\infty\Rightarrow \text{diverges};\qquad L=1\Rightarrow \text{no information.}\)<span class="cap">Same three cases. Use it when the whole term is an \(n\)th power, because the root just peels the exponent off.</span></div>
+  <p>Two limits do most of the work here: \(\sqrt[n]{n}\to 1\) and \(\left(1+\tfrac{x}{n}\right)^n\to e^{x}\). So \(\left(\dfrac{2n+3}{3n+2}\right)^{n}\) has \(\sqrt[n]{|a_n|}=\dfrac{2n+3}{3n+2}\to\tfrac23<1\), and \(\left(\dfrac{n}{n+1}\right)^{n^2}\) has \(\sqrt[n]{|a_n|}=\left(1-\tfrac{1}{n+1}\right)^{n}\to e^{-1}<1\).</p>
+
+  <div class="card">
+    <h4>Explore: which limit is settling down</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="rrPlot"></canvas><p class="plotcap">Orange dots: \(|a_{n+1}/a_n|\). Blue dots: \(\sqrt[n]{|a_n|}\). The gray line is the deciding level \(L=1\).</p></div>
+      <div>
+        <div class="presets" id="rrPresets"></div>
+        <div class="sliders" id="rrSliders"></div>
+        <div class="readout" id="rrOut"></div>
+        <p class="hint">Both sequences chase the same limit, but at very different speeds. On the factorial presets the ratio locks on immediately while the root crawls, which is exactly why factorials mean ratio test. On the \(n\)th-power presets it is the other way round. On \(\sum 1/n^2\) both crawl toward 1 and neither test can ever conclude.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: running the ratio test</h4>
+    <div class="expr" id="wtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wtPrev">◀ Back</button>
+      <button class="btn primary" id="wtNext">Next step ▶</button>
+      <button class="btn" id="wtNew">New series</button>
+      <span class="status" id="wtStatus"></span>
+    </div>
+    <p class="hint">Check yourself at step 3: after cancelling, no factorial should be left anywhere, and every surviving \(n\) should sit in a ratio of polynomials or a single constant. If a factorial survives, you did not write out \((n+1)!=(n+1)\cdot n!\).</p>
+  </div>
+
+  <div class="note"><b>Which test for which shape.</b> Factorials, \(n^n\), or a constant to the \(n\): ratio. The whole term raised to the \(n\)th power: root. Neither, and the terms are a rational function of \(n\): comparison or limit comparison, because ratio and root both give \(L=1\) there.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-ratioroot"></div>
+</section>
+
+<!-- ============================================================ 4 STRATEGY -->
+<section data-id="strategy" data-title="Strategy" data-goal="8">
+  <p class="eyebrow">Chapter 4 · Stewart 11.7</p>
+  <h2>Strategy: reading the shape</h2>
+  <p class="lead">There is no algorithm, but there is an order. Run down this list and stop at the first line that fits the series in front of you.</p>
+
+  <ol class="steps">
+    <li><b>Do the terms go to zero?</b> If \(a_n\not\to 0\), the series diverges by the test for divergence. This costs one limit and settles a surprising number of exam problems.</li>
+    <li><b>Is it a \(p\)-series or a geometric series?</b> \(\sum 1/n^p\) converges exactly when \(p>1\). \(\sum ar^{n}\) converges exactly when \(|r|<1\), to first term over \(1-r\).</li>
+    <li><b>Is it a rational or algebraic function of \(n\)?</b> Keep the dominant powers, compare or limit compare with a \(p\)-series.</li>
+    <li><b>Does it alternate?</b> Check \(b_n\to 0\) and \(b_n\) decreasing, and use the alternating series test. Take absolute values first if you want the stronger conclusion.</li>
+    <li><b>Does it contain \(n!\), \(n^n\), or \(c^{\,n}\)?</b> Ratio test. The cancellation is the whole computation.</li>
+    <li><b>Is the whole term an \(n\)th power?</b> Root test.</li>
+    <li><b>Is \(a_n=f(n)\) for a positive decreasing \(f\) you can integrate?</b> Integral test, and the integral's value even gives you a remainder bound.</li>
+  </ol>
+
+  <div class="card tint">
+    <h4>Ten series and the test each one was built for</h4>
+    <table class="simple">
+      <tr><th>Series</th><th>Shape</th><th>Test</th></tr>
+      <tr><td>\(\sum \dfrac{n}{2n+3}\)</td><td>terms tend to \(\tfrac12\)</td><td>test for divergence</td></tr>
+      <tr><td>\(\sum \dfrac{1}{n^{4/3}}\)</td><td>pure power</td><td>\(p\)-series, \(p&gt;1\)</td></tr>
+      <tr><td>\(\sum \left(\tfrac{2}{3}\right)^{n}\)</td><td>constant ratio</td><td>geometric, \(|r|&lt;1\)</td></tr>
+      <tr><td>\(\sum \dfrac{3n^2+1}{n^4+5}\)</td><td>rational in \(n\)</td><td>limit comparison with \(1/n^2\)</td></tr>
+      <tr><td>\(\sum \dfrac{1}{2^n+3}\)</td><td>exponential denominator</td><td>comparison with \((1/2)^n\)</td></tr>
+      <tr><td>\(\sum \dfrac{(-1)^n}{\sqrt{n+1}}\)</td><td>alternating, \(b_n\downarrow 0\)</td><td>alternating series test</td></tr>
+      <tr><td>\(\sum \dfrac{2^n}{n!}\)</td><td>factorial</td><td>ratio test</td></tr>
+      <tr><td>\(\sum \left(\dfrac{n+1}{2n+1}\right)^{n}\)</td><td>\(n\)th power</td><td>root test</td></tr>
+      <tr><td>\(\sum \dfrac{\ln n}{n^2}\)</td><td>positive, decreasing, integrable</td><td>integral test</td></tr>
+      <tr><td>\(\sum \dfrac{1}{n\ln n}\)</td><td>positive, decreasing, integrable</td><td>integral test (diverges)</td></tr>
+    </table>
+  </div>
+
+  <div class="warn"><b>Name the evidence, not the feeling.</b> "It looks like it converges" earns nothing. Every one of these lines ends in a produced quantity: the limit of \(a_n\), the value of \(p\), the ratio \(r\), the comparison series \(b_n\), the ratio-test \(L\), the root-test \(L\), or the value of the integral. The drill below asks for that quantity every time.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-strategy"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Fourteen mixed questions from every chapter. Score 11 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts={})=>el.appendChild(ansLine(label,k,opts));
+const SER=(body,from='n=1')=>texSum(body,from);
+const IDX=(arr,v)=>arr.findIndex(o=>o.value===v);
+const CONV2=[{label:'converges',value:'conv'},{label:'diverges',value:'div'}];
+const CONV3=[{label:'converges absolutely',value:'abs'},{label:'diverges',value:'div'},{label:'the test is inconclusive',value:'inc'}];
+const ACD=[{label:'absolutely convergent',value:'abs'},{label:'conditionally convergent',value:'cond'},{label:'divergent',value:'div'}];
+const BEXP={integer:true,positive:true,domain:{n:[2,14]}};
+/* a decimal that survives being tiny: 2.5e-9 prints as 2.5 x 10^{-9}, not as 0 */
+function texSci(x){if(!Number.isFinite(x)||x===0)return '0';const e=Math.floor(Math.log10(Math.abs(x)));
+  if(e>=-5)return fmtDec(x,Math.min(9,Math.max(2,2-e)));return `${fmtDec(x/Math.pow(10,e),2)}\\times 10^{${e}}`;}
+/* a bare < inside a math string would be parsed as an HTML tag and swallow the rest of the sentence.
+   escHtml protects it while leaving real tags (<b>, <br>, <code>) alone. */
+const escHtml=s=>String(s).replace(/<(?!\/?[A-Za-z]+[ >\/])/g,'&lt;');
+/* TeX for a limit value, keeping the named constants named */
+const TEXVAL=[[Math.E,'e'],[1/Math.E,R`\tfrac{1}{e}`],[2/Math.E,R`\tfrac{2}{e}`],[Math.E/3,R`\tfrac{e}{3}`],
+  [Math.PI/2,R`\tfrac{\pi}{2}`],[Math.PI/4,R`\tfrac{\pi}{4}`],[1/(2*Math.E),R`\tfrac{1}{2e}`],[Math.LN2,R`\ln 2`]];
+function texVal(x){if(x==='inf')return R`\infty`;const h=TEXVAL.find(p=>near(p[0],x,1e-9));return h?h[1]:texNum(x);}
+const bCheck=(v,ref)=>checkExprUpToFactor(v,ref,['n'],BEXP);
+
+/* log-gamma, so every factorial limit can be checked numerically without overflow */
+const LGC=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];
+function lgamma(x){let y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=LGC[j]/++y;return -t+Math.log(2.5066282746310005*s/x);}
+const lfact=n=>lgamma(n+1);
+const relOK=(a,b,tol)=>Number.isFinite(a)&&Math.abs(a-b)<=tol*Math.max(1,Math.abs(b));
+
+/* ---- numeric verification used inside every gen() ---- */
+const ratioAt=(la,n)=>Math.exp(la(n+1)-la(n));
+const rootAt=(la,n)=>Math.exp(la(n)/n);
+function vRatio(la,L,ns=[400,800],tol=0.02){
+  if(L==='inf'){const r1=ratioAt(la,ns[0]),r2=ratioAt(la,ns[1]);return r2>r1&&r2>20;}
+  return ns.every(n=>relOK(ratioAt(la,n),L,tol));
+}
+function vRoot(la,L,ns=[1e5,1e6],tol=0.01){
+  const v1=rootAt(la,ns[0]),v2=rootAt(la,ns[1]);
+  if(L===0)return Number.isFinite(v1)&&Number.isFinite(v2)&&v2<=v1&&v2<0.15;
+  if(L==='inf')return v2>v1&&v2>20;
+  return relOK(v1,L,tol)&&relOK(v2,L,tol);
+}
+/* limit of a sequence f(n): 0 means "decreasing toward 0", anything else is compared directly */
+function vLim(f,L,ns=[1e5,1e6],tol=2e-3){
+  const v1=f(ns[0]),v2=f(ns[1]);
+  if(L===0)return Number.isFinite(v1)&&Number.isFinite(v2)&&v2<=v1&&v2<0.15;
+  if(L==='inf')return !(v2<1e3);
+  return relOK(v1,L,10*tol)&&relOK(v2,L,tol);
+}
+/* the exponent p in a_n ~ C/n^p, read off two decades apart */
+const vP=(la,p,n=1e4)=>relOK(-(la(2*n)-la(n))/Math.LN2,p,0.02);
+/* a_n/b_n stays inside one positive band: what makes a comparison legal */
+function vCompare(la,bf,ns=[10,100,1000,1e4]){
+  const rs=ns.map(n=>Math.exp(la(n))/bf(n));
+  if(!rs.every(r=>Number.isFinite(r)&&r>0))return false;
+  return Math.max(...rs)/Math.min(...rs)<=20;
+}
+const vSRatio=(f,r,ns=[8,15])=>ns.every(n=>relOK(f(n+1)/f(n),r,1e-9));
+/* partial sums of positive terms, used to confirm convergence or divergence of sum |a_n| */
+function psum(f,lo,hi){let s=0;for(let n=lo;n<=hi;n++){const v=f(n);if(Number.isFinite(v))s+=v;}return s;}
+/* an improper integral over [a, inf) by the midpoint rule after x = a + t/(1-t) */
+function improperInt(f,a,n=20000){let s=0;const h=1/n;for(let i=0;i<n;i++){const t=(i+0.5)*h;const u=1-t;const v=f(a+t/u)/(u*u);if(Number.isFinite(v))s+=v;}return s*h;}
+const vInt=(f,a,val,tol=4e-3)=>relOK(improperInt(f,a),val,tol);
+/* regenerate until the stored answer checks out numerically */
+function genOK(make,verify,tries=60){for(let i=0;i<tries;i++){const q=make();if(verify(q))return q;}throw new Error('gen: no draw passed numeric verification');}
+
+/* ============================================================ chapter 1 pools */
+/* pick the comparison series: tex of a_n, ln|a_n|, the reference b_n, its tex, the verdict */
+const P_DOM=[
+ {t:R`\frac{3n^2+2}{n^4+n}`,la:n=>Math.log((3*n*n+2)/(n**4+n)),b:'1/n^2',bt:R`\frac{1}{n^2}`,v:'conv',w:'a convergent \\(p\\)-series with \\(p=2\\)'},
+ {t:R`\frac{1}{\sqrt{n^3+1}}`,la:n=>-0.5*Math.log(n**3+1),b:'1/n^(3/2)',bt:R`\frac{1}{n^{3/2}}`,v:'conv',w:'a convergent \\(p\\)-series with \\(p=\\tfrac32\\)'},
+ {t:R`\frac{n+1}{n^2+3}`,la:n=>Math.log((n+1)/(n*n+3)),b:'1/n',bt:R`\frac{1}{n}`,v:'div',w:'the divergent harmonic series'},
+ {t:R`\frac{n}{\sqrt{n^3+5}}`,la:n=>Math.log(n)-0.5*Math.log(n**3+5),b:'1/n^(1/2)',bt:R`\frac{1}{\sqrt n}`,v:'div',w:'a divergent \\(p\\)-series with \\(p=\\tfrac12\\)'},
+ {t:R`\frac{1}{2^n+n}`,la:n=>-Math.log(Math.pow(2,n)+n),b:'(1/2)^n',bt:R`\left(\tfrac12\right)^{n}`,v:'conv',w:'a convergent geometric series with \\(r=\\tfrac12\\)',ns:[10,40,120,300]},
+ {t:R`\frac{2+\cos n}{n^2}`,la:n=>Math.log((2+Math.cos(n))/(n*n)),b:'1/n^2',bt:R`\frac{1}{n^2}`,v:'conv',w:'a convergent \\(p\\)-series with \\(p=2\\)'},
+ {t:R`\frac{n^2-1}{3n^4+1}`,la:n=>Math.log((n*n-1)/(3*n**4+1)),b:'1/n^2',bt:R`\frac{1}{n^2}`,v:'conv',w:'a convergent \\(p\\)-series with \\(p=2\\)',lo:2},
+ {t:R`\frac{\sqrt n}{n^2+n}`,la:n=>0.5*Math.log(n)-Math.log(n*n+n),b:'1/n^(3/2)',bt:R`\frac{1}{n^{3/2}}`,v:'conv',w:'a convergent \\(p\\)-series with \\(p=\\tfrac32\\)'},
+ {t:R`\frac{1}{3^n-1}`,la:n=>-Math.log(Math.pow(3,n)-1),b:'(1/3)^n',bt:R`\left(\tfrac13\right)^{n}`,v:'conv',w:'a convergent geometric series with \\(r=\\tfrac13\\)',ns:[10,40,120,300]},
+ {t:R`\frac{3^n+4}{2^n}`,la:n=>Math.log((Math.pow(3,n)+4)/Math.pow(2,n)),b:'(3/2)^n',bt:R`\left(\tfrac32\right)^{n}`,v:'div',w:'a divergent geometric series with \\(r=\\tfrac32\\)',ns:[10,40,120,300]},
+ {t:R`\frac{n+2}{n^3+n}`,la:n=>Math.log((n+2)/(n**3+n)),b:'1/n^2',bt:R`\frac{1}{n^2}`,v:'conv',w:'a convergent \\(p\\)-series with \\(p=2\\)'},
+ {t:R`\frac{5}{2n-1}`,la:n=>Math.log(5/(2*n-1)),b:'1/n',bt:R`\frac{1}{n}`,v:'div',w:'the divergent harmonic series'},
+ {t:R`\frac{4^n}{3^n+5^n}`,la:n=>n*Math.log(4)-Math.log(Math.pow(3,n)+Math.pow(5,n)),b:'(4/5)^n',bt:R`\left(\tfrac45\right)^{n}`,v:'conv',w:'a convergent geometric series with \\(r=\\tfrac45\\)',ns:[10,40,120,300]},
+ {t:R`\frac{1}{n\sqrt{n+1}}`,la:n=>-Math.log(n)-0.5*Math.log(n+1),b:'1/n^(3/2)',bt:R`\frac{1}{n^{3/2}}`,v:'conv',w:'a convergent \\(p\\)-series with \\(p=\\tfrac32\\)'},
+ {t:R`\frac{\sqrt{n+2}}{2n^2+3}`,la:n=>0.5*Math.log(n+2)-Math.log(2*n*n+3),b:'1/n^(3/2)',bt:R`\frac{1}{n^{3/2}}`,v:'conv',w:'a convergent \\(p\\)-series with \\(p=\\tfrac32\\)'}
+];
+/* limit comparison: a_n and b_n given, the learner produces c */
+const P_LC=[
+ {t:R`\frac{3n^2+2}{n^4+n}`,f:n=>(3*n*n+2)/(n**4+n),bt:R`\frac{1}{n^2}`,bf:n=>1/(n*n),c:3,cs:'3',v:'conv',bw:'converges'},
+ {t:R`\frac{n+1}{n^2+3}`,f:n=>(n+1)/(n*n+3),bt:R`\frac{1}{n}`,bf:n=>1/n,c:1,cs:'1',v:'div',bw:'diverges'},
+ {t:R`\frac{2n^2+3n}{\sqrt{5+n^5}}`,f:n=>(2*n*n+3*n)/Math.sqrt(5+n**5),bt:R`\frac{1}{\sqrt n}`,bf:n=>1/Math.sqrt(n),c:2,cs:'2',v:'div',bw:'diverges'},
+ {t:R`\frac{1}{n^2-1}`,f:n=>1/(n*n-1),bt:R`\frac{1}{n^2}`,bf:n=>1/(n*n),c:1,cs:'1',v:'conv',bw:'converges',from:'n=2'},
+ {t:R`\frac{n^3+2n}{4n^4+5}`,f:n=>(n**3+2*n)/(4*n**4+5),bt:R`\frac{1}{n}`,bf:n=>1/n,c:0.25,cs:'1/4',v:'div',bw:'diverges'},
+ {t:R`\frac{5n+3}{2n^3-1}`,f:n=>(5*n+3)/(2*n**3-1),bt:R`\frac{1}{n^2}`,bf:n=>1/(n*n),c:2.5,cs:'5/2',v:'conv',bw:'converges'},
+ {t:R`\frac{1}{2^n-1}`,f:n=>1/(Math.pow(2,n)-1),bt:R`\left(\tfrac12\right)^{n}`,bf:n=>Math.pow(0.5,n),c:1,cs:'1',v:'conv',bw:'converges',ns:[200,400]},
+ {t:R`\frac{n+3^n}{n+4^n}`,f:n=>(n+Math.pow(3,n))/(n+Math.pow(4,n)),bt:R`\left(\tfrac34\right)^{n}`,bf:n=>Math.pow(0.75,n),c:1,cs:'1',v:'conv',bw:'converges',ns:[200,400]},
+ {t:R`\frac{\sqrt{n+2}}{2n^2+n+1}`,f:n=>Math.sqrt(n+2)/(2*n*n+n+1),bt:R`\frac{1}{n^{3/2}}`,bf:n=>Math.pow(n,-1.5),c:0.5,cs:'1/2',v:'conv',bw:'converges'},
+ {t:R`\frac{4n+1}{n^2-n+2}`,f:n=>(4*n+1)/(n*n-n+2),bt:R`\frac{1}{n}`,bf:n=>1/n,c:4,cs:'4',v:'div',bw:'diverges'},
+ {t:R`\sin\!\left(\frac{1}{n}\right)`,f:n=>Math.sin(1/n),bt:R`\frac{1}{n}`,bf:n=>1/n,c:1,cs:'1',v:'div',bw:'diverges'},
+ {t:R`1-\cos\!\left(\frac{1}{n}\right)`,f:n=>1-Math.cos(1/n),bt:R`\frac{1}{n^2}`,bf:n=>1/(n*n),c:0.5,cs:'1/2',v:'conv',bw:'converges',ns:[200,400]},
+ {t:R`\ln\!\left(1+\frac{1}{n}\right)`,f:n=>Math.log(1+1/n),bt:R`\frac{1}{n}`,bf:n=>1/n,c:1,cs:'1',v:'div',bw:'diverges'},
+ {t:R`\frac{2^n+n}{3^n+1}`,f:n=>(Math.pow(2,n)+n)/(Math.pow(3,n)+1),bt:R`\left(\tfrac23\right)^{n}`,bf:n=>Math.pow(2/3,n),c:1,cs:'1',v:'conv',bw:'converges',ns:[200,400]},
+ {t:R`\frac{n^2+n}{n^4+3}`,f:n=>(n*n+n)/(n**4+3),bt:R`\frac{1}{n^2}`,bf:n=>1/(n*n),c:1,cs:'1',v:'conv',bw:'converges'}
+];
+/* which way the inequality goes: dir 'le' means a_n <= b_n */
+const P_DI=[
+ {t:R`\frac{1}{n^2+1}`,f:n=>1/(n*n+1),b:'1/n^2',bt:R`\frac{1}{n^2}`,bf:n=>1/(n*n),dir:'le',v:'conv',lo:1,w:'\\(n^2+1>n^2\\), so the fraction is smaller'},
+ {t:R`\frac{1}{n-\tfrac12}`,f:n=>1/(n-0.5),b:'1/n',bt:R`\frac{1}{n}`,bf:n=>1/n,dir:'ge',v:'div',lo:1,w:'\\(n-\\tfrac12&lt;n\\), so the fraction is larger'},
+ {t:R`\frac{\ln n}{n}`,f:n=>Math.log(n)/n,b:'1/n',bt:R`\frac{1}{n}`,bf:n=>1/n,dir:'ge',v:'div',lo:3,w:'\\(\\ln n>1\\) once \\(n\\ge 3\\)'},
+ {t:R`\frac{\sin^2 n}{n^2}`,f:n=>Math.pow(Math.sin(n),2)/(n*n),b:'1/n^2',bt:R`\frac{1}{n^2}`,bf:n=>1/(n*n),dir:'le',v:'conv',lo:1,w:'\\(\\sin^2 n\\le 1\\)'},
+ {t:R`\frac{1}{2^n+1}`,f:n=>1/(Math.pow(2,n)+1),b:'(1/2)^n',bt:R`\left(\tfrac12\right)^{n}`,bf:n=>Math.pow(0.5,n),dir:'le',v:'conv',lo:1,w:'\\(2^n+1>2^n\\)'},
+ {t:R`\frac{1}{\sqrt{n-1}}`,f:n=>1/Math.sqrt(n-1),b:'1/n^(1/2)',bt:R`\frac{1}{\sqrt n}`,bf:n=>1/Math.sqrt(n),dir:'ge',v:'div',lo:2,w:'\\(\\sqrt{n-1}&lt;\\sqrt n\\)'},
+ {t:R`\frac{n}{n^2-1}`,f:n=>n/(n*n-1),b:'1/n',bt:R`\frac{1}{n}`,bf:n=>1/n,dir:'ge',v:'div',lo:2,w:'\\(n^2-1&lt;n^2\\), so \\(\\dfrac{n}{n^2-1}>\\dfrac{n}{n^2}\\)'},
+ {t:R`\frac{2+\cos n}{n^3}`,f:n=>(2+Math.cos(n))/(n**3),b:'1/n^3',bt:R`\frac{1}{n^3}`,bf:n=>3/(n**3),dir:'le',v:'conv',lo:1,w:'\\(2+\\cos n\\le 3\\)'},
+ {t:R`\frac{1}{n\,2^n}`,f:n=>1/(n*Math.pow(2,n)),b:'(1/2)^n',bt:R`\left(\tfrac12\right)^{n}`,bf:n=>Math.pow(0.5,n),dir:'le',v:'conv',lo:1,w:'dividing by \\(n\\ge 1\\) only makes it smaller'},
+ {t:R`\frac{1}{n!}`,f:n=>Math.exp(-lfact(n)),b:'(1/2)^n',bt:R`\left(\tfrac12\right)^{n}`,bf:n=>2*Math.pow(0.5,n),dir:'le',v:'conv',lo:1,w:'\\(n!\\ge 2^{\\,n-1}\\), so \\(\\dfrac{1}{n!}\\le\\dfrac{2}{2^{n}}\\)'},
+ {t:R`\frac{3+\sin n}{\sqrt n}`,f:n=>(3+Math.sin(n))/Math.sqrt(n),b:'1/n^(1/2)',bt:R`\frac{1}{\sqrt n}`,bf:n=>1/Math.sqrt(n),dir:'ge',v:'div',lo:1,w:'\\(3+\\sin n\\ge 2\\ge 1\\)'},
+ {t:R`\frac{n+4}{n^2}`,f:n=>(n+4)/(n*n),b:'1/n',bt:R`\frac{1}{n}`,bf:n=>1/n,dir:'ge',v:'div',lo:1,w:'\\(n+4>n\\)'}
+];
+/* logs against powers: the threshold on p */
+const P_LOG=[
+ {mk:()=>({t:R`\frac{\ln n}{n^{p}}`,from:'n=2',th:1,w:'\\(\\ln n\\) grows slower than every positive power of \\(n\\), so it cannot move the \\(p\\)-series threshold'})},
+ {mk:()=>({t:R`\frac{(\ln n)^2}{n^{p}}`,from:'n=2',th:1,w:'any fixed power of \\(\\ln n\\) still loses to \\(n^{\\varepsilon}\\), so the threshold is unmoved'})},
+ {mk:()=>({t:R`\frac{1}{n^{p}\ln n}`,from:'n=2',th:1,w:'dividing by \\(\\ln n\\) helps convergence, but not enough to rescue \\(p\\le 1\\): at \\(p=1\\) the integral test gives \\(\\ln\\ln n\\to\\infty\\)'})},
+ {mk:()=>{const k=rint(1,3);return {t:R`\frac{n^{${k}}}{n^{p}}`,from:'n=1',th:k+1,w:`the series is just \\(\\sum 1/n^{\\,p-${k}}\\), a \\(p\\)-series with exponent \\(p-${k}\\)`};}},
+ {mk:()=>{const k=rint(1,3);return {t:R`\frac{n^{${k}}\ln n}{n^{p}}`,from:'n=2',th:k+1,w:`the terms behave like \\(1/n^{\\,p-${k}}\\) up to the harmless \\(\\ln n\\)`};}},
+ {mk:()=>({t:R`\frac{1}{n(\ln n)^{p}}`,from:'n=2',th:1,w:'substitute \\(u=\\ln x\\) in the integral test: \\(\\int du/u^{p}\\) converges exactly when \\(p>1\\)'})}
+];
+P_DOM.forEach(e=>{const g=Expr.compile(e.b);e.bf=n=>g({n});});
+
+/* ============================================================ chapter 1 question types */
+const Q={};
+Q.dominantTerms={name:'pick the comparison series',
+  gen(){return genOK(()=>{const e=pick(P_DOM);return {e};},q=>vCompare(q.e.la,q.e.bf,q.e.ns));},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Test ${M(SER(e.t,e.lo?'n='+e.lo:'n=1'))} by comparison. Keep only the dominant terms and type the comparison series ${M('b_n')} as a formula in ${M('n')} (any positive constant multiple is accepted), then give the verdict for ${M(R`\sum a_n`)}.</p>`;
+    numIn(el,'b',M('b_n='),{wide:true,placeholder:'formula in n'});
+    q.get=choiceButtons(el,CONV2);},
+  check(q,el){const r=G(el,'b',bCheck($('[data-k=b]',el).value,q.e.b));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a verdict.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:'The comparison series is not right yet. Keep the highest power on top and on the bottom.'};
+    if(v!==q.e.v)return {ok:false,msg:`Your \\(b_n\\) is right. Now ask what ${M(SER('b_n'))} does.`};
+    return {ok:true};},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el0('div','hintbox expr'));}
+    h.innerHTML=`Drop everything but the fastest growing term on top and on the bottom, then cancel: ${M(`a_n \\approx ${q.e.bt}`)} up to a constant.`;},
+  solution(q){const e=q.e;return `Keeping the dominant terms, ${M(`a_n`)} behaves like ${M(e.bt)}. Since ${M(SER(e.bt))} is ${e.w}, the comparison test gives that ${M(SER(e.t))} <b>${e.v==='conv'?'converges':'diverges'}</b>.`;}
+};
+Q.limitComparison={name:'the limit comparison constant',
+  gen(){return genOK(()=>{const e=pick(P_LC);return {e};},q=>{const e=q.e,ns=e.ns||[500,1000];return ns.every(n=>relOK(e.f(n)/e.bf(n),e.c,0.02));});},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Apply the limit comparison test to ${M(SER(e.t,e.from||'n=1'))} with ${M('b_n='+e.bt)}. Give ${M(R`c=\lim_{n\to\infty} a_n/b_n`)} exactly, then the verdict for ${M(R`\sum a_n`)}.</p>`;
+    numIn(el,'c',M('c='));
+    q.get=choiceButtons(el,CONV2);},
+  check(q,el){const r=G(el,'c',checkNumber($('[data-k=c]',el).value,q.e.c));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a verdict.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:'Divide top and bottom by the highest power before taking the limit.'};
+    if(v!==q.e.v)return {ok:false,msg:`\\(c=${fmt(q.e.c)}\\) is right, so the two series do the same thing. ${M(SER(q.e.bt))} ${q.e.bw}.`};
+    return {ok:true};},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el0('div','hintbox expr'));}
+    h.innerHTML=`Write out the quotient ${M(R`\dfrac{a_n}{b_n}`)} as one fraction first, then divide numerator and denominator by the highest power of \\(n\\) in sight.`;},
+  solution(q){const e=q.e;return `${M(R`\lim_{n\to\infty}\frac{a_n}{b_n}=\lim_{n\to\infty}\frac{${e.t}}{${e.bt}}=${texNum(e.c)}`)}, a finite positive number, so the two series behave the same way. ${M(SER(e.bt))} ${e.bw}, so ${M(SER(e.t,e.from||'n=1'))} <b>${e.v==='conv'?'converges':'diverges'}</b>.`;}
+};
+Q.directInequality={name:'which way the inequality goes',
+  gen(){return genOK(()=>{const e=pick(P_DI);return {e};},q=>{const e=q.e;const ns=[e.lo,e.lo+3,20,200,2000];
+    return ns.every(n=>{const a=e.f(n),b=e.bf(n);if(!Number.isFinite(a)||!Number.isFinite(b))return false;return e.dir==='le'?a<=b*(1+1e-12):a>=b*(1-1e-12);});});},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Test ${M(SER(e.t,'n='+e.lo))} by direct comparison. Type the comparison series ${M('b_n')} (any positive constant multiple is accepted), say which way the inequality runs for large ${M('n')}, and give the verdict.</p>`;
+    numIn(el,'b',M('b_n='),{wide:true,placeholder:'formula in n'});
+    q.get=choiceButtons(el,[{label:'a\u2099 \u2264 b\u2099',value:'le'},{label:'a\u2099 \u2265 b\u2099',value:'ge'}]);
+    q.get2=choiceButtons(el,CONV2);},
+  check(q,el){const e=q.e;const r=G(el,'b',bCheck($('[data-k=b]',el).value,e.b));const d=q.get(),v=q.get2();
+    if(d===null||v===null)return {ok:false,msg:'Pick a direction and a verdict.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:'That is not the comparison series. Strip the series down to its dominant behaviour.'};
+    if(d!==e.dir)return {ok:false,msg:'Check the inequality on a small value of \\(n\\) first, say \\(n=10\\), and compare the two numbers.'};
+    if(v!==e.v)return {ok:false,msg:e.dir==='le'?'Smaller than a convergent series means convergent.':'Bigger than a divergent series means divergent.'};
+    return {ok:true};},
+  solution(q){const e=q.e;const sym=e.dir==='le'?R`\le`:R`\ge`;
+    return `${M(`${e.t} ${sym} ${e.bt}`)} for ${M('n\\ge '+e.lo)}, because ${e.w}. ${M(SER(e.bt))} ${e.v==='conv'?'converges, and a positive series trapped underneath a convergent series converges too':'diverges, and a positive series sitting above a divergent series diverges too'}, so the series <b>${e.v==='conv'?'converges':'diverges'}</b>.`;}
+};
+Q.logPower={name:'logs and powers',
+  gen(){const e=pick(P_LOG).mk();return e;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">For which values of ${M('p')} does ${M(SER(q.t,q.from))} converge? Type a condition on ${M('p')}, like <code>p &gt; 1</code>.</p>`;
+    numIn(el,'cond','converges when',{placeholder:'p > ?'});},
+  check(q,el){return G(el,'cond',checkCondition($('[data-k=cond]',el).value,{v:'p',op:'>',val:q.th}));},
+  solution(q){return `Converges exactly when ${M('p>'+texNum(q.th))}: ${q.w}.`;}
+};
+
+/* ============================================================ chapter 2 pools */
+/* alternating series test: b_n, its limit, and whether the series converges */
+const P_AST=[
+ {mk:()=>{const p=rint(1,3);return {bt:p===1?R`\frac{1}{n}`:R`\frac{1}{n^{${p}}}`,f:n=>Math.pow(n,-p),L:0,Ls:'0',conv:true,dec:`\\(1/n^{${p}}\\) decreases to 0`};}},
+ {mk:()=>({bt:R`\frac{1}{2n+1}`,f:n=>1/(2*n+1),L:0,Ls:'0',conv:true,dec:'the denominator grows, so \\(b_n\\) decreases to 0'})},
+ {mk:()=>({bt:R`\frac{n}{n^2+1}`,f:n=>n/(n*n+1),L:0,Ls:'0',conv:true,dec:'\\(b_n\\approx 1/n\\) and \\(f(x)=x/(x^2+1)\\) has \\(f\'(x)<0\\) for \\(x>1\\)'})},
+ {mk:()=>({bt:R`\frac{1}{\ln n}`,f:n=>1/Math.log(n),L:0,Ls:'0',conv:true,from:'n=2',dec:'\\(\\ln n\\) increases without bound, slowly, so \\(1/\\ln n\\) decreases to 0'})},
+ {mk:()=>({bt:R`\frac{n}{n+1}`,f:n=>n/(n+1),L:1,Ls:'1',conv:false})},
+ {mk:()=>({bt:R`\frac{1}{n!}`,f:n=>Math.exp(-lfact(n)),L:0,Ls:'0',conv:true,ns:[20,25],dec:'factorials explode, so \\(1/n!\\) decreases to 0 very fast'})},
+ {mk:()=>({bt:R`\frac{\sqrt n}{n+4}`,f:n=>Math.sqrt(n)/(n+4),L:0,Ls:'0',conv:true,dec:'\\(b_n\\approx 1/\\sqrt n\\), and \\(f(x)=\\sqrt x/(x+4)\\) has \\(f\'(x)<0\\) for \\(x>4\\)'})},
+ {mk:()=>({bt:R`\frac{2n}{3n-1}`,f:n=>2*n/(3*n-1),L:2/3,Ls:'2/3',conv:false})},
+ {mk:()=>({bt:R`\frac{n+1}{3n}`,f:n=>(n+1)/(3*n),L:1/3,Ls:'1/3',conv:false})},
+ {mk:()=>({bt:R`\frac{\ln n}{n}`,f:n=>Math.log(n)/n,L:0,Ls:'0',conv:true,from:'n=2',dec:'\\(f(x)=\\ln x/x\\) has \\(f\'(x)=(1-\\ln x)/x^2<0\\) for \\(x>e\\)'})},
+ {mk:()=>({bt:R`\frac{n^2}{n^3+1}`,f:n=>n*n/(n**3+1),L:0,Ls:'0',conv:true,dec:'\\(f\'(x)=x(2-x^3)/(x^3+1)^2<0\\) for \\(x>2^{1/3}\\)'})},
+ {mk:()=>({bt:R`\arctan n`,f:n=>Math.atan(n),L:Math.PI/2,Ls:'pi/2',conv:false})},
+ {mk:()=>({bt:R`\left(\tfrac34\right)^{n}`,f:n=>Math.pow(0.75,n),L:0,Ls:'0',conv:true,dec:'a geometric sequence with ratio \\(\\tfrac34<1\\) decreases to 0'})},
+ {mk:()=>({bt:R`\cos\!\left(\tfrac1n\right)`,f:n=>Math.cos(1/n),L:1,Ls:'1',conv:false})},
+ {mk:()=>({bt:R`\frac{n}{\sqrt{n^3+2}}`,f:n=>n/Math.sqrt(n**3+2),L:0,Ls:'0',conv:true,dec:'\\(b_n\\approx 1/\\sqrt n\\), which decreases to 0'})},
+ {mk:()=>({bt:R`\frac{2n^2+1}{n^2+3}`,f:n=>(2*n*n+1)/(n*n+3),L:2,Ls:'2',conv:false})}
+];
+const el0=(t,c)=>el(t,{class:c});
+const altSum=(b,N)=>{let s=0;for(let n=1;n<=N;n++)s+=(n%2?1:-1)*b(n);return s;};
+const factOf=n=>{let f=1;for(let k=2;k<=n;k++)f*=k;return f;};
+
+/* ============================================================ chapter 2 question types */
+Q.astApply={name:'apply the alternating series test',
+  gen(){return genOK(()=>({e:pick(P_AST).mk()}),q=>vLim(q.e.f,q.e.L,q.e.ns));},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Does ${M(SER(R`(-1)^{n}\,`+e.bt,e.from||'n=1'))} converge? Give ${M(R`\lim_{n\to\infty} b_n`)} first, then the verdict.</p>`;
+    numIn(el,'L',M(R`\lim_{n\to\infty} b_n=`));
+    q.get=choiceButtons(el,[{label:'converges (alternating series test)',value:'conv'},{label:'diverges (test for divergence)',value:'div'}]);},
+  check(q,el){const e=q.e;const r=G(el,'L',checkNumber($('[data-k=L]',el).value,e.L));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a verdict.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:'Take the limit of the size of the terms, ignoring the sign.'};
+    const want=e.conv?'conv':'div';
+    if(v!==want)return {ok:false,msg:e.conv?'The sizes decrease to 0, which is exactly what the alternating series test asks for.':'A nonzero limit for \\(b_n\\) means \\(a_n\\not\\to 0\\), and that is the test for divergence.'};
+    return {ok:true};},
+  solution(q){const e=q.e;
+    return e.conv?`${M(R`\lim_{n\to\infty} b_n=0`)} and ${e.dec}, so both conditions hold and the series <b>converges</b> by the alternating series test.`
+      :`${M(R`\lim_{n\to\infty} b_n=${texVal(e.L)}\ne 0`)}, so ${M('a_n')} does not tend to 0 and the series <b>diverges</b> by the test for divergence. The alternating series test does not apply, and it could not prove divergence anyway.`;}
+};
+Q.astError={name:'alternating series error bound',
+  gen(){return genOK(()=>{
+    const kind=pick(['p','p','fact','geom']);const N=rint(3,8);
+    let bt,b,ans,as;
+    let bt1;
+    if(kind==='p'){const p=rint(1,3);b=n=>Math.pow(n,-p);bt=p===1?R`\frac{1}{n}`:R`\frac{1}{n^{${p}}}`;ans=Math.pow(N+1,-p);as=`1/${Math.pow(N+1,p)}`;bt1=p===1?R`\frac{1}{${N+1}}`:R`\frac{1}{${N+1}^{${p}}}`;}
+    else if(kind==='fact'){b=n=>Math.exp(-lfact(n));bt=R`\frac{1}{n!}`;ans=1/factOf(N+1);as=`1/${N+1}!`;bt1=R`\frac{1}{${N+1}!}`;}
+    else{b=n=>Math.pow(0.5,n);bt=R`\frac{1}{2^{n}}`;ans=Math.pow(0.5,N+1);as=`1/${Math.pow(2,N+1)}`;bt1=R`\frac{1}{2^{${N+1}}}`;}
+    return {kind,N,b,bt,bt1,ans,as};},
+    q=>{const S=altSum(q.b,4000),sN=altSum(q.b,q.N);return relOK(q.ans,q.b(q.N+1),1e-12)&&Math.abs(S-sN)<=q.ans+1e-15;});},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">You add the first ${M('N='+q.N)} terms of ${M(SER(R`(-1)^{n+1}\,`+q.bt))} to estimate its sum. How large can the error be? Give the exact bound as a fraction.</p>`;
+    numIn(el,'r',M(R`|R_{${q.N}}|\le`),{placeholder:'exact fraction'});},
+  check(q,el){return G(el,'r',checkNumber($('[data-k=r]',el).value,q.ans));},
+  solution(q){return `The alternating series estimation theorem says the error is at most the first term you dropped: ${M(R`|R_{N}|\le b_{N+1}`)}. Here ${M(R`b_{${q.N+1}}=${q.bt1}\approx ${texSci(q.ans)}`)}, so ${M(R`|R_{${q.N}}|\le ${q.bt1}`)}.`;}
+};
+Q.astTerms={name:'how many terms',
+  gen(){return genOK(()=>{
+    const kind=pick(['p','p','fact','fact2','geom','ngeom']);let lb,bt,k;
+    if(kind==='p'){const p=rint(3,5);k=rint(2,3);lb=n=>-p*Math.log(n);bt=R`\frac{1}{n^{${p}}}`;}
+    else if(kind==='fact'){k=rint(4,6);lb=n=>-lfact(n);bt=R`\frac{1}{n!}`;}
+    else if(kind==='fact2'){k=pick([6,8]);lb=n=>-lfact(2*n);bt=R`\frac{1}{(2n)!}`;}
+    else if(kind==='geom'){k=rint(2,3);lb=n=>-n*Math.LN2;bt=R`\frac{1}{2^{n}}`;}
+    else{k=rint(3,4);lb=n=>-Math.log(n)-n*Math.log(3);bt=R`\frac{1}{n\,3^{n}}`;}
+    const target=-k*Math.LN10;let N=1;while(N<400&&!(lb(N+1)<target))N++;
+    return {kind,k,lb,bt,N};},
+    q=>{const t=-q.k*Math.LN10;return q.lb(q.N+1)<t&&(q.N===1||!(q.lb(q.N)<t))&&q.N<400;});},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">How many terms of ${M(SER(R`(-1)^{n+1}\,`+q.bt))} must you add so that the error of the partial sum is less than ${M(R`10^{-${q.k}}`)}? Give the smallest such ${M('N')} as an integer.</p>`;
+    numIn(el,'N',M('N='));},
+  check(q,el){return G(el,'N',checkNumber($('[data-k=N]',el).value,q.N));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el0('div','hintbox expr'));}
+    h.innerHTML=escHtml(`The error after \\(N\\) terms is at most \\(b_{N+1}\\), so solve ${M(R`b_{N+1}<10^{-${q.k}}`)} and take the smallest integer \\(N\\) that works.`);},
+  solution(q){return `The bound is ${M(R`|R_N|\le b_{N+1}`)}, so you need ${M(R`b_{N+1}<10^{-${q.k}}`)}. Testing values, ${M(R`b_{${q.N}}\approx ${texSci(Math.exp(q.lb(q.N)))}`)} is still too big and ${M(R`b_{${q.N+1}}\approx ${texSci(Math.exp(q.lb(q.N+1)))}<10^{-${q.k}}`)}, so <b>${q.N} terms</b> are enough.`;}
+};
+Q.astApprox={name:'approximate an alternating sum',
+  gen(){return genOK(()=>{
+    const kind=pick(['fact','p2','geom']);const N=kind==='fact'?rint(5,7):rint(4,6);
+    let b,bt,head,as,bt1;
+    if(kind==='fact'){b=n=>Math.exp(-lfact(n));bt=R`\frac{(-1)^{n}}{n!}`;head=R`\sum_{n=1}^{\infty}\frac{(-1)^{n}}{n!}`;as=`1/${N+1}!`;bt1=R`\frac{1}{${N+1}!}`;}
+    else if(kind==='p2'){b=n=>1/(n*n);bt=R`\frac{(-1)^{n+1}}{n^2}`;head=R`\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n^2}`;as=`1/${(N+1)*(N+1)}`;bt1=R`\frac{1}{${N+1}^{2}}`;}
+    else{b=n=>Math.pow(0.5,n);bt=R`\frac{(-1)^{n+1}}{2^{n}}`;head=R`\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{2^{n}}`;as=`1/${Math.pow(2,N+1)}`;bt1=R`\frac{1}{2^{${N+1}}}`;}
+    const sign=kind==='fact'?-1:1;let s=0;for(let n=1;n<=N;n++)s+=sign*(n%2?1:-1)*b(n);
+    return {kind,N,b,bt,bt1,head,s,bound:b(N+1),as};},
+    q=>{let S=0;const sign=q.kind==='fact'?-1:1;for(let n=1;n<=4000;n++)S+=sign*(n%2?1:-1)*q.b(n);
+      return Math.abs(S-q.s)<=q.bound+1e-12&&relOK(q.bound,q.b(q.N+1),1e-12);});},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Estimate ${M(q.head)} by its ${M('N='+q.N)}th partial sum. Give ${M('s_{'+q.N+'}')} to four decimal places, and the guaranteed error bound exactly.</p>`;
+    numIn(el,'s',M(`s_{${q.N}}\\approx`),{placeholder:'four decimals'});
+    numIn(el,'r',M(`|R_{${q.N}}|\\le`),{placeholder:'exact fraction'});},
+  check(q,el){return Gall(el,[['s',checkNumber($('[data-k=s]',el).value,q.s,{tol:6e-5})],['r',checkNumber($('[data-k=r]',el).value,q.bound)]]);},
+  solution(q){return `Add the first ${q.N} terms: ${M(`s_{${q.N}}=${fmtDec(q.s,6)}\\approx ${q.s.toFixed(4)}`)}. The next term has size ${M(R`b_{${q.N+1}}=${q.bt1}\approx ${texSci(q.bound)}`)}, and by the estimation theorem the true sum is within that distance of your estimate.`;}
+};
+
+/* ============================================================ chapter 3 pools */
+/* ratio test: ln|a_n| lets the ratio be checked numerically even with factorials */
+const P_RATIO=[
+ {mk:()=>{const k=rint(1,3),c=rint(2,5);return {t:R`\frac{n^{${k}}}{${c}^{\,n}}`,la:n=>k*Math.log(n)-n*Math.log(c),L:1/c,Ls:`1/${c}`,v:'abs',
+   w:`\\(\\dfrac{(n+1)^{${k}}}{${c}^{\\,n+1}}\\cdot\\dfrac{${c}^{\\,n}}{n^{${k}}}=\\dfrac{1}{${c}}\\left(1+\\tfrac1n\\right)^{${k}}\\to\\tfrac1{${c}}\\)`};}},
+ {mk:()=>{const c=pick([2,3,5]);return {t:R`\frac{${c}^{\,n}}{n!}`,la:n=>n*Math.log(c)-lfact(n),L:0,Ls:'0',v:'abs',
+   w:`\\(\\dfrac{${c}^{\\,n+1}}{(n+1)!}\\cdot\\dfrac{n!}{${c}^{\\,n}}=\\dfrac{${c}}{n+1}\\to 0\\)`};}},
+ {mk:()=>{const c=rint(2,4);return {t:R`\frac{n!}{${c}^{\,n}}`,la:n=>lfact(n)-n*Math.log(c),L:'inf',Ls:'inf',v:'div',
+   w:`\\(\\dfrac{(n+1)!}{${c}^{\\,n+1}}\\cdot\\dfrac{${c}^{\\,n}}{n!}=\\dfrac{n+1}{${c}}\\to\\infty\\)`};}},
+ {mk:()=>({t:R`\frac{n^{n}}{n!}`,la:n=>n*Math.log(n)-lfact(n),L:Math.E,Ls:'e',v:'div',
+   w:'\\(\\dfrac{(n+1)^{n+1}}{(n+1)!}\\cdot\\dfrac{n!}{n^{n}}=\\left(1+\\tfrac1n\\right)^{n}\\to e>1\\)'})},
+ {mk:()=>({t:R`\frac{(2n)!}{(n!)^2}`,la:n=>lfact(2*n)-2*lfact(n),L:4,Ls:'4',v:'div',
+   w:'\\(\\dfrac{(2n+2)!}{((n+1)!)^2}\\cdot\\dfrac{(n!)^2}{(2n)!}=\\dfrac{(2n+1)(2n+2)}{(n+1)^2}=\\dfrac{2(2n+1)}{n+1}\\to 4\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}\,n}{2^{n}}`,la:n=>Math.log(n)-n*Math.LN2,L:0.5,Ls:'1/2',v:'abs',
+   w:'\\(\\dfrac{n+1}{2^{\\,n+1}}\\cdot\\dfrac{2^{n}}{n}=\\dfrac12\\cdot\\dfrac{n+1}{n}\\to\\tfrac12\\)'})},
+ {mk:()=>({t:R`\frac{n!}{n^{n}}`,la:n=>lfact(n)-n*Math.log(n),L:1/Math.E,Ls:'1/e',v:'abs',
+   w:'\\(\\dfrac{(n+1)!}{(n+1)^{n+1}}\\cdot\\dfrac{n^{n}}{n!}=\\left(\\dfrac{n}{n+1}\\right)^{n}\\to e^{-1}<1\\)'})},
+ {mk:()=>({t:R`\frac{(n!)^2}{(2n)!}`,la:n=>2*lfact(n)-lfact(2*n),L:0.25,Ls:'1/4',v:'abs',
+   w:'\\(\\dfrac{((n+1)!)^2}{(2n+2)!}\\cdot\\dfrac{(2n)!}{(n!)^2}=\\dfrac{(n+1)^2}{(2n+1)(2n+2)}=\\dfrac{n+1}{2(2n+1)}\\to\\tfrac14\\)'})},
+ {mk:()=>({t:R`\frac{3^{n}}{n\,4^{n}}`,la:n=>n*Math.log(3)-Math.log(n)-n*Math.log(4),L:0.75,Ls:'3/4',v:'abs',
+   w:'\\(\\dfrac{3^{\\,n+1}}{(n+1)4^{\\,n+1}}\\cdot\\dfrac{n\\,4^{n}}{3^{n}}=\\dfrac34\\cdot\\dfrac{n}{n+1}\\to\\tfrac34\\)'})},
+ {mk:()=>{const p=rint(1,2);return {t:p===1?R`\frac{1}{n}`:R`\frac{1}{n^{2}}`,la:n=>-p*Math.log(n),L:1,Ls:'1',v:'inc',
+   w:`\\(\\dfrac{n^{${p}}}{(n+1)^{${p}}}\\to 1\\), and a \\(p\\)-series always gives \\(L=1\\)`};}},
+ {mk:()=>({t:R`\frac{n^2}{n!}`,la:n=>2*Math.log(n)-lfact(n),L:0,Ls:'0',v:'abs',
+   w:'\\(\\dfrac{(n+1)^2}{(n+1)!}\\cdot\\dfrac{n!}{n^2}=\\dfrac{(n+1)^2}{n^2(n+1)}\\to 0\\)'})},
+ {mk:()=>({t:R`\frac{2^{n}\,n!}{n^{n}}`,la:n=>n*Math.LN2+lfact(n)-n*Math.log(n),L:2/Math.E,Ls:'2/e',v:'abs',
+   w:'\\(2\\left(\\dfrac{n}{n+1}\\right)^{n}\\to \\dfrac{2}{e}<1\\)'})},
+ {mk:()=>({t:R`\frac{(-3)^{n}}{n!}`,la:n=>n*Math.log(3)-lfact(n),L:0,Ls:'0',v:'abs',
+   w:'\\(\\left|\\dfrac{(-3)^{\\,n+1}}{(n+1)!}\\cdot\\dfrac{n!}{(-3)^{n}}\\right|=\\dfrac{3}{n+1}\\to 0\\)'})},
+ {mk:()=>({t:R`\frac{(2n)!}{(n!)^2\,4^{n}}`,la:n=>lfact(2*n)-2*lfact(n)-n*Math.log(4),L:1,Ls:'1',v:'inc',
+   w:'\\(\\dfrac{2(2n+1)}{4(n+1)}=\\dfrac{2n+1}{2n+2}\\to 1\\)'})}
+];
+/* root test */
+const P_ROOT=[
+ {t:R`\left(\frac{2n+3}{3n+2}\right)^{n}`,la:n=>n*Math.log((2*n+3)/(3*n+2)),L:2/3,Ls:'2/3',v:'abs',w:'\\(\\sqrt[n]{|a_n|}=\\dfrac{2n+3}{3n+2}\\to\\tfrac23\\)'},
+ {t:R`\left(1+\frac{1}{n}\right)^{n^2}`,la:n=>n*n*Math.log(1+1/n),L:Math.E,Ls:'e',v:'div',w:'\\(\\sqrt[n]{|a_n|}=\\left(1+\\tfrac1n\\right)^{n}\\to e>1\\)'},
+ {t:R`\frac{1}{(\ln n)^{n}}`,la:n=>-n*Math.log(Math.log(n)),L:0,Ls:'0',v:'abs',from:'n=2',w:'\\(\\sqrt[n]{|a_n|}=\\dfrac{1}{\\ln n}\\to 0\\)'},
+ {t:R`\left(\frac{n}{n+1}\right)^{n^2}`,la:n=>n*n*Math.log(n/(n+1)),L:1/Math.E,Ls:'1/e',v:'abs',w:'\\(\\sqrt[n]{|a_n|}=\\left(1-\\tfrac{1}{n+1}\\right)^{n}\\to e^{-1}<1\\)'},
+ {t:R`\left(\frac{-2n}{n+1}\right)^{n}`,la:n=>n*Math.log(2*n/(n+1)),L:2,Ls:'2',v:'div',w:'\\(\\sqrt[n]{|a_n|}=\\dfrac{2n}{n+1}\\to 2>1\\)'},
+ {t:R`(\arctan n)^{n}`,la:n=>n*Math.log(Math.atan(n)),L:Math.PI/2,Ls:'pi/2',v:'div',w:'\\(\\sqrt[n]{|a_n|}=\\arctan n\\to\\tfrac{\\pi}{2}>1\\)'},
+ {t:R`\left(\frac{n+1}{2n+5}\right)^{n}`,la:n=>n*Math.log((n+1)/(2*n+5)),L:0.5,Ls:'1/2',v:'abs',w:'\\(\\sqrt[n]{|a_n|}=\\dfrac{n+1}{2n+5}\\to\\tfrac12\\)'},
+ {t:R`\left(\sqrt[n]{n}-1\right)^{n}`,la:n=>n*Math.log(Math.pow(n,1/n)-1),L:0,Ls:'0',v:'abs',from:'n=2',w:'\\(\\sqrt[n]{|a_n|}=\\sqrt[n]{n}-1\\to 1-1=0\\)'},
+ {t:R`\left(\frac{5n^2+1}{3n^2+2}\right)^{n}`,la:n=>n*Math.log((5*n*n+1)/(3*n*n+2)),L:5/3,Ls:'5/3',v:'div',w:'\\(\\sqrt[n]{|a_n|}=\\dfrac{5n^2+1}{3n^2+2}\\to\\tfrac53>1\\)'},
+ {t:R`\frac{1}{n^{n}}`,la:n=>-n*Math.log(n),L:0,Ls:'0',v:'abs',w:'\\(\\sqrt[n]{|a_n|}=\\dfrac1n\\to 0\\)'},
+ {t:R`\left(\frac{3n+1}{4n+2}\right)^{n}`,la:n=>n*Math.log((3*n+1)/(4*n+2)),L:0.75,Ls:'3/4',v:'abs',w:'\\(\\sqrt[n]{|a_n|}=\\dfrac{3n+1}{4n+2}\\to\\tfrac34\\)'},
+ {t:R`\frac{n^{n}}{2^{n^2}}`,la:n=>n*Math.log(n)-n*n*Math.LN2,L:0,Ls:'0',v:'abs',w:'\\(\\sqrt[n]{|a_n|}=\\dfrac{n}{2^{n}}\\to 0\\)'}
+];
+/* absolute, conditional, divergent: |a_n| is what the learner types */
+const P_AC=[
+ {mk:()=>{const p=pick([2,3]);return {t:R`\frac{(-1)^{n}}{n^{${p}}}`,bt:R`\frac{1}{n^{${p}}}`,b:`1/n^${p}`,la:n=>-p*Math.log(n),k:'abs',
+   w:`\\(\\sum 1/n^{${p}}\\) is a convergent \\(p\\)-series, so the series converges absolutely`};}},
+ {mk:()=>{const p=pick([1,0.5]);const bt=p===1?R`\frac{1}{n}`:R`\frac{1}{\sqrt n}`;return {t:R`\frac{(-1)^{n}}{${p===1?'n':R`\sqrt n`}}`,bt,b:p===1?'1/n':'1/n^(1/2)',la:n=>-p*Math.log(n),k:'cond',
+   w:`\\(\\sum 1/n^{${p===1?'1':'1/2'}}\\) diverges (\\(p\\le 1\\)), but \\(b_n\\) decreases to 0, so the alternating series test gives convergence: conditional`};}},
+ {mk:()=>({t:R`\frac{(-1)^{n}\,n}{2^{n}}`,bt:R`\frac{n}{2^{n}}`,b:'n/2^n',la:n=>Math.log(n)-n*Math.LN2,k:'abs',w:'the ratio test on \\(\\sum n/2^n\\) gives \\(L=\\tfrac12<1\\)'})},
+ {mk:()=>({t:R`\frac{\cos(n\pi)}{n!}`,bt:R`\frac{1}{n!}`,b:'1/n!',la:n=>-lfact(n),k:'abs',w:'\\(\\cos(n\\pi)=(-1)^n\\), and the ratio test on \\(\\sum 1/n!\\) gives \\(L=0\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n-1}\,3^{n}}{n!}`,bt:R`\frac{3^{n}}{n!}`,b:'3^n/n!',la:n=>n*Math.log(3)-lfact(n),k:'abs',w:'the ratio test gives \\(L=\\lim 3/(n+1)=0<1\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}}{n^2+1}`,bt:R`\frac{1}{n^2+1}`,b:'1/(n^2+1)',la:n=>-Math.log(n*n+1),k:'abs',w:'\\(\\dfrac{1}{n^2+1}\\le\\dfrac{1}{n^2}\\), and \\(\\sum 1/n^2\\) converges'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}\,n^2}{3^{n}}`,bt:R`\frac{n^2}{3^{n}}`,b:'n^2/3^n',la:n=>2*Math.log(n)-n*Math.log(3),k:'abs',w:'the ratio test gives \\(L=\\tfrac13<1\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}\,n}{n^2+1}`,bt:R`\frac{n}{n^2+1}`,b:'n/(n^2+1)',la:n=>Math.log(n)-Math.log(n*n+1),k:'cond',w:'\\(|a_n|\\approx 1/n\\), so \\(\\sum|a_n|\\) diverges by limit comparison, but \\(b_n\\downarrow 0\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}}{\ln n}`,bt:R`\frac{1}{\ln n}`,b:'1/ln(n)',la:n=>-Math.log(Math.log(n)),k:'cond',from:'n=2',w:'\\(1/\\ln n>1/n\\), so \\(\\sum|a_n|\\) diverges, while \\(1/\\ln n\\) still decreases to 0'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}}{n\ln n}`,bt:R`\frac{1}{n\ln n}`,b:'1/(n ln(n))',la:n=>-Math.log(n)-Math.log(Math.log(n)),k:'cond',from:'n=2',w:'the integral test gives \\(\\int_2^\\infty\\frac{dx}{x\\ln x}=\\infty\\), so \\(\\sum|a_n|\\) diverges'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}\ln n}{n}`,bt:R`\frac{\ln n}{n}`,b:'ln(n)/n',la:n=>Math.log(Math.log(n))-Math.log(n),k:'cond',from:'n=2',w:'\\(\\ln n/n\\ge 1/n\\) for \\(n\\ge 3\\), so \\(\\sum|a_n|\\) diverges, but \\(\\ln n/n\\) decreases to 0 after \\(n=e\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}}{2n+1}`,bt:R`\frac{1}{2n+1}`,b:'1/(2n+1)',la:n=>-Math.log(2*n+1),k:'cond',w:'\\(\\sum\\frac{1}{2n+1}\\) diverges by limit comparison with \\(\\sum 1/n\\), and \\(b_n\\downarrow 0\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}(n^2+1)}{n^3+2}`,bt:R`\frac{n^2+1}{n^3+2}`,b:'(n^2+1)/(n^3+2)',la:n=>Math.log(n*n+1)-Math.log(n**3+2),k:'cond',w:'\\(|a_n|\\approx 1/n\\), so \\(\\sum|a_n|\\) diverges, while \\(|a_n|\\downarrow 0\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}}{\sqrt{n+1}}`,bt:R`\frac{1}{\sqrt{n+1}}`,b:'1/(n+1)^(1/2)',la:n=>-0.5*Math.log(n+1),k:'cond',w:'\\(\\sum 1/\\sqrt{n+1}\\) diverges (\\(p=\\tfrac12\\)), but \\(b_n\\downarrow 0\\)'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}(n+1)}{n}`,bt:R`\frac{n+1}{n}`,b:'(n+1)/n',la:n=>Math.log(n+1)-Math.log(n),k:'div',w:'\\(|a_n|\\to 1\\ne 0\\), so the series diverges by the test for divergence'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}\,2^{n}}{n^2}`,bt:R`\frac{2^{n}}{n^2}`,b:'2^n/n^2',la:n=>n*Math.LN2-2*Math.log(n),k:'div',w:'\\(|a_n|\\to\\infty\\), so the terms do not tend to 0'})},
+ {mk:()=>({t:R`(-1)^{n}\left(1+\tfrac1n\right)^{n}`,bt:R`\left(1+\tfrac1n\right)^{n}`,b:'(1+1/n)^n',la:n=>n*Math.log(1+1/n),k:'div',w:'\\(|a_n|\\to e\\ne 0\\), so the series diverges by the test for divergence'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}\,n}{3n+1}`,bt:R`\frac{n}{3n+1}`,b:'n/(3n+1)',la:n=>Math.log(n)-Math.log(3*n+1),k:'div',w:'\\(|a_n|\\to\\tfrac13\\ne 0\\), so the series diverges by the test for divergence'})},
+ {mk:()=>({t:R`\frac{(-1)^{n}\,n!}{2^{n}}`,bt:R`\frac{n!}{2^{n}}`,b:'n!/2^n',la:n=>lfact(n)-n*Math.LN2,k:'div',w:'the ratio test gives \\(L=\\lim\\frac{n+1}{2}=\\infty\\), so the terms blow up'})}
+];
+function vAC(e){
+  const f=n=>Math.exp(e.la(n));const lo=(e.from==='n=2')?2:1;
+  const tail=psum(f,10001,50000);const big=f(1e6),big2=f(1e7);
+  if(e.k==='div')return !(big<0.05);
+  if(!(big<0.15&&big2<=big))return false;
+  return e.k==='abs'?tail<1e-3:tail>0.02&&lo>0;
+}
+
+/* ============================================================ chapter 3 question types */
+Q.ratioLimit={name:'the ratio test limit',
+  gen(){return genOK(()=>({e:pick(P_RATIO).mk()}),q=>vRatio(q.e.la,q.e.L));},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Apply the ratio test to ${M(SER(e.t,e.from||'n=1'))}. Give ${M(R`L=\lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right|`)} (type <code>inf</code> if it is infinite), then the conclusion.</p>`;
+    numIn(el,'L',M('L='));
+    q.get=choiceButtons(el,CONV3);},
+  check(q,el){const e=q.e;const r=G(el,'L',checkLimit($('[data-k=L]',el).value,e.L));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a conclusion.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:'Write \\(a_{n+1}\\) by replacing every \\(n\\) with \\(n+1\\), divide, and cancel before taking the limit.'};
+    if(v!==e.v)return {ok:false,msg:e.v==='inc'?'\\(L=1\\) is the one case the ratio test cannot decide.':e.v==='abs'?'\\(L<1\\) means absolute convergence.':'\\(L>1\\) means the terms grow, so the series diverges.'};
+    return {ok:true};},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el0('div','hintbox expr'));}
+    h.innerHTML=`Use \\((n+1)!=(n+1)\\,n!\\) and \\(c^{\\,n+1}=c\\cdot c^{\\,n}\\), so everything cancels except a few factors of \\(n\\).`;},
+  solution(q){const e=q.e;
+    return `${e.w}, so ${M('L='+texVal(e.L))}. ${e.v==='abs'?'Since \\(L<1\\), the series <b>converges absolutely</b>.':e.v==='div'?'Since \\(L>1\\), the series <b>diverges</b>.':'Since \\(L=1\\), the ratio test is <b>inconclusive</b> and you need another test.'}`;}
+};
+Q.rootLimit={name:'the root test limit',
+  gen(){return genOK(()=>({e:pick(P_ROOT)}),q=>vRoot(q.e.la,q.e.L));},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Apply the root test to ${M(SER(e.t,e.from||'n=1'))}. Give ${M(R`L=\lim_{n\to\infty}\sqrt[n]{|a_n|}`)} exactly, then the conclusion.</p>`;
+    numIn(el,'L',M('L='));
+    q.get=choiceButtons(el,CONV3);},
+  check(q,el){const e=q.e;const r=G(el,'L',checkNumber($('[data-k=L]',el).value,e.L));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a conclusion.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:'Take the \\(n\\)th root first: the exponent \\(n\\) disappears and you are left with an ordinary limit.'};
+    if(v!==e.v)return {ok:false,msg:e.v==='abs'?'\\(L<1\\) means absolute convergence.':'\\(L>1\\) means the terms do not tend to 0.'};
+    return {ok:true};},
+  solution(q){const e=q.e;
+    return `${e.w}, so ${M('L='+texVal(e.L))}. ${e.v==='abs'?'Since \\(L<1\\), the series <b>converges absolutely</b>.':'Since \\(L>1\\), the series <b>diverges</b>.'}`;}
+};
+Q.absCond={name:'absolute, conditional, or divergent',
+  gen(){return genOK(()=>({e:pick(P_AC).mk()}),q=>vAC(q.e));},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Classify ${M(SER(e.t,e.from||'n=1'))}. First type the size of the terms ${M('|a_n|')} as a formula in ${M('n')}, then classify the series.</p>`;
+    numIn(el,'b',M('|a_n|='),{wide:true,placeholder:'formula in n'});
+    q.get=choiceButtons(el,ACD);},
+  check(q,el){const e=q.e;const r=G(el,'b',bCheck($('[data-k=b]',el).value,e.b));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a classification.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:'Drop the sign and keep everything else: \\(|a_n|\\) is the size of the term.'};
+    if(v!==e.k)return {ok:false,msg:'Test \\(\\sum|a_n|\\) first. If it converges the answer is absolute; if it diverges, go back and try the alternating series test on \\(a_n\\) itself.'};
+    return {ok:true};},
+  solution(q){const e=q.e;const name={abs:'absolutely convergent',cond:'conditionally convergent',div:'divergent'}[e.k];
+    return `${M(`|a_n|=${e.bt}`)}. ${e.w[0].toUpperCase()+e.w.slice(1)}. The series is <b>${name}</b>.`;}
+};
+Q.powerRatio={name:'the ratio test on a power series',
+  gen(){return genOK(()=>{const c=rint(2,4);const x=pick([1,2,-2,3,-3,4,-4,5]);const L=Math.abs(x)/c;
+    return {c,x,L,v:L<1?'abs':L>1?'div':'inc',la:n=>Math.log(n)+n*Math.log(Math.abs(x))-n*Math.log(c)};},
+    q=>vRatio(q.la,q.L));},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Apply the ratio test to ${M(SER(R`\frac{n\,x^{n}}{${q.c}^{\,n}}`))} at ${M('x='+q.x)}. Give ${M('L')}, then say what the ratio test concludes at this value of ${M('x')}. (Module 11 does this for every ${M('x')} at once.)</p>`;
+    numIn(el,'L',M('L='));
+    q.get=choiceButtons(el,CONV3);},
+  check(q,el){const r=G(el,'L',checkNumber($('[data-k=L]',el).value,q.L));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a conclusion.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:'The \\(n\\) in front contributes \\((n+1)/n\\to 1\\); the rest is \\(|x|/'+q.c+'\\).'};
+    if(v!==q.v)return {ok:false,msg:'Compare \\(L\\) with 1: below is absolute convergence, above is divergence, exactly 1 decides nothing.'};
+    return {ok:true};},
+  solution(q){return `${M(R`\left|\frac{a_{n+1}}{a_n}\right|=\frac{(n+1)|x|^{\,n+1}}{${q.c}^{\,n+1}}\cdot\frac{${q.c}^{\,n}}{n|x|^{\,n}}=\frac{n+1}{n}\cdot\frac{|x|}{${q.c}}\to\frac{${Math.abs(q.x)}}{${q.c}}`)}, so ${M('L='+texNum(q.L))}. ${q.v==='abs'?'Since \\(L<1\\) the series <b>converges absolutely</b> at this \\(x\\).':q.v==='div'?'Since \\(L>1\\) the series <b>diverges</b> at this \\(x\\).':'Since \\(L=1\\) the ratio test is <b>inconclusive</b> here, which is exactly what happens at the endpoints of an interval of convergence.'}`;}
+};
+/* ============================================================ chapter 4: the mixed pool
+   every entry carries the series, the test that fits, the one quantity that settles it, and the verdict */
+const LAB={ratio:R`L=\lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right|`,root:R`L=\lim_{n\to\infty}\sqrt[n]{|a_n|}`,
+  lim:R`\lim_{n\to\infty}|a_n|`,p:R`p`,sratio:R`r`,compare:R`b_n`,integral:R`\int_{a}^{\infty} f(x)\,dx`,divint:R`\int_{a}^{\infty} f(x)\,dx`};
+const ASK={ratio:'the ratio-test limit',root:'the root-test limit',lim:'the limit of the size of the terms',
+  p:'the exponent \\(p\\)',sratio:'the common ratio \\(r\\)',compare:'a comparison series \\(b_n\\) (a \\(p\\)-series or a geometric series)',
+  integral:'the value of the integral',divint:'the value of the integral (type <code>inf</code> if it diverges)'};
+const MIX=[
+ {t:R`\frac{n}{2n+3}`,test:'the test for divergence',k:'lim',f:n=>n/(2*n+3),val:0.5,ans:'1/2',v:'div',
+  w:'the terms tend to \\(\\tfrac12\\), not 0'},
+ {t:R`\frac{(-1)^{n}n}{n+4}`,test:'the test for divergence',k:'lim',f:n=>n/(n+4),val:1,ans:'1',v:'div',
+  w:'\\(|a_n|\\to 1\\), so \\(a_n\\) cannot tend to 0'},
+ {t:R`\left(1+\frac1n\right)^{n}`,test:'the test for divergence',k:'lim',f:n=>Math.pow(1+1/n,n),val:Math.E,ans:'e',v:'div',
+  w:'the terms tend to \\(e\\), not 0'},
+ {t:R`\frac{(-1)^{n}2n}{3n+1}`,test:'the test for divergence',k:'lim',f:n=>2*n/(3*n+1),val:2/3,ans:'2/3',v:'div',
+  w:'\\(|a_n|\\to\\tfrac23\\ne 0\\)'},
+ {t:R`\frac{1}{n^{3}}`,test:'the \\(p\\)-series test',k:'p',la:n=>-3*Math.log(n),val:3,ans:'3',v:'conv',w:'\\(p=3>1\\)'},
+ {t:R`\frac{1}{\sqrt n}`,test:'the \\(p\\)-series test',k:'p',la:n=>-0.5*Math.log(n),val:0.5,ans:'1/2',v:'div',w:'\\(p=\\tfrac12\\le 1\\)'},
+ {t:R`\frac{3}{n^{4/3}}`,test:'the \\(p\\)-series test',k:'p',la:n=>Math.log(3)-(4/3)*Math.log(n),val:4/3,ans:'4/3',v:'conv',w:'\\(p=\\tfrac43>1\\), and the constant 3 changes nothing'},
+ {t:R`\left(\tfrac23\right)^{n}`,test:'the geometric series test',k:'sratio',f:n=>Math.pow(2/3,n),val:2/3,ans:'2/3',v:'conv',w:'\\(|r|=\\tfrac23<1\\)'},
+ {t:R`\left(-\tfrac54\right)^{n}`,test:'the geometric series test',k:'sratio',f:n=>Math.pow(-1.25,n),val:-1.25,ans:'-5/4',v:'div',w:'\\(|r|=\\tfrac54\\ge 1\\)'},
+ {t:R`3\left(\tfrac12\right)^{n-1}`,test:'the geometric series test',k:'sratio',f:n=>3*Math.pow(0.5,n-1),val:0.5,ans:'1/2',v:'conv',w:'\\(|r|=\\tfrac12<1\\), and the sum is \\(3/(1-\\tfrac12)=6\\)'},
+ {t:R`\frac{3n^2+1}{n^4+5}`,test:'limit comparison',k:'compare',la:n=>Math.log((3*n*n+1)/(n**4+5)),bf:n=>1/(n*n),bs:'1/n^2',ans:'1/n^2',v:'conv',w:'\\(a_n\\approx 3/n^2\\), and \\(\\sum 1/n^2\\) converges'},
+ {t:R`\frac{1}{\sqrt{n^3+2}}`,test:'limit comparison',k:'compare',la:n=>-0.5*Math.log(n**3+2),bf:n=>Math.pow(n,-1.5),bs:'1/n^(3/2)',ans:'1/n^(3/2)',v:'conv',w:'\\(a_n\\approx n^{-3/2}\\), and \\(p=\\tfrac32>1\\)'},
+ {t:R`\frac{n+2}{n^2+1}`,test:'limit comparison',k:'compare',la:n=>Math.log((n+2)/(n*n+1)),bf:n=>1/n,bs:'1/n',ans:'1/n',v:'div',w:'\\(a_n\\approx 1/n\\), and the harmonic series diverges'},
+ {t:R`\frac{n}{n^3+1}`,test:'limit comparison',k:'compare',la:n=>Math.log(n/(n**3+1)),bf:n=>1/(n*n),bs:'1/n^2',ans:'1/n^2',v:'conv',w:'\\(a_n\\approx 1/n^2\\)'},
+ {t:R`\frac{1}{n^2+n}`,test:'comparison',k:'compare',la:n=>-Math.log(n*n+n),bf:n=>1/(n*n),bs:'1/n^2',ans:'1/n^2',v:'conv',w:'\\(a_n<1/n^2\\)'},
+ {t:R`\frac{1}{2^{n}+3}`,test:'comparison',k:'compare',la:n=>-Math.log(Math.pow(2,n)+3),bf:n=>Math.pow(0.5,n),bs:'(1/2)^n',ans:'(1/2)^n',v:'conv',ns:[5,20,60,200],w:'\\(a_n<(1/2)^n\\), a convergent geometric series'},
+ {t:R`\frac{5^{n}}{3^{n}+4^{n}}`,test:'limit comparison',k:'compare',la:n=>n*Math.log(5)-Math.log(Math.pow(3,n)+Math.pow(4,n)),bf:n=>Math.pow(1.25,n),bs:'(5/4)^n',ans:'(5/4)^n',v:'div',ns:[5,20,60,200],w:'\\(a_n\\approx(5/4)^n\\), a divergent geometric series'},
+ {t:R`\frac{\sqrt n}{n+1}`,test:'limit comparison',k:'compare',la:n=>0.5*Math.log(n)-Math.log(n+1),bf:n=>1/Math.sqrt(n),bs:'1/n^(1/2)',ans:'1/sqrt(n)',v:'div',w:'\\(a_n\\approx n^{-1/2}\\), and \\(p=\\tfrac12\\le 1\\)'},
+ {t:R`n e^{-n}`,test:'the ratio test',k:'ratio',la:n=>Math.log(n)-n,val:1/Math.E,ans:'1/e',v:'conv',w:'\\(\\frac{n+1}{n}e^{-1}\\to e^{-1}<1\\)'},
+ {t:R`\frac{n!}{2^{n}}`,test:'the ratio test',k:'ratio',la:n=>lfact(n)-n*Math.LN2,val:'inf',ans:'inf',v:'div',w:'\\(\\frac{n+1}{2}\\to\\infty\\)'},
+ {t:R`\frac{2^{n}}{n!}`,test:'the ratio test',k:'ratio',la:n=>n*Math.LN2-lfact(n),val:0,ans:'0',v:'conv',w:'\\(\\frac{2}{n+1}\\to 0<1\\)'},
+ {t:R`\frac{n^2}{n!}`,test:'the ratio test',k:'ratio',la:n=>2*Math.log(n)-lfact(n),val:0,ans:'0',v:'conv',w:'\\(\\frac{(n+1)^2}{n^2(n+1)}\\to 0\\)'},
+ {t:R`\frac{n^{n}}{3^{n}n!}`,test:'the ratio test',k:'ratio',la:n=>n*Math.log(n)-n*Math.log(3)-lfact(n),val:Math.E/3,ans:'e/3',v:'conv',w:'\\(\\tfrac13(1+\\tfrac1n)^n\\to e/3<1\\)'},
+ {t:R`\frac{(n!)^2}{(2n)!}`,test:'the ratio test',k:'ratio',la:n=>2*lfact(n)-lfact(2*n),val:0.25,ans:'1/4',v:'conv',w:'\\(\\frac{n+1}{2(2n+1)}\\to\\tfrac14<1\\)'},
+ {t:R`\frac{n^2}{2^{n}}`,test:'the ratio test',k:'ratio',la:n=>2*Math.log(n)-n*Math.LN2,val:0.5,ans:'1/2',v:'conv',w:'\\(\\tfrac12(1+\\tfrac1n)^2\\to\\tfrac12<1\\)'},
+ {t:R`\left(\frac{n+1}{2n+1}\right)^{n}`,test:'the root test',k:'root',la:n=>n*Math.log((n+1)/(2*n+1)),val:0.5,ans:'1/2',v:'conv',w:'\\(\\sqrt[n]{|a_n|}=\\frac{n+1}{2n+1}\\to\\tfrac12<1\\)'},
+ {t:R`\left(1-\frac1n\right)^{n^2}`,test:'the root test',k:'root',la:n=>n*n*Math.log(1-1/n),val:1/Math.E,ans:'1/e',v:'conv',from:'n=2',w:'\\(\\sqrt[n]{|a_n|}=(1-\\tfrac1n)^n\\to e^{-1}<1\\)'},
+ {t:R`\left(\frac{3n+2}{2n+1}\right)^{n}`,test:'the root test',k:'root',la:n=>n*Math.log((3*n+2)/(2*n+1)),val:1.5,ans:'3/2',v:'div',w:'\\(\\sqrt[n]{|a_n|}\\to\\tfrac32>1\\)'},
+ {t:R`\frac{(-1)^{n}}{\sqrt{n+1}}`,test:'the alternating series test',k:'lim',f:n=>1/Math.sqrt(n+1),val:0,ans:'0',v:'conv',w:'\\(b_n=1/\\sqrt{n+1}\\) decreases to 0'},
+ {t:R`\frac{(-1)^{n}n}{n^2+4}`,test:'the alternating series test',k:'lim',f:n=>n/(n*n+4),val:0,ans:'0',v:'conv',w:'\\(b_n\\to 0\\) and \\(b_n\\) is eventually decreasing'},
+ {t:R`\frac{(-1)^{n}}{n!}`,test:'the alternating series test',k:'lim',f:n=>Math.exp(-lfact(n)),val:0,ans:'0',v:'conv',ns:[20,25],w:'\\(b_n=1/n!\\) decreases to 0 (and the series is absolutely convergent too)'},
+ {t:R`\frac{\ln n}{n^2}`,test:'the integral test',k:'integral',la:n=>Math.log(Math.log(n))-2*Math.log(n),ifun:x=>Math.log(x)/(x*x),a:1,val:1,ans:'1',v:'conv',from:'n=1',w:'\\(\\int_1^\\infty\\frac{\\ln x}{x^2}dx=1\\) by parts, a finite value'},
+ {t:R`\frac{1}{n^2+1}`,test:'the integral test',k:'integral',la:n=>-Math.log(n*n+1),ifun:x=>1/(x*x+1),a:1,val:Math.PI/4,ans:'pi/4',v:'conv',w:'\\(\\int_1^\\infty\\frac{dx}{x^2+1}=\\tfrac{\\pi}{2}-\\tfrac{\\pi}{4}=\\tfrac{\\pi}{4}\\)'},
+ {t:R`n e^{-n^2}`,test:'the integral test',k:'integral',la:n=>Math.log(n)-n*n,ifun:x=>x*Math.exp(-x*x),a:1,val:1/(2*Math.E),ans:'1/(2e)',v:'conv',w:'\\(\\int_1^\\infty xe^{-x^2}dx=\\tfrac{1}{2e}\\) by the substitution \\(u=x^2\\)'},
+ {t:R`\frac{\ln n}{n}`,test:'the integral test',k:'divint',f:n=>Math.log(n)/n,a:1,ans:'inf',val:'inf',v:'div',from:'n=1',w:'\\(\\int_1^\\infty\\frac{\\ln x}{x}dx=\\lim\\tfrac12(\\ln x)^2=\\infty\\)'},
+ {t:R`\frac{1}{n\ln n}`,test:'the integral test',k:'divint',f:n=>1/(n*Math.log(n)),a:2,ans:'inf',val:'inf',v:'div',from:'n=2',w:'\\(\\int_2^\\infty\\frac{dx}{x\\ln x}=\\lim\\ln(\\ln x)=\\infty\\) by the substitution \\(u=\\ln x\\)'}
+];
+function vMix(e){
+  switch(e.k){
+    case 'ratio':return vRatio(e.la,e.val);
+    case 'root':return vRoot(e.la,e.val);
+    case 'lim':return vLim(e.f,e.val,e.ns);
+    case 'p':return vP(e.la,e.val);
+    case 'sratio':return vSRatio(e.f,e.val);
+    case 'compare':return vCompare(e.la,e.bf,e.ns);
+    case 'integral':return vInt(e.ifun,e.a,e.val);
+    case 'divint':return psum(e.f,10001,50000)>0.15;
+  }
+  return false;
+}
+const mixAsk=e=>e.k==='integral'||e.k==='divint'
+  ?`the value of ${M(R`\int_{${e.a}}^{\infty} f(x)\,dx`)} for the matching function ${M('f')}${e.k==='divint'?' (type <code>inf</code> if it diverges)':''}`
+  :ASK[e.k];
+const mixLabel=e=>e.k==='integral'||e.k==='divint'?R`\int_{${e.a}}^{\infty} f(x)\,dx=`:LAB[e.k]+'=';
+function mixCheck(e,val){return e.k==='compare'?bCheck(val,e.bs):checkLimit(val,e.val);}
+
+/* ============================================================ chapter 4 question types */
+Q.mixedVerdict={name:'mixed bag: evidence and verdict',
+  gen(){return genOK(()=>({e:pick(MIX)}),q=>vMix(q.e));},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Decide whether ${M(SER(e.t,e.from||'n=1'))} converges. Type ${mixAsk(e)}, then give the verdict.</p>`;
+    numIn(el,'key',M(mixLabel(e)),{wide:e.k==='compare',placeholder:e.k==='compare'?'formula in n':''});
+    q.get=choiceButtons(el,CONV2);},
+  check(q,el){const e=q.e;const r=G(el,'key',mixCheck(e,$('[data-k=key]',el).value));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a verdict.'};
+    if(!r.ok)return {ok:false,err:r.err,msg:`Read the shape first: this one is built for ${e.test}.`};
+    if(v!==e.v)return {ok:false,msg:'The evidence is right. Now state what that evidence proves.'};
+    return {ok:true};},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el0('div','hintbox expr'));}
+    h.innerHTML=`The shape of this series calls for <b>${q.e.test}</b>.`;},
+  solution(q){const e=q.e;return `Use ${e.test}: ${e.w}. So ${M(SER(e.t,e.from||'n=1'))} <b>${e.v==='conv'?'converges':'diverges'}</b>.`;}
+};
+Q.whichEvidence={name:'what settles it',
+  gen(){return genOK(()=>({e:pick(MIX)}),q=>vMix(q.e));},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Which single quantity settles ${M(SER(e.t,e.from||'n=1'))}? Produce it: type ${mixAsk(e)}.</p>`;
+    numIn(el,'key',M(mixLabel(e)),{wide:e.k==='compare',placeholder:e.k==='compare'?'formula in n':''});},
+  check(q,el){const e=q.e;const r=G(el,'key',mixCheck(e,$('[data-k=key]',el).value));
+    if(!r.ok)return {ok:false,err:r.err,msg:`Look at the shape: factorials and \\(c^{\\,n}\\) mean the ratio test, an \\(n\\)th power means the root test, a rational function means comparison.`};
+    return {ok:true};},
+  solution(q){const e=q.e;return `The test that fits is ${e.test}, and the quantity it needs is ${M(mixLabel(e)+(e.k==='compare'?previewTex(e.ans):texVal(e.val)))}. ${e.w[0].toUpperCase()+e.w.slice(1)}, so the series <b>${e.v==='conv'?'converges':'diverges'}</b>.`;}
+};
+const P_TWO=[
+ {t:R`\frac{n}{2^{n}}`,l1:R`L=\lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right|=`,a1:'1/2',v1:0.5,k1:'num',
+  l2:R`b_n=`,a2:'(3/4)^n',k2:'expr',n1:'the ratio test',n2:'comparison with a geometric series',
+  w:'The ratio is \\(\\tfrac12\\cdot\\frac{n+1}{n}\\to\\tfrac12<1\\). Or note \\(n\\le(3/2)^n\\), so \\(\\frac{n}{2^n}\\le(3/4)^n\\) and the geometric series with \\(r=\\tfrac34\\) converges.',
+  chk:()=>{for(let n=1;n<=200;n++)if(n/Math.pow(2,n)>Math.pow(0.75,n)+1e-15)return false;return true;}},
+ {t:R`\frac{1}{n^2}`,l1:R`p=`,a1:'2',v1:2,k1:'num',l2:R`\int_1^{\infty}\frac{dx}{x^2}=`,a2:'1',v2:1,k2:'num',
+  n1:'the \\(p\\)-series test',n2:'the integral test',
+  w:'\\(p=2>1\\), so the \\(p\\)-series converges. The integral test agrees: \\(\\int_1^\\infty x^{-2}dx=1\\) is finite.',
+  chk:()=>vInt(x=>1/(x*x),1,1)},
+ {t:R`\frac{(-1)^{n}}{n^{3}}`,l1:R`\lim_{n\to\infty} b_n=`,a1:'0',v1:0,k1:'num',l2:R`p=`,a2:'3',v2:3,k2:'num',
+  n1:'the alternating series test',n2:'absolute convergence by the \\(p\\)-series test',
+  w:'\\(b_n=1/n^3\\downarrow 0\\), so the alternating series test gives convergence. Since \\(p=3>1\\), \\(\\sum|a_n|\\) converges too, so the convergence is absolute.',chk:()=>true},
+ {t:R`\frac{1}{n^2+1}`,l1:R`b_n=`,a1:'1/n^2',k1:'expr',l2:R`\int_1^{\infty}\frac{dx}{x^2+1}=`,a2:'pi/4',v2:Math.PI/4,k2:'num',
+  n1:'comparison with a \\(p\\)-series',n2:'the integral test',
+  w:'\\(\\frac{1}{n^2+1}&lt;\\frac{1}{n^2}\\) and \\(\\sum 1/n^2\\) converges. The integral test agrees: \\(\\int_1^\\infty\\frac{dx}{x^2+1}=\\tfrac{\\pi}{4}\\).',
+  chk:()=>vInt(x=>1/(x*x+1),1,Math.PI/4)},
+ {t:R`\frac{n}{3^{n}}`,l1:R`L_{\text{ratio}}=`,a1:'1/3',v1:1/3,k1:'num',l2:R`L_{\text{root}}=`,a2:'1/3',v2:1/3,k2:'num',
+  n1:'the ratio test',n2:'the root test',
+  w:'Ratio: \\(\\tfrac13\\cdot\\frac{n+1}{n}\\to\\tfrac13\\). Root: \\(\\frac{\\sqrt[n]{n}}{3}\\to\\tfrac13\\), using \\(\\sqrt[n]{n}\\to 1\\). Both are below 1.',
+  chk:()=>vRatio(n=>Math.log(n)-n*Math.log(3),1/3)&&vRoot(n=>Math.log(n)-n*Math.log(3),1/3)},
+ {t:R`e^{-n}`,l1:R`r=`,a1:'1/e',v1:1/Math.E,k1:'num',l2:R`\int_1^{\infty}e^{-x}\,dx=`,a2:'1/e',v2:1/Math.E,k2:'num',
+  n1:'the geometric series test',n2:'the integral test',
+  w:'It is geometric with \\(r=e^{-1}<1\\). The integral test agrees: \\(\\int_1^\\infty e^{-x}dx=e^{-1}\\).',
+  chk:()=>vInt(x=>Math.exp(-x),1,1/Math.E)},
+ {t:R`\frac{2^{n}}{3^{n}}`,l1:R`r=`,a1:'2/3',v1:2/3,k1:'num',l2:R`L_{\text{root}}=`,a2:'2/3',v2:2/3,k2:'num',
+  n1:'the geometric series test',n2:'the root test',
+  w:'Geometric with \\(r=\\tfrac23\\). The root test gives the same number, because \\(\\sqrt[n]{(2/3)^n}=\\tfrac23\\) exactly.',chk:()=>true},
+ {t:R`\frac{1}{n(n+1)}`,l1:R`b_n=`,a1:'1/n^2',k1:'expr',l2:R`\sum_{n=1}^{\infty}a_n=`,a2:'1',v2:1,k2:'num',
+  n1:'comparison with a \\(p\\)-series',n2:'telescoping partial sums',
+  w:'\\(\\frac{1}{n(n+1)}&lt;\\frac{1}{n^2}\\), so it converges. It also telescopes: \\(\\frac{1}{n}-\\frac{1}{n+1}\\) gives \\(s_N=1-\\frac{1}{N+1}\\to 1\\).',
+  chk:()=>Math.abs(psum(n=>1/(n*(n+1)),1,200000)-1)<1e-4}
+];
+Q.twoTests={name:'two ways to see it',
+  gen(){return genOK(()=>({e:pick(P_TWO)}),q=>q.e.chk());},
+  render(q,el){const e=q.e;
+    el.innerHTML=`<p class="prompt">Two different tests settle ${M(SER(e.t))}. Produce the evidence for both: ${e.n1}, and ${e.n2}.</p>`;
+    numIn(el,'k1',M(e.l1),{wide:e.k1==='expr',placeholder:e.k1==='expr'?'formula in n':''});
+    numIn(el,'k2',M(e.l2),{wide:e.k2==='expr',placeholder:e.k2==='expr'?'formula in n':''});},
+  check(q,el){const e=q.e;
+    const r1=e.k1==='expr'?bCheck($('[data-k=k1]',el).value,e.a1):checkNumber($('[data-k=k1]',el).value,e.v1);
+    const r2=e.k2==='expr'?bCheck($('[data-k=k2]',el).value,e.a2):checkNumber($('[data-k=k2]',el).value,e.v2);
+    return Gall(el,[['k1',r1],['k2',r2]]);},
+  solution(q){const e=q.e;return `${e.w} Either route proves the series converges.`;}
+};
+/* ============================================================ chapter 1 widget: a_n, b_n, and the ratio */
+(function(){
+  const PRE=[
+    {n:'(3n²+2)/(n⁴+n) vs 1/n²',a:n=>(3*n*n+2)/(n**4+n),b:n=>1/(n*n),c:'3',cs:'converges with it'},
+    {n:'(n+1)/(n²+3) vs 1/n',a:n=>(n+1)/(n*n+3),b:n=>1/n,c:'1',cs:'diverges with it'},
+    {n:'1/(2ⁿ+n) vs (1/2)ⁿ',a:n=>1/(Math.pow(2,n)+n),b:n=>Math.pow(0.5,n),c:'1',cs:'converges with it'},
+    {n:'sin(1/n) vs 1/n',a:n=>Math.sin(1/n),b:n=>1/n,c:'1',cs:'diverges with it'},
+    {n:'ln n / n vs 1/n',a:n=>Math.log(n)/n,b:n=>1/n,c:'∞',cs:'the ratio runs away, so limit comparison does not apply'}
+  ];
+  const p=new Plot2D('#lcPlot',{xmin:0,xmax:18,ymin:0,ymax:1,labels:true});
+  let cur=PRE[0],N=16,mode='terms';
+  const pb=$('#lcPresets'),mb=$('#lcMode');
+  PRE.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);b.onclick=()=>{cur=pr;$$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};pb.appendChild(b);});
+  $$('.btn',pb)[0].classList.add('on');
+  [['terms','the terms aₙ and bₙ'],['sums','the partial sums']].forEach(([k,lab])=>{
+    const b=el('button',{class:'btn small'},lab);b.onclick=()=>{mode=k;$$('.btn',mb).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};mb.appendChild(b);});
+  $$('.btn',mb)[0].classList.add('on');
+  sliderRow($('#lcSliders'),{label:'terms shown',min:5,max:40,step:1,value:N,fmt:v=>String(v),onInput:v=>{N=v;draw();}});
+  function draw(){
+    const A=[],B=[];let sa=0,sb=0;
+    for(let n=1;n<=N;n++){const av=cur.a(n),bv=cur.b(n);sa+=av;sb+=bv;A.push(mode==='terms'?av:sa);B.push(mode==='terms'?bv:sb);}
+    const top=Math.max(...A,...B)*1.18||1;
+    Object.assign(p.o,{xmin:-N*0.05,xmax:N+1,ymin:-top*0.07,ymax:top});
+    p.begin();
+    B.forEach((v,i)=>p.point([i+1,v],{color:'#2563eb',r:3.4}));
+    A.forEach((v,i)=>p.point([i+1,v],{color:'#d97706',r:3.4}));
+    p.text([N*0.55,top*0.9],mode==='terms'?'orange: aₙ    blue: bₙ':'orange: Σaₙ    blue: Σbₙ',{color:'#8b877e'});
+    const rows=[1,2,5,Math.max(6,Math.round(N/2)),N].filter((v,i,arr)=>arr.indexOf(v)===i&&v<=N);
+    $('#lcOut').innerHTML=`<table class="simple" style="font-size:13px;margin:0"><tr><th>n</th><th>aₙ</th><th>bₙ</th><th>aₙ/bₙ</th></tr>`+
+      rows.map(n=>`<tr><td>${n}</td><td>${fmtDec(cur.a(n),5)}</td><td>${fmtDec(cur.b(n),5)}</td><td><b>${fmtDec(cur.a(n)/cur.b(n),4)}</b></td></tr>`).join('')+
+      `</table><div style="margin-top:6px">limit of the ratio: <b>c = ${cur.c}</b> &nbsp;·&nbsp; so Σaₙ ${cur.cs}</div>`;
+  }
+  redrawOnShow('comparison',draw);draw();
+  new Drill({mount:'#drill-comparison',section:'comparison',goal:8,
+    ...mixDrill([Q.dominantTerms,Q.dominantTerms,Q.limitComparison,Q.limitComparison,Q.directInequality,Q.directInequality,Q.logPower])});
+})();
+
+/* ============================================================ chapter 2 widget: bracketing */
+(function(){
+  const accel=t=>{let arr=[];let s=0;for(let n=1;n<=3000;n++){s+=t(n);if(n>2992)arr.push(s);}
+    while(arr.length>1){const a2=[];for(let i=0;i<arr.length-1;i++)a2.push((arr[i]+arr[i+1])/2);arr=a2;}return arr[0];};
+  const PRE=[
+    {n:'(−1)ⁿ⁺¹/n',t:n=>(n%2?1:-1)/n,b:n=>1/n,lim:Math.LN2,lt:'ln 2'},
+    {n:'(−1)ⁿ/n²',t:n=>(n%2?-1:1)/(n*n),b:n=>1/(n*n),lim:-Math.PI*Math.PI/12,lt:'−π²/12'},
+    {n:'(−1)ⁿ/√n',t:n=>(n%2?-1:1)/Math.sqrt(n),b:n=>1/Math.sqrt(n),lim:null,lt:'≈ −0.6049'},
+    {n:'(−1)ⁿ n/(n+1)  (fails)',t:n=>(n%2?-1:1)*n/(n+1),b:n=>n/(n+1),lim:null,lt:'no limit',bad:true}
+  ];
+  PRE.forEach(pr=>{if(pr.lim===null&&!pr.bad)pr.lim=accel(pr.t);});
+  const p=new Plot2D('#astPlot',{xmin:0,xmax:26,ymin:-1.2,ymax:1.2});
+  let cur=PRE[0],N=4;
+  const pb=$('#astPresets');
+  PRE.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);b.onclick=()=>{cur=pr;$$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};pb.appendChild(b);});
+  $$('.btn',pb)[0].classList.add('on');
+  const sl=sliderRow($('#astSliders'),{label:'N (terms added)',min:1,max:24,step:1,value:N,fmt:v=>String(v),onInput:v=>{N=v;draw();}});
+  let acc=0;
+  const anim=animator('alternating',dt=>{acc+=dt;if(acc>0.45){acc=0;N=N>=24?1:N+1;sl.set(N);draw();}});
+  $('#astPlay').onclick=()=>{anim.toggle();$('#astPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';$('#astStatus').textContent=anim.running?'watch the dots hop across the sum':'';};
+  function draw(){
+    const S=[];let s=0;for(let n=1;n<=26;n++){s+=cur.t(n);S.push(s);}
+    const bN=cur.b(N+1),sN=S[N-1];
+    const lo=Math.min(...S,sN-bN),hi=Math.max(...S,sN+bN),pad=(hi-lo)*0.18||0.5;
+    Object.assign(p.o,{xmin:-1,xmax:27,ymin:lo-pad,ymax:hi+pad});
+    p.begin();
+    p.poly([[0,sN-bN],[27,sN-bN],[27,sN+bN],[0,sN+bN]],{fill:'rgba(217,119,6,.16)',stroke:'rgba(217,119,6,.5)'});
+    if(cur.lim!=null)p.fn(()=>cur.lim,{color:'#16a34a',width:1.8,dash:[6,4]});
+    p.param(t=>{const i=Math.max(0,Math.min(25,Math.round(t)));return [i+1,S[i]];},0,25,{color:'#e0ddd5',width:1.2,n:200});
+    S.forEach((v,i)=>p.point([i+1,v],{color:i+1===N?'#d97706':'#7c3aed',r:i+1===N?6:3.4,ring:i+1===N}));
+    p.text([18,hi+pad*0.4],cur.lim!=null?'dashed green: the sum s':'no limit to draw',{color:'#8b877e'});
+    const err=cur.lim!=null?Math.abs(cur.lim-sN):null;
+    $('#astOut').innerHTML=`N = <b>${N}</b> &nbsp; s<sub>N</sub> = <b>${fmtDec(sN,6)}</b><br>`+
+      `b<sub>N+1</sub> = ${fmtDec(bN,6)} &nbsp; (the first term you left out)<br>`+
+      (cur.lim!=null?`s = ${cur.lt} = ${fmtDec(cur.lim,6)}<br>|s − s<sub>N</sub>| = <b>${fmtDec(err,6)}</b> ${err<=bN?'≤':'>'} b<sub>N+1</sub> = ${fmtDec(bN,6)}`
+        :`the terms do not shrink to 0, so the partial sums never settle: <b>divergent</b>`);
+  }
+  redrawOnShow('alternating',draw);draw();
+  new Drill({mount:'#drill-alternating',section:'alternating',goal:7,
+    ...mixDrill([Q.astApply,Q.astApply,Q.astError,Q.astTerms,Q.astApprox])});
+})();
+
+/* ============================================================ chapter 3 widget + walkthrough */
+(function(){
+  const PRE=[
+    {n:'2ⁿ/n!',la:n=>n*Math.LN2-lfact(n),L:0,lt:'L = 0'},
+    {n:'n!/nⁿ',la:n=>lfact(n)-n*Math.log(n),L:1/Math.E,lt:'L = 1/e ≈ 0.368'},
+    {n:'((n+1)/(2n+1))ⁿ',la:n=>n*Math.log((n+1)/(2*n+1)),L:0.5,lt:'L = 1/2'},
+    {n:'(1+1/n)^(n²)',la:n=>n*n*Math.log(1+1/n),L:Math.E,lt:'L = e ≈ 2.718'},
+    {n:'1/n²  (both fail)',la:n=>-2*Math.log(n),L:1,lt:'L = 1, no conclusion'},
+    {n:'n!/2ⁿ',la:n=>lfact(n)-n*Math.LN2,L:Infinity,lt:'L = ∞'}
+  ];
+  const p=new Plot2D('#rrPlot',{xmin:0,xmax:26,ymin:0,ymax:2});
+  let cur=PRE[0],N=20;
+  const pb=$('#rrPresets');
+  PRE.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);b.onclick=()=>{cur=pr;$$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};pb.appendChild(b);});
+  $$('.btn',pb)[0].classList.add('on');
+  sliderRow($('#rrSliders'),{label:'n shown',min:6,max:40,step:1,value:N,fmt:v=>String(v),onInput:v=>{N=v;draw();}});
+  function draw(){
+    const RA=[],RT=[];
+    for(let n=1;n<=N;n++){RA.push(ratioAt(cur.la,n));RT.push(rootAt(cur.la,n));}
+    const finite=[...RA,...RT].filter(Number.isFinite);
+    const top=Math.min(6,Math.max(1.6,Math.max(...finite)*1.15));
+    Object.assign(p.o,{xmin:-N*0.05,xmax:N+1,ymin:-top*0.06,ymax:top});
+    p.begin();
+    p.fn(()=>1,{color:'#b9b5ab',width:1.4});
+    if(Number.isFinite(cur.L)&&cur.L<top)p.fn(()=>cur.L,{color:'#16a34a',width:1.5,dash:[6,4]});
+    RT.forEach((v,i)=>{if(v<=top)p.point([i+1,v],{color:'#2563eb',r:3.4});});
+    RA.forEach((v,i)=>{if(v<=top)p.point([i+1,v],{color:'#d97706',r:3.4});});
+    p.text([N*0.5,top*0.93],'gray line: L = 1',{color:'#8b877e'});
+    $('#rrOut').innerHTML=`at n = ${N}: &nbsp; |a<sub>n+1</sub>/a<sub>n</sub>| = <b>${fmtDec(RA[N-1],5)}</b> &nbsp;·&nbsp; ⁿ√|a<sub>n</sub>| = <b>${fmtDec(RT[N-1],5)}</b><br>`+
+      `limit: ${cur.lt}<br>${cur.L===1?'neither test can decide: go back to comparison or the integral test':cur.L<1?'both limits are below 1, so the series converges absolutely':'both limits are above 1, so the series diverges'}`;
+  }
+  redrawOnShow('ratioroot',draw);draw();
+
+  /* step-by-step ratio test */
+  let W=null,step=0;
+  function newW(){
+    const fam=pick(['fact','pow','nfact','nn']);
+    const c=fam==='nn'?pick([2,3]):rint(2,5),k=rint(1,3);
+    if(fam==='fact')W={a:R`\frac{${c}^{\,n}}{n!}`,a1:R`\frac{${c}^{\,n+1}}{(n+1)!}`,
+      ratio:R`\frac{${c}^{\,n+1}}{(n+1)!}\cdot\frac{n!}{${c}^{\,n}}`,canc:R`\frac{${c}}{n+1}`,lim:'0',ok:true};
+    else if(fam==='pow')W={a:R`\frac{n^{${k}}}{${c}^{\,n}}`,a1:R`\frac{(n+1)^{${k}}}{${c}^{\,n+1}}`,
+      ratio:R`\frac{(n+1)^{${k}}}{${c}^{\,n+1}}\cdot\frac{${c}^{\,n}}{n^{${k}}}`,canc:R`\frac{1}{${c}}\left(\frac{n+1}{n}\right)^{${k}}`,lim:texFrac(1,c),ok:true};
+    else if(fam==='nfact')W={a:R`\frac{n!}{${c}^{\,n}}`,a1:R`\frac{(n+1)!}{${c}^{\,n+1}}`,
+      ratio:R`\frac{(n+1)!}{${c}^{\,n+1}}\cdot\frac{${c}^{\,n}}{n!}`,canc:R`\frac{n+1}{${c}}`,lim:R`\infty`,ok:false};
+    else W={a:R`\frac{${c}^{\,n}\,n!}{n^{n}}`,a1:R`\frac{${c}^{\,n+1}(n+1)!}{(n+1)^{n+1}}`,
+      ratio:R`\frac{${c}^{\,n+1}(n+1)!}{(n+1)^{n+1}}\cdot\frac{n^{n}}{${c}^{\,n}\,n!}`,canc:R`${c}\left(\frac{n}{n+1}\right)^{n}`,lim:R`\frac{${c}}{e}`,ok:c===2};
+    W.concl=W.ok?'\\(L<1\\), so the series converges absolutely.':'\\(L>1\\), so the series diverges.';
+    step=0;drawW();
+  }
+  function drawW(){
+    const L=[];
+    L.push(`<span class="t a">${M('a_n='+W.a)}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}">Step 1: <span class="t ${step===1?'now':''} a">${M('a_{n+1}='+W.a1)}</span></span>`);
+    L.push(`<span class="${step>=2?'':'faint'}">Step 2: <span class="t ${step===2?'now':''} b">${M(R`\left|\frac{a_{n+1}}{a_n}\right|=`+W.ratio)}</span></span>`);
+    L.push(`<span class="${step>=3?'':'faint'}">Step 3: <span class="t ${step===3?'now':''} b">${M('='+W.canc)}</span></span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">Step 4: <span class="t ${step===4?'now':''} c">${M('L='+W.lim)}</span></span>`);
+    L.push(`<span class="${step>=5?'':'faint'}">Step 5: ${step>=5?W.concl:''}</span>`);
+    $('#wtExpr').innerHTML=escHtml(L.join('<br>'));
+    const st=['A series with a factorial or a power: the ratio test is built for this. Press Next.',
+      'Write a_{n+1} by replacing every n with n+1. Nothing else changes.',
+      'Divide by a_n, which means multiplying by its reciprocal.',
+      'Cancel: (n+1)! = (n+1)·n! and c^{n+1} = c·c^n. No factorial should survive.',
+      'Take the limit of what is left.',
+      'Compare L with 1 and state the conclusion.'];
+    $('#wtStatus').textContent=st[step];
+    $('#wtPrev').disabled=step===0;$('#wtNext').disabled=step===5;
+    typeset($('#wtExpr'));
+  }
+  $('#wtNext').onclick=()=>{step=Math.min(5,step+1);drawW();};
+  $('#wtPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#wtNew').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-ratioroot',section:'ratioroot',goal:8,
+    ...mixDrill([Q.ratioLimit,Q.ratioLimit,Q.rootLimit,Q.rootLimit,Q.absCond,Q.absCond,Q.powerRatio])});
+})();
+
+/* ============================================================ chapter 4 drill */
+new Drill({mount:'#drill-strategy',section:'strategy',goal:8,
+  ...mixDrill([Q.mixedVerdict,Q.mixedVerdict,Q.mixedVerdict,Q.whichEvidence,Q.whichEvidence,Q.twoTests])});
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:14,pass:11,section:'quiz',types:[
+  Q.dominantTerms,Q.limitComparison,Q.directInequality,Q.logPower,
+  Q.astApply,Q.astError,Q.astTerms,Q.astApprox,
+  Q.ratioLimit,Q.rootLimit,Q.absCond,Q.powerRatio,
+  Q.mixedVerdict,Q.mixedVerdict,Q.whichEvidence,Q.twoTests]});
+
+/* one pass over every question type: protect bare < in worked solutions and feedback messages */
+Object.keys(Q).forEach(k=>{const t=Q[k];const so=t.solution,ch=t.check;
+  t.solution=(q,e)=>escHtml(so.call(t,q,e));
+  t.check=(q,e)=>{const r=ch.call(t,q,e);if(r&&r.msg)r.msg=escHtml(r.msg);return r;};});
+
+/* test hook: correct inputs for every question type (used by the orchestrator's harness) */
+window.__solvers={
+  'pick the comparison series':q=>({b:q.e.b,_btn:IDX(CONV2,q.e.v)}),
+  'the limit comparison constant':q=>({c:q.e.cs,_btn:IDX(CONV2,q.e.v)}),
+  'which way the inequality goes':q=>({b:q.e.b,_btn:q.e.dir==='le'?0:1,_btn1:IDX(CONV2,q.e.v)}),
+  'logs and powers':q=>({cond:'p > '+q.th}),
+  'apply the alternating series test':q=>({L:q.e.Ls,_btn:q.e.conv?0:1}),
+  'alternating series error bound':q=>({r:q.as}),
+  'how many terms':q=>({N:String(q.N)}),
+  'approximate an alternating sum':q=>({s:String(q.s),r:q.as}),
+  'the ratio test limit':q=>({L:q.e.Ls,_btn:IDX(CONV3,q.e.v)}),
+  'the root test limit':q=>({L:q.e.Ls,_btn:IDX(CONV3,q.e.v)}),
+  'absolute, conditional, or divergent':q=>({b:q.e.b,_btn:IDX(ACD,q.e.k)}),
+  'the ratio test on a power series':q=>({L:String(q.L),_btn:IDX(CONV3,q.v)}),
+  'mixed bag: evidence and verdict':q=>({key:q.e.ans,_btn:IDX(CONV2,q.e.v)}),
+  'what settles it':q=>({key:q.e.ans}),
+  'two ways to see it':q=>({k1:q.e.a1,k2:q.e.a2})
+};
+
+/* every pool entry is checked once at load: a stored limit that does not match the series is a page error */
+(function(){
+  const bad=[];
+  P_DOM.forEach(e=>{if(!vCompare(e.la,e.bf,e.ns))bad.push('P_DOM '+e.b);});
+  P_LC.forEach(e=>{const ns=e.ns||[500,1000];if(!ns.every(n=>relOK(e.f(n)/e.bf(n),e.c,0.02)))bad.push('P_LC '+e.cs);});
+  P_DI.forEach(e=>{const ok=[e.lo,e.lo+3,20,200,2000].every(n=>e.dir==='le'?e.f(n)<=e.bf(n)*(1+1e-12):e.f(n)>=e.bf(n)*(1-1e-12));if(!ok)bad.push('P_DI '+e.b);});
+  P_AST.forEach(m=>{const e=m.mk();if(!vLim(e.f,e.L,e.ns))bad.push('P_AST '+e.Ls);});
+  P_RATIO.forEach(m=>{const e=m.mk();if(!vRatio(e.la,e.L))bad.push('P_RATIO '+e.Ls);});
+  P_ROOT.forEach(e=>{if(!vRoot(e.la,e.L))bad.push('P_ROOT '+e.Ls);});
+  P_AC.forEach(m=>{const e=m.mk();if(!vAC(e))bad.push('P_AC '+e.b);});
+  MIX.forEach(e=>{if(!vMix(e))bad.push('MIX '+e.ans);});
+  P_TWO.forEach(e=>{if(!e.chk())bad.push('P_TWO '+e.a1);});
+  if(bad.length)console.error('series-tests pool verification failed: '+bad.join(' | '));
+})();
+
+$('#memcard').replaceWith(memoryCard('c2-tests',[
+  R`<b>Comparison test.</b> For \(0\le a_n\le b_n\): if \(\sum b_n\) converges so does \(\sum a_n\); if \(\sum a_n\) diverges so does \(\sum b_n\). The inequality only needs to hold eventually.`,
+  R`<b>Limit comparison test.</b> If \(a_n,b_n>0\) and \(\lim a_n/b_n=c\) with \(0&lt;c&lt;\infty\), the two series both converge or both diverge.`,
+  R`<b>Alternating series test.</b> \(\sum(-1)^{n-1}b_n\) with \(b_n>0\) converges when \(b_n\) is eventually decreasing and \(b_n\to 0\).`,
+  R`<b>Alternating remainder.</b> \(|R_N|=|s-s_N|\le b_{N+1}\): the error is at most the first term you dropped.`,
+  R`<b>Absolute convergence.</b> If \(\sum|a_n|\) converges then \(\sum a_n\) converges. Conditional means \(\sum a_n\) converges but \(\sum|a_n|\) does not.`,
+  R`<b>Ratio test.</b> \(L=\lim|a_{n+1}/a_n|\): \(L<1\) absolutely convergent, \(L>1\) or \(\infty\) divergent, \(L=1\) no information.`,
+  R`<b>Root test.</b> \(L=\lim\sqrt[n]{|a_n|}\), same three cases.`,
+  R`<b>Shapes.</b> Rational or algebraic in \(n\) → limit comparison with a \(p\)-series. Factorials, \(n^n\), \(c^{\,n}\) → ratio. Whole term to the \(n\) → root. \((-1)^n b_n\) → alternating series test. \(f(n)\) integrable → integral test.`,
+  R`<b>Reference series.</b> \(\sum 1/n^p\) converges exactly when \(p>1\); \(\sum ar^{\,n}\) converges exactly when \(|r|<1\), to \(\dfrac{a}{1-r}\).`,
+  R`<b>Worth knowing.</b> \(\sum_{n=1}^{\infty}\dfrac{(-1)^{n+1}}{n}=\ln 2\) converges conditionally, while \(\sum 1/n\) diverges.`
+].map(escHtml)));
+
+initModule({key:'c2-tests',title:'Series Tests',sub:'Module 10 · Stewart 11.4 to 11.7'});
+</script>
+</body>
+</html>
