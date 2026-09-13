@@ -75,7 +75,7 @@ const KEY='m102-flash-missed';
 let missed={};try{missed=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
 const saveMissed=()=>{try{localStorage.setItem(KEY,JSON.stringify(missed));}catch(e){}};
 const missedOf=mod=>CARDS.filter(c=>c.mod===mod&&missed[c.id]);
-const short=t=>t.replace(/^Module \d+ · /,'');
+const short=t=>t.replace(/^[^·]*· /,'');
 let mod=null,queue=[],i=0,flipped=false,known=[],miss=[],mode='all',busy=false;
 
 function buildNav(){
