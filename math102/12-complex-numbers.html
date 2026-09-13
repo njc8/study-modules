@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Complex Numbers</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 12 · Stewart Appendix H</p>
+  <h2>Complex numbers</h2>
+  <p class="lead">Add one new number, \(i\), with \(i^2=-1\), and three things happen at once: every polynomial gets all of its roots, multiplication becomes rotation, and \(e^{i\theta}\) walks around the unit circle.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or slide, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Type a complex number any way you would write it: <code>3-4i</code>, <code>(1+2i)(3-i)</code> (the checker multiplies it out), <code>2e^(i pi/3)</code>, <code>2(cos(pi/3)+i sin(pi/3))</code>, <code>sqrt(3)+i</code>, or <code>(1+7i)/10</code>. Lists of roots are comma separated and any order is accepted. Angles are always in radians, so type <code>3pi/4</code> or <code>-pi/6</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>Answer boxes work like WebAssign's calcPad: type <code>sqrt</code> and a radical appears, <code>/</code> makes a fraction, <code>^</code> an exponent, <code>pi</code> the symbol. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the number \(z\) you control</span>
+      <span><i class="dot" style="background:var(--b)"></i> the second number \(w\), and the imaginary steps</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result: a product, a sum, a limit point</span>
+      <span><i class="dot" style="background:var(--d)"></i> powers, roots, and marked points</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Add, subtract, multiply, divide, and conjugate complex numbers, and find the modulus of one.</li>
+      <li>Solve a quadratic whose discriminant is negative and write both roots.</li>
+      <li>Convert between \(a+bi\), \(r(\cos\theta+i\sin\theta)\), and \(re^{i\theta}\), with the argument in the principal range.</li>
+      <li>Multiply and divide in polar form, and take powers with De Moivre's theorem.</li>
+      <li>Find all \(n\) of the \(n\)th roots of a complex number and place them on their circle.</li>
+      <li>State Euler's formula, derive it from the Maclaurin series of \(e^x\), and explain why \(e^{i\pi}+1=0\).</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 ARITHMETIC -->
+<section data-id="arith" data-title="Arithmetic and the complex plane" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart Appendix H</p>
+  <h2>Arithmetic and the complex plane</h2>
+  <p class="lead">A complex number is a point in the plane that you can also multiply. That one extra ability is what the whole appendix is about.</p>
+
+  <p>A <b>complex number</b> is \(z=a+bi\) where \(a\) and \(b\) are real and \(i^2=-1\). Call \(a=\operatorname{Re}z\) the <b>real part</b> and \(b=\operatorname{Im}z\) the <b>imaginary part</b>. Note that the imaginary part is a real number: the imaginary part of \(3-4i\) is \(-4\), not \(-4i\).</p>
+  <p>Plot \(a+bi\) as the point \((a,b)\). The horizontal axis is the <b>real axis</b>, the vertical axis is the <b>imaginary axis</b>, and the picture is the <b>complex plane</b>. Addition is then exactly vector addition, tip to tail:</p>
+  <div class="formula">\((a+bi)+(c+di)=(a+c)+(b+d)i\)<span class="cap">Add the real parts, add the imaginary parts. Subtraction works the same way. Nothing new yet: this is \(\mathbb{R}^2\).</span></div>
+  <p>Multiplication is where complex numbers stop being vectors. Multiply out with FOIL and use \(i^2=-1\) on the last term:</p>
+  <div class="formula">\((a+bi)(c+di)=ac+adi+bci+bdi^2=(ac-bd)+(ad+bc)i\)<span class="cap">The only rule you add to ordinary algebra is \(i^2=-1\). Everything else, commutativity, distributivity, the binomial theorem, still holds.</span></div>
+
+  <h3>Conjugate and modulus</h3>
+  <p>The <b>conjugate</b> of \(z=a+bi\) is \(\bar z=a-bi\). Geometrically it is the reflection of \(z\) across the real axis. The <b>modulus</b> \(|z|\) is the distance from \(z\) to the origin:</p>
+  <div class="formula">\(|z|=\sqrt{a^2+b^2}\qquad\qquad z\bar z=(a+bi)(a-bi)=a^2+b^2=|z|^2\)<span class="cap">Multiplying by the conjugate kills the \(i\): the cross terms \(+abi\) and \(-abi\) cancel and \(-b^2i^2=+b^2\). So \(z\bar z\) is always a nonnegative real number.</span></div>
+  <p>That identity is the whole trick for division. To divide, multiply the top and the bottom by the conjugate of the bottom, which turns the denominator into a real number:</p>
+  <div class="formula">\(\dfrac{z}{w}=\dfrac{z}{w}\cdot\dfrac{\bar w}{\bar w}=\dfrac{z\bar w}{|w|^2}\qquad\text{so}\qquad \dfrac{1}{z}=\dfrac{\bar z}{|z|^2}\)<span class="cap">The same move as rationalizing \(\frac{1}{2+\sqrt3}\) in algebra. You are clearing the \(i\) out of the denominator.</span></div>
+
+  <div class="card">
+    <h4>Explore: drag z and watch its relatives</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="cxPlot"></canvas><p class="plotcap">Drag anywhere to move \(z\); it snaps to half integers and is held inside the dashed circle \(|z|=2\) so that \(z^2\) stays on screen. The two arcs are \(\arg z\) and \(\arg z^2\).</p></div>
+      <div>
+        <div class="presets" id="cxPresets"></div>
+        <div class="readout" id="cxOut"></div>
+        <p class="hint">Squaring doubles the angle and squares the length. Drag \(z\) around the unit circle and watch \(z^2\) go around twice as fast, always staying on the circle. Push \(z\) out past the unit circle and \(1/z\) dives inside it. That doubling is the seed of the whole next chapter.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: dividing by the conjugate</h4>
+    <div class="expr" id="divExpr"></div>
+    <div class="controls">
+      <button class="btn" id="divPrev">◀ Back</button>
+      <button class="btn primary" id="divNext">Next step ▶</button>
+      <button class="btn" id="divNew">New problem</button>
+      <span class="status" id="divStatus"></span>
+    </div>
+    <p class="hint">Check yourself at the third step: the denominator must be a plain real number with no \(i\) left in it. If an \(i\) survives down there, you multiplied by the wrong thing.</p>
+  </div>
+
+  <h3>Quadratics that used to have no roots</h3>
+  <p>The quadratic formula never fails now. For \(x^2+bx+c=0\) with \(b^2-4c<0\), write \(\sqrt{b^2-4c}=i\sqrt{4c-b^2}\):</p>
+  <div class="formula">\(x=\dfrac{-b\pm\sqrt{b^2-4c}}{2}=-\dfrac{b}{2}\pm\dfrac{\sqrt{4c-b^2}}{2}\,i\)<span class="cap">The two roots are a <b>conjugate pair</b>. Whenever a polynomial has real coefficients, complex roots come in conjugate pairs, because conjugating the whole equation leaves it unchanged.</span></div>
+  <p>This is the point of the <b>Fundamental Theorem of Algebra</b>: every polynomial of degree \(n\) with complex coefficients has exactly \(n\) complex roots counted with multiplicity. Nothing is missing any more.</p>
+
+  <h3>Powers of i</h3>
+  <p>\(i^1=i\), \(i^2=-1\), \(i^3=-i\), \(i^4=1\), and then it repeats. The powers of \(i\) cycle with period 4, so \(i^n\) depends only on \(n \bmod 4\): \(i^{27}=i^{24}\cdot i^3=-i\).</p>
+  <div class="note"><b>Divide the exponent by 4 and keep the remainder.</b> Remainder 0 gives 1, remainder 1 gives \(i\), remainder 2 gives \(-1\), remainder 3 gives \(-i\). For \((1+i)^n\) use \((1+i)^2=2i\) first, which turns a big power into a power of \(2i\).</div>
+  <div class="warn"><b>\(\sqrt{ab}=\sqrt a\sqrt b\) is a real-number rule.</b> It breaks here: \(\sqrt{-4}\sqrt{-9}=(2i)(3i)=-6\), not \(\sqrt{36}=6\). Convert every negative radicand to \(i\sqrt{\;}\) form first, then multiply.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-arith"></div>
+</section>
+
+<!-- ============================================================ 2 POLAR -->
+<section data-id="polar" data-title="Polar form, powers, and roots" data-goal="8">
+  <p class="eyebrow">Chapter 2 · Stewart Appendix H</p>
+  <h2>Polar form, products, powers, and roots</h2>
+  <p class="lead">Write a complex number as a length and a direction, and multiplication turns into one multiplication and one addition.</p>
+
+  <p>Any \(z=a+bi\) other than 0 can be written with polar coordinates. Let \(r=|z|=\sqrt{a^2+b^2}\) and let \(\theta\) be an angle with \(a=r\cos\theta\), \(b=r\sin\theta\). Then</p>
+  <div class="formula">\(z=r(\cos\theta+i\sin\theta)\)<span class="cap">\(r\) is the <b>modulus</b>, \(\theta\) is an <b>argument</b> of \(z\). Any two arguments differ by a multiple of \(2\pi\); the one with \(-\pi\lt\theta\le\pi\) is the <b>principal argument</b>, written \(\arg z\).</span></div>
+  <p>To find \(\theta\), do not just type \(\arctan(b/a)\) into a calculator. Arctangent always returns an angle in the right half plane, so it gets the second and third quadrants wrong by \(\pi\). Sketch the point first, then pick the angle that matches the quadrant. For \(-1+i\) the reference angle is \(\pi/4\) and the point is in quadrant II, so \(\theta=3\pi/4\).</p>
+
+  <h3>Multiplication adds the angles</h3>
+  <p>Take \(z_1=r_1(\cos\theta_1+i\sin\theta_1)\) and \(z_2=r_2(\cos\theta_2+i\sin\theta_2)\), multiply out, and collect with the addition formulas \(\cos\theta_1\cos\theta_2-\sin\theta_1\sin\theta_2=\cos(\theta_1+\theta_2)\) and \(\sin\theta_1\cos\theta_2+\cos\theta_1\sin\theta_2=\sin(\theta_1+\theta_2)\):</p>
+  <div class="formula">\(z_1z_2=r_1r_2\big(\cos(\theta_1+\theta_2)+i\sin(\theta_1+\theta_2)\big)\qquad \dfrac{z_1}{z_2}=\dfrac{r_1}{r_2}\big(\cos(\theta_1-\theta_2)+i\sin(\theta_1-\theta_2)\big)\)<span class="cap">Multiply the moduli, add the arguments. Divide the moduli, subtract the arguments. Multiplying by a number of modulus 1 is a pure rotation.</span></div>
+
+  <div class="card">
+    <h4>Explore: multiplying is rotating and stretching</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="mulPlot"></canvas><p class="plotcap">Drag near \(z\) or \(w\) to move it; both are held inside \(|\,\cdot\,|\le 1.7\) so the product stays on screen. The green point is \(zw\).</p></div>
+      <div>
+        <div class="presets" id="mulPresets"></div>
+        <div class="controls">
+          <label class="chk"><input type="checkbox" id="showRoots"> show the \(n\)th roots of \(z\)</label>
+          <span id="rootN"></span>
+          <button class="btn" id="mulPlay">▶ Spin w</button>
+        </div>
+        <div class="readout" id="mulOut"></div>
+        <p class="hint">Press Spin and watch: \(w\) travels around a circle, and \(zw\) travels around a circle of radius \(|z||w|\) at exactly the same angular speed. Drag \(w\) onto the unit circle first, and then \(zw\) is just \(z\) rotated. Turn on the roots and step \(n\) up: the \(n\) roots always sit on one circle, equally spaced, starting at angle \((\arg z)/n\).</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>De Moivre's theorem</h3>
+  <p>Multiply \(z\) by itself \(n\) times and the rule above says the modulus gets raised to the \(n\) and the argument gets multiplied by \(n\):</p>
+  <div class="formula">\(\big[r(\cos\theta+i\sin\theta)\big]^n=r^n\big(\cos n\theta+i\sin n\theta\big)\)<span class="cap">This is <b>De Moivre's theorem</b>. Computing \((1+i)^{10}\) by expanding the binomial takes ten minutes; in polar form it is \((\sqrt2)^{10}\) at angle \(10\cdot\frac{\pi}{4}\), so \(32\) at angle \(\frac{5\pi}{2}\), which is \(32i\).</span></div>
+
+  <h3>Every number has exactly n nth roots</h3>
+  <p>To solve \(\zeta^n=z\), write \(z=r(\cos\theta+i\sin\theta)\) and remember that \(\theta+2\pi k\) is also an argument of \(z\) for every integer \(k\). De Moivre run backwards gives</p>
+  <div class="formula">\(\zeta_k=r^{1/n}\left[\cos\left(\dfrac{\theta+2\pi k}{n}\right)+i\sin\left(\dfrac{\theta+2\pi k}{n}\right)\right],\qquad k=0,1,\dots,n-1\)<span class="cap">All \(n\) roots have the same modulus \(r^{1/n}\), so they sit on one circle. The first is at angle \(\theta/n\) and each next one is \(2\pi/n\) further around. After \(k=n-1\) you start repeating.</span></div>
+  <p>The \(n\)th roots of 1, the <b>roots of unity</b>, are the cleanest case: \(1, e^{2\pi i/n}, e^{4\pi i/n},\dots\), the vertices of a regular \(n\)-gon inscribed in the unit circle with one vertex at 1. The cube roots of unity are \(1\) and \(-\tfrac12\pm\tfrac{\sqrt3}{2}i\).</p>
+
+  <div class="card">
+    <h4>Step-by-step: all n of the nth roots</h4>
+    <div class="expr" id="rtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="rtPrev">◀ Back</button>
+      <button class="btn primary" id="rtNext">Next step ▶</button>
+      <button class="btn" id="rtNew">New problem</button>
+      <span class="status" id="rtStatus"></span>
+    </div>
+    <p class="hint">The count is the check. If you wrote down fewer than \(n\) roots you stopped early, and if you wrote more than \(n\) you kept going past \(k=n-1\) and repeated one.</p>
+  </div>
+
+  <div class="warn"><b>Principal argument, every time.</b> When a problem asks for \(\arg\), the answer must land in \(-\pi\lt\theta\le\pi\). After adding or multiplying angles, add or subtract \(2\pi\) until you are back in range: \(6\cdot\frac{3\pi}{4}=\frac{9\pi}{2}\) reduces to \(\frac{\pi}{2}\).</div>
+  <div class="note"><b>Why the roots are equally spaced.</b> Any two \(n\)th roots differ by a factor whose \(n\)th power is 1, so they differ by an \(n\)th root of unity, which is a rotation by a multiple of \(2\pi/n\). Find one root and rotating it by \(2\pi/n\) generates all the rest.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-polar"></div>
+</section>
+
+<!-- ============================================================ 3 EULER -->
+<section data-id="euler" data-title="Euler's formula" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart Appendix H</p>
+  <h2>Euler's formula</h2>
+  <p class="lead">The exponential and the two trigonometric functions turn out to be the same function looked at from different directions. The bridge is a power series.</p>
+
+  <div class="formula">\(e^{i\theta}=\cos\theta+i\sin\theta\)<span class="cap"><b>Euler's formula.</b> The right side is the point at angle \(\theta\) on the unit circle, so \(e^{i\theta}\) is exactly "walk \(\theta\) radians counterclockwise around the unit circle starting at 1".</span></div>
+
+  <h3>Where it comes from</h3>
+  <p>Module 11 gave you three Maclaurin series that converge for every \(x\). Put \(x=i\theta\) into the first one and use the cycle \(i^2=-1\), \(i^3=-i\), \(i^4=1\):</p>
+  <div class="card">
+    <h4>Step-by-step: plug \(i\theta\) into the series for \(e^x\)</h4>
+    <div class="expr" id="euExpr"></div>
+    <div class="controls">
+      <button class="btn" id="euPrev">◀ Back</button>
+      <button class="btn primary" id="euNext">Next step ▶</button>
+      <button class="btn" id="euReset">Start over</button>
+      <span class="status" id="euStatus"></span>
+    </div>
+    <p class="hint">The whole derivation is one regrouping. The even powers of \(i\theta\) are real and reassemble the cosine series; the odd powers each carry exactly one factor of \(i\) and reassemble \(i\) times the sine series.</p>
+  </div>
+
+  <p>Set \(\theta=\pi\). Then \(\cos\pi=-1\) and \(\sin\pi=0\), so \(e^{i\pi}=-1\), which is usually written</p>
+  <div class="formula">\(e^{i\pi}+1=0\)<span class="cap">One equation containing \(e\), \(i\), \(\pi\), \(1\), and \(0\). It says nothing mysterious: walking \(\pi\) radians counterclockwise from 1 around the unit circle lands you at \(-1\).</span></div>
+  <p>Other immediate consequences: \(e^{2\pi i}=1\), \(e^{i\pi/2}=i\), and \(|e^{i\theta}|=\sqrt{\cos^2\theta+\sin^2\theta}=1\) for every real \(\theta\). The exponential of a purely imaginary number always has modulus 1.</p>
+
+  <div class="card">
+    <h4>Explore: the series spirals into the circle</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="spiralPlot"></canvas><p class="plotcap">Each segment is one term \(\frac{(i\theta)^n}{n!}\) added to the running total. Orange segments are the even terms (real, horizontal), blue segments are the odd terms (imaginary, vertical). The green point is \(e^{i\theta}\) on the unit circle.</p></div>
+      <div>
+        <div class="presets" id="spPresets"></div>
+        <div class="sliders" id="spSliders"></div>
+        <div class="controls"><button class="btn" id="spPlay">▶ Play θ</button></div>
+        <div class="readout" id="spOut"></div>
+        <p class="hint">Set \(\theta=\pi\) and push \(N\) up: the path staggers out to a distance of about 5 and then spirals back in to \(-1\), which is Euler's identity being computed one term at a time. Watch the colors alternate: the orange steps only ever move horizontally and the blue steps only ever move vertically, which is the split into \(\cos\theta\) and \(i\sin\theta\).</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>The exponential form and what it buys you</h3>
+  <div class="formula">\(z=re^{i\theta}\qquad z_1z_2=r_1r_2e^{i(\theta_1+\theta_2)}\qquad \dfrac{z_1}{z_2}=\dfrac{r_1}{r_2}e^{i(\theta_1-\theta_2)}\qquad z^n=r^ne^{in\theta}\)<span class="cap">Every rule from chapter 2 is now just the exponent law \(e^{A}e^{B}=e^{A+B}\). De Moivre's theorem becomes one line: \((e^{i\theta})^n=e^{in\theta}\).</span></div>
+  <p>For a general complex exponent, split it into real and imaginary parts:</p>
+  <div class="formula">\(e^{a+bi}=e^ae^{bi}=e^a(\cos b+i\sin b)\)<span class="cap">The real part of the exponent sets the modulus \(e^a\); the imaginary part sets the angle \(b\). So \(e^{\ln 2+i\pi/3}=2\left(\tfrac12+\tfrac{\sqrt3}{2}i\right)=1+\sqrt3\,i\).</span></div>
+  <p>Adding and subtracting \(e^{i\theta}=\cos\theta+i\sin\theta\) and \(e^{-i\theta}=\cos\theta-i\sin\theta\) solves for the two trigonometric functions:</p>
+  <div class="formula">\(\cos\theta=\dfrac{e^{i\theta}+e^{-i\theta}}{2}\qquad\qquad \sin\theta=\dfrac{e^{i\theta}-e^{-i\theta}}{2i}\)<span class="cap">Sine and cosine are combinations of two exponentials. This is how you turn a trigonometric identity into an algebra problem about exponents.</span></div>
+  <p>That is the practical payoff. Squaring \(e^{i\theta}\) two different ways gives the double angle formulas in one line:</p>
+  <div class="formula">\(\cos 2\theta+i\sin 2\theta=e^{2i\theta}=\big(e^{i\theta}\big)^2=(\cos\theta+i\sin\theta)^2=(\cos^2\theta-\sin^2\theta)+i(2\sin\theta\cos\theta)\)<span class="cap">Match real parts: \(\cos2\theta=\cos^2\theta-\sin^2\theta\). Match imaginary parts: \(\sin2\theta=2\sin\theta\cos\theta\). Cubing gives the triple angle formulas the same way.</span></div>
+  <p>Products of exponentials give the product to sum formulas, and \(\ln\) can be extended too: since \(-1=e^{i\pi}\), the principal logarithm is \(\ln(-1)=i\pi\), and in general \(\ln z=\ln|z|+i\arg z\).</p>
+  <div class="warn"><b>\(e^{i\theta}\) is never zero and never large.</b> It sits on the unit circle for every real \(\theta\), so \(|e^{i\theta}|=1\) always. If a computation hands you \(|e^{i\theta}|\ne1\), you multiplied a modulus somewhere you should have added an angle.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-euler"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+
+/* complex shorthand on top of Cx from calc102.js */
+const CX=(re,im=0)=>({re,im});
+const vok=(x,y,tol=1e-9)=>Math.abs(x-y)<=tol*Math.max(1,Math.abs(y));
+const cxOk=(z,re,im,tol=1e-9)=>vok(z.re,re,tol)&&vok(z.im,im,tol);
+/* solver strings the complex checker parses: parenthesized imaginary part */
+const cxStr=(re,im)=>`${re}+(${im})i`;
+const cxListStr=zs=>zs.map(z=>cxStr(z.re,z.im)).join(', ');
+
+/* exact TeX for the numbers this module produces: integers, small fractions, and c*sqrt(2 or 3) */
+function exactNum(v){
+  if(Math.abs(v)<1e-12)return '0';
+  for(const s of [1,2,3]){
+    const c=v/Math.sqrt(s);
+    for(let d=1;d<=240;d++){
+      const n=c*d;
+      if(Math.abs(n-Math.round(n))<=1e-9*Math.max(1,Math.abs(n))){
+        const nn=Math.round(n);if(nn===0)continue;
+        const g=gcd(Math.abs(nn),d)||1;const p=nn/g,q=d/g;const sign=p<0?'-':'';const ap=Math.abs(p);
+        if(s===1)return q===1?String(p):sign+R`\tfrac{`+ap+'}{'+q+'}';
+        const body=(ap===1?'':ap)+R`\sqrt{`+s+'}';
+        return sign+(q===1?body:R`\tfrac{`+body+'}{'+q+'}');
+      }
+    }
+  }
+  return fmtDec(v,4);
+}
+/* exact TeX for a complex number */
+function exactCxTex(re,im){
+  const hasR=Math.abs(re)>1e-12,hasI=Math.abs(im)>1e-12;
+  if(!hasR&&!hasI)return '0';
+  let out=hasR?exactNum(re):'';
+  if(hasI){
+    const a=Math.abs(im);const coef=Math.abs(a-1)<1e-12?'':exactNum(a);
+    out+=(out===''?(im<0?'-':''):(im<0?'-':'+'))+coef+(coef.endsWith('}')?R`\,i`:'i');
+  }
+  return out;
+}
+/* plain text complex number for readouts */
+const mnum=x=>fmt(x).replace('-','−');
+const dnum=(x,p=2)=>fmtDec(x,p).replace('-','−');
+const decCx=(a,b,p=4)=>`${dnum(a,p)} ${b<0?'−':'+'} ${fmtDec(Math.abs(b),p)}i`;
+function cxPlain(a,b){
+  const hasR=Math.abs(a)>1e-9,hasI=Math.abs(b)>1e-9;
+  if(!hasR&&!hasI)return '0';
+  let out=hasR?mnum(a):'';
+  if(hasI){const m=Math.abs(b);const coef=Math.abs(m-1)<1e-9?'':fmt(m);
+    out+=(out===''?(b<0?'−':''):(b<0?' − ':' + '))+coef+'i';}
+  return out;
+}
+/* angles: degrees in, exact radian TeX out */
+const princ=d=>{d=((d%360)+360)%360;return d>180?d-360:d;};
+const degRad=d=>d*PI/180;
+function piTex(deg){
+  const [n,d]=fr(Math.round(deg*2),360);if(n===0)return '0';
+  const s=n<0?'-':'';const a=Math.abs(n);
+  if(d===1)return s+(a===1?R`\pi`:a+R`\pi`);
+  return s+R`\tfrac{`+(a===1?'':a)+R`\pi}{`+d+'}';
+}
+function iAngTex(deg){
+  const [n,d]=fr(Math.round(deg*2),360);if(n===0)return '0';
+  const s=n<0?'-':'';const a=Math.abs(n);const body=(a===1?'':a)+R`i\pi`;
+  return s+(d===1?body:R`\tfrac{`+body+'}{'+d+'}');
+}
+const angArg=deg=>{const t=piTex(deg);return t[0]==='-'?R`\left(${t}\right)`:t;};
+function combTex(c,s2){const st=Math.abs(s2)<1e-12?'0':exactNum(s2);return exactNum(c)+(st[0]==='-'?st:'+'+st)+'i';}
+const expTexF=(r,deg)=>{const a=iAngTex(deg);return R`${exactNum(r)}e^{${a==='0'?R`i\cdot 0`:a}}`;};
+const angEq=(x,y)=>{let t=Math.abs(((x-y)%(2*PI)+2*PI)%(2*PI));return Math.min(t,2*PI-t)<1e-8;};
+/* a point of the special-angle lattice: modulus and argument are both exact */
+function latticePoint(){
+  const fam=pick(['axis','diag','diag','thirty','thirty','thirty']);
+  let deg,r;
+  if(fam==='axis'){r=rint(1,5);deg=pick([0,90,180,270]);}
+  else if(fam==='diag'){r=rint(1,4)*Math.SQRT2;deg=pick([45,135,225,315]);}
+  else{r=2*rint(1,3);deg=pick([30,60,120,150,210,240,300,330]);}
+  const av=r*cosExact(deg)[1],bv=r*sinExact(deg)[1];
+  const pd=princ(deg);
+  return {deg:pd,r,av,bv,theta:degRad(pd),tex:exactCxTex(av,bv)};
+}
+const Q={};
+
+/* ============================================================ chapter 1 question types */
+Q.addMult={name:'add, subtract, multiply',
+  gen(){
+    let a,b,c,d,op,z,ok=false;
+    while(!ok){
+      a=rnz(-5,5);b=rnz(-5,5);c=rnz(-5,5);d=rnz(-5,5);op=pick(['+','-','*','*','sq']);
+      const z1=CX(a,b),z2=CX(c,d);
+      z=op==='+'?Cx.add(z1,z2):op==='-'?Cx.sub(z1,z2):op==='*'?Cx.mul(z1,z2):Cx.mul(z1,z1);
+      /* verify the stored answer against the component formulas */
+      const re=op==='+'?a+c:op==='-'?a-c:op==='*'?a*c-b*d:a*a-b*b;
+      const im=op==='+'?b+d:op==='-'?b-d:op==='*'?a*d+b*c:2*a*b;
+      ok=cxOk(z,re,im)&&(Math.abs(z.re)+Math.abs(z.im)>0);
+    }
+    return {a,b,c,d,op,re:z.re,im:z.im};
+  },
+  render(q,el){
+    const z1=exactCxTex(q.a,q.b),z2=exactCxTex(q.c,q.d);
+    const body=q.op==='sq'?R`\left(${z1}\right)^2`:R`\left(${z1}\right) ${q.op==='*'?R`\left(${z2}\right)`:q.op+' \\left('+z2+R`\right)`}`;
+    q.body=body;
+    el.innerHTML=`<p class="prompt">Write ${M(body)} in the form ${M('a+bi')}.</p>`;
+    numIn(el,'z','=',{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return G(el,'z',checkComplex($('[data-k=z]',el).value,[q.re,q.im]));},
+  solution(q){
+    if(q.op==='+'||q.op==='-'){
+      return `Combine the real parts and the imaginary parts separately: ${M(R`(${q.a} ${q.op} ${q.c}) + (${q.b} ${q.op} ${q.d})i = ${exactCxTex(q.re,q.im)}`)}.`;
+    }
+    const [a,b,c,d]=q.op==='sq'?[q.a,q.b,q.a,q.b]:[q.a,q.b,q.c,q.d];
+    return `FOIL, then use ${M('i^2=-1')} on the last term: ${M(R`(${a})(${c})+(${a})(${d})i+(${b})(${c})i+(${b})(${d})i^2`)} ${M(R`=\big((${a})(${c})-(${b})(${d})\big)+\big((${a})(${d})+(${b})(${c})\big)i=${exactCxTex(q.re,q.im)}`)}.`;
+  }
+};
+
+Q.divide={name:'divide',
+  gen(){
+    let p,q2,c,d,z,ok=false;
+    while(!ok){
+      p=rint(-4,4);q2=rint(-4,4);c=rnz(-4,4);d=rnz(-4,4);
+      if(p===0&&q2===0)continue;
+      z=Cx.mul(CX(p,q2),CX(c,d));
+      if(Math.abs(z.re)>40||Math.abs(z.im)>40)continue;
+      const quo=Cx.div(z,CX(c,d));
+      ok=cxOk(quo,p,q2);                    /* the stored quotient really is z/w */
+    }
+    return {p,q:q2,c,d,zre:z.re,zim:z.im,den:c*c+d*d};
+  },
+  render(q,el){
+    q.ztex=exactCxTex(q.zre,q.zim);q.wtex=exactCxTex(q.c,q.d);
+    el.innerHTML=`<p class="prompt">Write ${M(R`\dfrac{${q.ztex}}{${q.wtex}}`)} in the form ${M('a+bi')}.</p>`;
+    numIn(el,'z','=',{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return G(el,'z',checkComplex($('[data-k=z]',el).value,[q.p,q.q]));},
+  hint(q,el){
+    let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Multiply the top and the bottom by ${M(R`\overline{${q.wtex}}=${exactCxTex(q.c,-q.d)}`)}. The new denominator is ${M(R`(${q.c})^2+(${q.d})^2=${q.den}`)}.`;
+  },
+  solution(q){
+    const num=Cx.mul(CX(q.zre,q.zim),CX(q.c,-q.d));
+    return `Multiply top and bottom by the conjugate of the denominator, ${M(exactCxTex(q.c,-q.d))}. The denominator becomes ${M(R`(${q.c})^2+(${q.d})^2=${q.den}`)} and the numerator becomes ${M(exactCxTex(num.re,num.im))}, so the quotient is ${M(R`\dfrac{${exactCxTex(num.re,num.im)}}{${q.den}}=${exactCxTex(q.p,q.q)}`)}.`;
+  }
+};
+
+Q.modulusConj={name:'modulus and conjugate',
+  gen(){
+    const PY=[[3,4],[4,3],[5,12],[12,5],[8,15],[6,8],[8,6],[9,12],[7,24],[20,21]];
+    let a,b;
+    if(Math.random()<0.45){const p=pick(PY);a=p[0]*pick([1,-1]);b=p[1]*pick([1,-1]);}
+    else{a=rnz(-9,9);b=rnz(-9,9);}
+    const m2=a*a+b*b,m=Math.sqrt(m2);
+    return {a,b,m2,m};
+  },
+  render(q,el){
+    q.ztex=exactCxTex(q.a,q.b);
+    el.innerHTML=`<p class="prompt">For ${M('z='+q.ztex)}, give the modulus exactly (like <code>sqrt(13)</code> or <code>5</code>) and the conjugate.</p>`;
+    numIn(el,'m',M('|z|='));
+    numIn(el,'zb',M(R`\bar z =`),{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return Gall(el,[['m',checkNumber($('[data-k=m]',el).value,q.m)],['zb',checkComplex($('[data-k=zb]',el).value,[q.a,-q.b])]]);},
+  solution(q){
+    return `${M(R`|z|=\sqrt{(${q.a})^2+(${q.b})^2}=\sqrt{${q.m2}}=${texSqrt(q.m2)}`)}. The conjugate flips the sign of the imaginary part only, so ${M(R`\bar z=${exactCxTex(q.a,-q.b)}`)}, which is the reflection of ${M('z')} across the real axis.`;
+  }
+};
+
+Q.conjProduct={name:'conjugate product and reciprocal',
+  gen(){
+    let a,b,ok=false,m2,inv;
+    while(!ok){
+      a=rnz(-7,7);b=rnz(-7,7);m2=a*a+b*b;
+      inv=Cx.div(CX(1,0),CX(a,b));
+      ok=cxOk(inv,a/m2,-b/m2)&&cxOk(Cx.mul(CX(a,b),CX(a,-b)),m2,0);
+    }
+    return {a,b,m2,ire:a/m2,iim:-b/m2};
+  },
+  render(q,el){
+    q.ztex=exactCxTex(q.a,q.b);
+    el.innerHTML=`<p class="prompt">Let ${M('z='+q.ztex)}. Compute ${M(R`z\bar z`)} as a real number, then write ${M(R`\dfrac1z`)} in the form ${M('a+bi')}. Fractions like <code>3/25</code> are fine.</p>`;
+    numIn(el,'p',M(R`z\bar z =`));
+    numIn(el,'inv',M(R`\dfrac1z =`),{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return Gall(el,[['p',checkNumber($('[data-k=p]',el).value,q.m2)],['inv',checkComplex($('[data-k=inv]',el).value,[q.ire,q.iim])]]);},
+  solution(q){
+    return `The cross terms cancel: ${M(R`z\bar z=(${q.a})^2+(${q.b})^2=${q.m2}=|z|^2`)}. Then ${M(R`\dfrac1z=\dfrac{\bar z}{|z|^2}=\dfrac{${exactCxTex(q.a,-q.b)}}{${q.m2}}=${exactCxTex(q.ire,q.iim)}`)}.`;
+  }
+};
+
+Q.quadratic={name:'solve a quadratic',
+  gen(){
+    let p,k,qv,b,c,roots,ok=false;
+    while(!ok){
+      p=rint(-4,4);
+      if(Math.random()<0.55){qv=rint(1,5);k=qv*qv;}
+      else{k=pick([2,3,5,6,7,10,11]);qv=Math.sqrt(k);}
+      b=-2*p;c=p*p+k;
+      if(c>60)continue;
+      roots=[CX(p,qv),CX(p,-qv)];
+      /* verify: each stored root satisfies x^2 + bx + c = 0 */
+      ok=roots.every(rt=>{const v=Cx.add(Cx.add(Cx.mul(rt,rt),Cx.mul(CX(b,0),rt)),CX(c,0));return Math.abs(v.re)<1e-8&&Math.abs(v.im)<1e-8;});
+    }
+    return {p,k,q:qv,b,c,roots};
+  },
+  render(q,el){
+    let s='x^2';
+    if(q.b!==0)s+=(q.b<0?' - ':' + ')+(Math.abs(q.b)===1?'':Math.abs(q.b))+'x';
+    s+=' + '+q.c+' = 0';q.eq=s;
+    el.innerHTML=`<p class="prompt">Solve ${M(s)}. Enter both roots as a comma separated list, in either order.</p>`;
+    numIn(el,'r','roots:',{xwide:true,placeholder:'a + bi, a - bi'});
+  },
+  check(q,el){return G(el,'r',checkComplexList($('[data-k=r]',el).value,q.roots.map(z=>[z.re,z.im]),{tol:1e-6}));},
+  hint(q,el){
+    let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`The discriminant is ${M(R`b^2-4c=${q.b*q.b-4*q.c}`)}, which is negative, so write ${M(R`\sqrt{${q.b*q.b-4*q.c}}=i\sqrt{${4*q.c-q.b*q.b}}`)}.`;
+  },
+  solution(q){
+    const disc=q.b*q.b-4*q.c;
+    return `Quadratic formula: ${M(R`x=\dfrac{${-q.b}\pm\sqrt{${disc}}}{2}`)}. Since the discriminant is negative, ${M(R`\sqrt{${disc}}=i\sqrt{${-disc}}=${exactNum(Math.sqrt(-disc))}\,i`)}, so ${M(R`x=${exactCxTex(q.p,q.q)}`)} and ${M(R`x=${exactCxTex(q.p,-q.q)}`)}. The two roots are a conjugate pair, as they must be for real coefficients.`;
+  }
+};
+
+Q.powersOfI={name:'powers of i',
+  gen(){
+    let kind,n,z,ok=false;
+    while(!ok){
+      kind=pick(['i','i','negi','onep','onep']);
+      if(kind==='onep')n=rint(2,8);else n=rint(5,40);
+      const base=kind==='i'?CX(0,1):kind==='negi'?CX(0,-1):CX(1,1);
+      z=Cx.pow(base,CX(n,0));
+      /* verify by direct repeated multiplication */
+      let d=CX(1,0);for(let j=0;j<n;j++)d=Cx.mul(d,base);
+      ok=cxOk(z,d.re,d.im,1e-8);
+      z=CX(Math.round(z.re),Math.round(z.im));
+    }
+    return {kind,n,re:z.re,im:z.im};
+  },
+  render(q,el){
+    q.btex=q.kind==='i'?'i':q.kind==='negi'?'(-i)':'(1+i)';
+    el.innerHTML=`<p class="prompt">Evaluate ${M(R`${q.btex}^{${q.n}}`)}. Write the answer in the form ${M('a+bi')}.</p>`;
+    numIn(el,'z','=',{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return G(el,'z',checkComplex($('[data-k=z]',el).value,[q.re,q.im]));},
+  solution(q){
+    if(q.kind==='onep'){
+      const half=Math.floor(q.n/2),hx=half===1?'':'^{'+half+'}';
+      return `Use ${M(R`(1+i)^2=1+2i+i^2=2i`)}. Then ${M(R`(1+i)^{${q.n}}=\big((1+i)^2\big)${hx}${q.n%2?R`(1+i)`:''}=(2i)${hx}${q.n%2?R`(1+i)`:''}=${exactCxTex(q.re,q.im)}`)}.`;
+    }
+    const r=q.n%4,tab={0:'1',1:'i',2:'-1',3:'-i'};
+    const inner=`The powers of ${M('i')} repeat every 4 and ${M(R`${q.n}=4\cdot${Math.floor(q.n/4)}+${r}`)}, so ${M(R`i^{${q.n}}=i^{${r}}=${tab[r]}`)}.`;
+    if(q.kind==='i')return inner;
+    return inner+` Then ${M(R`(-i)^{${q.n}}=(-1)^{${q.n}}i^{${q.n}}=${q.n%2?'-':'+'}\left(${tab[r]}\right)=${exactCxTex(q.re,q.im)}`)}.`;
+  }
+};
+/* ============================================================ chapter 2 question types */
+Q.toPolar={name:'convert to polar form',
+  gen(){
+    let L,ok=false;
+    while(!ok){
+      L=latticePoint();
+      /* verify: r(cos t + i sin t) really is the displayed a+bi */
+      const z=CX(L.r*Math.cos(L.theta),L.r*Math.sin(L.theta));
+      ok=cxOk(z,L.av,L.bv,1e-9)&&L.r>0;
+    }
+    return L;
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Write ${M('z='+q.tex)} in polar form ${M(R`r(\cos\theta+i\sin\theta)`)}. Give ${M('r')} exactly and the principal argument ${M(R`\theta`)} with ${M(R`-\pi\lt\theta\le\pi`)} in radians (type something like <code>3pi/4</code>).</p>`;
+    numIn(el,'r',M('r='));
+    numIn(el,'th',M(R`\theta=`));
+  },
+  check(q,el){return Gall(el,[['r',checkNumber($('[data-k=r]',el).value,q.r)],['th',checkNumber($('[data-k=th]',el).value,q.theta)]]);},
+  hint(q,el){
+    let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`${M(R`r^2=a^2+b^2=${Math.round(q.av*q.av+q.bv*q.bv)}`)}, and the point sits in ${q.av>1e-9&&q.bv>=0?'quadrant I or on an axis':q.av<-1e-9&&q.bv>=0?'quadrant II':q.av<-1e-9?'quadrant III':'quadrant IV or on an axis'}.`;
+  },
+  solution(q){
+    return `${M(R`r=\sqrt{(${exactNum(q.av)})^2+(${exactNum(q.bv)})^2}=${exactNum(q.r)}`)}. Sketch the point to pick the right quadrant: ${M(R`\cos\theta=${exactNum(q.av/q.r)}`)} and ${M(R`\sin\theta=${exactNum(q.bv/q.r)}`)} give ${M(R`\theta=${piTex(q.deg)}`)}, so ${M(R`z=${exactNum(q.r)}\left(\cos ${angArg(q.deg)}+i\sin ${angArg(q.deg)}\right)`)}.`;
+  }
+};
+
+Q.fromPolar={name:'polar to rectangular',
+  gen(){
+    let L,ok=false;
+    while(!ok){L=latticePoint();ok=Math.abs(L.av)+Math.abs(L.bv)>1e-9;}
+    return Object.assign(L,{form:pick(['trig','exp'])});
+  },
+  render(q,el){
+    q.disp=q.form==='exp'?expTexF(q.r,q.deg):R`${exactNum(q.r)}\left(\cos ${angArg(q.deg)}+i\sin ${angArg(q.deg)}\right)`;
+    el.innerHTML=`<p class="prompt">Write ${M('z='+q.disp)} in the form ${M('a+bi')} with exact values (radicals are fine).</p>`;
+    numIn(el,'z','=',{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return G(el,'z',checkComplex($('[data-k=z]',el).value,[q.av,q.bv]));},
+  solution(q){
+    return `${M(R`\cos ${angArg(q.deg)}=${exactNum(q.av/q.r)}`)} and ${M(R`\sin ${angArg(q.deg)}=${exactNum(q.bv/q.r)}`)}, so ${M(R`z=${exactNum(q.r)}\left(${combTex(q.av/q.r,q.bv/q.r)}\right)=${q.tex}`)}.`;
+  }
+};
+
+Q.productPolar={name:'multiply or divide in polar form',
+  gen(){
+    const SP=[0,30,45,60,90,120,135,150,180,-30,-45,-60,-90,-120,-135,-150];
+    let r1,r2,d1,d2,op,mod,deg,ok=false;
+    while(!ok){
+      r1=rint(2,6);r2=rint(2,6);d1=pick(SP);d2=pick(SP);op=pick(['*','/']);
+      mod=op==='*'?r1*r2:r1/r2;deg=princ(op==='*'?d1+d2:d1-d2);
+      const z1=CX(r1*Math.cos(degRad(d1)),r1*Math.sin(degRad(d1)));
+      const z2=CX(r2*Math.cos(degRad(d2)),r2*Math.sin(degRad(d2)));
+      const zz=op==='*'?Cx.mul(z1,z2):Cx.div(z1,z2);
+      /* verify the stored modulus and argument against the actual product */
+      ok=vok(Cx.abs(zz),mod,1e-9)&&angEq(Cx.arg(zz),degRad(deg));
+    }
+    return {r1,r2,d1,d2,op,mod,deg,theta:degRad(deg),form:pick(['trig','exp'])};
+  },
+  render(q,el){
+    const show=(r,d)=>q.form==='exp'?R`${r}e^{${iAngTex(d)==='0'?R`i\cdot 0`:iAngTex(d)}}`:R`${r}\left(\cos ${angArg(d)}+i\sin ${angArg(d)}\right)`;
+    q.d1t=show(q.r1,q.d1);q.d2t=show(q.r2,q.d2);
+    q.optex=q.op==='*'?R`z_1z_2`:R`\dfrac{z_1}{z_2}`;
+    el.innerHTML=`<p class="prompt">Let ${M('z_1='+q.d1t)} and ${M('z_2='+q.d2t)}. Find the modulus and the principal argument of ${M(q.optex)}. Give ${M(R`\theta`)} in radians with ${M(R`-\pi\lt\theta\le\pi`)}.</p>`;
+    numIn(el,'r',M(R`\left|${q.op==='*'?'z_1z_2':'z_1/z_2'}\right|=`));
+    numIn(el,'th',M(R`\arg=`));
+  },
+  check(q,el){return Gall(el,[['r',checkNumber($('[data-k=r]',el).value,q.mod)],['th',checkNumber($('[data-k=th]',el).value,q.theta)]]);},
+  solution(q){
+    const raw=q.op==='*'?q.d1+q.d2:q.d1-q.d2;
+    const modTex=q.op==='*'?R`r=${q.r1}\cdot ${q.r2}=${texNum(q.mod)}`:R`r=\dfrac{${q.r1}}{${q.r2}}=${texNum(q.mod)}`;
+    const red=raw===q.deg?'':` Reducing ${M(piTex(raw))} into ${M(R`(-\pi,\pi]`)} by ${raw>q.deg?'subtracting':'adding'} ${M(R`2\pi`)} gives ${M(piTex(q.deg))}.`;
+    return `${q.op==='*'?'Multiply the moduli and add the arguments':'Divide the moduli and subtract the arguments'}: ${M(modTex)} and ${M(R`\theta=${piTex(q.d1)} ${q.op==='*'?'+':'-'} ${angArg(q.d2)}=${piTex(raw)}`)}.${red}`;
+  }
+};
+
+const DM=[{tex:'1+i',re:1,im:1,r2:2,deg:45},{tex:R`\sqrt{3}+i`,re:Math.sqrt(3),im:1,r2:4,deg:30},
+  {tex:'1-i',re:1,im:-1,r2:2,deg:-45},{tex:R`-1+\sqrt{3}\,i`,re:-1,im:Math.sqrt(3),r2:4,deg:120}];
+Q.deMoivre={name:'a power by De Moivre',
+  gen(){
+    let B,n,mod,deg,re,im,ok=false;
+    while(!ok){
+      B=pick(DM);n=rint(3,10);
+      mod=Math.pow(Math.sqrt(B.r2),n);deg=princ(B.deg*n);
+      re=mod*cosExact(B.deg*n)[1];im=mod*sinExact(B.deg*n)[1];
+      /* verify against direct repeated multiplication of the base */
+      let d=CX(1,0);for(let j=0;j<n;j++)d=Cx.mul(d,CX(B.re,B.im));
+      ok=cxOk(d,re,im,1e-8);
+    }
+    return {B,n,mod,deg,re,im};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Use De Moivre's theorem to evaluate ${M(R`\left(${q.B.tex}\right)^{${q.n}}`)}. Write the answer in the form ${M('a+bi')} with exact values.</p>`;
+    numIn(el,'z','=',{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return G(el,'z',checkComplex($('[data-k=z]',el).value,[q.re,q.im],{tol:1e-6*Math.max(1,q.mod)}));},
+  hint(q,el){
+    let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`${M(q.B.tex+'='+expTexF(Math.sqrt(q.B.r2),q.B.deg))}, so raise the modulus to the ${M(String(q.n))} and multiply the angle by ${M(String(q.n))}.`;
+  },
+  solution(q){
+    const raw=q.B.deg*q.n;
+    return `In polar form ${M(R`${q.B.tex}=${exactNum(Math.sqrt(q.B.r2))}\left(\cos ${angArg(q.B.deg)}+i\sin ${angArg(q.B.deg)}\right)`)}. De Moivre gives modulus ${M(R`\left(${exactNum(Math.sqrt(q.B.r2))}\right)^{${q.n}}=${texSqrt(Math.round(Math.pow(q.B.r2,q.n)))}`)} and angle ${M(R`${q.n}\cdot ${angArg(q.B.deg)}=${piTex(raw)}\equiv ${piTex(q.deg)}`)}. So the value is ${M(R`${texSqrt(Math.round(Math.pow(q.B.r2,q.n)))}\left(${combTex(Math.cos(degRad(q.deg)),Math.sin(degRad(q.deg)))}\right)=${exactCxTex(q.re,q.im)}`)}.`;
+  }
+};
+
+const ROOTZ=[{z:[8,0],n:3,tex:'8'},{z:[-16,0],n:4,tex:'-16'},{z:[0,1],n:2,tex:'i'},{z:[0,-8],n:3,tex:'-8i'},
+  {z:[1,0],n:3,tex:'1'},{z:[1,0],n:4,tex:'1'},{z:[1,0],n:6,tex:'1'},{z:[-1,0],n:3,tex:'-1'},
+  {z:[2,2*Math.sqrt(3)],n:2,tex:R`2+2\sqrt{3}\,i`},{z:[-8,0],n:3,tex:'-8'},{z:[16,0],n:4,tex:'16'},
+  {z:[-9,0],n:2,tex:'-9'},{z:[0,27],n:3,tex:'27i'},{z:[81,0],n:4,tex:'81'},{z:[0,-1],n:2,tex:'-i'}];
+function nRoots(zre,zim,n){
+  const r=Math.pow(Math.hypot(zre,zim),1/n),t0=Math.atan2(zim,zre)/n;
+  const out=[];for(let k=0;k<n;k++){const a=t0+2*PI*k/n;out.push(CX(r*Math.cos(a),r*Math.sin(a)));}
+  return out;
+}
+Q.nthRoots={name:'all nth roots',
+  gen(){
+    let it,roots,ok=false;
+    while(!ok){
+      it=pick(ROOTZ);roots=nRoots(it.z[0],it.z[1],it.n);
+      /* verify: every stored root really is an nth root of z */
+      ok=roots.length===it.n&&roots.every(rt=>{const p=Cx.pow(rt,CX(it.n,0));return Math.abs(p.re-it.z[0])<1e-7*Math.max(1,Math.abs(it.z[0]))+1e-7&&Math.abs(p.im-it.z[1])<1e-7*Math.max(1,Math.abs(it.z[1]))+1e-7;});
+    }
+    const r=Math.hypot(it.z[0],it.z[1]),t=Math.atan2(it.z[1],it.z[0]);
+    return {it,n:it.n,roots,r,t,rr:Math.pow(r,1/it.n)};
+  },
+  render(q,el){
+    const word=q.n===2?'square':q.n===3?'cube':M(R`${q.n}\text{th}`);
+    el.innerHTML=`<p class="prompt">Find all ${q.n} of the ${word} roots of ${M(q.it.tex)}. Enter them as a comma separated list, in any order, with exact values.</p>`;
+    numIn(el,'r','roots:',{xwide:true,placeholder:'z1, z2, ...'});
+  },
+  check(q,el){return G(el,'r',checkComplexList($('[data-k=r]',el).value,q.roots.map(z=>[z.re,z.im]),{tol:1e-6}));},
+  hint(q,el){
+    let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`${M(R`|z|=${exactNum(q.r)}`)} and ${M(R`\arg z=${piTex(Math.round(q.t*180/PI))}`)}. Every root has modulus ${M(R`|z|^{1/${q.n}}=${exactNum(q.rr)}`)}; the first angle is ${M(R`\tfrac{1}{${q.n}}\arg z`)} and the rest are spaced ${M(R`\tfrac{2\pi}{${q.n}}`)} apart.`;
+  },
+  solution(q){
+    const deg0=Math.round(q.t*180/PI);
+    const list=q.roots.map(z=>M(exactCxTex(z.re,z.im))).join(', ');
+    return `Write ${M('z='+expTexF(q.r,deg0))}. Each root has modulus ${M(R`${exactNum(q.r)}^{1/${q.n}}=${exactNum(q.rr)}`)}, the first is at angle ${M(piTex(deg0/q.n))}, and consecutive roots are ${M(R`\tfrac{2\pi}{${q.n}}`)} apart. The ${M(String(q.n))} roots are ${list}.`;
+  }
+};
+
+Q.argument={name:'principal argument',
+  gen(){
+    let kind,A,B,n,deg,zz,ok=false;
+    while(!ok){
+      kind=pick(['pow','quot','prod']);
+      A=latticePoint();B=latticePoint();n=rint(2,8);
+      const za=CX(A.av,A.bv),zb=CX(B.av,B.bv);
+      if(kind==='pow'){deg=princ(A.deg*n);zz=Cx.pow(za,CX(n,0));}
+      else if(kind==='quot'){deg=princ(A.deg-B.deg);zz=Cx.div(za,zb);}
+      else{deg=princ(A.deg+B.deg);zz=Cx.mul(za,zb);}
+      /* verify the stored angle against the numeric argument */
+      ok=Cx.abs(zz)>1e-9&&angEq(Cx.arg(zz),degRad(deg));
+    }
+    return {kind,A,B,n,deg,theta:degRad(deg)};
+  },
+  render(q,el){
+    q.disp=q.kind==='pow'?R`\left(${q.A.tex}\right)^{${q.n}}`:q.kind==='quot'?R`\dfrac{${q.A.tex}}{${q.B.tex}}`:R`\left(${q.A.tex}\right)\left(${q.B.tex}\right)`;
+    el.innerHTML=`<p class="prompt">Find the principal argument of ${M(q.disp)}. Give ${M(R`\theta`)} in radians with ${M(R`-\pi\lt\theta\le\pi`)}.</p>`;
+    numIn(el,'th',M(R`\arg=`));
+  },
+  check(q,el){return G(el,'th',checkNumber($('[data-k=th]',el).value,q.theta));},
+  solution(q){
+    const raw=q.kind==='pow'?q.A.deg*q.n:q.kind==='quot'?q.A.deg-q.B.deg:q.A.deg+q.B.deg;
+    const step=q.kind==='pow'?R`${q.n}\cdot ${angArg(q.A.deg)}`:q.kind==='quot'?R`${piTex(q.A.deg)}-${angArg(q.B.deg)}`:R`${piTex(q.A.deg)}+${angArg(q.B.deg)}`;
+    return `${M(R`\arg\left(${q.A.tex}\right)=${piTex(q.A.deg)}`)}${q.kind==='pow'?'':` and ${M(R`\arg\left(${q.B.tex}\right)=${piTex(q.B.deg)}`)}`}. Arguments ${q.kind==='pow'?'multiply by the exponent':q.kind==='quot'?'subtract on division':'add on multiplication'}: ${M(R`${step}=${piTex(raw)}`)}${raw===q.deg?'':`, and reducing into ${M(R`(-\pi,\pi]`)} gives ${M(piTex(q.deg))}`}.`;
+  }
+};
+/* ============================================================ chapter 3 question types */
+const SPD=[0,30,45,60,90,120,135,150,180,-30,-45,-60,-90,-120,-135,-150];
+/* angles kept inside one family, so that sums and differences are still special angles */
+const SP30=[0,30,60,90,120,150,180,-30,-60,-90,-120,-150];
+const SP45=[0,45,90,135,180,-45,-90,-135];
+const SPDN=SPD.filter(d=>d!==0);              /* e^{i0}=1 is not worth asking */
+const SPDP=SPD.filter(d=>d!==0&&d!==180);     /* at 0 and pi the two exponentials coincide */
+const plusTex=t=>t==='0'?'':(t[0]==='-'?t:'+'+t);
+const SCALE=[[Math.LN2,R`\ln 2`,2],[-Math.LN2,R`-\ln 2`,0.5],[Math.log(3),R`\ln 3`,3],[Math.log(4),R`\ln 4`,4]];
+
+Q.eulerEval={name:'evaluate',
+  gen(){
+    let kind,a,aTex,d1,d2,mag,deg,re,im,ok=false;
+    while(!ok){
+      kind=pick(['plain','plain','scaled','scaled','prod','quot']);
+      a=0;aTex='';d1=pick(SPDN);d2=pick(SPDN);mag=1;
+      if(kind==='scaled'){const s=pick(SCALE);a=s[0];aTex=s[1];mag=s[2];deg=d1;}
+      else if(kind==='plain'){deg=d1;}
+      else{const fam=pick([SP30,SP45]);d1=pick(fam);d2=pick(fam);deg=princ(kind==='prod'?d1+d2:d1-d2);}
+      re=mag*cosExact(deg)[1];im=mag*sinExact(deg)[1];
+      /* verify the stored value against the complex exponential */
+      ok=cxOk(Cx.exp(CX(a,degRad(deg))),re,im,1e-9);
+    }
+    return {kind,a,aTex,d1,d2,mag,deg,re,im};
+  },
+  render(q,el){
+    q.disp=q.kind==='plain'?R`e^{${iAngTex(q.d1)}}`
+      :q.kind==='scaled'?R`e^{${q.aTex}${plusTex(iAngTex(q.d1))}}`
+      :q.kind==='prod'?R`e^{${iAngTex(q.d1)}}\cdot e^{${iAngTex(q.d2)}}`
+      :R`\dfrac{e^{${iAngTex(q.d1)}}}{e^{${iAngTex(q.d2)}}}`;
+    el.innerHTML=`<p class="prompt">Use Euler's formula to evaluate ${M(q.disp)}. Write the answer in the form ${M('a+bi')} with exact values.</p>`;
+    numIn(el,'z','=',{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return G(el,'z',checkComplex($('[data-k=z]',el).value,[q.re,q.im]));},
+  solution(q){
+    const lead=q.kind==='prod'?`Exponents add: ${M(R`e^{${iAngTex(q.d1)}}e^{${iAngTex(q.d2)}}=e^{${iAngTex(princ(q.d1+q.d2))}}`)}. `
+      :q.kind==='quot'?`Exponents subtract: ${M(R`\dfrac{e^{${iAngTex(q.d1)}}}{e^{${iAngTex(q.d2)}}}=e^{${iAngTex(princ(q.d1-q.d2))}}`)}. `
+      :q.kind==='scaled'?`Split the exponent: ${M(R`e^{a+bi}=e^a(\cos b+i\sin b)`)}, and ${M(R`e^{${q.aTex}}=${texNum(q.mag)}`)}. `:'';
+    return `${lead}${lead?'Then':"Euler's formula gives"} ${M(R`e^{${iAngTex(q.deg)}}=\cos ${angArg(q.deg)}+i\sin ${angArg(q.deg)}=${exactCxTex(cosExact(q.deg)[1],sinExact(q.deg)[1])}`)}, so the value is ${M(exactCxTex(q.re,q.im))}.`;
+  }
+};
+
+Q.expForm={name:'write in exponential form',
+  gen(){
+    let L,ok=false;
+    while(!ok){
+      L=latticePoint();
+      ok=cxOk(Cx.exp(CX(Math.log(L.r),L.theta)),L.av,L.bv,1e-8);
+    }
+    return L;
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Write ${M('z='+q.tex)} in exponential form ${M(R`re^{i\theta}`)}. Give ${M('r')} exactly and the principal argument ${M(R`\theta`)} with ${M(R`-\pi\lt\theta\le\pi`)} in radians.</p>`;
+    numIn(el,'r',M('r='));
+    numIn(el,'th',M(R`\theta=`));
+  },
+  check(q,el){return Gall(el,[['r',checkNumber($('[data-k=r]',el).value,q.r)],['th',checkNumber($('[data-k=th]',el).value,q.theta)]]);},
+  solution(q){
+    return `${M(R`r=|z|=\sqrt{(${exactNum(q.av)})^2+(${exactNum(q.bv)})^2}=${exactNum(q.r)}`)} and the point lies at angle ${M(piTex(q.deg))}, so ${M(R`z=${expTexF(q.r,q.deg)}`)}.`;
+  }
+};
+
+const IDS=[
+  {targ:R`\cos 2\theta`,ref:t=>Math.cos(2*t),ans:'cos(theta)^2-sin(theta)^2',texAns:R`\cos^2\theta-\sin^2\theta`,
+   why:R`Square \(e^{i\theta}\): \((\cos\theta+i\sin\theta)^2=(\cos^2\theta-\sin^2\theta)+i(2\sin\theta\cos\theta)\), and this must equal \(e^{2i\theta}=\cos2\theta+i\sin2\theta\). Matching real parts gives the answer.`},
+  {targ:R`\sin 2\theta`,ref:t=>Math.sin(2*t),ans:'2sin(theta)cos(theta)',texAns:R`2\sin\theta\cos\theta`,
+   why:R`Square \(e^{i\theta}\) and match imaginary parts: \(\sin2\theta=2\sin\theta\cos\theta\).`},
+  {targ:R`\cos 3\theta`,ref:t=>Math.cos(3*t),ans:'4cos(theta)^3-3cos(theta)',texAns:R`4\cos^3\theta-3\cos\theta`,
+   why:R`Cube \(e^{i\theta}\): \((\cos\theta+i\sin\theta)^3=\cos^3\theta-3\cos\theta\sin^2\theta+i(3\cos^2\theta\sin\theta-\sin^3\theta)\). Match real parts and replace \(\sin^2\theta\) by \(1-\cos^2\theta\).`},
+  {targ:R`\sin 3\theta`,ref:t=>Math.sin(3*t),ans:'3sin(theta)-4sin(theta)^3',texAns:R`3\sin\theta-4\sin^3\theta`,
+   why:R`Cube \(e^{i\theta}\) and match imaginary parts: \(3\cos^2\theta\sin\theta-\sin^3\theta\), then replace \(\cos^2\theta\) by \(1-\sin^2\theta\).`},
+];
+Q.eulerIdentity={name:'derive with Euler',
+  gen(){
+    let it,ok=false;
+    while(!ok){
+      it=pick(IDS);
+      /* verify the stored answer string really equals the target function of theta */
+      const f=Expr.compile(it.ans);
+      ok=sampleEqual(f,e=>it.ref(e.theta),['theta'],{domain:{theta:[0.1,1.4]}});
+    }
+    return {it};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Squaring or cubing ${M(R`e^{i\theta}`)} two different ways turns a multiple angle into a polynomial. Express ${M(q.it.targ)} using only ${M(R`\cos\theta`)} and ${M(R`\sin\theta`)}. Type <code>theta</code> for ${M(R`\theta`)}; no multiple of ${M(R`\theta`)} may appear inside a trigonometric function.</p>`;
+    numIn(el,'e',M(q.it.targ+'='),{xwide:true,placeholder:'in cos(theta) and sin(theta)'});
+  },
+  check(q,el){
+    const raw=cleanAns($('[data-k=e]',el).value).replace(/\s+/g,'');
+    if(/\d\*?theta|theta\*?\d/.test(raw))return G(el,'e',{ok:false,msg:'Write the answer with a single \u03b8 inside each cosine and sine.'});
+    return G(el,'e',checkExpr($('[data-k=e]',el).value,e=>q.it.ref(e.theta),['theta'],{domain:{theta:[0.1,1.4]}}));
+  },
+  hint(q,el){
+    let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Start from ${M(R`\cos n\theta+i\sin n\theta=(\cos\theta+i\sin\theta)^n`)}, expand the right side with the binomial theorem, and match ${q.it.targ.indexOf('cos')>=0?'real':'imaginary'} parts.`;
+  },
+  solution(q){return q.it.why+` The identity is ${M(q.it.targ+'='+q.it.texAns)}.`;}
+};
+
+Q.cosSinExp={name:'cos and sin as exponentials',
+  gen(){
+    let A,B,cv,sv,ok=false;
+    while(!ok){
+      A=pick(SPDP);B=pick(SPDP);
+      cv=cosExact(A)[1];sv=sinExact(B)[1];
+      const c2=Cx.div(Cx.add(Cx.exp(CX(0,degRad(A))),Cx.exp(CX(0,-degRad(A)))),CX(2,0));
+      const s2=Cx.div(Cx.sub(Cx.exp(CX(0,degRad(B))),Cx.exp(CX(0,-degRad(B)))),CX(0,2));
+      /* verify both stored values against the exponential combinations */
+      ok=cxOk(c2,cv,0,1e-9)&&cxOk(s2,sv,0,1e-9);
+    }
+    return {A,B,cv,sv};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Both combinations below are real numbers. Evaluate each one exactly.</p>`;
+    numIn(el,'c',M(R`\dfrac{e^{${iAngTex(q.A)}}+e^{${iAngTex(-q.A)}}}{2}=`));
+    numIn(el,'s',M(R`\dfrac{e^{${iAngTex(q.B)}}-e^{${iAngTex(-q.B)}}}{2i}=`));
+  },
+  check(q,el){return Gall(el,[['c',checkNumber($('[data-k=c]',el).value,q.cv)],['s',checkNumber($('[data-k=s]',el).value,q.sv)]]);},
+  solution(q){
+    return `Adding ${M(R`e^{i\theta}=\cos\theta+i\sin\theta`)} to ${M(R`e^{-i\theta}=\cos\theta-i\sin\theta`)} cancels the sine, and subtracting cancels the cosine. So the first is ${M(R`\cos ${angArg(q.A)}=${exactNum(q.cv)}`)} and the second is ${M(R`\sin ${angArg(q.B)}=${exactNum(q.sv)}`)}.`;
+  }
+};
+
+const LOGS=[
+  {tex:R`\ln(-1)`,val:()=>Cx.log(CX(-1,0)),re:0,im:PI,
+   why:R`\(-1=e^{i\pi}\), so the principal logarithm is \(i\pi\). In general \(\ln z=\ln|z|+i\arg z\), and here \(|z|=1\) so the real part is \(\ln 1=0\).`},
+  {tex:R`\ln(i)`,val:()=>Cx.log(CX(0,1)),re:0,im:PI/2,
+   why:R`\(i=e^{i\pi/2}\) and \(|i|=1\), so \(\ln i=\ln 1+i\tfrac{\pi}{2}=\tfrac{i\pi}{2}\).`},
+  {tex:R`\ln(-i)`,val:()=>Cx.log(CX(0,-1)),re:0,im:-PI/2,
+   why:R`\(-i=e^{-i\pi/2}\), and the principal argument of \(-i\) is \(-\tfrac{\pi}{2}\), so \(\ln(-i)=-\tfrac{i\pi}{2}\).`},
+  {tex:R`i^{\,i}`,val:()=>Cx.pow(CX(0,1),CX(0,1)),re:Math.exp(-PI/2),im:0,
+   why:R`Write \(i^i=e^{i\ln i}=e^{i\cdot i\pi/2}=e^{-\pi/2}\), a real number about \(0.2079\). Type it as <code>e^(-pi/2)</code>.`},
+];
+Q.logAndPower={name:'complex logarithm and powers',
+  gen(){
+    let it,ok=false;
+    while(!ok){it=pick(LOGS);ok=cxOk(it.val(),it.re,it.im,1e-9);}
+    return {it,re:it.re,im:it.im};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the principal value of ${M(q.it.tex)}. Write the answer in the form ${M('a+bi')} with exact values (${M(R`\pi`)} and ${M('e')} are allowed).</p>`;
+    numIn(el,'z','=',{wide:true,placeholder:'a + bi'});
+  },
+  check(q,el){return G(el,'z',checkComplex($('[data-k=z]',el).value,[q.re,q.im]));},
+  solution(q){return q.it.why;}
+};
+/* ============================================================ chapter 1: the plane + the division walkthrough */
+(function(){
+  const plot=new Plot2D('#cxPlot',{xmin:-4,xmax:4,ymin:-4,ymax:4});
+  let z=[1.5,1];
+  const snapZ=w=>{
+    let x=Math.round(w[0]*2)/2,y=Math.round(w[1]*2)/2,g=0;
+    while(Math.hypot(x,y)>2.0001&&g++<40){x=Math.sign(x)*Math.floor(Math.abs(x)*1.8)/2;y=Math.sign(y)*Math.floor(Math.abs(y)*1.8)/2;}
+    if(x===0&&y===0)x=0.5;
+    return [x,y];
+  };
+  const arcAt=(rad,a0,a1,color)=>{const ctx=plot.ctx,[ox,oy]=plot.px(0,0);ctx.strokeStyle=color;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(ox,oy,rad,-a0,-a1,a1>a0);ctx.stroke();};
+  function draw(){
+    plot.begin();
+    const [a,b]=z,m2=a*a+b*b,m=Math.sqrt(m2),th=Math.atan2(b,a);
+    const sq=[a*a-b*b,2*a*b],cj=[a,-b],ng=[-a,-b],iv=[a/m2,-b/m2];
+    plot.param(t=>[Math.cos(t),Math.sin(t)],0,2*PI,{color:'#e4e1da',width:1.2,n:400});
+    plot.param(t=>[2*Math.cos(t),2*Math.sin(t)],0,2*PI,{color:'#eeece6',width:1,dash:[5,5],n:400});
+    arcAt(30,0,th,'#d97706');arcAt(48,0,2*th,'#7c3aed');
+    plot.vector([0,0],z,{color:'#d97706',width:2.4,dash:[6,4]});
+    plot.vector([0,0],sq,{color:'#7c3aed',width:2.2,dash:[6,4]});
+    plot.point(ng,{color:'#8b877e',r:4,label:'−z'});
+    plot.point(cj,{color:'#2563eb',r:5,label:'conj z'});
+    plot.point(iv,{color:'#db2777',r:5,label:'1/z'});
+    plot.point(sq,{color:'#7c3aed',r:6,label:'z²'});
+    plot.point(z,{color:'#d97706',r:6,label:'z'});
+    $('#cxOut').innerHTML=`z = <b>${cxPlain(a,b)}</b> &nbsp; conj z = ${cxPlain(a,-b)} &nbsp; −z = ${cxPlain(-a,-b)}<br>
+      |z| = √((${mnum(a)})² + (${mnum(b)})²) ≈ ${fmtDec(m,3)}, and |z|² = ${fmt(m2)}<br>
+      z² = ${cxPlain(sq[0],sq[1])} &nbsp; with |z²| = ${fmtDec(m2,3)} = |z|²<br>
+      1/z = conj z / |z|² = ${cxPlain(iv[0],iv[1])} &nbsp; with |1/z| = ${fmtDec(1/m,3)}<br>
+      arg z = ${dnum(th*180/PI,1)}° &nbsp; arg z² = ${dnum(princ(2*th*180/PI),1)}° = twice arg z`;
+  }
+  plot.on('down',w=>{z=snapZ(w);draw();}).on('drag',w=>{z=snapZ(w);draw();});
+  [['z = i',[0,1]],['z = 1 + i',[1,1]],['z = −1',[-1,0]],['z = 2',[2,0]],['z = −1.5 + 0.5i',[-1.5,0.5]],['z = 0.5 − 1.5i',[0.5,-1.5]]].forEach(([n,v])=>{
+    const b=el('button',{class:'btn small'},n);b.onclick=()=>{z=v.slice();draw();};$('#cxPresets').appendChild(b);});
+  redrawOnShow('arith',draw);draw();
+
+  /* division walkthrough */
+  let dv=null,dstep=0;
+  function newDiv(){
+    let p,q,c,d;do{p=rint(-4,4);q=rint(-4,4);c=rnz(-4,4);d=rnz(-4,4);}while(p===0&&q===0);
+    dv={p,q,c,d,z:Cx.mul(CX(p,q),CX(c,d)),den:c*c+d*d};dstep=0;drawDiv();
+  }
+  function drawDiv(){
+    const {p,q,c,d,den}=dv;
+    const ztex=exactCxTex(dv.z.re,dv.z.im),wtex=exactCxTex(c,d),cjtex=exactCxTex(c,-d);
+    const num=Cx.mul(CX(dv.z.re,dv.z.im),CX(c,-d));const ntex=exactCxTex(num.re,num.im);
+    const L=[
+      M(R`\dfrac{${ztex}}{${wtex}}`),
+      M(R`=\dfrac{${ztex}}{${wtex}}\cdot\dfrac{${cjtex}}{${cjtex}}`),
+      M(R`=\dfrac{\left(${ztex}\right)\left(${cjtex}\right)}{\left(${wtex}\right)\left(${cjtex}\right)}=\dfrac{${ntex}}{\left(${wtex}\right)\left(${cjtex}\right)}`),
+      M(R`=\dfrac{${ntex}}{(${c})^2+(${d})^2}=\dfrac{${ntex}}{${den}}`),
+      M(R`=${exactCxTex(p,q)}`)
+    ];
+    $('#divExpr').innerHTML=L.map((s,i)=>`<div class="${i<=dstep?'':'faint'}"><span class="t ${i===dstep?'now ':''}${i===4?'c':i===2?'b':'a'}">${s}</span></div>`).join('');
+    $('#divStatus').textContent=['The quotient to simplify.','Multiply top and bottom by the conjugate of the denominator. That is multiplying by 1, so nothing changes.','Expand the numerator with FOIL and ι² = −1.'.replace('ι','i'),'The denominator collapses to |w|², a real number.','Divide each part by that real number.'][dstep];
+    $('#divPrev').disabled=dstep===0;$('#divNext').disabled=dstep===4;
+    typeset($('#divExpr'));
+  }
+  $('#divNext').onclick=()=>{dstep=Math.min(4,dstep+1);drawDiv();};
+  $('#divPrev').onclick=()=>{dstep=Math.max(0,dstep-1);drawDiv();};
+  $('#divNew').onclick=newDiv;
+  newDiv();
+
+  new Drill({mount:'#drill-arith',section:'arith',goal:7,...mixDrill([Q.addMult,Q.addMult,Q.divide,Q.divide,Q.modulusConj,Q.conjProduct,Q.quadratic,Q.quadratic,Q.powersOfI])});
+})();
+
+/* ============================================================ chapter 2: multiplication as rotation + the roots walkthrough */
+(function(){
+  const plot=new Plot2D('#mulPlot',{xmin:-3,xmax:3,ymin:-3,ymax:3});
+  let z=[1.25,0.75],w=[0.75,1],n=3;
+  const snapW=v=>{
+    let x=Math.round(v[0]*4)/4,y=Math.round(v[1]*4)/4,g=0;
+    while(Math.hypot(x,y)>1.7001&&g++<40){x=Math.sign(x)*Math.floor(Math.abs(x)*3.6)/4;y=Math.sign(y)*Math.floor(Math.abs(y)*3.6)/4;}
+    if(x===0&&y===0)x=0.25;
+    return [x,y];
+  };
+  const arcAt=(rad,a0,a1,color)=>{const ctx=plot.ctx,[ox,oy]=plot.px(0,0);ctx.strokeStyle=color;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(ox,oy,rad,-a0,-a1,a1>a0);ctx.stroke();};
+  const nStep=stepper('#rootN',3,2,8,v=>{n=v;draw();});
+  function draw(){
+    plot.begin();
+    const zw=[z[0]*w[0]-z[1]*w[1],z[0]*w[1]+z[1]*w[0]];
+    const rz=Math.hypot(z[0],z[1]),rw=Math.hypot(w[0],w[1]),rp=rz*rw;
+    const tz=Math.atan2(z[1],z[0]),tw=Math.atan2(w[1],w[0]),tp=Math.atan2(zw[1],zw[0]);
+    plot.param(t=>[Math.cos(t),Math.sin(t)],0,2*PI,{color:'#e4e1da',width:1.4,n:400});
+    plot.param(t=>[rp*Math.cos(t),rp*Math.sin(t)],0,2*PI,{color:'#eef7f0',width:1,dash:[5,5],n:400});
+    arcAt(26,0,tz,'#d97706');arcAt(40,0,tw,'#2563eb');arcAt(54,0,tp,'#16a34a');
+    if($('#showRoots').checked){
+      const rr=Math.pow(rz,1/n),t0=tz/n;
+      plot.param(t=>[rr*Math.cos(t),rr*Math.sin(t)],0,2*PI,{color:'#ede9fe',width:1.2,dash:[4,4],n:400});
+      for(let k=0;k<n;k++){const a=t0+2*PI*k/n;plot.point([rr*Math.cos(a),rr*Math.sin(a)],{color:'#7c3aed',r:5,label:k===0?'root 0':''});}
+    }
+    plot.vector([0,0],z,{color:'#d97706',width:2.4});
+    plot.vector([0,0],w,{color:'#2563eb',width:2.4});
+    plot.vector([0,0],zw,{color:'#16a34a',width:2.8});
+    plot.point(z,{color:'#d97706',r:5,label:'z'});
+    plot.point(w,{color:'#2563eb',r:5,label:'w'});
+    plot.point(zw,{color:'#16a34a',r:6,label:'zw'});
+    const deg=x=>dnum(x*180/PI,1);
+    let extra='';
+    if($('#showRoots').checked){const rr=Math.pow(rz,1/n);extra=`<br>${n} roots of z: modulus ${fmtDec(rr,3)} = |z|<sup>1/${n}</sup>, first angle ${deg(tz/n)}°, spacing ${deg(2*PI/n)}°`;}
+    $('#mulOut').innerHTML=`z = ${cxPlain(z[0],z[1])} &nbsp; |z| = ${fmtDec(rz,3)} &nbsp; arg z = ${deg(tz)}°<br>
+      w = ${cxPlain(w[0],w[1])} &nbsp; |w| = ${fmtDec(rw,3)} &nbsp; arg w = ${deg(tw)}°<br>
+      zw = <b>${cxPlain(zw[0],zw[1])}</b><br>
+      |zw| = ${fmtDec(rz,3)} × ${fmtDec(rw,3)} = <b>${fmtDec(rp,3)}</b> &nbsp; arg zw = ${deg(tz)}° + ${deg(tw)}° = <b>${deg(tp)}°</b> (mod 360°)${extra}`;
+  }
+  plot.on('down',v=>{const pz=Math.hypot(v[0]-z[0],v[1]-z[1]),pw=Math.hypot(v[0]-w[0],v[1]-w[1]);if(pz<pw)z=snapW(v);else w=snapW(v);draw();})
+      .on('drag',v=>{const pz=Math.hypot(v[0]-z[0],v[1]-z[1]),pw=Math.hypot(v[0]-w[0],v[1]-w[1]);if(pz<pw)z=snapW(v);else w=snapW(v);draw();});
+  $('#showRoots').onchange=draw;
+  [['z = 1 + i, w = i',[1,1],[0,1]],['w on the unit circle',[1.25,0.75],[Math.SQRT2/2,Math.SQRT2/2]],['both real',[1.5,0],[1.25,0]],['w = −1',[1.25,0.75],[-1,0]]].forEach(([nm,a,b])=>{
+    const btn=el('button',{class:'btn small'},nm);btn.onclick=()=>{z=a.slice();w=b.slice();draw();};$('#mulPresets').appendChild(btn);});
+  const spin=animator('polar',dt=>{const r=Math.hypot(w[0],w[1]),t=Math.atan2(w[1],w[0])+dt*0.8;w=[r*Math.cos(t),r*Math.sin(t)];draw();});
+  $('#mulPlay').onclick=()=>{spin.toggle();$('#mulPlay').textContent=spin.running?'❚❚ Pause':'▶ Spin w';};
+  onShow('*',id=>{if(id!=='polar')$('#mulPlay').textContent='▶ Spin w';});
+  redrawOnShow('polar',draw);draw();
+
+  /* nth roots walkthrough */
+  let rt=null,rstep=0;
+  function newRt(){const it=pick(ROOTZ);rt={it,roots:nRoots(it.z[0],it.z[1],it.n),r:Math.hypot(it.z[0],it.z[1]),t:Math.atan2(it.z[1],it.z[0])};rstep=0;drawRt();}
+  function drawRt(){
+    const {it,roots,r,t}=rt;const nn=it.n;const deg0=Math.round(t*180/PI);
+    const L=[
+      M(R`\zeta^{${nn}}=${it.tex}`),
+      M(R`${it.tex}=${expTexF(r,deg0)}\quad\text{so}\quad r=${exactNum(r)},\ \theta=${piTex(deg0)}`),
+      M(R`|\zeta|=r^{1/${nn}}=${exactNum(Math.pow(r,1/nn))}`),
+      M(R`\theta_k=\dfrac{${piTex(deg0)}+2\pi k}{${nn}}=${piTex(deg0/nn)}+\dfrac{2\pi k}{${nn}},\quad k=0,\dots,${nn-1}`),
+      roots.map(zz=>M(exactCxTex(zz.re,zz.im))).join(', &nbsp; ')
+    ];
+    $('#rtExpr').innerHTML=L.map((s,i)=>`<div class="${i<=rstep?'':'faint'}"><span class="t ${i===rstep?'now ':''}${i===4?'c':i===3?'b':'a'}">${s}</span></div>`).join('');
+    $('#rtStatus').textContent=['The equation to solve.','Put z in polar form: read off its modulus and its argument.','Every root has the same modulus, the real nth root of r.','The angles start at θ/n and step by 2π/n. Stop at k = n − 1.','The n roots, equally spaced on the circle.'][rstep];
+    $('#rtPrev').disabled=rstep===0;$('#rtNext').disabled=rstep===4;
+    typeset($('#rtExpr'));
+  }
+  $('#rtNext').onclick=()=>{rstep=Math.min(4,rstep+1);drawRt();};
+  $('#rtPrev').onclick=()=>{rstep=Math.max(0,rstep-1);drawRt();};
+  $('#rtNew').onclick=newRt;
+  newRt();
+
+  new Drill({mount:'#drill-polar',section:'polar',goal:8,...mixDrill([Q.toPolar,Q.toPolar,Q.fromPolar,Q.productPolar,Q.productPolar,Q.deMoivre,Q.deMoivre,Q.nthRoots,Q.argument])});
+})();
+
+/* ============================================================ chapter 3: the series spiral + the derivation */
+(function(){
+  const plot=new Plot2D('#spiralPlot',{xmin:-5.5,xmax:5.5,ymin:-5.5,ymax:5.5});
+  let th=2.2,N=6;
+  const sl=$('#spSliders');
+  const sTh=sliderRow(sl,{label:'θ',min:0,max:PI,step:0.01,value:th,fmt:v=>fmtDec(v,2),onInput:v=>{th=v;draw();}});
+  const sN=sliderRow(sl,{label:'N',min:0,max:14,step:1,value:N,fmt:v=>String(v),onInput:v=>{N=v;draw();}});
+  function partials(t,K){
+    const out=[];let term=CX(1,0),s=CX(1,0);out.push(CX(1,0));
+    for(let k=1;k<=K;k++){term=Cx.div(Cx.mul(term,CX(0,t)),CX(k,0));s=Cx.add(s,term);out.push(CX(s.re,s.im));}
+    return out;
+  }
+  function draw(){
+    plot.begin();
+    const S=partials(th,N),last=S[S.length-1];
+    const tgt=[Math.cos(th),Math.sin(th)];
+    plot.param(t=>[Math.cos(t),Math.sin(t)],0,2*PI,{color:'#e4e1da',width:1.4,n:400});
+    plot.param(t=>[Math.cos(t),Math.sin(t)],0,th,{color:'#bbf7d0',width:5,n:300});
+    for(let k=1;k<S.length;k++){
+      const A=S[k-1],B=S[k];
+      plot.vector([A.re,A.im],[B.re,B.im],{color:k%2?'#2563eb':'#d97706',width:2});
+    }
+    S.forEach((p,k)=>{if(k<S.length-1)plot.point([p.re,p.im],{color:'#c9c5bb',r:3});});
+    plot.vector([last.re,last.im],tgt,{color:'#b9b5ab',width:1.2,dash:[4,4]});
+    plot.point(tgt,{color:'#16a34a',r:6,label:'e^{iθ}'});
+    plot.point([last.re,last.im],{color:'#d97706',r:6,label:'S_N'});
+    plot.point([1,0],{color:'#7c3aed',r:4,label:'1'});
+    const err=Math.hypot(last.re-tgt[0],last.im-tgt[1]);
+    $('#spOut').innerHTML=`θ = ${fmtDec(th,3)} rad = ${fmtDec(th*180/PI,1)}° &nbsp; N = ${N}<br>
+      S<sub>N</sub> = Σ<sub>n=0..${N}</sub> (iθ)<sup>n</sup>/n! = <b>${decCx(last.re,last.im)}</b><br>
+      e<sup>iθ</sup> = cos θ + i sin θ = <b>${decCx(tgt[0],tgt[1])}</b><br>
+      |S<sub>N</sub> − e<sup>iθ</sup>| = ${err<1e-4?err.toExponential(2):fmtDec(err,5)}`;
+  }
+  [['θ = π/3',PI/3],['θ = π/2',PI/2],['θ = 2π/3',2*PI/3],['θ = π (Euler’s identity)',PI]].forEach(([nm,v])=>{
+    const b=el('button',{class:'btn small'},nm);b.onclick=()=>{th=v;sTh.set(v);draw();};$('#spPresets').appendChild(b);});
+  const play=animator('euler',dt=>{th+=dt*0.45;if(th>PI)th=0;sTh.set(th);draw();});
+  $('#spPlay').onclick=()=>{play.toggle();$('#spPlay').textContent=play.running?'❚❚ Pause':'▶ Play θ';};
+  onShow('*',id=>{if(id!=='euler')$('#spPlay').textContent='▶ Play θ';});
+  redrawOnShow('euler',draw);draw();
+
+  /* the derivation, one line at a time */
+  const EU=[
+    D(R`e^{x}=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\frac{x^4}{4!}+\frac{x^5}{5!}+\cdots`),
+    D(R`e^{i\theta}=1+i\theta+\frac{(i\theta)^2}{2!}+\frac{(i\theta)^3}{3!}+\frac{(i\theta)^4}{4!}+\frac{(i\theta)^5}{5!}+\cdots`),
+    D(R`=1+i\theta-\frac{\theta^2}{2!}-i\frac{\theta^3}{3!}+\frac{\theta^4}{4!}+i\frac{\theta^5}{5!}-\cdots`),
+    D(R`=\left(1-\frac{\theta^2}{2!}+\frac{\theta^4}{4!}-\cdots\right)+i\left(\theta-\frac{\theta^3}{3!}+\frac{\theta^5}{5!}-\cdots\right)`),
+    D(R`=\cos\theta+i\sin\theta\qquad\Longrightarrow\qquad e^{i\pi}=\cos\pi+i\sin\pi=-1`)
+  ];
+  const EUS=['The Maclaurin series for the exponential, valid for every x.',
+    'Substitute x = iθ. The series still converges, for every θ.',
+    'Use i² = −1, i³ = −i, i⁴ = 1, i⁵ = i. The signs now run + + − − + + in pairs.',
+    'Group the real terms and the imaginary terms. Nothing has been thrown away.',
+    'Those two series are exactly cos θ and sin θ from module 11. Put θ = π to get e^{iπ} + 1 = 0.'];
+  let estep=0;
+  function drawEu(){
+    $('#euExpr').innerHTML=EU.map((s,i)=>`<div class="${i<=estep?'':'faint'}"><span class="t ${i===estep?'now ':''}${i===4?'c':i===3?'b':'a'}">${s}</span></div>`).join('');
+    $('#euStatus').textContent=EUS[estep];
+    $('#euPrev').disabled=estep===0;$('#euNext').disabled=estep===4;
+    typeset($('#euExpr'));
+  }
+  $('#euNext').onclick=()=>{estep=Math.min(4,estep+1);drawEu();};
+  $('#euPrev').onclick=()=>{estep=Math.max(0,estep-1);drawEu();};
+  $('#euReset').onclick=()=>{estep=0;drawEu();};
+  drawEu();
+
+  new Drill({mount:'#drill-euler',section:'euler',goal:6,...mixDrill([Q.eulerEval,Q.eulerEval,Q.expForm,Q.eulerIdentity,Q.eulerIdentity,Q.cosSinExp,Q.logAndPower])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[Q.addMult,Q.divide,Q.modulusConj,Q.conjProduct,Q.quadratic,Q.powersOfI,
+  Q.toPolar,Q.fromPolar,Q.productPolar,Q.deMoivre,Q.nthRoots,Q.argument,Q.eulerEval,Q.expForm,Q.eulerIdentity,Q.cosSinExp,Q.logAndPower]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-complex',[
+  R`\(i^2=-1\), and the powers of \(i\) cycle with period 4: \(i,-1,-i,1\).`,
+  R`\(\bar z=a-bi\), \(z\bar z=|z|^2=a^2+b^2\), and \(\dfrac1z=\dfrac{\bar z}{|z|^2}\).`,
+  R`Polar form \(z=r(\cos\theta+i\sin\theta)=re^{i\theta}\), with \(-\pi\lt\arg z\le\pi\).`,
+  R`Products multiply moduli and add arguments; quotients divide moduli and subtract arguments.`,
+  R`De Moivre: \((\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta\).`,
+  R`The \(n\)th roots of \(re^{i\theta}\) are \(r^{1/n}e^{i(\theta+2\pi k)/n}\) for \(k=0,\dots,n-1\): \(n\) points, equally spaced.`,
+  R`Euler: \(e^{i\theta}=\cos\theta+i\sin\theta\), so \(e^{i\pi}+1=0\) and \(|e^{i\theta}|=1\).`,
+  R`\(\cos\theta=\dfrac{e^{i\theta}+e^{-i\theta}}{2}\) and \(\sin\theta=\dfrac{e^{i\theta}-e^{-i\theta}}{2i}\).`,
+  R`\(e^{a+bi}=e^a(\cos b+i\sin b)\), and \(\ln z=\ln|z|+i\arg z\).`,
+  R`A real quadratic with negative discriminant has conjugate roots \(-\tfrac{b}{2}\pm\tfrac{\sqrt{4c-b^2}}{2}i\).`
+]));
+
+/* ============================================================ test hook */
+window.__solvers=(()=>{const S=String;return {
+  'add, subtract, multiply':q=>({z:cxStr(q.re,q.im)}),
+  'divide':q=>({z:cxStr(q.p,q.q)}),
+  'modulus and conjugate':q=>({m:S(q.m),zb:cxStr(q.a,-q.b)}),
+  'conjugate product and reciprocal':q=>({p:S(q.m2),inv:cxStr(q.ire,q.iim)}),
+  'solve a quadratic':q=>({r:cxListStr(q.roots)}),
+  'powers of i':q=>({z:cxStr(q.re,q.im)}),
+  'convert to polar form':q=>({r:S(q.r),th:S(q.theta)}),
+  'polar to rectangular':q=>({z:cxStr(q.av,q.bv)}),
+  'multiply or divide in polar form':q=>({r:S(q.mod),th:S(q.theta)}),
+  'a power by De Moivre':q=>({z:cxStr(q.re,q.im)}),
+  'all nth roots':q=>({r:cxListStr(q.roots)}),
+  'principal argument':q=>({th:S(q.theta)}),
+  'evaluate':q=>({z:cxStr(q.re,q.im)}),
+  'write in exponential form':q=>({r:S(q.r),th:S(q.theta)}),
+  'derive with Euler':q=>({e:q.it.ans}),
+  'cos and sin as exponentials':q=>({c:S(q.cv),s:S(q.sv)}),
+  'complex logarithm and powers':q=>({z:cxStr(q.re,q.im)}),
+};})();
+
+initModule({key:'c2-complex',title:'Complex Numbers',sub:'Module 12 · Stewart Appendix H'});
+</script>
+</body>
+</html>
