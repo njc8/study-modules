@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Substitution</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+<style>
+.tbl{width:100%;border-collapse:collapse;font-size:15px}
+.tbl th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;padding:6px 10px 6px 0;border-bottom:1px solid var(--line)}
+.tbl td{padding:7px 10px 7px 0;border-bottom:1px solid var(--line)}
+.tbl tr:last-child td{border-bottom:0}
+</style>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 1 · Stewart 5.5</p>
+  <h2>Substitution</h2>
+  <p class="lead">The chain rule run backwards. It is the single most used technique in this course: every other method you learn this semester ends with a substitution somewhere in the middle.</p>
+
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answers are exact unless a problem says otherwise. Antiderivatives are graded up to a constant, so <code>+ C</code> is optional. Type numbers like <code>16pi</code>, <code>32/3</code>, <code>(e-1)/2</code>, <code>ln(5)</code>, <code>4sqrt(3)</code>. Type expressions like <code>(x^2+1)^4/8</code>, <code>e^(x^2)/2</code>, <code>ln|cos x|</code>, <code>sqrt(x+2)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>Answer boxes work like WebAssign's calcPad: typing <code>sqrt</code> makes a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>pi</code> the symbol, <code>|</code> absolute value. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the integral in \(x\), and the inside function \(u\)</span>
+      <span><i class="dot" style="background:var(--b)"></i> the integral in \(u\), and \(du\)</span>
+      <span><i class="dot" style="background:var(--c)"></i> the value, the answer</span>
+      <span><i class="dot" style="background:var(--d)"></i> curves and marked points</span>
+    </div>
+  </div>
+
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Look at an integrand and spot \(u\) in one pass: the inside function whose derivative is already sitting outside.</li>
+      <li>Finish an indefinite integral, including the constant adjustment, and check it by differentiating.</li>
+      <li>Change the limits of a definite integral instead of substituting back, and know why that is the safer habit.</li>
+      <li>Use odd and even symmetry on \([-a,a]\) to kill a term or halve the work.</li>
+      <li>Split an integral so that one piece is a known area, the way Stewart 5.5.83 wants you to.</li>
+    </ul>
+  </div>
+
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 SPOTTING u -->
+<section data-id="spot" data-title="Spotting u" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 5.5</p>
+  <h2>Spotting \(u\)</h2>
+  <p class="lead">The chain rule says \(\frac{d}{dx}F(g(x))=F'(g(x))\,g'(x)\). Read that right to left and you have the whole technique.</p>
+
+  <p>If an integrand looks like <b>a function of something, times the derivative of that something</b>, then it is a chain rule derivative in disguise. Undo it by naming the something \(u\).</p>
+  <div class="formula">\(\displaystyle\int f(g(x))\,g'(x)\,dx=\int f(u)\,du \qquad\text{where } u=g(x),\; du=g'(x)\,dx\)<span class="cap">The whole content of the rule: replace \(g(x)\) by \(u\) and replace \(g'(x)\,dx\) by \(du\). What is left must be an integral you already know.</span></div>
+
+  <p>The mechanical version is three lines. Write \(u=g(x)\). Differentiate to get \(du=g'(x)\,dx\). Solve that for whatever piece of the integrand you actually have, then swap.</p>
+
+  <h3>The checklist</h3>
+  <div class="card tint">
+    <ol class="steps">
+      <li><b>Is there an inside function?</b> Something under a root, inside a power, inside \(\sin\), inside \(e^{(\;)}\), inside \(\ln\), or in a denominator. Call it \(u\).</li>
+      <li><b>Is its derivative outside, up to a constant?</b> If \(u=x^3+5\) then \(u'=3x^2\), and an \(x^2\) sitting outside is close enough: constants are free.</li>
+      <li><b>Do the constant adjustment.</b> From \(du=3x^2\,dx\) you get \(x^2\,dx=\tfrac{du}{3}\). Pull the \(\tfrac13\) out front.</li>
+      <li><b>Rewrite completely in \(u\).</b> No \(x\) may survive.</li>
+      <li><b>Integrate, then substitute back</b> \(u=g(x)\), and add \(+\,C\).</li>
+    </ol>
+  </div>
+
+  <h3>The patterns worth memorizing</h3>
+  <p>These nine cover most of what you will see. In each one the middle column is the \(u\) that works.</p>
+  <div class="card">
+    <table class="tbl">
+      <tr><th>Integrand</th><th>Take \(u=\)</th><th>Becomes</th></tr>
+      <tr><td>\((ax+b)^n\)</td><td>\(ax+b\)</td><td>\(\frac1a\int u^n\,du\)</td></tr>
+      <tr><td>\(x(x^2+c)^n\)</td><td>\(x^2+c\)</td><td>\(\frac12\int u^n\,du\)</td></tr>
+      <tr><td>\(x\,e^{x^2}\)</td><td>\(x^2\)</td><td>\(\frac12\int e^u\,du\)</td></tr>
+      <tr><td>\(\cos x\,\sin^n x\)</td><td>\(\sin x\)</td><td>\(\int u^n\,du\)</td></tr>
+      <tr><td>\(\dfrac{\ln x}{x}\)</td><td>\(\ln x\)</td><td>\(\int u\,du\)</td></tr>
+      <tr><td>\(\dfrac{e^x}{1+e^x}\)</td><td>\(1+e^x\)</td><td>\(\int \frac{du}{u}\)</td></tr>
+      <tr><td>\(\sec^2 x\,\tan^n x\)</td><td>\(\tan x\)</td><td>\(\int u^n\,du\)</td></tr>
+      <tr><td>\(\dfrac{1}{x\ln x}\)</td><td>\(\ln x\)</td><td>\(\int \frac{du}{u}\)</td></tr>
+      <tr><td>\(\dfrac{x}{\sqrt{1-x^2}}\)</td><td>\(1-x^2\)</td><td>\(-\frac12\int u^{-1/2}\,du\)</td></tr>
+    </table>
+    <p class="hint">\(\tan x=\dfrac{\sin x}{\cos x}\) belongs on this list too: with \(u=\cos x\) it becomes \(-\int\frac{du}{u}=-\ln|\cos x|=\ln|\sec x|\).</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: the u-spotter, one step at a time</h4>
+    <div class="expr" id="usExpr"></div>
+    <div class="controls">
+      <button class="btn" id="usPrev">◀ Back</button>
+      <button class="btn primary" id="usNext">Next step ▶</button>
+      <button class="btn" id="usNew">New integral</button>
+      <span class="status" id="usStatus"></span>
+    </div>
+    <p class="hint">Watch the two colors. Orange is everything that becomes \(u\). Blue is everything that becomes \(du\). If a piece of the integrand is neither color by step 4, the substitution is not going to close.</p>
+  </div>
+
+  <div class="warn"><b>\(du\) must absorb everything that is left.</b> After you substitute, no \(x\) may survive. If one does, either the substitution is wrong, or you need the back-substitution trick from Chapter 3 (solve \(u=g(x)\) for \(x\) and replace the leftover too).</div>
+
+  <h3>Check by differentiating</h3>
+  <p>An antiderivative is right exactly when its derivative is the integrand. That is a check you can always run, and it costs ten seconds.</p>
+
+  <div class="card">
+    <h4>Explore: the slope of \(F\) is the integrand</h4>
+    <div class="xf">
+      <div><canvas class="scene short" id="chkPlot"></canvas><p class="plotcap">Purple: the antiderivative \(F\). Orange: the integrand \(f\). Green: the tangent line to \(F\) at the marked point.</p></div>
+      <div>
+        <div class="presets" id="chkPresets"></div>
+        <div class="sliders" id="chkSliders"></div>
+        <div class="controls"><button class="btn primary" id="chkPlay">▶ Play</button></div>
+        <div class="readout" id="chkOut"></div>
+        <p class="hint">Slide \(x_0\) and watch two numbers stay locked together: the slope of the purple curve and the height of the orange curve. Where the orange curve crosses zero the purple curve is flat. Where orange is negative, purple falls. That correspondence is the only thing "antiderivative" means.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Constants are free, variables are not.</b> You may pull \(\tfrac13\) out of an integral. You may never pull an \(x\) out. If your \(du\) leaves you needing to divide by \(x\), the substitution failed.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-spot"></div>
+</section>
+
+<!-- ============================================================ 2 DEFINITE -->
+<section data-id="definite" data-title="Definite integrals: change the limits" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 5.5</p>
+  <h2>Definite integrals: change the limits</h2>
+  <p class="lead">Once you substitute, the old limits are limits for the old variable. Convert them and you never have to go back.</p>
+
+  <div class="formula">\(\displaystyle\int_a^b f(g(x))\,g'(x)\,dx=\int_{g(a)}^{g(b)} f(u)\,du\)<span class="cap">The limits travel through \(g\) exactly like the variable does. The left side sweeps \(x\) from \(a\) to \(b\); the right side sweeps \(u\) from \(g(a)\) to \(g(b)\).</span></div>
+
+  <p>You have two legal options and one of them is better.</p>
+  <ul>
+    <li><b>Substitute back.</b> Find the antiderivative in \(u\), rewrite it in \(x\), then use the original limits \(a\) and \(b\).</li>
+    <li><b>Change the limits.</b> Convert \(a\mapsto g(a)\) and \(b\mapsto g(b)\) right when you write \(du\), then finish entirely in \(u\). Recommended: it is shorter, and it removes the most common error, which is plugging \(x\)-limits into a \(u\)-antiderivative.</li>
+  </ul>
+
+  <div class="warn"><b>Reversed limits are fine.</b> If \(g\) is decreasing you can get something like \(\int_2^{0}\). Do not flip it and do not take absolute values. Keep the order the substitution gives you, or flip it and change the sign: \(\int_2^0=-\int_0^2\).</div>
+
+  <div class="card">
+    <h4>Explore: two pictures, one number</h4>
+    <div class="presets" id="dsPresets"></div>
+    <div class="minis two">
+      <div><canvas class="scene short" id="dsX"></canvas><p class="cap">in \(x\): the integrand on \([a,\,b]\)</p></div>
+      <div><canvas class="scene short" id="dsU"></canvas><p class="cap">in \(u\): the integrand on \([g(a),\,g(b)]\)</p></div>
+    </div>
+    <div class="sliders" id="dsSliders"></div>
+    <div class="controls"><button class="btn primary" id="dsPlay">▶ Play</button></div>
+    <div class="readout" id="dsOut"></div>
+    <p class="hint">Sweep the upper limit and watch the two shaded areas. The shapes are completely different, the widths are different, the heights are different, and the two numbers are equal at every instant. Substitution is not an approximation, it is a re-labelling of the same accumulated area.</p>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: a definite integral by substitution</h4>
+    <div class="expr" id="dwExpr"></div>
+    <div class="controls">
+      <button class="btn" id="dwPrev">◀ Back</button>
+      <button class="btn primary" id="dwNext">Next step ▶</button>
+      <button class="btn" id="dwNew">New problem</button>
+      <span class="status" id="dwStatus"></span>
+    </div>
+    <p class="hint">Step 2 is the one people skip. Write \(u(a)\) and \(u(b)\) out as numbers before you touch the integrand, and the rest of the problem has no \(x\) in it anywhere.</p>
+  </div>
+
+  <div class="note"><b>The new limits are numbers, not expressions.</b> \(g(a)\) and \(g(b)\) are evaluated immediately. If a limit still has an \(x\) in it you substituted into the wrong slot.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-definite"></div>
+</section>
+
+<!-- ============================================================ 3 SYMMETRY AND SPLITTING -->
+<section data-id="tricks" data-title="Symmetry, splitting, back-substitution" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 5.5</p>
+  <h2>Symmetry, splitting, and back-substitution</h2>
+  <p class="lead">Three moves that turn an integral you cannot do into one you can, or into nothing at all.</p>
+
+  <h3>Symmetry on \([-a,\,a]\)</h3>
+  <p>A function is <b>odd</b> when \(f(-x)=-f(x)\) and <b>even</b> when \(f(-x)=f(x)\). Over an interval centered at the origin this decides a lot.</p>
+  <div class="formula">\(\displaystyle\int_{-a}^{a} f(x)\,dx = 0 \;\;(f \text{ odd}) \qquad\qquad \int_{-a}^{a} f(x)\,dx = 2\int_0^a f(x)\,dx \;\;(f \text{ even})\)<span class="cap">Odd: the area to the left of 0 is the exact negative of the area to the right, so they cancel. Even: the two halves are mirror images, so double one of them.</span></div>
+  <p>This is worth real points, because it works on integrands with no elementary antiderivative at all. Nobody can write \(\int x e^{x^2}\cos x\,dx\) in closed form, but \(\int_{-3}^{3} x e^{x^2}\cos x\,dx=0\) is immediate: odd times even is odd.</p>
+  <p>Quick parity arithmetic: odd \(\times\) odd \(=\) even, odd \(\times\) even \(=\) odd, even \(\times\) even \(=\) even. Powers \(x^{\text{odd}}\), \(\sin x\), \(\tan x\) are odd; \(x^{\text{even}}\), \(\cos x\), \(|x|\), and any function of \(x^2\) are even.</p>
+
+  <h3>Splitting off a known area</h3>
+  <p>An integral does not have to be done in one piece. Split the integrand into a sum, and handle each piece with whichever tool fits. Stewart 5.5.83 is the model problem:</p>
+  <div class="formula">\(\displaystyle\int_{-4}^{4}(x+2)\sqrt{16-x^2}\,dx=\underbrace{\int_{-4}^{4}x\sqrt{16-x^2}\,dx}_{\text{odd, so }0}+\underbrace{2\int_{-4}^{4}\sqrt{16-x^2}\,dx}_{2\,\cdot\,\text{half disk of radius }4}=0+2\cdot 8\pi=16\pi\)<span class="cap">The first piece is odd and dies. The second is twice the area of a semicircle of radius 4, which is \(\tfrac12\pi(4)^2=8\pi\). No antiderivative is needed anywhere.</span></div>
+  <p>The area fact behind it: \(y=\sqrt{a^2-x^2}\) is the upper half of the circle \(x^2+y^2=a^2\), so \(\displaystyle\int_{-a}^{a}\sqrt{a^2-x^2}\,dx=\tfrac12\pi a^2\) and \(\displaystyle\int_{0}^{a}\sqrt{a^2-x^2}\,dx=\tfrac14\pi a^2\).</p>
+
+  <div class="card">
+    <h4>Explore: odd plus even</h4>
+    <div class="minis">
+      <div><canvas class="scene short" id="oeOdd"></canvas><p class="cap">\(x\sqrt{a^2-x^2}\) : odd</p></div>
+      <div><canvas class="scene short" id="oeEven"></canvas><p class="cap">\(c\sqrt{a^2-x^2}\) : even</p></div>
+      <div><canvas class="scene short" id="oeSum"></canvas><p class="cap">\((x+c)\sqrt{a^2-x^2}\) : the sum</p></div>
+    </div>
+    <div class="sliders" id="oeSliders"></div>
+    <div class="presets" id="oePresets"></div>
+    <div class="readout" id="oeOut"></div>
+    <p class="hint">The odd picture has two lobes that are mirror images with opposite signs, so its signed area is exactly zero no matter what \(a\) is. The even picture is a scaled half-disk whose area you know without integrating. The third picture is lopsided and looks hard, and it is just the sum of a zero and a half-disk.</p>
+  </div>
+
+  <h3>Back-substitution: when an \(x\) survives</h3>
+  <p>Sometimes \(u=g(x)\) clears the hard part but leaves a stray \(x\) behind. Do not give up: solve \(u=g(x)\) for \(x\) and substitute that too.</p>
+  <div class="formula">\(\displaystyle\int x\sqrt{x+c}\,dx \;\xrightarrow{\;u=x+c,\;x=u-c,\;dx=du\;}\; \int (u-c)\sqrt{u}\,du=\int\left(u^{3/2}-c\,u^{1/2}\right)du=\tfrac25 u^{5/2}-\tfrac{2c}{3}u^{3/2}+C\)<span class="cap">Then put \(u=x+c\) back. The trick is that \(x\) is a simple function of \(u\), so replacing it costs nothing and the integrand becomes a sum of powers.</span></div>
+  <p>The same move handles \(\int x(ax+b)^n\,dx\) with \(x=\frac{u-b}{a}\), and \(\int \frac{x}{(x+c)^2}\,dx\), which becomes \(\int\frac{u-c}{u^2}\,du=\ln|u|+\frac{c}{u}+C\).</p>
+  <div class="note"><b>The alternative: let \(u\) be the whole radical.</b> For \(\int x\sqrt{2x+1}\,dx\) you may set \(u=\sqrt{2x+1}\), so \(u^2=2x+1\), \(x=\frac{u^2-1}{2}\), and \(dx=u\,du\). The integrand becomes a polynomial in \(u\). Both routes are correct; pick whichever leaves you with powers instead of roots.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-tricks"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+
+/* fractions: fr / texFrac / frVal come from calc102.js */
+const frStr=(n,d)=>{const [p,q]=fr(n,d);return q===1?String(p):`${p}/${q}`;};
+const fTex=(n,d)=>texFrac(n,d,{tf:true});
+/* coefficient n/d in front of a TeX body */
+const cfTex=(n,d,body)=>{const [p,q]=fr(n,d);if(q===1)return (p===1?'':p===-1?'-':String(p))+body;
+  return (p<0?'-':'')+`\\tfrac{${Math.abs(p)}}{${q}}`+body;};
+/* n/d times pi */
+const piTex=(n,d)=>{const [p,q]=fr(n,d);if(p===0)return '0';const s=p<0?'-':'',ap=Math.abs(p);
+  if(q===1)return s+(ap===1?'\\pi':`${ap}\\pi`);return s+`\\tfrac{${ap===1?'':ap}\\pi}{${q}}`;};
+const co=k=>k===1?'':k===-1?'-':String(k);
+const pm=b=>b<0?`- ${-b}`:`+ ${b}`;
+const pmS=b=>b<0?`-${-b}`:`+${b}`;
+const linTex=(a,b)=>`${co(a)}x ${pm(b)}`;
+/* "dx = du/a", written so a negative a does not print du/-3 */
+const dxAdj=a=>a===1?'dx=du':a===-1?'dx=-du':a<0?`dx=-\\tfrac{du}{${-a}}`:`dx=\\tfrac{du}{${a}}`;
+const linStr=(a,b)=>`${a}x${pmS(b)}`;
+const powTex=(b,n)=>n===1?b:`${b}^{${n}}`;
+const APX=v=>Number.isInteger(v)?'':`\\approx ${fmtDec(v,4)}`;
+
+/* ============================================================ numeric verification
+   Every stored answer is checked inside gen() before the question is handed to the learner:
+   antiderivatives by central differences, definite values by Simpson. */
+function simpson(f,a,b,n=2000){n=2*Math.ceil(n/2);const h=(b-a)/n;let s=f(a)+f(b);
+  for(let i=1;i<n;i++)s+=f(a+i*h)*(i%2?4:2);return s*h/3;}
+function dnum(F,x){const h=1e-5;return (F({x:x+h})-F({x:x-h}))/(2*h);}
+/* the derivative of the stored antiderivative string must equal the integrand across the domain */
+function verifyAnti(str,f,dom){let F;try{F=Expr.compile(str);}catch(e){return false;}
+  const [lo,hi]=dom;
+  for(let i=1;i<=4;i++){const x=lo+(hi-lo)*i/5;const d=dnum(F,x),v=f(x);
+    if(!Number.isFinite(d)||!Number.isFinite(v))return false;
+    if(Math.abs(d-v)>1e-4*Math.max(1,Math.abs(v)))return false;}
+  return true;}
+/* the stored value must equal a Simpson estimate of the integral */
+function verifyVal(f,a,b,val){const s=simpson(f,a,b,4000);
+  if(!Number.isFinite(s))return false;
+  const sc=simpson(x=>Math.abs(f(x)),a,b,4000);
+  return Math.abs(s-val)<=1e-6*Math.max(1,Math.abs(sc));}
+/* integral of (x + c)*sqrt(a^2 - x^2) done in theta so the endpoints stay smooth */
+function circMoment(a,c,half){const t0=half?0:-PI/2;
+  return simpson(t=>(a*Math.sin(t)+c)*a*Math.cos(t)*a*Math.cos(t),t0,PI/2,3000);}
+
+/* ============================================================ chapter 1: the substitution families
+   Each family returns everything the walkthrough, the two drills, and the solutions need. */
+function famPower(){const a=rint(2,4),b=rnz(-4,4),n=rint(2,4);
+  return {id:'power',
+    iTex:`(${linTex(a,b)})^{${n}}`, f:x=>Math.pow(a*x+b,n),
+    uTex:linTex(a,b), uStr:linStr(a,b), duTex:`${a}\\,dx`, duStr:String(a),
+    adjTex:dxAdj(a),
+    uIntTex:`\\tfrac{1}{${a}}\\int ${powTex("u",n)}\\,du`,
+    uAntiTex:cfTex(1,a*(n+1),`u^{${n+1}}`),
+    backTex:cfTex(1,a*(n+1),`(${linTex(a,b)})^{${n+1}}`),
+    antiStr:`(${linStr(a,b)})^(${n+1})/${a*(n+1)}`, dom:[0.3,1.5]};}
+function famXpoly(){const k=rint(1,3),c=rint(1,5),n=rint(2,4);
+  return {id:'xpoly',
+    iTex:`${co(k)}x(x^{2}+${c})^{${n}}`, f:x=>k*x*Math.pow(x*x+c,n),
+    uTex:`x^{2}+${c}`, uStr:`x^2+${c}`, duTex:'2x\\,dx', duStr:'2x',
+    adjTex:'x\\,dx=\\tfrac{du}{2}',
+    uIntTex:`${cfTex(k,2,'')}\\int ${powTex("u",n)}\\,du`,
+    uAntiTex:cfTex(k,2*(n+1),`u^{${n+1}}`),
+    backTex:cfTex(k,2*(n+1),`(x^{2}+${c})^{${n+1}}`),
+    antiStr:`${k}(x^2+${c})^(${n+1})/${2*(n+1)}`, dom:[0.3,1.5]};}
+function famCube(){const k=rint(1,3),isCos=Math.random()<0.5;
+  const T=isCos?'\\cos':'\\sin';
+  return {id:'cube',
+    iTex:`${co(k)}x^{2}${T}\\!\\left(x^{3}\\right)`,
+    f:x=>k*x*x*(isCos?Math.cos(x*x*x):Math.sin(x*x*x)),
+    uTex:'x^{3}', uStr:'x^3', duTex:'3x^{2}\\,dx', duStr:'3x^2',
+    adjTex:'x^{2}\\,dx=\\tfrac{du}{3}',
+    uIntTex:`${cfTex(k,3,'')}\\int ${T} u\\,du`,
+    uAntiTex:isCos?cfTex(k,3,'\\sin u'):cfTex(-k,3,'\\cos u'),
+    backTex:isCos?cfTex(k,3,'\\sin\\!\\left(x^{3}\\right)'):cfTex(-k,3,'\\cos\\!\\left(x^{3}\\right)'),
+    antiStr:isCos?`${k}sin(x^3)/3`:`-${k}cos(x^3)/3`, dom:[0.3,1.4]};}
+function famExpSin(){const k=rint(1,3);
+  return {id:'expsin',
+    iTex:`${co(k)}\\cos x\\,e^{\\sin x}`, f:x=>k*Math.cos(x)*Math.exp(Math.sin(x)),
+    uTex:'\\sin x', uStr:'sin(x)', duTex:'\\cos x\\,dx', duStr:'cos(x)',
+    adjTex:'\\cos x\\,dx=du',
+    uIntTex:`${co(k)}\\int e^{u}\\,du`,
+    uAntiTex:`${co(k)}e^{u}`, backTex:`${co(k)}e^{\\sin x}`,
+    antiStr:`${k}e^(sin(x))`, dom:[0.2,1.2]};}
+function famLn(){const k=rint(1,3),n=rint(1,3);
+  return {id:'ln',
+    iTex:`\\dfrac{${co(k)}${n===1?'\\ln x':`(\\ln x)^{${n}}`}}{x}`,
+    f:x=>k*Math.pow(Math.log(x),n)/x,
+    uTex:'\\ln x', uStr:'ln(x)', duTex:'\\dfrac{dx}{x}', duStr:'1/x',
+    adjTex:'\\dfrac{dx}{x}=du',
+    uIntTex:`${co(k)}\\int ${powTex("u",n)}\\,du`,
+    uAntiTex:cfTex(k,n+1,`u^{${n+1}}`),
+    backTex:cfTex(k,n+1,`(\\ln x)^{${n+1}}`),
+    antiStr:`${k}(ln(x))^(${n+1})/${n+1}`, dom:[1.2,3]};}
+function famTan(){const k=rint(1,3),n=rint(1,3);
+  return {id:'tan',
+    iTex:`${co(k)}\\sec^{2}x\\,${n===1?'\\tan x':`\\tan^{${n}}x`}`,
+    f:x=>k*Math.pow(Math.tan(x),n)/(Math.cos(x)*Math.cos(x)),
+    uTex:'\\tan x', uStr:'tan(x)', duTex:'\\sec^{2}x\\,dx', duStr:'sec(x)^2',
+    adjTex:'\\sec^{2}x\\,dx=du',
+    uIntTex:`${co(k)}\\int ${powTex("u",n)}\\,du`,
+    uAntiTex:cfTex(k,n+1,`u^{${n+1}}`),
+    backTex:cfTex(k,n+1,`\\tan^{${n+1}}x`),
+    antiStr:`${k}(tan(x))^(${n+1})/${n+1}`, dom:[0.2,1.0]};}
+function famRoot(){const k=rint(1,4),c=rint(1,6);
+  return {id:'root',
+    iTex:`\\dfrac{${co(k)}x}{\\sqrt{x^{2}+${c}}}`, f:x=>k*x/Math.sqrt(x*x+c),
+    uTex:`x^{2}+${c}`, uStr:`x^2+${c}`, duTex:'2x\\,dx', duStr:'2x',
+    adjTex:'x\\,dx=\\tfrac{du}{2}',
+    uIntTex:`${cfTex(k,2,'')}\\int u^{-1/2}\\,du`,
+    uAntiTex:`${co(k)}\\sqrt{u}`, backTex:`${co(k)}\\sqrt{x^{2}+${c}}`,
+    antiStr:`${k}sqrt(x^2+${c})`, dom:[0.3,2]};}
+function famXexp(){const k=rint(1,4);
+  return {id:'xexp',
+    iTex:`${co(k)}x\\,e^{x^{2}}`, f:x=>k*x*Math.exp(x*x),
+    uTex:'x^{2}', uStr:'x^2', duTex:'2x\\,dx', duStr:'2x',
+    adjTex:'x\\,dx=\\tfrac{du}{2}',
+    uIntTex:`${cfTex(k,2,'')}\\int e^{u}\\,du`,
+    uAntiTex:cfTex(k,2,'e^{u}'), backTex:cfTex(k,2,'e^{x^{2}}'),
+    antiStr:`${k}e^(x^2)/2`, dom:[0.2,1.3]};}
+const SUBFAMS=[famPower,famXpoly,famCube,famExpSin,famLn,famTan,famRoot,famXexp];
+function subFamily(){for(let i=0;i<40;i++){const F=pick(SUBFAMS)();
+    if(verifyAnti(F.antiStr,F.f,F.dom))return F;}
+  return famXexp();}
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1 ---------- */
+Q.chooseU={name:'choose u and write du',
+  gen(){return subFamily();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Set up the substitution for this integral. Use the <b>inside function</b> as ${M('u')}: the expression whose derivative appears, up to a constant factor, in the rest of the integrand.</p>
+      ${D(texInt(null,null,q.iTex,'x'))}`;
+    numIn(el,'u',M('u='),{wide:true});
+    numIn(el,'du',M('du='),{wide:true,after:M('dx')});
+  },
+  check(q,el){const dom={x:q.dom};
+    return Gall(el,[['u',checkExpr($('[data-k=u]',el).value,q.uStr,['x'],{domain:dom})],
+                    ['du',checkExpr($('[data-k=du]',el).value,q.duStr,['x'],{domain:dom})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`The inside function sits at ${M(q.uTex)}. Now differentiate it.`;},
+  solution(q){return `Take ${M('u='+q.uTex)}. Differentiating, ${M('du='+q.duTex)}, so ${M(q.adjTex)} and the integral becomes ${M(q.uIntTex)}.`;}
+};
+
+Q.indefinite={name:'indefinite integral by substitution',
+  gen(){return subFamily();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate the integral. The constant of integration is optional.</p>
+      ${D(texInt(null,null,q.iTex,'x'))}`;
+    numIn(el,'F','=',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.antiStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(`u=${q.uTex},\\quad du=${q.duTex},\\quad ${q.adjTex}`);},
+  solution(q){return `Let ${M('u='+q.uTex)}, so ${M('du='+q.duTex)} and ${M(q.adjTex)}. Then `+
+    D(`${texInt(null,null,q.iTex,'x')}=${q.uIntTex}=${q.uAntiTex}+C=${q.backTex}+C`)+
+    `Check it by differentiating: the derivative of ${M(q.backTex)} is ${M(q.iTex)}.`;}
+};
+
+/* the constant adjustment: every one of these needs a 1/a pulled out front */
+function adjFamily(){const k=rint(1,4);
+  const which=pick(['cube','exp','cos','sin','sec','sqrt']);
+  if(which==='cube'){const c=rint(1,5),n=rint(1,3);
+    return {iTex:`${co(k)}x^{2}${powTex(`(x^{3}+${c})`,n)}`, f:x=>k*x*x*Math.pow(x*x*x+c,n),
+      uTex:`x^{3}+${c}`, duTex:'3x^{2}\\,dx', adjTex:'x^{2}\\,dx=\\tfrac{du}{3}',
+      uIntTex:`${cfTex(k,3,'')}\\int ${powTex("u",n)}\\,du`,
+      backTex:cfTex(k,3*(n+1),`(x^{3}+${c})^{${n+1}}`),
+      antiStr:`${k}(x^3+${c})^(${n+1})/${3*(n+1)}`, dom:[0.2,1.3]};}
+  if(which==='exp'){const a=pick([-4,-3,-2,2,3,4,5]);
+    return {iTex:`${co(k)}e^{${co(a)}x}`, f:x=>k*Math.exp(a*x),
+      uTex:`${co(a)}x`, duTex:`${a}\\,dx`, adjTex:dxAdj(a),
+      uIntTex:`${cfTex(k,a,'')}\\int e^{u}\\,du`,
+      backTex:cfTex(k,a,`e^{${co(a)}x}`),
+      antiStr:`(${frStr(k,a)})e^(${a}x)`, dom:[0.1,1.0]};}
+  if(which==='cos'){const a=rint(2,5),b=rnz(-4,4);
+    return {iTex:`${co(k)}\\cos(${linTex(a,b)})`, f:x=>k*Math.cos(a*x+b),
+      uTex:linTex(a,b), duTex:`${a}\\,dx`, adjTex:dxAdj(a),
+      uIntTex:`${cfTex(k,a,'')}\\int \\cos u\\,du`,
+      backTex:cfTex(k,a,`\\sin(${linTex(a,b)})`),
+      antiStr:`(${frStr(k,a)})sin(${linStr(a,b)})`, dom:[0.2,1.2]};}
+  if(which==='sin'){const a=rint(2,5),b=rnz(-4,4);
+    return {iTex:`${co(k)}\\sin(${linTex(a,b)})`, f:x=>k*Math.sin(a*x+b),
+      uTex:linTex(a,b), duTex:`${a}\\,dx`, adjTex:dxAdj(a),
+      uIntTex:`${cfTex(k,a,'')}\\int \\sin u\\,du`,
+      backTex:cfTex(-k,a,`\\cos(${linTex(a,b)})`),
+      antiStr:`(${frStr(-k,a)})cos(${linStr(a,b)})`, dom:[0.2,1.2]};}
+  if(which==='sec'){const a=rint(2,3);
+    return {iTex:`${co(k)}\\sec^{2}(${co(a)}x)`, f:x=>k/Math.pow(Math.cos(a*x),2),
+      uTex:`${co(a)}x`, duTex:`${a}\\,dx`, adjTex:dxAdj(a),
+      uIntTex:`${cfTex(k,a,'')}\\int \\sec^{2}u\\,du`,
+      backTex:cfTex(k,a,`\\tan(${co(a)}x)`),
+      antiStr:`(${frStr(k,a)})tan(${a}x)`, dom:[0.05,0.4]};}
+  const a=rint(2,4),b=rint(1,6);
+  return {iTex:`${co(k)}\\sqrt{${linTex(a,b)}}`, f:x=>k*Math.sqrt(a*x+b),
+    uTex:linTex(a,b), duTex:`${a}\\,dx`, adjTex:dxAdj(a),
+    uIntTex:`${cfTex(k,a,'')}\\int u^{1/2}\\,du`,
+    backTex:cfTex(2*k,3*a,`(${linTex(a,b)})^{3/2}`),
+    antiStr:`(${frStr(2*k,3*a)})(${linStr(a,b)})^(3/2)`, dom:[0.2,2]};}
+Q.constantAdjust={name:'the constant adjustment',
+  gen(){for(let i=0;i<40;i++){const F=adjFamily();if(verifyAnti(F.antiStr,F.f,F.dom))return F;}
+    return adjFamily();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate the integral. Watch the constant: ${M('du')} is not ${M('dx')}, and the difference goes out front.</p>
+      ${D(texInt(null,null,q.iTex,'x'))}`;
+    numIn(el,'F','=',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.antiStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(`u=${q.uTex},\\quad du=${q.duTex}`);},
+  solution(q){return `With ${M('u='+q.uTex)} we get ${M('du='+q.duTex)}, so ${M(q.adjTex)}. The integral is `+
+    D(`${q.uIntTex}=${q.backTex}+C`)+`Differentiate the answer and the extra factor reappears from the chain rule, which is exactly what the constant out front cancels.`;}
+};
+
+/* f'/f gives ln */
+function logFamily(){const k=rint(1,4);
+  const which=pick(['quad','tan','cot','expfrac','xlnx','xquad']);
+  if(which==='quad'){const a=rint(1,5),b=rint(1,6);
+    return {iTex:`\\dfrac{${co(k)}(2x+${a})}{x^{2}+${a}x+${b}}`, f:x=>k*(2*x+a)/(x*x+a*x+b),
+      uTex:`x^{2}+${a}x+${b}`, duTex:`(2x+${a})\\,dx`,
+      backTex:`${co(k)}\\ln\\left|x^{2}+${a}x+${b}\\right|`,
+      antiStr:`${k}ln(abs(x^2+${a}x+${b}))`, dom:[1.5,3],
+      why:`The numerator is exactly the derivative of the denominator.`};}
+  if(which==='tan'){
+    return {iTex:`${co(k)}\\tan x`, f:x=>k*Math.tan(x),
+      uTex:'\\cos x', duTex:'-\\sin x\\,dx',
+      backTex:`${co(-k)}\\ln\\left|\\cos x\\right|=${co(k)}\\ln\\left|\\sec x\\right|`,
+      antiStr:`-${k}ln(abs(cos(x)))`, dom:[0.2,1.2],
+      why:`Write ${M(R`\tan x=\frac{\sin x}{\cos x}`)}: the numerator is minus the derivative of the denominator.`};}
+  if(which==='cot'){
+    return {iTex:`${co(k)}\\cot x`, f:x=>k*Math.cos(x)/Math.sin(x),
+      uTex:'\\sin x', duTex:'\\cos x\\,dx',
+      backTex:`${co(k)}\\ln\\left|\\sin x\\right|`,
+      antiStr:`${k}ln(abs(sin(x)))`, dom:[0.4,1.4],
+      why:`Write ${M(R`\cot x=\frac{\cos x}{\sin x}`)}: the numerator is the derivative of the denominator.`};}
+  if(which==='expfrac'){const c=rint(1,5);
+    return {iTex:`\\dfrac{${co(k)}e^{x}}{e^{x}+${c}}`, f:x=>k*Math.exp(x)/(Math.exp(x)+c),
+      uTex:`e^{x}+${c}`, duTex:'e^{x}\\,dx',
+      backTex:`${co(k)}\\ln\\left(e^{x}+${c}\\right)`,
+      antiStr:`${k}ln(e^x+${c})`, dom:[0.2,1.5],
+      why:`The derivative of ${M(`e^{x}+${c}`)} is ${M('e^{x}')}, which is the numerator.`};}
+  if(which==='xlnx'){
+    return {iTex:`\\dfrac{${co(k)}}{x\\ln x}`, f:x=>k/(x*Math.log(x)),
+      uTex:'\\ln x', duTex:'\\dfrac{dx}{x}',
+      backTex:`${co(k)}\\ln\\left|\\ln x\\right|`,
+      antiStr:`${k}ln(abs(ln(x)))`, dom:[1.4,3],
+      why:`Peel one layer at a time: ${M(R`\frac{1}{x\ln x}=\frac{1/x}{\ln x}`)}, and ${M('1/x')} is the derivative of ${M('\\ln x')}.`};}
+  const c=rint(1,6);
+  return {iTex:`\\dfrac{${co(k)}x}{x^{2}+${c}}`, f:x=>k*x/(x*x+c),
+    uTex:`x^{2}+${c}`, duTex:'2x\\,dx',
+    backTex:cfTex(k,2,`\\ln\\left(x^{2}+${c}\\right)`),
+    antiStr:`(${frStr(k,2)})ln(x^2+${c})`, dom:[1.5,3],
+    why:`The numerator is half the derivative of the denominator, so a ${M('\\tfrac12')} comes out front.`};}
+Q.logPattern={name:"f'/f gives ln",
+  gen(){for(let i=0;i<40;i++){const F=logFamily();if(verifyAnti(F.antiStr,F.f,F.dom))return F;}
+    return logFamily();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate the integral. Every one of these is the pattern ${M(R`\int\frac{f'(x)}{f(x)}\,dx=\ln|f(x)|+C`)}. Write absolute values where Stewart would; type them as <code>|...|</code> or <code>abs(...)</code>.</p>
+      ${D(texInt(null,null,q.iTex,'x'))}`;
+    numIn(el,'F','=',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.antiStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Try ${M('u='+q.uTex)}.`;},
+  solution(q){return `${q.why} Let ${M('u='+q.uTex)}, so ${M('du='+q.duTex)}, and the integral becomes ${M(R`\int\frac{du}{u}=\ln|u|+C`)}. Back in ${M('x')}: `+D(`${q.backTex}+C`);}
+};
+
+/* ============================================================ chapter 2: definite families */
+function defFamily(){
+  const which=pick(['xpoly','power','sincos','lnx','logquad','xexp']);
+  if(which==='xpoly'){const A=rint(0,1),B=A+rint(1,2),m=rint(1,3),n=rint(1,2),k=rint(1,3);
+    const c=A*A+m,d=B*B+m;
+    const val=frVal(fr(k*(Math.pow(d,n+1)-Math.pow(c,n+1)),2*(n+1)));
+    return {iTex:`${co(k)}x${powTex(`(x^{2}+${m})`,n)}`, f:x=>k*x*Math.pow(x*x+m,n),
+      A,B,ATex:String(A),BTex:String(B),
+      uTex:`x^{2}+${m}`, uStr:`x^2+${m}`, duTex:'2x\\,dx', adjTex:'x\\,dx=\\tfrac{du}{2}',
+      c,d,cTex:String(c),dTex:String(d),
+      gTex:cfTex(k,2,`${powTex("u",n)}`), gStr:`${k}u^${n}/2`, g:u=>k*Math.pow(u,n)/2,
+      antiUTex:cfTex(k,2*(n+1),`u^{${n+1}}`),
+      val, valTex:fTex(k*(Math.pow(d,n+1)-Math.pow(c,n+1)),2*(n+1))};}
+  if(which==='power'){const a=rint(2,3),b=rint(1,4),A=rint(0,1),B=A+1,n=rint(2,3),k=rint(1,2);
+    const c=a*A+b,d=a*B+b;
+    const val=frVal(fr(k*(Math.pow(d,n+1)-Math.pow(c,n+1)),a*(n+1)));
+    return {iTex:`${co(k)}(${linTex(a,b)})^{${n}}`, f:x=>k*Math.pow(a*x+b,n),
+      A,B,ATex:String(A),BTex:String(B),
+      uTex:linTex(a,b), uStr:linStr(a,b), duTex:`${a}\\,dx`, adjTex:dxAdj(a),
+      c,d,cTex:String(c),dTex:String(d),
+      gTex:cfTex(k,a,`${powTex("u",n)}`), gStr:`${k}u^${n}/${a}`, g:u=>k*Math.pow(u,n)/a,
+      antiUTex:cfTex(k,a*(n+1),`u^{${n+1}}`),
+      val, valTex:fTex(k*(Math.pow(d,n+1)-Math.pow(c,n+1)),a*(n+1))};}
+  if(which==='sincos'){const n=rint(1,4),k=rint(1,6);
+    return {iTex:`${co(k)}\\cos x\\,${n===1?'\\sin x':`\\sin^{${n}}x`}`,
+      f:x=>k*Math.cos(x)*Math.pow(Math.sin(x),n),
+      A:0,B:PI/2,ATex:'0',BTex:'\\tfrac{\\pi}{2}',
+      uTex:'\\sin x', uStr:'sin(x)', duTex:'\\cos x\\,dx', adjTex:'\\cos x\\,dx=du',
+      c:0,d:1,cTex:'0',dTex:'1',
+      gTex:`${co(k)}${powTex("u",n)}`, gStr:`${k}u^${n}`, g:u=>k*Math.pow(u,n),
+      antiUTex:cfTex(k,n+1,`u^{${n+1}}`),
+      val:k/(n+1), valTex:fTex(k,n+1)};}
+  if(which==='lnx'){const m=rint(1,2),n=rint(1,3),k=rint(1,4);
+    return {iTex:`\\dfrac{${co(k)}${n===1?'\\ln x':`(\\ln x)^{${n}}`}}{x}`,
+      f:x=>k*Math.pow(Math.log(x),n)/x,
+      A:1,B:Math.exp(m),ATex:'1',BTex:m===1?'e':`e^{${m}}`,
+      uTex:'\\ln x', uStr:'ln(x)', duTex:'\\dfrac{dx}{x}', adjTex:'\\dfrac{dx}{x}=du',
+      c:0,d:m,cTex:'0',dTex:String(m),
+      gTex:`${co(k)}${powTex("u",n)}`, gStr:`${k}u^${n}`, g:u=>k*Math.pow(u,n),
+      antiUTex:cfTex(k,n+1,`u^{${n+1}}`),
+      val:k*Math.pow(m,n+1)/(n+1), valTex:fTex(k*Math.pow(m,n+1),n+1)};}
+  if(which==='logquad'){const A=rint(0,2),B=A+rint(1,2),m=rint(1,4),k=rint(1,4);
+    const c=A*A+m,d=B*B+m;
+    return {iTex:`\\dfrac{${co(k)}x}{x^{2}+${m}}`, f:x=>k*x/(x*x+m),
+      A,B,ATex:String(A),BTex:String(B),
+      uTex:`x^{2}+${m}`, uStr:`x^2+${m}`, duTex:'2x\\,dx', adjTex:'x\\,dx=\\tfrac{du}{2}',
+      c,d,cTex:String(c),dTex:String(d),
+      gTex:cfTex(k,2,'\\dfrac{1}{u}'), gStr:`${k}/(2u)`, g:u=>k/(2*u),
+      antiUTex:cfTex(k,2,'\\ln u'),
+      val:(k/2)*Math.log(d/c), valTex:cfTex(k,2,`\\ln ${fr(d,c)[1]===1?String(d/c):`\\tfrac{${fr(d,c)[0]}}{${fr(d,c)[1]}}`}`)};}
+  const B=rint(1,2),k=rint(1,4);
+  return {iTex:`${co(k)}x\\,e^{x^{2}}`, f:x=>k*x*Math.exp(x*x),
+    A:0,B,ATex:'0',BTex:String(B),
+    uTex:'x^{2}', uStr:'x^2', duTex:'2x\\,dx', adjTex:'x\\,dx=\\tfrac{du}{2}',
+    c:0,d:B*B,cTex:'0',dTex:String(B*B),
+    gTex:cfTex(k,2,'e^{u}'), gStr:`${k}e^u/2`, g:u=>k*Math.exp(u)/2,
+    antiUTex:cfTex(k,2,'e^{u}'),
+    val:k*(Math.exp(B*B)-1)/2, valTex:cfTex(k,2,`\\left(e^{${B*B}}-1\\right)`)};}
+function defProblem(){for(let i=0;i<40;i++){const P=defFamily();
+    if(verifyVal(P.f,P.A,P.B,P.val)&&verifyVal(P.g,P.c,P.d,P.val))return P;}
+  return defFamily();}
+
+Q.newLimits={name:'find the new limits',
+  gen(){return defProblem();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Use the substitution ${M('u='+q.uTex)} to rewrite this integral entirely in ${M('u')}. Give the two new limits as numbers and the new integrand as an expression in ${M('u')}.</p>
+      ${D(texInt(q.ATex,q.BTex,q.iTex,'x'))}
+      <p class="prompt">${M(R`=\int_{\square}^{\square}\big(\;\square\;\big)\,du`)}</p>`;
+    numIn(el,'lo','lower limit =');
+    numIn(el,'hi','upper limit =');
+    numIn(el,'g','integrand =',{wide:true,placeholder:'expression in u'});
+  },
+  check(q,el){return Gall(el,[
+    ['lo',checkNumber($('[data-k=lo]',el).value,q.c)],
+    ['hi',checkNumber($('[data-k=hi]',el).value,q.d)],
+    ['g',checkExpr($('[data-k=g]',el).value,q.gStr,['u'],{domain:{u:[0.4,2.5]}})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`${M('du='+q.duTex)}, so ${M(q.adjTex)}. Push each ${M('x')}-limit through ${M('u='+q.uTex)}.`;},
+  solution(q){return `With ${M('u='+q.uTex)} we get ${M('du='+q.duTex)}, so ${M(q.adjTex)}. `+
+    `The limits travel through the same formula: ${M(`x=${q.ATex}\\Rightarrow u=${q.cTex}`)} and ${M(`x=${q.BTex}\\Rightarrow u=${q.dTex}`)}. So `+
+    D(`${texInt(q.ATex,q.BTex,q.iTex,'x')}=${texInt(q.cTex,q.dTex,q.gTex,'u')}`);}
+};
+
+Q.definiteSub={name:'evaluate the definite integral',
+  gen(){return defProblem();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate. Give the exact value; you may leave ${M('e')} and ${M('\\ln')} in your answer, and fractions like <code>32/3</code> are fine.</p>
+      ${D(texInt(q.ATex,q.BTex,q.iTex,'x'))}`;
+    numIn(el,'v','Value =',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(`u=${q.uTex},\\quad ${q.adjTex},\\quad ${texInt(q.cTex,q.dTex,q.gTex,'u')}`);},
+  solution(q){return `Let ${M('u='+q.uTex)}, so ${M('du='+q.duTex)} and ${M(q.adjTex)}. New limits: ${M(`u(${q.ATex})=${q.cTex}`)} and ${M(`u(${q.BTex})=${q.dTex}`)}. Then `+
+    D(`${texInt(q.ATex,q.BTex,q.iTex,'x')}=${texInt(q.cTex,q.dTex,q.gTex,'u')}=\\Big[\\,${q.antiUTex}\\,\\Big]_{${q.cTex}}^{${q.dTex}}=${q.valTex}${APX(q.val)}`);}
+};
+
+Q.trigSub={name:'trig-inside definite',
+  gen(){
+    for(let i=0;i<40;i++){
+      const n=rint(1,4),k=rint(1,6),which=pick(['sin','tan','sec']);
+      let P;
+      if(which==='sin')P={iTex:`${co(k)}${n===1?'\\sin x':`\\sin^{${n}}x`}\\cos x`, f:x=>k*Math.pow(Math.sin(x),n)*Math.cos(x),
+        A:0,B:PI/2,ATex:'0',BTex:'\\tfrac{\\pi}{2}',uTex:'\\sin x',duTex:'\\cos x\\,dx',
+        cTex:'0',dTex:'1',gTex:`${co(k)}${powTex("u",n)}`,antiUTex:cfTex(k,n+1,`u^{${n+1}}`),
+        val:k/(n+1),valTex:fTex(k,n+1)};
+      else if(which==='tan')P={iTex:`${co(k)}\\sec^{2}x\\,${n===1?'\\tan x':`\\tan^{${n}}x`}`, f:x=>k*Math.pow(Math.tan(x),n)/Math.pow(Math.cos(x),2),
+        A:0,B:PI/4,ATex:'0',BTex:'\\tfrac{\\pi}{4}',uTex:'\\tan x',duTex:'\\sec^{2}x\\,dx',
+        cTex:'0',dTex:'1',gTex:`${co(k)}${powTex("u",n)}`,antiUTex:cfTex(k,n+1,`u^{${n+1}}`),
+        val:k/(n+1),valTex:fTex(k,n+1)};
+      else P={iTex:`\\dfrac{${co(k)}\\sin x}{\\cos^{2}x}`, f:x=>k*Math.sin(x)/Math.pow(Math.cos(x),2),
+        A:0,B:PI/3,ATex:'0',BTex:'\\tfrac{\\pi}{3}',uTex:'\\cos x',duTex:'-\\sin x\\,dx',
+        cTex:'1',dTex:'\\tfrac12',gTex:cfTex(-k,1,'u^{-2}'),antiUTex:cfTex(k,1,'u^{-1}'),
+        val:k,valTex:String(k)};
+      if(verifyVal(P.f,P.A,P.B,P.val))return P;
+    }
+    return {iTex:'\\sin x\\cos x',f:x=>Math.sin(x)*Math.cos(x),A:0,B:PI/2,ATex:'0',BTex:'\\tfrac{\\pi}{2}',
+      uTex:'\\sin x',duTex:'\\cos x\\,dx',cTex:'0',dTex:'1',gTex:'u',antiUTex:'\\tfrac{u^{2}}{2}',val:0.5,valTex:'\\tfrac12'};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate. The whole problem is one substitution; the trig disappears immediately. Exact value.</p>
+      ${D(texInt(q.ATex,q.BTex,q.iTex,'x'))}`;
+    numIn(el,'v','Value =',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Let ${M('u='+q.uTex)}, so ${M('du='+q.duTex)}. The new limits are ${M(q.cTex)} and ${M(q.dTex)}.`;},
+  solution(q){return `Let ${M('u='+q.uTex)}, so ${M('du='+q.duTex)}, and the limits become ${M(q.cTex)} and ${M(q.dTex)}. Then `+
+    D(`${texInt(q.ATex,q.BTex,q.iTex,'x')}=${texInt(q.cTex,q.dTex,q.gTex,'u')}=\\Big[\\,${q.antiUTex}\\,\\Big]_{${q.cTex}}^{${q.dTex}}=${q.valTex}`);}
+};
+
+/* ============================================================ chapter 3 */
+const ODDS=[
+  {tex:'x^{3}\\cos x', f:x=>x*x*x*Math.cos(x), amax:3, why:'odd times even is odd'},
+  {tex:'\\dfrac{x}{1+x^{4}}', f:x=>x/(1+Math.pow(x,4)), amax:4, why:'an odd numerator over an even denominator is odd'},
+  {tex:'\\sin x', f:x=>Math.sin(x), amax:3, why:'\\(\\sin\\) is odd'},
+  {tex:'x\\,e^{x^{2}}', f:x=>x*Math.exp(x*x), amax:2, why:'odd times even is odd'},
+  {tex:'\\dfrac{x^{3}}{1+x^{2}}', f:x=>x*x*x/(1+x*x), amax:3, why:'an odd numerator over an even denominator is odd'},
+  {tex:'x\\sqrt{1+x^{2}}', f:x=>x*Math.sqrt(1+x*x), amax:3, why:'odd times even is odd'},
+  {tex:'x^{5}\\cos(x^{2})', f:x=>Math.pow(x,5)*Math.cos(x*x), amax:2, why:'odd times even is odd'},
+];
+Q.symmetry={name:'use symmetry',
+  gen(){
+    for(let i=0;i<40;i++){
+      const kind=pick(['odd','odd','even','evenTrig','mixed']);
+      let P;
+      if(kind==='odd'){const o=pick(ODDS),a=rint(1,o.amax);
+        P={kind,iTex:o.tex,f:o.f,a,ATex:`-${a}`,BTex:String(a),val:0,valTex:'0',
+          why:`The integrand is <b>odd</b> (${o.why}), and the interval ${M(`[-${a},${a}]`)} is symmetric about 0, so the two signed areas cancel exactly.`};}
+      else if(kind==='even'){const a=rint(1,3),c=rint(1,6),p=pick([2,4]);
+        const v=p===2?2*(a*a*a/3+c*a):2*(Math.pow(a,5)/5+c*a);
+        const vt=p===2?`2\\left(\\tfrac{${a**3}}{3}+${c*a}\\right)=${fTex(2*(a**3+3*c*a),3)}`
+                      :`2\\left(\\tfrac{${a**5}}{5}+${c*a}\\right)=${fTex(2*(a**5+5*c*a),5)}`;
+        P={kind,iTex:`x^{${p}}+${c}`,f:x=>Math.pow(x,p)+c,a,ATex:`-${a}`,BTex:String(a),
+          val:v,valTex:vt,
+          why:`The integrand is <b>even</b>, so ${M(R`\int_{-a}^{a}=2\int_0^{a}`)}.`};}
+      else if(kind==='evenTrig'){const k=rint(1,5);
+        P={kind,iTex:`${co(k)}\\cos x`,f:x=>k*Math.cos(x),a:PI/2,ATex:'-\\tfrac{\\pi}{2}',BTex:'\\tfrac{\\pi}{2}',
+          val:2*k,valTex:`2\\Big[${co(k)}\\sin x\\Big]_{0}^{\\pi/2}=${2*k}`,
+          why:`${M('\\cos')} is <b>even</b>, so double the integral over ${M('[0,\\pi/2]')}.`};}
+      else{const a=rint(1,3),p=rnz(-4,4),qq=rint(1,4),r=rnz(-5,5),s=rnz(-4,4);
+        const v=2*(qq*a*a*a/3+s*a);
+        P={kind,iTex:`${texPoly([p,qq,r,s],'x')}`,f:x=>p*x*x*x+qq*x*x+r*x+s,a,ATex:`-${a}`,BTex:String(a),
+          val:v,valTex:`2\\left(\\tfrac{${qq*a**3}}{3} ${pm(s*a)}\\right)=${fTex(2*(qq*a**3+3*s*a),3)}`,
+          why:`Split it: the ${M(`${p}x^{3}`)} and ${M(`${r}x`)} terms are odd and contribute 0, and the rest is even, so ${M(R`\int_{-a}^{a}=2\int_0^{a}\left(${qq}x^{2}${pm(s)}\right)dx`)}.`};}
+      if(verifyVal(P.f,-P.a,P.a,P.val))return P;
+    }
+    return {kind:'odd',iTex:'\\sin x',f:x=>Math.sin(x),a:2,ATex:'-2',BTex:'2',val:0,valTex:'0',
+      why:'The integrand is <b>odd</b> and the interval is symmetric, so the integral is 0.'};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Use symmetry to evaluate. Give the exact value; fractions are fine. Deciding odd or even first saves you all of the work.</p>
+      ${D(texInt(q.ATex,q.BTex,q.iTex,'x'))}`;
+    numIn(el,'v','Value =',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Replace ${M('x')} by ${M('-x')} and compare with the original. Then use ${M(R`\int_{-a}^{a}f=0`)} for odd, ${M(R`2\int_0^a f`)} for even.`;},
+  solution(q){return q.why+' '+D(`${texInt(q.ATex,q.BTex,q.iTex,'x')}=${q.valTex}`);}
+};
+
+Q.splitArea={name:'split off a known area',
+  gen(){
+    for(let i=0;i<40;i++){
+      const a=rint(1,5),c=rint(1,6),half=Math.random()<0.45;
+      const val=half?(a*a*a/3+c*PI*a*a/4):(c*PI*a*a/2);
+      const valTex=half?`${fTex(a**3,3)}+${piTex(c*a*a,4)}`:piTex(c*a*a,2);
+      const P={a,c,half,val,valTex,
+        ATex:half?'0':`-${a}`, BTex:String(a),
+        iTex:`(x+${c})\\sqrt{${a*a}-x^{2}}`};
+      const num=circMoment(a,c,half);
+      if(Math.abs(num-val)<=1e-6*Math.max(1,Math.abs(num)))return P;
+    }
+    return {a:4,c:2,half:false,val:16*PI,valTex:'16\\pi',ATex:'-4',BTex:'4',iTex:'(x+2)\\sqrt{16-x^{2}}'};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Split the integrand into two pieces: one you can kill and one whose area you already know. Give the exact value; <code>pi</code> is expected in the answer.</p>
+      ${D(texInt(q.ATex,q.BTex,q.iTex,'x'))}`;
+    numIn(el,'v','Value =',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(`(x+${q.c})\\sqrt{${q.a*q.a}-x^{2}}=x\\sqrt{${q.a*q.a}-x^{2}}+${co(q.c)}\\sqrt{${q.a*q.a}-x^{2}}`)+
+      `. The second radical is the upper half of a circle of radius ${q.a}.`;},
+  solution(q){
+    const a2=q.a*q.a;
+    const circle=q.half?`${co(q.c)}\\cdot\\tfrac14\\pi(${q.a})^{2}=${piTex(q.c*a2,4)}`
+                       :`${co(q.c)}\\cdot\\tfrac12\\pi(${q.a})^{2}=${piTex(q.c*a2,2)}`;
+    const first=q.half?`\\int_{0}^{${q.a}}x\\sqrt{${a2}-x^{2}}\\,dx=\\Big[-\\tfrac13(${a2}-x^{2})^{3/2}\\Big]_{0}^{${q.a}}=${fTex(q.a**3,3)}`
+                      :`\\int_{-${q.a}}^{${q.a}}x\\sqrt{${a2}-x^{2}}\\,dx=0\\quad(\\text{odd})`;
+    return `Split the integrand: ${M(`(x+${q.c})\\sqrt{${a2}-x^{2}}=x\\sqrt{${a2}-x^{2}}+${co(q.c)}\\sqrt{${a2}-x^{2}}`)}. `+
+      `The first piece ${q.half?'is a quick substitution '+M(`u=${a2}-x^{2}`):'is odd on a symmetric interval'}: `+D(first)+
+      `The second piece is ${q.c} ${(q.half?'quarter disk':'half disk')+(q.c===1?'':'s')} of radius ${q.a}: ${M(circle)}. Adding, `+
+      D(`${texInt(q.ATex,q.BTex,q.iTex,'x')}=${q.valTex}${APX(q.val)}`);}
+};
+
+function backFamily(){
+  const which=pick(['root','sqfrac','poly','rootlin','overroot']);
+  if(which==='root'){const c=rint(1,6);
+    return {iTex:`x\\sqrt{x+${c}}`, f:x=>x*Math.sqrt(x+c),
+      uTex:`x+${c}`, xTex:`x=u-${c}`, duTex:'dx=du',
+      uIntTex:`\\int (u-${c})u^{1/2}\\,du=\\int\\left(u^{3/2}-${c}u^{1/2}\\right)du`,
+      backTex:`\\tfrac25 (x+${c})^{5/2}-${fTex(2*c,3)}(x+${c})^{3/2}`,
+      antiStr:`(2/5)(x+${c})^(5/2)-(${frStr(2*c,3)})(x+${c})^(3/2)`, dom:[1,3]};}
+  if(which==='sqfrac'){const c=rint(1,6);
+    return {iTex:`\\dfrac{x}{(x+${c})^{2}}`, f:x=>x/Math.pow(x+c,2),
+      uTex:`x+${c}`, xTex:`x=u-${c}`, duTex:'dx=du',
+      uIntTex:`\\int\\frac{u-${c}}{u^{2}}\\,du=\\int\\left(\\frac1u-\\frac{${c}}{u^{2}}\\right)du`,
+      backTex:`\\ln\\left|x+${c}\\right|+\\dfrac{${c}}{x+${c}}`,
+      antiStr:`ln(abs(x+${c}))+${c}/(x+${c})`, dom:[1,3]};}
+  if(which==='poly'){const a=rint(1,3),b=rint(1,5),n=rint(2,3);
+    return {iTex:`x(${linTex(a,b)})^{${n}}`, f:x=>x*Math.pow(a*x+b,n),
+      uTex:linTex(a,b), xTex:`x=\\dfrac{u-${b}}{${a}}`, duTex:`dx=\\dfrac{du}{${a}}`,
+      uIntTex:`\\tfrac{1}{${a*a}}\\int (u-${b})${powTex("u",n)}\\,du=\\tfrac{1}{${a*a}}\\int\\left(u^{${n+1}}-${b}${powTex("u",n)}\\right)du`,
+      backTex:`\\tfrac{1}{${a*a}}\\left[\\tfrac{(${linTex(a,b)})^{${n+2}}}{${n+2}}-\\tfrac{${b}(${linTex(a,b)})^{${n+1}}}{${n+1}}\\right]`,
+      antiStr:`((${linStr(a,b)})^(${n+2})/${n+2}-${b}(${linStr(a,b)})^(${n+1})/${n+1})/${a*a}`, dom:[1,3]};}
+  if(which==='rootlin'){const a=rint(2,3),b=rint(1,5);
+    return {iTex:`x\\sqrt{${linTex(a,b)}}`, f:x=>x*Math.sqrt(a*x+b),
+      uTex:linTex(a,b), xTex:`x=\\dfrac{u-${b}}{${a}}`, duTex:`dx=\\dfrac{du}{${a}}`,
+      uIntTex:`\\tfrac{1}{${a*a}}\\int (u-${b})u^{1/2}\\,du=\\tfrac{1}{${a*a}}\\int\\left(u^{3/2}-${b}u^{1/2}\\right)du`,
+      backTex:`\\tfrac{1}{${a*a}}\\left[\\tfrac25(${linTex(a,b)})^{5/2}-${fTex(2*b,3)}(${linTex(a,b)})^{3/2}\\right]`,
+      antiStr:`((2/5)(${linStr(a,b)})^(5/2)-(${frStr(2*b,3)})(${linStr(a,b)})^(3/2))/${a*a}`, dom:[1,3]};}
+  const c=rint(1,6);
+  return {iTex:`\\dfrac{x}{\\sqrt{x+${c}}}`, f:x=>x/Math.sqrt(x+c),
+    uTex:`x+${c}`, xTex:`x=u-${c}`, duTex:'dx=du',
+    uIntTex:`\\int\\frac{u-${c}}{\\sqrt u}\\,du=\\int\\left(u^{1/2}-${c}u^{-1/2}\\right)du`,
+    backTex:`\\tfrac23 (x+${c})^{3/2}-${2*c}\\sqrt{x+${c}}`,
+    antiStr:`(2/3)(x+${c})^(3/2)-${2*c}(x+${c})^(1/2)`, dom:[1,3]};}
+Q.backSub={name:'back-substitution',
+  gen(){for(let i=0;i<40;i++){const F=backFamily();if(verifyAnti(F.antiStr,F.f,F.dom))return F;}
+    return backFamily();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Substitute, then solve for the leftover ${M('x')} and substitute that too. The constant of integration is optional.</p>
+      ${D(texInt(null,null,q.iTex,'x'))}`;
+    numIn(el,'F','=',{xwide:true,placeholder:'antiderivative'});
+  },
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.antiStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(`u=${q.uTex}\\;\\Rightarrow\\; ${q.xTex},\\quad ${q.duTex}`);},
+  solution(q){return `Let ${M('u='+q.uTex)}. Then ${M(q.xTex)} and ${M(q.duTex)}, so the stray ${M('x')} becomes a function of ${M('u')} as well: `+
+    D(q.uIntTex)+`Integrating and putting ${M('u='+q.uTex)} back, `+D(`${q.backTex}+C`);}
+};
+
+/* ============================================================ chapter 1 widgets */
+(function(){
+  let F=null,step=0;
+  const ST=['Read the integrand. Where is the inside function?',
+    'Name the inside function u. It is the orange piece.',
+    'Differentiate it to get du. The blue piece is what du eats.',
+    'Solve for the exact chunk of the integrand you have. Constants move freely.',
+    'Rewrite the whole integral in u. No x may survive.',
+    'Integrate. This is the part you already knew how to do.',
+    'Substitute u back and add + C. Differentiate it mentally to check.'];
+  function fresh(){F=subFamily();step=0;draw();}
+  function draw(){
+    const L=[];
+    L.push(`<span>${M(texInt(null,null,F.iTex,'x'))}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}"><span class="t a ${step===1?'now':''}">${M('u='+F.uTex)}</span></span>`);
+    L.push(`<span class="${step>=2?'':'faint'}"><span class="t b ${step===2?'now':''}">${M('du='+F.duTex)}</span></span>`);
+    L.push(`<span class="${step>=3?'':'faint'}"><span class="t b ${step===3?'now':''}">${M(F.adjTex)}</span></span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">= <span class="t a ${step===4?'now':''}">${M(F.uIntTex)}</span></span>`);
+    L.push(`<span class="${step>=5?'':'faint'}">= <span class="t b ${step===5?'now':''}">${M(F.uAntiTex+'+C')}</span></span>`);
+    L.push(`<span class="${step>=6?'':'faint'}">= <span class="t c ${step===6?'now':''}">${M(F.backTex+'+C')}</span></span>`);
+    $('#usExpr').innerHTML=L.join('<br>');
+    $('#usStatus').textContent=ST[step];
+    $('#usPrev').disabled=step===0;$('#usNext').disabled=step===6;
+    typeset($('#usExpr'));
+  }
+  $('#usNext').onclick=()=>{step=Math.min(6,step+1);draw();};
+  $('#usPrev').onclick=()=>{step=Math.max(0,step-1);draw();};
+  $('#usNew').onclick=fresh;
+  fresh();
+
+  /* check-by-differentiating plot */
+  const CHK=[
+    {lab:'x / (x²+1)', F:x=>0.5*Math.log(x*x+1), f:x=>x/(x*x+1), FL:'½ ln(x²+1)', fL:'x / (x²+1)'},
+    {lab:'cos x sin²x', F:x=>Math.pow(Math.sin(x),3)/3, f:x=>Math.cos(x)*Math.pow(Math.sin(x),2), FL:'⅓ sin³x', fL:'cos x sin²x'},
+    {lab:'2x e^(−x²)', F:x=>-Math.exp(-x*x), f:x=>2*x*Math.exp(-x*x), FL:'−e^(−x²)', fL:'2x e^(−x²)'},
+    {lab:'x / √(x²+1)', F:x=>Math.sqrt(x*x+1)-1, f:x=>x/Math.sqrt(x*x+1), FL:'√(x²+1) − 1', fL:'x / √(x²+1)'},
+  ];
+  let ci=0,x0=0.8;
+  const plot=new Plot2D('#chkPlot',{xmin:-3,xmax:3,ymin:-2.2,ymax:2.2});
+  const sl=sliderRow($('#chkSliders'),{label:'x₀',min:-3,max:3,step:0.02,value:x0,onInput:v=>{x0=v;drawChk();}});
+  CHK.forEach((c,i)=>{const b=el('button',{class:'btn small'},c.lab);b.onclick=()=>{ci=i;drawChk();};$('#chkPresets').appendChild(b);});
+  function drawChk(){
+    const c=CHK[ci];plot.begin();
+    plot.fn(c.F,{color:'#7c3aed',width:2.6});
+    plot.fn(c.f,{color:'#d97706',width:2.2});
+    const y0=c.F(x0),m=c.f(x0);
+    plot.fn(x=>y0+m*(x-x0),{color:'#16a34a',width:2,xmin:x0-1.2,xmax:x0+1.2,dash:[6,4]});
+    plot.point([x0,y0],{color:'#7c3aed',r:5,ring:true});
+    plot.point([x0,m],{color:'#d97706',r:5,ring:true});
+    plot.vector([x0,0],[x0,m],{color:'#d97706',width:1.2,dash:[3,3]});
+    $('#chkOut').innerHTML=`F(x) = ${c.FL} &nbsp;&nbsp; f(x) = F&prime;(x) = ${c.fL}<br>`+
+      `x₀ = ${fmtDec(x0,3)}, F(x₀) = ${fmtDec(y0,4)}<br>`+
+      `slope of F at x₀ = <b>${fmtDec(m,4)}</b><br>height of f at x₀ = <b>${fmtDec(c.f(x0),4)}</b>`;
+  }
+  const anim=animator('spot',dt=>{x0+=dt*1.1;if(x0>3)x0=-3;sl.set(x0);drawChk();});
+  $('#chkPlay').onclick=()=>{anim.toggle();$('#chkPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  redrawOnShow('spot',drawChk);drawChk();
+
+  new Drill({mount:'#drill-spot',section:'spot',goal:7,
+    ...mixDrill([Q.chooseU,Q.chooseU,Q.indefinite,Q.indefinite,Q.constantAdjust,Q.constantAdjust,Q.logPattern,Q.logPattern])});
+})();
+
+/* ============================================================ chapter 2 widgets */
+(function(){
+  const DS=[
+    {lab:'∫₀¹ 2x e^{x²} dx',
+     f:x=>2*x*Math.exp(x*x), a:0,b:1, gx:x=>x*x, g:u=>Math.exp(u),
+     fL:'2x e^(x²)', gL:'e^u', uL:'u = x²',
+     xw:[-0.25,1.25,-1.0,6.4], uw:[-0.25,1.25,-0.5,3.2], gs:1},
+    {lab:'∫₀^{π/2} cos x sin²x dx',
+     f:x=>Math.cos(x)*Math.pow(Math.sin(x),2), a:0,b:PI/2, gx:x=>Math.sin(x), g:u=>u*u,
+     fL:'cos x sin²x', gL:'u²', uL:'u = sin x',
+     xw:[-0.25,1.85,-0.12,0.62], uw:[-0.25,1.25,-0.2,1.1], gs:0.25},
+    {lab:'∫₁² 2x/(x²+1) dx',
+     f:x=>2*x/(x*x+1), a:1,b:2, gx:x=>x*x+1, g:u=>1/u,
+     fL:'2x/(x²+1)', gL:'1/u', uL:'u = x²+1',
+     xw:[-0.15,2.5,-0.2,1.6], uw:[-0.3,5.6,-0.12,0.85], gs:0.5},
+  ];
+  let di=0,s=1;
+  const pX=new Plot2D('#dsX',{grid:false,axes:false});
+  const pU=new Plot2D('#dsU',{grid:false,axes:false});
+  DS.forEach((d,i)=>{const b=el('button',{class:'btn small'},d.lab);b.onclick=()=>{di=i;drawDS();};$('#dsPresets').appendChild(b);});
+  const sl=sliderRow($('#dsSliders'),{label:'sweep',min:0,max:1,step:0.005,value:1,onInput:v=>{s=v;drawDS();}});
+  function shade(p,fn,lo,hi,fill,stroke){if(hi-lo<1e-6)return;p.region(lo,hi,()=>0,fn,{fill,stroke,n:220});}
+  function drawDS(){
+    const d=DS[di];
+    const xt=d.a+(d.b-d.a)*s, ut=d.gx(xt), ua=d.gx(d.a);
+    Object.assign(pX.o,{xmin:d.xw[0],xmax:d.xw[1],ymin:d.xw[2],ymax:d.xw[3]});
+    Object.assign(pU.o,{xmin:d.uw[0],xmax:d.uw[1],ymin:d.uw[2],ymax:d.uw[3]});
+    pX.begin();pX.grid(d.gs);pX.axes();
+    shade(pX,d.f,d.a,xt,'rgba(217,119,6,.22)','#d97706');
+    pX.fn(d.f,{color:'#d97706',width:2.6,xmin:d.a,xmax:d.b});
+    pX.point([xt,d.f(xt)],{color:'#d97706',r:4.5,ring:true});
+    pX.text([xt,d.xw[2]],'x = '+fmtDec(xt,2),{color:'#8b877e',dx:4,dy:-6});
+    pU.begin();pU.grid(d.gs);pU.axes();
+    const lo=Math.min(ua,ut),hi=Math.max(ua,ut);
+    shade(pU,d.g,lo,hi,'rgba(37,99,235,.20)','#2563eb');
+    pU.fn(d.g,{color:'#2563eb',width:2.6,xmin:Math.min(ua,d.gx(d.b)),xmax:Math.max(ua,d.gx(d.b))});
+    pU.point([ut,d.g(ut)],{color:'#2563eb',r:4.5,ring:true});
+    pU.text([ut,d.uw[2]],'u = '+fmtDec(ut,2),{color:'#8b877e',dx:4,dy:-6});
+    const Ax=xt>d.a?simpson(d.f,d.a,xt,600):0;
+    const Au=Math.abs(ut-ua)>1e-9?simpson(d.g,ua,ut,600):0;
+    $('#dsOut').innerHTML=`${d.uL}<br>`+
+      `area in x: ∫ from ${fmtDec(d.a,2)} to ${fmtDec(xt,2)} of ${d.fL} = <b>${fmtDec(Ax,5)}</b><br>`+
+      `area in u: ∫ from ${fmtDec(ua,2)} to ${fmtDec(ut,2)} of ${d.gL} = <b>${fmtDec(Au,5)}</b><br>`+
+      `difference = ${fmtDec(Math.abs(Ax-Au),8)}`;
+  }
+  const anim=animator('definite',dt=>{s+=dt*0.28;if(s>1)s=0;sl.set(s);drawDS();});
+  $('#dsPlay').onclick=()=>{anim.toggle();$('#dsPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  redrawOnShow('definite',drawDS);drawDS();
+
+  /* definite walkthrough */
+  let P=null,step=0;
+  const ST=['A definite integral. Same substitution hunt as before, plus two limits to carry.',
+    'Name u and write du. Solve for the chunk you have.',
+    'Push both limits through u = g(x). These are numbers, computed once.',
+    'Rewrite the whole integral in u, limits included. Nothing here mentions x.',
+    'Antidifferentiate in u and set up the evaluation bars.',
+    'Evaluate. No back-substitution was ever needed.'];
+  function freshD(){P=defProblem();step=0;drawW();}
+  function drawW(){
+    const L=[];
+    L.push(`<span>${M(texInt(P.ATex,P.BTex,P.iTex,'x'))}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}"><span class="t a ${step===1?'now':''}">${M('u='+P.uTex)}</span> , <span class="t b ${step===1?'now':''}">${M('du='+P.duTex)}</span> , ${M(P.adjTex)}</span>`);
+    L.push(`<span class="${step>=2?'':'faint'}"><span class="t b ${step===2?'now':''}">${M(`x=${P.ATex}\\Rightarrow u=${P.cTex}`)}</span> , <span class="t b ${step===2?'now':''}">${M(`x=${P.BTex}\\Rightarrow u=${P.dTex}`)}</span></span>`);
+    L.push(`<span class="${step>=3?'':'faint'}">= <span class="t a ${step===3?'now':''}">${M(texInt(P.cTex,P.dTex,P.gTex,'u'))}</span></span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">= <span class="t b ${step===4?'now':''}">${M(`\\Big[\\,${P.antiUTex}\\,\\Big]_{${P.cTex}}^{${P.dTex}}`)}</span></span>`);
+    L.push(`<span class="${step>=5?'':'faint'}">= <span class="t c ${step===5?'now':''}">${M(P.valTex+APX(P.val))}</span></span>`);
+    $('#dwExpr').innerHTML=L.join('<br>');
+    $('#dwStatus').textContent=ST[step];
+    $('#dwPrev').disabled=step===0;$('#dwNext').disabled=step===5;
+    typeset($('#dwExpr'));
+  }
+  $('#dwNext').onclick=()=>{step=Math.min(5,step+1);drawW();};
+  $('#dwPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#dwNew').onclick=freshD;
+  freshD();
+
+  new Drill({mount:'#drill-definite',section:'definite',goal:6,
+    ...mixDrill([Q.newLimits,Q.newLimits,Q.definiteSub,Q.definiteSub,Q.definiteSub,Q.trigSub,Q.trigSub])});
+})();
+
+/* ============================================================ chapter 3 widgets */
+(function(){
+  let a=4,c=2;
+  const mk=id=>new Plot2D(id,{grid:false,axes:false});
+  const pO=mk('#oeOdd'),pE=mk('#oeEven'),pS=mk('#oeSum');
+  const sls=$('#oeSliders');
+  const sa=sliderRow(sls,{label:'a',min:1,max:5,step:0.5,value:a,onInput:v=>{a=v;drawOE();}});
+  const sc=sliderRow(sls,{label:'c',min:0,max:6,step:0.5,value:c,onInput:v=>{c=v;drawOE();}});
+  [['Stewart 5.5.83  (a = 4, c = 2)',4,2],['pure semicircle  (c = 3, no odd part)',3,3],['tall and thin  (a = 1.5, c = 5)',1.5,5]]
+    .forEach(([lab,A,C])=>{const b=el('button',{class:'btn small'},lab);
+      b.onclick=()=>{a=A;c=C;sa.set(a);sc.set(c);drawOE();};$('#oePresets').appendChild(b);});
+  function frame(p){const m=a+0.7;const hi=Math.max(a*a/2,c*a,1)+1.0,lo=-(a*a/2+1.0);
+    Object.assign(p.o,{xmin:-m,xmax:m,ymin:lo,ymax:hi});p.begin();p.grid(a>3?2:1);p.axes();return p;}
+  function drawOE(){
+    const rt=x=>Math.sqrt(Math.max(0,a*a-x*x));
+    const fO=x=>x*rt(x), fE=x=>c*rt(x), fS=x=>(x+c)*rt(x);
+    frame(pO);
+    pO.region(0,a,()=>0,fO,{fill:'rgba(217,119,6,.24)',stroke:'#d97706',n:260});
+    pO.region(-a,0,fO,()=>0,{fill:'rgba(217,119,6,.24)',stroke:'#d97706',n:260});
+    pO.fn(fO,{color:'#d97706',width:2.4,xmin:-a,xmax:a});
+    pO.text([a*0.45,a*a*0.12],'+',{color:'#b45309',font:'700 20px -apple-system,Segoe UI,sans-serif'});
+    pO.text([-a*0.55,-a*a*0.16],'−',{color:'#b45309',font:'700 20px -apple-system,Segoe UI,sans-serif'});
+    frame(pE);
+    pE.region(-a,a,()=>0,fE,{fill:'rgba(37,99,235,.20)',stroke:'#2563eb',n:300});
+    pE.fn(fE,{color:'#2563eb',width:2.4,xmin:-a,xmax:a});
+    frame(pS);
+    pS.region(-a,a,()=>0,fS,{fill:'rgba(22,163,74,.20)',stroke:'#16a34a',n:300});
+    pS.fn(fS,{color:'#16a34a',width:2.4,xmin:-a,xmax:a});
+    const odd=simpson(t=>a*Math.sin(t)*a*Math.cos(t)*a*Math.cos(t),-PI/2,PI/2,2000);
+    const even=simpson(t=>c*a*Math.cos(t)*a*Math.cos(t),-PI/2,PI/2,2000);
+    const tot=odd+even;
+    $('#oeOut').innerHTML=`a = ${fmtDec(a,1)}, c = ${fmtDec(c,1)}<br>`+
+      `odd piece &nbsp;∫ x√(a²−x²) dx = <b>${fmtDec(odd,6)}</b> &nbsp;(exactly 0)<br>`+
+      `even piece ∫ c√(a²−x²) dx = c·πa²/2 = <b>${fmtDec(even,5)}</b><br>`+
+      `total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∫ (x+c)√(a²−x²) dx = <b>${fmtDec(tot,5)}</b>`;
+  }
+  redrawOnShow('tricks',drawOE);drawOE();
+
+  new Drill({mount:'#drill-tricks',section:'tricks',goal:6,
+    ...mixDrill([Q.symmetry,Q.symmetry,Q.splitArea,Q.splitArea,Q.backSub,Q.backSub])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',
+  types:[Q.chooseU,Q.indefinite,Q.indefinite,Q.constantAdjust,Q.logPattern,Q.logPattern,
+         Q.newLimits,Q.definiteSub,Q.definiteSub,Q.trigSub,Q.symmetry,Q.splitArea,Q.backSub]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-usub',[
+  R`The substitution rule: \(\int f(g(x))g'(x)\,dx=\int f(u)\,du\) with \(u=g(x)\), \(du=g'(x)\,dx\).`,
+  R`The definite version: \(\int_a^b f(g(x))g'(x)\,dx=\int_{g(a)}^{g(b)} f(u)\,du\). Change the limits, never substitute back.`,
+  R`Symmetry on \([-a,a]\): odd gives \(0\), even gives \(2\int_0^a\).`,
+  R`\(\int x e^{x^2}\,dx=\tfrac12 e^{x^2}+C\).`,
+  R`\(\int \tan x\,dx=\ln|\sec x|+C=-\ln|\cos x|+C\).`,
+  R`\(\int \frac{f'(x)}{f(x)}\,dx=\ln|f(x)|+C\).`,
+  R`\(\int e^{ax}\,dx=\frac{1}{a}e^{ax}+C\), and \(\int (ax+b)^n dx=\frac{(ax+b)^{n+1}}{a(n+1)}+C\) for \(n\neq -1\).`,
+  R`Half-disk area: \(\int_{-a}^{a}\sqrt{a^2-x^2}\,dx=\tfrac12\pi a^2\), and \(\int_0^a\sqrt{a^2-x^2}\,dx=\tfrac14\pi a^2\).`,
+]));
+
+/* ============================================================ test hook */
+window.__solvers=(()=>{const S=String;return {
+  'choose u and write du':q=>({u:q.uStr,du:q.duStr}),
+  'indefinite integral by substitution':q=>({F:q.antiStr}),
+  'the constant adjustment':q=>({F:q.antiStr}),
+  "f'/f gives ln":q=>({F:q.antiStr}),
+  'find the new limits':q=>({lo:S(q.c),hi:S(q.d),g:q.gStr}),
+  'evaluate the definite integral':q=>({v:S(q.val)}),
+  'trig-inside definite':q=>({v:S(q.val)}),
+  'use symmetry':q=>({v:S(q.val)}),
+  'split off a known area':q=>({v:S(q.val)}),
+  'back-substitution':q=>({F:q.antiStr}),
+};})();
+
+initModule({key:'c2-usub',title:'Substitution',sub:'Module 1 · Stewart 5.5'});
+</script>
+</body>
+</html>
