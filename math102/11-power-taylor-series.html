@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Series and Taylor Series</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 11 · Stewart 11.8 to 11.11</p>
+  <h2>Power series and Taylor series</h2>
+  <p class="lead">A polynomial that never stops. Written correctly it does not just approximate \(e^x\), \(\sin x\), \(\ln(1+x)\) or \(\arctan x\), it equals them, and an error bound tells you exactly how many terms you need.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or play, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats here: a <b>general term</b> is a formula in \(n\) and \(x\), typed like <code>(-1)^n x^(2n+1)/(2n+1)!</code> or <code>x^n/3^(n+1)</code>. An <b>interval of convergence</b> is typed like <code>[-1, 1)</code>, <code>(-inf, inf)</code>, or <code>{2}</code> for a single point. A <b>Taylor polynomial</b> is typed like <code>1 - x^2/2 + x^4/24</code>. Exact numbers are expected unless the problem asks for decimals: <code>pi/4</code>, <code>ln(3/2)</code>, <code>sqrt(3)/2</code>, <code>e^3</code>, <code>1/384</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>The answer boxes work like WebAssign's calcPad: <code>/</code> makes a fraction, <code>^</code> an exponent, <code>n!</code> a factorial, <code>sqrt</code> a radical, <code>pi</code> the symbol. Use the right arrow key to step out of a fraction or an exponent before typing what comes next.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the partial sum, the polynomial you actually compute</span>
+      <span><i class="dot" style="background:var(--b)"></i> the function the series is trying to be</span>
+      <span><i class="dot" style="background:var(--c)"></i> the interval of convergence, the error bound</span>
+      <span><i class="dot" style="background:var(--d)"></i> the center and marked points</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Find the radius and the interval of convergence of a power series, endpoints tested separately.</li>
+      <li>Build new power series out of the geometric series by substitution, multiplication, differentiation, and integration.</li>
+      <li>Write a Taylor or Maclaurin series from the definition \(c_n=f^{(n)}(a)/n!\), and much faster from the table of seven.</li>
+      <li>Write Taylor polynomials \(T_n\) and bound the error with Taylor's inequality or the alternating series estimate.</li>
+      <li>Use series to evaluate limits, to integrate functions with no elementary antiderivative, and to recognize a number hiding inside a series.</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 POWER SERIES -->
+<section data-id="power" data-title="Power series and where they converge" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 11.8</p>
+  <h2>Power series and where they converge</h2>
+  <p class="lead">A power series is a series whose terms contain a variable. For some \(x\) it converges, for others it blows up, and the ratio test draws the line between them.</p>
+
+  <p>A <b>power series centered at \(a\)</b> is</p>
+  <div class="formula">\(\displaystyle\sum_{n=0}^{\infty} c_n (x-a)^n = c_0 + c_1(x-a) + c_2(x-a)^2 + \cdots\)<span class="cap">The \(c_n\) are constants, the <b>coefficients</b>. The number \(a\) is the <b>center</b>. Plug in a number for \(x\) and you have an ordinary series, which either converges or diverges.</span></div>
+  <p>At \(x=a\) every term after the first is zero, so the series always converges there. That is the only thing that is true for every power series. Beyond it there are exactly <b>three possibilities</b>:</p>
+  <div class="card tint">
+    <ol>
+      <li>It converges only at \(x=a\). Radius \(R=0\). Example: \(\sum n!\,x^n\).</li>
+      <li>It converges for every real \(x\). Radius \(R=\infty\). Example: \(\sum x^n/n!\).</li>
+      <li>There is a number \(R&gt;0\) with convergence for \(|x-a|&lt;R\) and divergence for \(|x-a|&gt;R\). At the two endpoints \(x=a\pm R\) anything can happen and you must check them one at a time.</li>
+    </ol>
+  </div>
+  <p>The <b>radius of convergence</b> is that \(R\). The <b>interval of convergence</b> is the set of all \(x\) where the series converges: the open interval \((a-R,\,a+R)\) plus whichever endpoints survive their own test.</p>
+
+  <h3>The ratio test gives the radius</h3>
+  <p>Apply the ratio test to the terms \(a_n = c_n (x-a)^n\), treating \(x\) as a constant:</p>
+  <div class="formula">\(\displaystyle\lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right| = \lim_{n\to\infty}\left|\frac{c_{n+1}}{c_n}\right|\,|x-a| = L\,|x-a| &lt; 1 \quad\Longleftrightarrow\quad |x-a| &lt; \frac{1}{L}=R\)<span class="cap">Solve the inequality for \(|x-a|\) and read the radius off the right-hand side. If \(L=0\) the inequality holds for every \(x\) and \(R=\infty\); if \(L=\infty\) it holds only at \(x=a\) and \(R=0\).</span></div>
+  <p>The ratio test says nothing when the limit equals 1, which is exactly what happens at the two endpoints. That is why endpoints always need a separate test: alternating series test, \(p\)-series, comparison, or the test for divergence.</p>
+
+  <div class="card">
+    <h4>Explore: partial sums of a power series</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="psPlot"></canvas><p class="plotcap">Blue: the function the series converges to. Orange: the partial sum \(S_N\). The green band on the axis is the interval of convergence.</p></div>
+      <div>
+        <div class="presets" id="psPresets"></div>
+        <div class="sliders" id="psSliders"></div>
+        <div class="controls"><button class="btn" id="psPlay">▶ Play</button></div>
+        <div class="readout" id="psOut"></div>
+        <p class="hint">Push \(N\) up. Inside the green band the orange curve settles onto the blue one and stays there. Outside the band it flies off, and raising \(N\) makes it worse, not better: more terms of a divergent series is more divergence. Watch the edge of the band closely, where convergence is slowest.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: radius and interval by the ratio test</h4>
+    <div class="expr" id="wtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wtPrev">◀ Back</button>
+      <button class="btn primary" id="wtNext">Next step ▶</button>
+      <button class="btn" id="wtNew">New series</button>
+      <span class="status" id="wtStatus"></span>
+    </div>
+    <p class="hint">The two endpoint lines are the whole game. Substitute the endpoint into the original series, simplify until you recognize a series from Module 10, then name the test that settles it.</p>
+  </div>
+
+  <div class="warn"><b>Endpoints are two separate problems.</b> \(\sum (x-3)^n/n\) converges at \(x=2\) (alternating harmonic) and diverges at \(x=4\) (harmonic), so the interval is \([2,4)\). Writing \((2,4)\) or \([2,4]\) throws away half the work. Test each end on its own and record the bracket you earned.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-power"></div>
+</section>
+
+<!-- ============================================================ 2 REPRESENTING FUNCTIONS -->
+<section data-id="represent" data-title="Functions as power series" data-goal="7">
+  <p class="eyebrow">Chapter 2 · Stewart 11.9</p>
+  <h2>Functions as power series</h2>
+  <p class="lead">One series does most of the work. Everything in this chapter is the geometric series with something substituted into it, multiplied by something, differentiated, or integrated.</p>
+
+  <div class="formula">\(\displaystyle\frac{1}{1-x}=\sum_{n=0}^{\infty}x^n = 1+x+x^2+x^3+\cdots,\qquad |x|&lt;1\)<span class="cap">The engine. Read it right to left: a geometric series with first term 1 and ratio \(x\) sums to \(1/(1-x)\). Read left to right: the function <b>is</b> that series on \((-1,1)\).</span></div>
+
+  <p><b>Substitution.</b> Put anything you like in place of \(x\), then impose the condition \(|\text{that thing}|&lt;1\):</p>
+  <div class="formula">\(\displaystyle\frac{1}{1+x^2}=\frac{1}{1-(-x^2)}=\sum_{n=0}^{\infty}(-x^2)^n=\sum_{n=0}^{\infty}(-1)^n x^{2n},\qquad |x|&lt;1\)<span class="cap">\(|-x^2|&lt;1\) means \(x^2&lt;1\), that is \(|x|&lt;1\), so \(R=1\).</span></div>
+  <p><b>A denominator that does not start with 1.</b> Factor the constant out first, so the ratio is visible:</p>
+  <div class="formula">\(\displaystyle\frac{1}{a-x}=\frac{1}{a}\cdot\frac{1}{1-\frac{x}{a}}=\frac{1}{a}\sum_{n=0}^{\infty}\left(\frac{x}{a}\right)^n=\sum_{n=0}^{\infty}\frac{x^n}{a^{n+1}},\qquad |x|&lt;a\)<span class="cap">The ratio is \(x/a\), so the radius is \(a\), and the extra \(1/a\) out front is what turns \(a^n\) into \(a^{n+1}\).</span></div>
+  <p><b>Multiplying by a power of \(x\)</b> shifts every exponent and changes nothing else: \(\dfrac{x^2}{1-x^3}=x^2\sum x^{3n}=\sum x^{3n+2}\), still with \(R=1\). If the denominator factors, do partial fractions first and expand each piece.</p>
+
+  <h3>Differentiating and integrating term by term</h3>
+  <p>Inside the interval of convergence a power series behaves like a polynomial. You may differentiate it and integrate it one term at a time, and <b>the radius does not change</b> (the endpoints can change, and often do).</p>
+  <div class="formula">\(\displaystyle\frac{1}{(1-x)^2}=\frac{d}{dx}\frac{1}{1-x}=\sum_{n=1}^{\infty}n x^{n-1}=\sum_{n=0}^{\infty}(n+1)x^n\)<span class="cap">Differentiating kills the constant term, so the sum starts at \(n=1\); re-indexing to start at \(n=0\) turns \(n x^{n-1}\) into \((n+1)x^n\). Both forms are the same series.</span></div>
+  <div class="formula">\(\displaystyle\ln(1+x)=\int\frac{dx}{1+x}=\sum_{n=0}^{\infty}\frac{(-1)^n x^{n+1}}{n+1}=\sum_{n=1}^{\infty}\frac{(-1)^{n+1}x^n}{n},\qquad -1&lt;x\le 1\)<span class="cap">Integrate \(\sum(-1)^nx^n\) term by term and fix the constant by plugging in \(x=0\): \(\ln 1 = 0\), so \(C=0\). The radius is still 1, but now the right endpoint \(x=1\) is included: that is the alternating harmonic series, and its sum is \(\ln 2\).</span></div>
+  <div class="formula">\(\displaystyle\arctan x=\int\frac{dx}{1+x^2}=\sum_{n=0}^{\infty}\frac{(-1)^n x^{2n+1}}{2n+1},\qquad |x|\le 1\)<span class="cap">Same move on \(1/(1+x^2)\). At \(x=1\) it gives \(1-\tfrac13+\tfrac15-\cdots=\tfrac{\pi}{4}\), one of the oldest formulas for \(\pi\) and a famously slow one.</span></div>
+  <div class="note"><b>Always find the constant.</b> Term-by-term integration produces \(f(x)=C+\sum\cdots\). Plug in \(x=0\), where every term of the series vanishes, and \(C=f(0)\) falls out. For \(\ln(1+x)\) and \(\arctan x\) that constant is 0, which is why it is easy to forget it exists.</div>
+
+  <div class="card">
+    <h4>Explore: a function and the series built from it</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="repPlot"></canvas><p class="plotcap">Blue: \(f\). Orange: the partial sum of the derived series. Green band: \(|x|&lt;R\).</p></div>
+      <div>
+        <div class="presets" id="repPresets"></div>
+        <div class="sliders" id="repSliders"></div>
+        <div class="readout" id="repOut"></div>
+        <p class="hint">Every one of these has radius 1, and they behave completely differently at the ends. For \(\ln(1+x)\), slide \(x_0\) to 1 and push \(N\): the partial sums crawl toward \(\ln 2\) from both sides, alternating. At \(x_0=-1\) they fall off a cliff. Same radius, different endpoints.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>What the series are for</h3>
+  <p>Two payoffs, both on the final. First, <b>integrals with no elementary antiderivative</b>: expand, integrate term by term, and stop when the next term is smaller than the accuracy you want. Second, <b>summing a numerical series</b>: recognize it as a known series evaluated at a specific \(x\).</p>
+  <div class="formula">\(\displaystyle\int_0^{1/2}\frac{dx}{1+x^4}=\int_0^{1/2}\sum_{n=0}^{\infty}(-1)^nx^{4n}\,dx=\sum_{n=0}^{\infty}\frac{(-1)^n}{(4n+1)2^{4n+1}}=\tfrac12-\tfrac{1}{160}+\tfrac{1}{2304}-\cdots\)<span class="cap">The result alternates with decreasing terms, so the alternating series estimate applies: the error from stopping is smaller than the first term you dropped.</span></div>
+  <p>And in the other direction, \(\sum_{n=1}^{\infty}\dfrac{1}{n2^n}\) is the series \(-\ln(1-x)=\sum x^n/n\) evaluated at \(x=\tfrac12\), so it equals \(-\ln\tfrac12=\ln 2\). Recognizing the pattern is the entire technique.</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-represent"></div>
+</section>
+
+<!-- ============================================================ 3 TAYLOR AND MACLAURIN -->
+<section data-id="taylor" data-title="Taylor and Maclaurin series" data-goal="8">
+  <p class="eyebrow">Chapter 3 · Stewart 11.10</p>
+  <h2>Taylor and Maclaurin series</h2>
+  <p class="lead">Chapter 2 went from a series to a function. This chapter goes the other way: given a function, the coefficients are forced, and there is only one power series it can have.</p>
+
+  <p>Suppose \(f(x)=\sum c_n(x-a)^n\) on some interval around \(a\). Differentiate \(k\) times and set \(x=a\): every term dies except one, and it leaves \(f^{(k)}(a)=k!\,c_k\). So the coefficients are not a choice.</p>
+  <div class="formula">\(\displaystyle c_n=\frac{f^{(n)}(a)}{n!}\qquad\Longrightarrow\qquad f(x)=\sum_{n=0}^{\infty}\frac{f^{(n)}(a)}{n!}(x-a)^n\)<span class="cap">The <b>Taylor series of \(f\) at \(a\)</b>. When \(a=0\) it is called the <b>Maclaurin series</b>. The partial sum through degree \(n\) is the <b>Taylor polynomial</b> \(T_n(x)\).</span></div>
+  <div class="formula">\(\displaystyle T_n(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k = f(a)+f'(a)(x-a)+\frac{f''(a)}{2}(x-a)^2+\cdots+\frac{f^{(n)}(a)}{n!}(x-a)^n\)<span class="cap">\(T_1\) is the tangent line. \(T_2\) adds the curvature. Each new term matches one more derivative at the center, which is why the fit is so good near \(a\) and can be so bad far away.</span></div>
+
+  <h3>The table you should know cold</h3>
+  <div class="card tint">
+    <table class="simple">
+      <tr><td>\(\dfrac{1}{1-x}=\displaystyle\sum_{n=0}^{\infty}x^n\)</td><td>\(R=1\)</td></tr>
+      <tr><td>\(e^x=\displaystyle\sum_{n=0}^{\infty}\frac{x^n}{n!}\)</td><td>\(R=\infty\)</td></tr>
+      <tr><td>\(\sin x=\displaystyle\sum_{n=0}^{\infty}\frac{(-1)^n x^{2n+1}}{(2n+1)!}\)</td><td>\(R=\infty\)</td></tr>
+      <tr><td>\(\cos x=\displaystyle\sum_{n=0}^{\infty}\frac{(-1)^n x^{2n}}{(2n)!}\)</td><td>\(R=\infty\)</td></tr>
+      <tr><td>\(\arctan x=\displaystyle\sum_{n=0}^{\infty}\frac{(-1)^n x^{2n+1}}{2n+1}\)</td><td>\(R=1\)</td></tr>
+      <tr><td>\(\ln(1+x)=\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^{n+1}x^{n}}{n}\)</td><td>\(R=1\)</td></tr>
+      <tr><td>\((1+x)^k=\displaystyle\sum_{n=0}^{\infty}\binom{k}{n}x^n\)</td><td>\(R=1\)</td></tr>
+    </table>
+  </div>
+  <p>Notice that \(\sin\) and \(\cos\) are each other's derivative series: differentiate \(\cos x=\sum(-1)^nx^{2n}/(2n)!\) term by term and you get \(-\sin x\). Notice also that \(\sin\) has only odd powers and \(\cos\) only even ones, which is the series saying that one is odd and the other is even.</p>
+  <p>Almost every Maclaurin series you are asked for is one of these seven with a substitution and a multiplication:</p>
+  <div class="formula">\(\displaystyle e^{-x^2}=\sum_{n=0}^{\infty}\frac{(-x^2)^n}{n!}=\sum_{n=0}^{\infty}\frac{(-1)^nx^{2n}}{n!}\qquad x\cos x=\sum_{n=0}^{\infty}\frac{(-1)^nx^{2n+1}}{(2n)!}\qquad \sin(x^2)=\sum_{n=0}^{\infty}\frac{(-1)^nx^{4n+2}}{(2n+1)!}\)<span class="cap">Substitute into the table entry, then push the outside factor into the exponent. Never differentiate \(e^{-x^2}\) nine times to get its ninth coefficient.</span></div>
+
+  <h3>The binomial series</h3>
+  <p>For any real \(k\), with the <b>binomial coefficients</b> \(\displaystyle\binom{k}{n}=\frac{k(k-1)(k-2)\cdots(k-n+1)}{n!}\) and \(\binom{k}{0}=1\):</p>
+  <div class="formula">\((1+x)^k=1+kx+\dfrac{k(k-1)}{2!}x^2+\dfrac{k(k-1)(k-2)}{3!}x^3+\cdots,\qquad |x|&lt;1\)<span class="cap">The numerator has exactly \(n\) factors, each one less than the last, starting at \(k\). When \(k\) is a positive integer the factors eventually hit zero and the series stops: that is the ordinary binomial theorem.</span></div>
+  <p>The two you will actually use are \(\sqrt{1+x}=1+\tfrac12x-\tfrac18x^2+\tfrac{1}{16}x^3-\cdots\) and \(\dfrac{1}{\sqrt{1+x}}=1-\tfrac12x+\tfrac38x^2-\tfrac{5}{16}x^3+\cdots\)</p>
+
+  <h3>Centers other than zero</h3>
+  <p>When the problem says "at \(a=1\)", the answer must be written in powers of \((x-1)\). Two ways: compute \(f^{(n)}(1)/n!\) from the definition, or rewrite \(f\) so the table applies. For \(e^x\) at \(a=1\), write \(e^x=e\cdot e^{x-1}\) and use the table on \(e^{x-1}\):</p>
+  <div class="formula">\(\displaystyle e^x=e\sum_{n=0}^{\infty}\frac{(x-1)^n}{n!}\qquad\qquad \frac1x=\frac{1}{1+(x-1)}=\sum_{n=0}^{\infty}(-1)^n(x-1)^n\)<span class="cap">A Taylor series at \(a\) is not allowed to contain a bare \(x\) anywhere. Every \(x\) lives inside \((x-a)\).</span></div>
+
+  <div class="card">
+    <h4>Explore: Taylor polynomials closing in</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="tayPlot"></canvas><p class="plotcap">Blue: \(f\). Orange: \(T_N\) centered at the purple point. The dashed line marks \(x_0\).</p></div>
+      <div>
+        <div class="presets" id="tayPresets"></div>
+        <div class="sliders" id="taySliders"></div>
+        <div class="controls"><button class="btn" id="tayPlay">▶ Play</button></div>
+        <div class="readout" id="tayOut"></div>
+        <p class="hint">Press Play on \(e^x\) and watch the polynomial swallow the whole window. Then switch to \(\ln(1+x)\) or \(1/(1-x)\) and play again: however high the degree goes, the polynomials never get past \(x=1\), because the radius of convergence is 1 and there is a genuine wall there. Now drag the center \(a\) to the right and watch the good region move with it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>The series can converge and still not be \(f\).</b> Taylor's theorem does not say \(f\) equals its series; it says \(f=T_n+R_n\). You get equality only where the remainder \(R_n(x)\to 0\), which is the subject of the next chapter. For every function in this course it does go to zero inside the radius, but the logic matters: convergence of the series is not the same statement as convergence <b>to \(f\)</b>.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-taylor"></div>
+</section>
+
+<!-- ============================================================ 4 ERROR BOUNDS -->
+<section data-id="error" data-title="Error bounds and applications" data-goal="7">
+  <p class="eyebrow">Chapter 4 · Stewart 11.10 to 11.11</p>
+  <h2>Error bounds and applications</h2>
+  <p class="lead">An approximation with no error bound is a guess. This chapter is how you know that \(\int_0^1 e^{-x^2}dx=0.746824\ldots\) is right to six places.</p>
+
+  <p>Define the <b>remainder</b> \(R_n(x)=f(x)-T_n(x)\). It is the exact error made by stopping at degree \(n\). Taylor's inequality bounds it:</p>
+  <div class="formula">\(\displaystyle |R_n(x)|\le \frac{M}{(n+1)!}\,|x-a|^{n+1}\qquad\text{whenever } |f^{(n+1)}(t)|\le M \text{ for all } t \text{ between } a \text{ and } x\)<span class="cap">Three ingredients: a bound \(M\) on the next derivative over the whole interval, the distance \(|x-a|\) raised to the next power, and the factorial that eventually crushes everything.</span></div>
+  <p>Finding \(M\) is the only creative step. For \(\sin\) and \(\cos\) every derivative is \(\pm\sin\) or \(\pm\cos\), so \(M=1\) always works. For \(e^x\) on \([0,b]\) the derivatives are all \(e^x\), increasing, so \(M=e^b\) (and Stewart often writes \(e&lt;3\) to keep the arithmetic clean).</p>
+  <div class="formula">\(\displaystyle T_3 \text{ for } \sin x \text{ on } |x|\le 0.5:\quad |R_3(x)|\le\frac{1\cdot(0.5)^4}{4!}=\frac{0.0625}{24}\approx 0.0026\)<span class="cap">Three decimal places from two nonzero terms. The true error at \(x=0.5\) is about \(0.00026\), ten times smaller: the bound is a guarantee, not a prediction.</span></div>
+  <p><b>When the series alternates, use the alternating series estimate instead.</b> If the terms alternate and decrease in size to zero, the error from stopping is smaller than the first term you dropped. It is easier to compute than Taylor's inequality and usually much sharper.</p>
+
+  <div class="card">
+    <h4>Explore: the error and the bound that traps it</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="errPlot"></canvas><p class="plotcap">Orange: the true remainder \(f(x)-T_N(x)\). Green dashed: \(\pm M|x|^{N+1}/(N+1)!\), the Taylor bound.</p></div>
+      <div>
+        <div class="presets" id="errPresets"></div>
+        <div class="sliders" id="errSliders"></div>
+        <div class="readout" id="errOut"></div>
+        <p class="hint">The orange curve stays inside the green envelope everywhere, usually by a wide margin near the center, and comes close only at the far end of the interval. Raise \(N\) by one and read the vertical scale: the bound drops by a factor of about \(c/(N+2)\) each time, which is why a few extra terms buy so many decimal places.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Three things series are for</h3>
+  <p><b>Limits.</b> Replace each function by its series and cancel. No L'Hospital, no algebra:</p>
+  <div class="formula">\(\displaystyle\lim_{x\to 0}\frac{\sin x-x}{x^3}=\lim_{x\to 0}\frac{\left(x-\frac{x^3}{6}+\frac{x^5}{120}-\cdots\right)-x}{x^3}=\lim_{x\to 0}\left(-\frac16+\frac{x^2}{120}-\cdots\right)=-\frac16\)<span class="cap">Keep terms up to the power in the denominator; everything above it goes to zero. The lowest surviving power gives you the answer immediately.</span></div>
+  <p><b>Integrals with no elementary antiderivative.</b> The motivating question of this course:</p>
+  <div class="formula">\(\displaystyle\int_0^1 e^{-x^2}dx=\int_0^1\sum_{n=0}^{\infty}\frac{(-1)^nx^{2n}}{n!}dx=\sum_{n=0}^{\infty}\frac{(-1)^n}{n!(2n+1)}=1-\frac13+\frac{1}{10}-\frac{1}{42}+\frac{1}{216}-\cdots\)<span class="cap">Alternating with decreasing terms, so the alternating estimate applies: stopping after \(1/216\) guarantees an error below the next term, \(1/1320\approx 0.00076\). Carry it to \(n=9\) and the guarantee is under \(10^{-6}\), giving \(0.746824\).</span></div>
+  <p><b>Physics one-liners.</b> Einstein's kinetic energy \(K=mc^2\big[(1-v^2/c^2)^{-1/2}-1\big]\) has binomial series \(K=\tfrac12mv^2+\tfrac38 mv^4/c^2+\cdots\), so Newton's \(\tfrac12mv^2\) is simply the first term of the relativistic one, and at everyday speeds the rest is invisible.</p>
+
+  <div class="note"><b>Which bound do I use?</b> If the series at your \(x\) alternates with terms decreasing to zero, use the alternating estimate: error is less than the first omitted term. If it does not alternate (\(e^x\) at \(x&gt;0\), for instance), use Taylor's inequality with an honest \(M\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-error"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Fourteen mixed questions from every chapter. Score 11 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts={})=>el.appendChild(ansLine(label,k,opts));
+const fact=n=>{let f=1;for(let k=2;k<=n;k++)f*=k;return f;};
+const binom=(k,m)=>{let p=1;for(let j=0;j<m;j++)p*=(k-j);return p/fact(m);};
+const ipow=(b,e)=>Math.round(Math.pow(b,e));
+/* exact-looking strings and TeX for rational numbers with denominators the coefficients actually produce */
+function ratStr(x){
+  if(!Number.isFinite(x))return String(x);
+  if(Math.abs(x-Math.round(x))<1e-12)return String(Math.round(x));
+  for(let d=2;d<=50400;d++){const n=x*d;if(Math.abs(n-Math.round(n))<1e-9*Math.max(1,Math.abs(n)))return `${Math.round(n)}/${d}`;}
+  return String(x);
+}
+function ratTex(x){const s=ratStr(x);const m=/^(-?\d+)\/(\d+)$/.exec(s);if(!m)return s;const sg=m[1][0]==='-'?'-':'';return `${sg}\\tfrac{${m[1].replace('-','')}}{${m[2]}}`;}
+/* (x - a) in TeX and in typed form; a may be a number or {v, tex, str} for pi-centers */
+const cenV=a=>typeof a==='object'?a.v:a;
+const xaT=a=>{if(typeof a==='object')return `(x-${a.tex})`;return a===0?'x':`(x${a<0?'+'+(-a):'-'+a})`;};
+const xaS=a=>{if(typeof a==='object')return `(x-${a.str})`;return a===0?'x':`(x${a<0?'+'+(-a):'-'+a})`;};
+const cenT=a=>typeof a==='object'?a.tex:String(a);
+/* numeric tools used to verify every stored answer inside gen() */
+function seriesSum(term,start,N){let s=0;for(let n=start;n<=N;n++){const t=term(n);if(!Number.isFinite(t))break;s+=t;if(Math.abs(t)<1e-17&&n>start+2)break;}return s;}
+function simpson(f,a,b,n=2000){if(n%2)n++;const h=(b-a)/n;let s=f(a)+f(b);for(let i=1;i<n;i++)s+=f(a+i*h)*(i%2?4:2);return s*h/3;}
+/* verifyTerm: does the stored general-term string really sum to f? */
+function verifyTerm(str,f,{start=0,xs=[0.3,-0.25],N=70,tol=1e-8,center=0}={}){
+  let g;try{g=Expr.compile(str);}catch(e){return false;}
+  return xs.every(dx=>{const x=center+dx;let s=0;
+    for(let n=start;n<=N;n++){const t=g({n,x});if(!Number.isFinite(t))return false;s+=t;if(Math.abs(t)<1e-18&&n>start+2)break;}
+    const v=f(x);return Number.isFinite(v)&&Math.abs(s-v)<=tol*Math.max(1,Math.abs(v));});
+}
+/* verifySum: direct summation against a stored exact value (average of two partial sums kills alternating drift) */
+function verifySum(term,start,value,{N=4000,tol=1e-6}={}){
+  let s=0,prev=0;for(let n=start;n<=N;n++){prev=s;const t=term(n);if(!Number.isFinite(t))return false;s+=t;if(Math.abs(t)<1e-18&&n>start+2){prev=s;break;}}
+  const avg=(s+prev)/2;const sc=Math.max(1,Math.abs(value));
+  return Math.abs(s-value)<=tol*sc||Math.abs(avg-value)<=tol*sc;
+}
+/* Maclaurin coefficient functions: c(k) = f^(k)(0)/k! */
+const MAC={
+  exp:k=>1/fact(k),
+  sin:k=>k%2?(((k-1)/2)%2?-1:1)/fact(k):0,
+  cos:k=>k%2?0:((k/2)%2?-1:1)/fact(k),
+  ln1p:k=>k===0?0:(k%2?1:-1)/k,
+  inv1m:k=>1,
+  inv1p:k=>k%2?-1:1,
+  sqrt1p:k=>binom(0.5,k),
+  atan:k=>k%2?(((k-1)/2)%2?-1:1)/k:0,
+  emx2:k=>k%2?0:((k/2)%2?-1:1)/fact(k/2),
+  xex:k=>k===0?0:1/fact(k-1),
+};
+const Tfn=(c,a,n)=>x=>{let s=0;for(let k=0;k<=n;k++){const ck=c(k);if(ck)s+=ck*Math.pow(x-a,k);}return s;};
+const maxErr=(f,T,lo,hi,m=160)=>{let e=0;for(let i=0;i<=m;i++){const x=lo+(hi-lo)*i/m;const d=Math.abs(f(x)-T(x));if(Number.isFinite(d)&&d>e)e=d;}return e;};
+/* pretty series TeX */
+const SUM=(body,from='n=1')=>texSum(body,from);
+const DSUM=(body,from='n=1')=>D(texSum(body,from));
+const powT=(b,e)=>e===1?b:`${b}^{${e}}`;
+/* interval helpers */
+const ivStr=iv=>{
+  if(iv.lo===-Infinity&&iv.hi===Infinity)return '(-inf, inf)';
+  if(iv.lo===iv.hi)return `x=${fmt(iv.lo)}`;   /* MathQuill swallows bare braces when a value is set programmatically; x=a is the form the harness types */
+  return `${iv.loIn?'[':'('}${fmt(iv.lo)}, ${fmt(iv.hi)}${iv.hiIn?']':')'}`;
+};
+const ivTex=iv=>{
+  if(iv.lo===-Infinity&&iv.hi===Infinity)return '(-\\infty,\\infty)';
+  if(iv.lo===iv.hi)return `\\{${texNum(iv.lo)}\\}`;
+  return `${iv.loIn?'[':'('}${texNum(iv.lo)},\\,${texNum(iv.hi)}${iv.hiIn?']':')'}`;
+};
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1: radius, interval, endpoints ---------- */
+const absT=a=>a===0?'|x|':`\\left|x${a<0?'+'+(-a):'-'+a}\\right|`;
+const RADIUS_POOL=[
+  ()=>{const a=rint(-3,3),c=pick([2,3,4,5]);return {tex:texSum(`\\frac{${xaT(a)}^n}{n\\,${c}^n}`,'n=1'),a,R:c,
+    ratio:`\\frac{n}{n+1}\\cdot\\frac{${absT(a)}}{${c}}\\to\\frac{${absT(a)}}{${c}}`};},
+  ()=>{const k=pick([1,2,3]);return {tex:texSum(`n^{${k}}x^n`,'n=1'),a:0,R:1,
+    ratio:`\\left(\\frac{n+1}{n}\\right)^{${k}}|x|\\to |x|`};},
+  ()=>({tex:texSum('\\frac{x^n}{n!}','n=0'),a:0,R:Infinity,ratio:'\\frac{|x|}{n+1}\\to 0\\ \\text{for every }x'}),
+  ()=>{const a=rint(-2,3);return {tex:texSum(`n!\\,${xaT(a)}^n`,'n=0'),a,R:0,
+    ratio:`(n+1)${absT(a)}\\to\\infty\\ \\text{unless }x=${a}`};},
+  ()=>{const b=pick([2,3,4]);return {tex:texSum(`\\frac{(${b}x)^n}{n^2}`,'n=1'),a:0,R:1/b,
+    ratio:`\\left(\\frac{n}{n+1}\\right)^{2}${b}|x|\\to ${b}|x|`};},
+  ()=>{const b=pick([2,3,5]);return {tex:texSum(`\\frac{x^{2n}}{${b*b}^n}`,'n=0'),a:0,R:b,
+    ratio:`\\frac{x^2}{${b*b}}`};},
+  ()=>({tex:texSum('\\frac{(-1)^n x^n}{\\sqrt{n}}','n=1'),a:0,R:1,ratio:'\\sqrt{\\tfrac{n}{n+1}}\\,|x|\\to |x|'}),
+  ()=>{const b=pick([2,3,4]);return {tex:texSum(`\\frac{(${b}x+1)^n}{n}`,'n=1'),a:-1/b,R:1/b,
+    ratio:`\\frac{n}{n+1}\\,${b}\\left|x+\\tfrac{1}{${b}}\\right|\\to ${b}\\left|x+\\tfrac{1}{${b}}\\right|`};},
+  ()=>({tex:texSum('n^n x^n','n=1'),a:0,R:0,ratio:'\\frac{(n+1)^{n+1}}{n^n}|x|\\to\\infty\\ \\text{unless }x=0'}),
+];
+Q.radius={name:'radius of convergence',
+  gen(){const q=pick(RADIUS_POOL)();q.inf=!Number.isFinite(q.R);return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the center ${M('a')} and the radius of convergence ${M('R')} of</p>${D(q.tex)}<p class="small muted">Type <code>inf</code> for \\(R\\) if the series converges for every \\(x\\), and <code>0</code> if it converges only at the center.</p>`;
+    numIn(el,'a',M('a='));numIn(el,'R',M('R='));},
+  check(q,el){return Gall(el,[['a',checkNumber($('[data-k=a]',el).value,q.a)],['R',checkLimit($('[data-k=R]',el).value,q.inf?'inf':q.R)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox expr';el.appendChild(h);}h.innerHTML=`Ratio test: ${M(R`\left|\frac{a_{n+1}}{a_n}\right|=`+q.ratio)}`;},
+  solution(q){return `Ratio test on the terms: ${M(R`\left|\frac{a_{n+1}}{a_n}\right|=`+q.ratio)}. `+
+    (q.inf?`That limit is 0 for every ${M('x')}, so the series converges everywhere: ${M('R=\\infty')}, centered at ${M('a='+texNum(q.a))}.`
+     :q.R===0?`That limit is infinite for every ${M('x')} except the center, so ${M('R=0')} and the series converges only at ${M('x='+texNum(q.a))}.`
+     :`Setting it ${M(R`\lt 1`)} gives ${M(absT(q.a)+'\\lt '+texNum(q.R))}, so the center is ${M('a='+texNum(q.a))} and ${M('R='+texNum(q.R))}.`);}
+};
+const INTERVAL_POOL=[
+  ()=>{const a=rint(-3,3),c=pick([2,3,4]);return {tex:texSum(`\\frac{${xaT(a)}^n}{n\\,${c}^n}`,'n=1'),iv:{lo:a-c,hi:a+c,loIn:true,hiIn:false},
+    R:c,a,left:'alternating harmonic, converges',right:'harmonic, diverges'};},
+  ()=>{const a=rint(-3,3),c=pick([2,3,4]);return {tex:texSum(`\\frac{${xaT(a)}^n}{n^2\\,${c}^n}`,'n=1'),iv:{lo:a-c,hi:a+c,loIn:true,hiIn:true},
+    R:c,a,left:'converges absolutely (p-series, p=2)',right:'converges (p-series, p=2)'};},
+  ()=>{const a=rint(-3,3),c=pick([2,3,4,5]);return {tex:texSum(`\\frac{${xaT(a)}^n}{${c}^n}`,'n=0'),iv:{lo:a-c,hi:a+c,loIn:false,hiIn:false},
+    R:c,a,left:'terms are \\((-1)^n\\), diverges',right:'terms are 1, diverges'};},
+  ()=>{const a=rint(-3,3),c=pick([2,3,4]);return {tex:texSum(`\\frac{(-1)^n${xaT(a)}^n}{n\\,${c}^n}`,'n=1'),iv:{lo:a-c,hi:a+c,loIn:false,hiIn:true},
+    R:c,a,left:'harmonic, diverges',right:'alternating harmonic, converges'};},
+  ()=>({tex:texSum('\\frac{x^n}{n!}','n=0'),iv:{lo:-Infinity,hi:Infinity,loIn:false,hiIn:false},R:Infinity,a:0,left:'',right:''}),
+  ()=>{const a=rint(-2,3);return {tex:texSum(`n!\\,${xaT(a)}^n`,'n=0'),iv:{lo:a,hi:a,loIn:true,hiIn:true},R:0,a,left:'',right:''};},
+  ()=>{const a=rint(-3,3),c=pick([2,3,4]);return {tex:texSum(`\\frac{${xaT(a)}^n}{\\sqrt{n}\\,${c}^n}`,'n=1'),iv:{lo:a-c,hi:a+c,loIn:true,hiIn:false},
+    R:c,a,left:'alternating, converges',right:'p-series with p=1/2, diverges'};},
+];
+Q.interval={name:'interval of convergence',
+  gen(){const q=pick(INTERVAL_POOL)();q.ans=ivStr(q.iv);return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the interval of convergence.</p>${D(q.tex)}<p class="small muted">Type an interval like <code>[-1, 1)</code>, or <code>(-inf, inf)</code>, or <code>{2}</code> for a single point.</p>`;
+    numIn(el,'iv','Interval =',{wide:true,placeholder:'[a, b)'});},
+  check(q,el){return G(el,'iv',checkInterval($('[data-k=iv]',el).value,q.iv));},
+  solution(q){
+    if(!Number.isFinite(q.R))return `The ratio ${M(R`|a_{n+1}/a_n|=|x|/(n+1)\to 0`)} for every ${M('x')}, so the interval is all of ${M('(-\\infty,\\infty)')}.`;
+    if(q.R===0)return `The ratio ${M(R`(n+1)|x-a|\to\infty`)} unless ${M('x='+texNum(q.a))}, so the series converges at the center only: ${M(ivTex(q.iv))}.`;
+    return `The ratio test gives ${M(absT(q.a)+'\\lt '+texNum(q.R))}, so ${M('R='+texNum(q.R))} and the open interval is ${M(`(${texNum(q.a-q.R)},${texNum(q.a+q.R)})`)}. At ${M('x='+texNum(q.a-q.R))}: ${q.left}. At ${M('x='+texNum(q.a+q.R))}: ${q.right}. Interval of convergence ${M(ivTex(q.iv))}.`;}
+};
+Q.endpointTest={name:'test one endpoint',
+  gen(){
+    let q;for(let guard=0;guard<40;guard++){
+      const a=rint(-3,3),c=pick([2,3,4]);
+      const fam=pick([{p:1,den:'n',dTex:'n'},{p:2,den:'n^2',dTex:'n^2'},{p:0.5,den:'sqrt(n)',dTex:'\\sqrt{n}'}]);
+      const alt=Math.random()<0.5, side=pick([-1,1]);
+      const x=a+side*c;
+      /* after substitution the sign factor is (-1)^n exactly when alt XOR (side<0) */
+      const negTerm=alt!==(side<0);
+      const tStr=(negTerm?'(-1)^n/':'1/')+fam.den;
+      const tTex=(negTerm?'\\frac{(-1)^n}{':'\\frac{1}{')+fam.dTex+'}';
+      const conv=negTerm?true:fam.p>1;
+      const why=negTerm?(fam.p>1?'it converges absolutely, since \\(\\sum 1/n^{'+fam.p+'}\\) is a convergent p-series':'the terms decrease to 0 and alternate, so the alternating series test gives convergence')
+        :(fam.p>1?'it is a p-series with \\(p='+fam.p+'>1\\), so it converges':'it is a p-series with \\(p='+(fam.p===1?'1':'1/2')+'\\le 1\\), so it diverges');
+      const tex=texSum(`\\frac{${alt?'(-1)^n':''}${xaT(a)}^n}{${fam.dTex}\\,${c}^n}`,'n=1');
+      /* verify: the substituted term really is the general term at this endpoint */
+      const g=Expr.compile(tStr);const den=n=>Math.pow(n,fam.p);
+      let ok=true;for(let n=1;n<=10;n++){const orig=(alt?Math.pow(-1,n):1)*Math.pow(x-a,n)/(den(n)*Math.pow(c,n));if(!near(orig,g({n}),1e-9))ok=false;}
+      if(!ok)continue;
+      q={a,c,x,tex,tStr,tTex,conv,why,p:fam.p};break;
+    }
+    return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">This series has radius of convergence ${M(texNum(q.c))} about ${M('x='+texNum(q.a))}.</p>${D(q.tex)}
+    <p class="prompt">Substitute the endpoint ${M('x='+texNum(q.x))} and simplify: the series becomes ${M(texSum('a_n','n=1'))} with ${M('a_n=')} what? Then say whether it converges.</p>`;
+    numIn(el,'t',M('a_n='),{wide:true,placeholder:'a formula in n'});
+    q.get=choiceButtons(el,[{label:'converges',value:true},{label:'diverges',value:false}]);},
+  check(q,el){const r=G(el,'t',checkExprInt($('[data-k=t]',el).value,q.tStr,['n'],{domain:{n:[1,14]}}));
+    const v=q.get();if(v===null)return {ok:false,msg:'Pick converges or diverges.'};
+    if(!r.ok)return r;
+    if(v!==q.conv)return {ok:false,msg:'Look again at the simplified series and name the test that applies.'};
+    return {ok:true};},
+  solution(q){return `At ${M('x='+texNum(q.x))} the numerator ${M(xaT(q.a)+'^n')} becomes ${M(`(${texNum(q.x-q.a)})^n`)}, which cancels the ${M(q.c+'^n')} and leaves ${M('a_n='+q.tTex)}. Since ${q.why}, the series ${q.conv?'<b>converges</b>':'<b>diverges</b>'} at this endpoint.`;}
+};
+
+/* ---------- chapter 2: building series from the geometric series ---------- */
+const GEO_POOL=[
+  ()=>{const a=pick([2,3,4,5]);return {ftex:`\\frac{1}{${a}-x}`,f:x=>1/(a-x),t:`x^n/${a}^(n+1)`,tTex:`\\frac{x^n}{${a}^{n+1}}`,R:a,
+    how:`Factor the ${a} out: ${M(R`\frac{1}{${a}-x}=\frac{1}{${a}}\cdot\frac{1}{1-x/${a}}`)}, a geometric series with ratio ${M(`x/${a}`)}.`};},
+  ()=>{const a=pick([2,3,4]);return {ftex:`\\frac{x}{${a}+x}`,f:x=>x/(a+x),t:`(-1)^n x^(n+1)/${a}^(n+1)`,tTex:`\\frac{(-1)^n x^{n+1}}{${a}^{n+1}}`,R:a,
+    how:`${M(R`\frac{x}{${a}+x}=\frac{x}{${a}}\cdot\frac{1}{1-(-x/${a})}`)}: ratio ${M(`-x/${a}`)}, then multiply every term by ${M('x')}.`};},
+  ()=>{const [a,b,Rr]=pick([[4,1,2],[9,4,1.5],[1,4,0.5],[9,1,3]]);const bs=b===1?'':`${b}`;
+    return {ftex:`\\frac{1}{${a}+${bs}x^2}`,f:x=>1/(a+b*x*x),
+      t:`(-1)^n ${b}^n x^(2n)/${a}^(n+1)`,tTex:`\\frac{(-1)^n ${b===1?'':b+'^n'} x^{2n}}{${a}^{n+1}}`,R:Rr,
+      how:`${M(R`\frac{1}{${a}+${bs}x^2}=\frac{1}{${a}}\cdot\frac{1}{1-\left(-\frac{${bs}x^2}{${a}}\right)}`)}: the ratio is ${M(`-${bs}x^2/${a}`)}, and it is less than 1 in size when ${M(`|x|<${texNum(Rr)}`)}.`};},
+  ()=>{const a=pick([8,27]);const r=Math.cbrt(a);return {ftex:`\\frac{x^2}{${a}-x^3}`,f:x=>x*x/(a-x*x*x),t:`x^(3n+2)/${a}^(n+1)`,tTex:`\\frac{x^{3n+2}}{${a}^{n+1}}`,R:r,
+    how:`Ratio ${M(`x^3/${a}`)}, so ${M(R`\frac{x^2}{${a}-x^3}=x^2\sum\frac{x^{3n}}{${a}^{n+1}}`)}. It converges when ${M(`|x|^3<${a}`)}.`};},
+  ()=>{const b=pick([2,3,5]);return {ftex:`\\frac{${b}}{1-x^4}`,f:x=>b/(1-Math.pow(x,4)),t:`${b}x^(4n)`,tTex:`${b}x^{4n}`,R:1,
+    how:`Substitute ${M('x^4')} for ${M('x')} in the geometric series and multiply by ${M(String(b))}.`};},
+];
+Q.geometricRewrite={name:'rewrite as a power series',
+  gen(){let q;for(let i=0;i<30;i++){q=pick(GEO_POOL)();if(verifyTerm(q.t,q.f,{start:0,xs:[0.3,-0.25]}))break;q=null;}return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Write ${M('f(x)='+q.ftex)} as a power series ${M(texSum('a_n(x)','n=0'))}. Give the general term ${M('a_n(x)')} (a formula in ${M('n')} and ${M('x')}) and the radius of convergence.</p>`;
+    numIn(el,'t',M('a_n(x)='),{wide:true,placeholder:'in terms of n and x'});numIn(el,'R',M('R='));},
+  check(q,el){return Gall(el,[['t',checkExprInt($('[data-k=t]',el).value,q.t,['n','x'],{domain:{n:[0,6],x:[-0.4,0.4]}})],
+    ['R',checkNumber($('[data-k=R]',el).value,q.R)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}h.innerHTML=q.how;},
+  solution(q){return `${q.how} So ${M(`${q.ftex}=`+texSum(q.tTex,'n=0'))} with ${M('R='+texNum(q.R))}.`;}
+};
+const DI_POOL=[
+  {ftex:'\\frac{1}{(1-x)^2}',f:x=>1/((1-x)*(1-x)),t:'(n+1)x^n',tTex:'(n+1)x^n',start:0,R:1,
+   how:'Differentiate \\(\\frac{1}{1-x}=\\sum x^n\\) term by term: \\(\\sum n x^{n-1}\\), then re-index to start at \\(n=0\\).'},
+  {ftex:'\\ln(1-x)',f:x=>Math.log(1-x),t:'-x^n/n',tTex:'-\\frac{x^n}{n}',start:1,R:1,
+   how:'Integrate \\(\\frac{-1}{1-x}=-\\sum x^n\\) term by term and use \\(\\ln 1=0\\) to kill the constant.'},
+  {ftex:'\\arctan x',f:Math.atan,t:'(-1)^n x^(2n+1)/(2n+1)',tTex:'\\frac{(-1)^nx^{2n+1}}{2n+1}',start:0,R:1,
+   how:'Integrate \\(\\frac{1}{1+x^2}=\\sum(-1)^nx^{2n}\\) term by term; the constant is \\(\\arctan 0=0\\).'},
+  {ftex:'\\ln(1+x^2)',f:x=>Math.log(1+x*x),t:'(-1)^(n+1) x^(2n)/n',tTex:'\\frac{(-1)^{n+1}x^{2n}}{n}',start:1,R:1,
+   how:'Put \\(x^2\\) in place of \\(x\\) in \\(\\ln(1+x)=\\sum(-1)^{n+1}x^n/n\\).'},
+  {ftex:'\\frac{x}{(1+x^2)^2}',f:x=>x/Math.pow(1+x*x,2),t:'(-1)^(n+1) n x^(2n-1)',tTex:'(-1)^{n+1}n\\,x^{2n-1}',start:1,R:1,
+   how:'Differentiate \\(\\frac{1}{1+x^2}=\\sum(-1)^nx^{2n}\\): the left side is \\(\\frac{-2x}{(1+x^2)^2}\\), so divide by \\(-2\\).'},
+  {ftex:'\\ln(1+x)',f:x=>Math.log(1+x),t:'(-1)^(n+1) x^n/n',tTex:'\\frac{(-1)^{n+1}x^n}{n}',start:1,R:1,
+   how:'Integrate \\(\\frac{1}{1+x}=\\sum(-1)^nx^n\\) term by term; the constant is \\(\\ln 1=0\\).'},
+  {ftex:'\\frac{2}{(1-x)^3}',f:x=>2/Math.pow(1-x,3),t:'(n+1)(n+2)x^n',tTex:'(n+1)(n+2)x^n',start:0,R:1,
+   how:'Differentiate \\(\\frac{1}{(1-x)^2}=\\sum(n+1)x^n\\) once more.'},
+];
+Q.differentiateIntegrate={name:'differentiate or integrate a known series',
+  gen(){let q;for(let i=0;i<30;i++){q=pick(DI_POOL);if(verifyTerm(q.t,q.f,{start:q.start,xs:[0.3,-0.25]}))break;q=null;}return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Starting from the geometric series, find the Maclaurin series for ${M('f(x)='+q.ftex)}. Write it as ${M(texSum('a_n(x)','n='+q.start))} and give the general term ${M('a_n(x)')} together with the radius of convergence.</p>
+    <p class="small muted">The sum starts at ${M('n='+q.start)}.</p>`;
+    numIn(el,'t',M('a_n(x)='),{wide:true,placeholder:'in terms of n and x'});numIn(el,'R',M('R='));},
+  check(q,el){return Gall(el,[['t',checkExprInt($('[data-k=t]',el).value,q.t,['n','x'],{domain:{n:[q.start,q.start+6],x:[-0.4,0.4]}})],
+    ['R',checkNumber($('[data-k=R]',el).value,q.R)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}h.innerHTML=q.how;},
+  solution(q){return `${q.how} The result is ${M(q.ftex+'='+texSum(q.tTex,'n='+q.start))}, and termwise differentiation and integration keep the radius: ${M('R=1')}.`;}
+};
+const COEF_POOL=[
+  ()=>{const a=pick([2,3,4]);return {ftex:`\\frac{1}{${a}-x}`,f:x=>1/(a-x),c:k=>1/Math.pow(a,k+1),
+    why:`${M(R`\frac{1}{${a}-x}=\sum\frac{x^n}{${a}^{n+1}}`)}`};},
+  ()=>({ftex:'\\ln(1+x)',f:x=>Math.log(1+x),c:k=>k===0?0:(k%2?1:-1)/k,why:`${M(R`\ln(1+x)=\sum_{n\ge1}\frac{(-1)^{n+1}x^n}{n}`)}`}),
+  ()=>({ftex:'\\arctan x',f:Math.atan,c:MAC.atan,why:`${M(R`\arctan x=\sum\frac{(-1)^nx^{2n+1}}{2n+1}`)}, so even powers are missing`}),
+  ()=>({ftex:'\\frac{1}{1+x^2}',f:x=>1/(1+x*x),c:k=>k%2?0:((k/2)%2?-1:1),why:`${M(R`\frac{1}{1+x^2}=\sum(-1)^nx^{2n}`)}, so odd powers are missing`}),
+  ()=>({ftex:'\\frac{1}{(1-x)^2}',f:x=>1/((1-x)*(1-x)),c:k=>k+1,why:`${M(R`\frac{1}{(1-x)^2}=\sum(n+1)x^n`)}`}),
+  ()=>{const a=pick([2,3]);return {ftex:`\\frac{x}{${a}+x}`,f:x=>x/(a+x),c:k=>k===0?0:(k%2?1:-1)/Math.pow(a,k),
+    why:`${M(R`\frac{x}{${a}+x}=\sum\frac{(-1)^nx^{n+1}}{${a}^{n+1}}`)}`};},
+];
+Q.coefficient={name:'a particular coefficient',
+  gen(){let q;for(let i=0;i<30;i++){q=pick(COEF_POOL)();const s=seriesSum(j=>q.c(j)*Math.pow(0.3,j),0,60);
+      if(Math.abs(s-q.f(0.3))<1e-9){q.k=rint(2,7);q.val=q.c(q.k);break;}q=null;}
+    return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the coefficient of ${M('x^{'+q.k+'}')} in the Maclaurin series of ${M('f(x)='+q.ftex)}. Give an exact number (a fraction is fine, and 0 is a legitimate answer).</p>`;
+    numIn(el,'c',M('c_{'+q.k+'}='));},
+  check(q,el){return G(el,'c',checkNumber($('[data-k=c]',el).value,q.val));},
+  solution(q){return `${q.why}. Reading off the coefficient of ${M('x^{'+q.k+'}')} gives ${M('c_{'+q.k+'}='+ratTex(q.val))}.`;}
+};
+const SI_POOL=[
+  {itex:'\\frac{1}{1+x^4}',g:x=>1/(1+Math.pow(x,4)),t:'(-1)^n x^(4n+1)/(4n+1)',tTex:'\\frac{(-1)^nx^{4n+1}}{4n+1}',start:0,
+   how:'\\(\\frac{1}{1+x^4}=\\sum(-1)^nx^{4n}\\); integrate term by term.'},
+  {itex:'\\frac{x}{1+x^3}',g:x=>x/(1+Math.pow(x,3)),t:'(-1)^n x^(3n+2)/(3n+2)',tTex:'\\frac{(-1)^nx^{3n+2}}{3n+2}',start:0,
+   how:'\\(\\frac{x}{1+x^3}=x\\sum(-1)^nx^{3n}=\\sum(-1)^nx^{3n+1}\\); integrate term by term.'},
+  {itex:'\\arctan(x^2)',g:x=>Math.atan(x*x),t:'(-1)^n x^(4n+3)/((2n+1)(4n+3))',tTex:'\\frac{(-1)^nx^{4n+3}}{(2n+1)(4n+3)}',start:0,
+   how:'\\(\\arctan(x^2)=\\sum\\frac{(-1)^nx^{4n+2}}{2n+1}\\); integrate term by term.'},
+];
+Q.seriesIntegral={name:'approximate an integral with a series',
+  gen(){let q;
+    for(let i=0;i<30;i++){
+      const p=pick(SI_POOL),c=pick([0.5,0.2,0.4]);
+      const F=x=>simpson(p.g,0,x,400);
+      if(!verifyTerm(p.t,F,{start:p.start,xs:[0.3,-0.25],tol:1e-7}))continue;
+      const val=simpson(p.g,0,c,4000);
+      const g=Expr.compile(p.t);const ser=seriesSum(n=>g({n,x:c}),p.start,80);
+      if(Math.abs(ser-val)>1e-9)continue;
+      q={...p,c,val};break;}
+    return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Expand the integrand in a power series and integrate term by term.</p>${D(texInt(0,texNum(q.c),q.itex,'x'))}
+    <p class="prompt">The antiderivative with ${M('F(0)=0')} is ${M(texSum('a_n(x)','n='+q.start))}. Give ${M('a_n(x)')}, then give the value of the definite integral to within ${M('10^{-4}')} (four decimal places).</p>`;
+    numIn(el,'t',M('a_n(x)='),{wide:true,placeholder:'in terms of n and x'});numIn(el,'v','Value =');},
+  check(q,el){return Gall(el,[['t',checkExprInt($('[data-k=t]',el).value,q.t,['n','x'],{domain:{n:[q.start,q.start+5],x:[-0.4,0.4]}})],
+    ['v',checkNumber($('[data-k=v]',el).value,q.val,{tol:1e-4})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}h.innerHTML=q.how;},
+  solution(q){const g=Expr.compile(q.t);const parts=[];for(let n=q.start;n<q.start+4;n++)parts.push(fmtDec(g({n,x:q.c}),6));
+    return `${q.how} Integrating gives ${M(texSum(q.tTex,'n='+q.start))}. At ${M('x='+texNum(q.c))} the terms are ${parts.join(', ')}, ... and they alternate and shrink fast, so stopping once a term is below ${M('10^{-4}')} is safe: the integral is ${M(fmtDec(q.val,5))}.`;}
+};
+const SUMS2=[
+  ()=>({tex:texSum('\\frac{(-1)^n}{2n+1}','n=0'),term:n=>(n%2?-1:1)/(2*n+1),start:0,val:Math.PI/4,ans:'\\frac{\\pi}{4}',
+    why:'the arctangent series \\(\\sum\\frac{(-1)^nx^{2n+1}}{2n+1}\\) at \\(x=1\\), which is \\(\\arctan 1\\)'}),
+  ()=>{const a=pick([3,4,5]);return {tex:texSum(`\\frac{1}{${a}^n}`,'n=0'),term:n=>Math.pow(a,-n),start:0,val:a/(a-1),ans:texFrac(a,a-1),
+    why:`the geometric series with ratio \\(1/${a}\\), so it sums to \\(\\frac{1}{1-1/${a}}\\)`};},
+  ()=>({tex:texSum('(-1)^n(0.3)^{2n}','n=0'),term:n=>(n%2?-1:1)*Math.pow(0.3,2*n),start:0,val:1/1.09,ans:'\\tfrac{100}{109}',
+    why:'geometric with ratio \\(-0.09\\), so it sums to \\(\\frac{1}{1+0.09}\\)'}),
+  ()=>{const a=pick([2,3,4]);return {tex:texSum(`\\frac{1}{n\\,${a}^n}`,'n=1'),term:n=>1/(n*Math.pow(a,n)),start:1,val:Math.log(a/(a-1)),ans:`\\ln ${texFrac(a,a-1)}`,
+    why:`\\(-\\ln(1-x)=\\sum x^n/n\\) at \\(x=1/${a}\\), giving \\(-\\ln\\frac{${a-1}}{${a}}\\)`};},
+  ()=>{const a=pick([2,3]);return {tex:texSum(`\\frac{n}{${a}^n}`,'n=1'),term:n=>n/Math.pow(a,n),start:1,val:a/((a-1)*(a-1)),ans:texFrac(a,(a-1)*(a-1)),
+    why:`\\(\\sum nx^n=\\frac{x}{(1-x)^2}\\) at \\(x=1/${a}\\)`};},
+  ()=>({tex:texSum('\\frac{(-1)^{n+1}}{n}','n=1'),term:n=>(n%2?1:-1)/n,start:1,val:Math.LN2,ans:'\\ln 2',
+    why:'\\(\\ln(1+x)=\\sum\\frac{(-1)^{n+1}x^n}{n}\\) at \\(x=1\\)'}),
+  ()=>({tex:texSum('\\frac{(-1)^{n+1}}{n\\,2^n}','n=1'),term:n=>(n%2?1:-1)/(n*Math.pow(2,n)),start:1,val:Math.log(1.5),ans:'\\ln\\tfrac32',
+    why:'\\(\\ln(1+x)\\) at \\(x=\\tfrac12\\)'}),
+];
+Q.sumSeries={name:'identify the sum',
+  gen(){let q;for(let i=0;i<30;i++){q=SUMS2[rint(0,SUMS2.length-1)]();if(verifySum(q.term,q.start,q.val,{N:6000,tol:1e-5}))break;q=null;}return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">This series is a known power series evaluated at one point. Find its exact sum.</p>${D(q.tex)}
+    <p class="small muted">Exact value: you may write <code>pi</code>, <code>ln(2)</code>, or a fraction.</p>`;
+    numIn(el,'v','Sum =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  solution(q){return `Recognize it as ${q.why}. The sum is ${M(q.ans)} ${M('\\approx '+fmtDec(q.val,5))}.`;}
+};
+
+/* ---------- chapter 3: Taylor and Maclaurin ---------- */
+const MT_POOL=[
+  {ftex:'xe^{-x}',f:x=>x*Math.exp(-x),t:'(-1)^n x^(n+1)/n!',tTex:'\\frac{(-1)^nx^{n+1}}{n!}',start:0,
+   how:'Put \\(-x\\) into \\(e^x=\\sum x^n/n!\\), then multiply every term by \\(x\\).'},
+  {ftex:'e^{2x}',f:x=>Math.exp(2*x),t:'2^n x^n/n!',tTex:'\\frac{2^nx^n}{n!}',start:0,
+   how:'Put \\(2x\\) into \\(e^x=\\sum x^n/n!\\): \\((2x)^n=2^nx^n\\).'},
+  {ftex:'x^2\\cos x',f:x=>x*x*Math.cos(x),t:'(-1)^n x^(2n+2)/(2n)!',tTex:'\\frac{(-1)^nx^{2n+2}}{(2n)!}',start:0,
+   how:'Multiply \\(\\cos x=\\sum\\frac{(-1)^nx^{2n}}{(2n)!}\\) by \\(x^2\\).'},
+  {ftex:'\\sin(3x)',f:x=>Math.sin(3*x),t:'(-1)^n 3^(2n+1) x^(2n+1)/(2n+1)!',tTex:'\\frac{(-1)^n3^{2n+1}x^{2n+1}}{(2n+1)!}',start:0,
+   how:'Put \\(3x\\) into the sine series: \\((3x)^{2n+1}=3^{2n+1}x^{2n+1}\\).'},
+  {ftex:'\\cos(x^2)',f:x=>Math.cos(x*x),t:'(-1)^n x^(4n)/(2n)!',tTex:'\\frac{(-1)^nx^{4n}}{(2n)!}',start:0,
+   how:'Put \\(x^2\\) into the cosine series: \\((x^2)^{2n}=x^{4n}\\).'},
+  {ftex:'x\\arctan x',f:x=>x*Math.atan(x),t:'(-1)^n x^(2n+2)/(2n+1)',tTex:'\\frac{(-1)^nx^{2n+2}}{2n+1}',start:0,
+   how:'Multiply the arctangent series by \\(x\\).'},
+  {ftex:'\\ln(1+2x)',f:x=>Math.log(1+2*x),t:'(-1)^(n+1) 2^n x^n/n',tTex:'\\frac{(-1)^{n+1}2^nx^n}{n}',start:1,
+   how:'Put \\(2x\\) into \\(\\ln(1+x)=\\sum_{n\\ge1}\\frac{(-1)^{n+1}x^n}{n}\\).'},
+  {ftex:'\\frac{x}{1+x^2}',f:x=>x/(1+x*x),t:'(-1)^n x^(2n+1)',tTex:'(-1)^nx^{2n+1}',start:0,
+   how:'\\(\\frac{1}{1+x^2}=\\sum(-1)^nx^{2n}\\), then multiply by \\(x\\).'},
+  {ftex:'e^{x^2}-1',f:x=>Math.exp(x*x)-1,t:'x^(2n)/n!',tTex:'\\frac{x^{2n}}{n!}',start:1,
+   how:'Put \\(x^2\\) into \\(e^x\\) and drop the \\(n=0\\) term, which is the 1 you subtracted.'},
+  {ftex:'\\sin^2 x',f:x=>Math.sin(x)*Math.sin(x),t:'(-1)^(n+1) 2^(2n-1) x^(2n)/(2n)!',tTex:'\\frac{(-1)^{n+1}2^{2n-1}x^{2n}}{(2n)!}',start:1,
+   how:'Use \\(\\sin^2x=\\tfrac12(1-\\cos 2x)\\), expand \\(\\cos 2x\\), and the constant terms cancel.'},
+];
+Q.maclaurinFromTable={name:'Maclaurin series by substitution',
+  gen(){let q;for(let i=0;i<30;i++){q=pick(MT_POOL);if(verifyTerm(q.t,q.f,{start:q.start,xs:[0.3,-0.25]}))break;q=null;}return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Use the table of Maclaurin series to write ${M('f(x)='+q.ftex)} as ${M(texSum('a_n(x)','n='+q.start))}. Give the general term ${M('a_n(x)')}.</p>
+    <p class="small muted">The sum starts at ${M('n='+q.start)}. Type things like <code>(-1)^n x^(2n+1)/(2n+1)!</code>.</p>`;
+    numIn(el,'t',M('a_n(x)='),{wide:true,placeholder:'in terms of n and x'});},
+  check(q,el){return G(el,'t',checkExprInt($('[data-k=t]',el).value,q.t,['n','x'],{domain:{n:[q.start,q.start+6],x:[-0.6,0.6]}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}h.innerHTML=q.how;},
+  solution(q){return `${q.how} That gives ${M(q.ftex+'='+texSum(q.tTex,'n='+q.start))}.`;}
+};
+const PI2={v:Math.PI/2,tex:'\\tfrac{\\pi}{2}',str:'pi/2'},PIC={v:Math.PI,tex:'\\pi',str:'pi'};
+const TD_POOL=[
+  ()=>{const a=pick([1,2,-1]);return {ftex:'e^x',f:Math.exp,a,start:0,t:`e^(${a})*${xaS(a)}^n/n!`,tTex:`\\frac{e^{${a}}${xaT(a)}^n}{n!}`,
+    how:`Every derivative of \\(e^x\\) is \\(e^x\\), so \\(f^{(n)}(${a})=e^{${a}}\\) and \\(c_n=e^{${a}}/n!\\).`};},
+  ()=>{const a=pick([1,2,3]);return {ftex:'\\frac{1}{x}',f:x=>1/x,a,start:0,t:`(-1)^n ${xaS(a)}^n/${a}^(n+1)`,tTex:`\\frac{(-1)^n${xaT(a)}^n}{${a}^{n+1}}`,
+    how:`\\(f^{(n)}(x)=\\frac{(-1)^nn!}{x^{n+1}}\\), so \\(c_n=\\frac{(-1)^n}{${a}^{n+1}}\\). Or write \\(\\frac1x=\\frac{1}{${a}+(x-${a})}\\) and use the geometric series.`};},
+  ()=>({ftex:'\\ln x',f:Math.log,a:1,start:1,t:'(-1)^(n+1)(x-1)^n/n',tTex:'\\frac{(-1)^{n+1}(x-1)^n}{n}',
+    how:'\\(\\ln x=\\ln(1+(x-1))\\), so put \\(x-1\\) into the \\(\\ln(1+u)\\) series.'}),
+  ()=>({ftex:'\\sin x',f:Math.sin,a:PI2,start:0,t:'(-1)^n (x-pi/2)^(2n)/(2n)!',tTex:'\\frac{(-1)^n\\left(x-\\tfrac{\\pi}{2}\\right)^{2n}}{(2n)!}',
+    how:'\\(\\sin\\left(\\tfrac{\\pi}{2}+u\\right)=\\cos u\\), so it is the cosine series in \\(u=x-\\tfrac{\\pi}{2}\\).'}),
+  ()=>({ftex:'\\cos x',f:Math.cos,a:PIC,start:0,t:'(-1)^(n+1)(x-pi)^(2n)/(2n)!',tTex:'\\frac{(-1)^{n+1}(x-\\pi)^{2n}}{(2n)!}',
+    how:'\\(\\cos(\\pi+u)=-\\cos u\\), so it is minus the cosine series in \\(u=x-\\pi\\).'}),
+  ()=>({ftex:'\\sin x',f:Math.sin,a:PIC,start:0,t:'(-1)^(n+1)(x-pi)^(2n+1)/(2n+1)!',tTex:'\\frac{(-1)^{n+1}(x-\\pi)^{2n+1}}{(2n+1)!}',
+    how:'\\(\\sin(\\pi+u)=-\\sin u\\), so it is minus the sine series in \\(u=x-\\pi\\).'}),
+];
+Q.taylorDef={name:'Taylor series from the definition',
+  gen(){let q;for(let i=0;i<30;i++){q=pick(TD_POOL)();if(verifyTerm(q.t,q.f,{start:q.start,xs:[0.3,-0.25],center:cenV(q.a)}))break;q=null;}return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the Taylor series of ${M('f(x)='+q.ftex)} centered at ${M('a='+cenT(q.a))}. Write it as ${M(texSum('a_n(x)','n='+q.start))} and give the general term.</p>
+    <p class="small muted">Every ${M('x')} must appear inside ${M(xaT(q.a))}. The sum starts at ${M('n='+q.start)}.</p>`;
+    numIn(el,'t',M('a_n(x)='),{wide:true,placeholder:'in terms of n and x'});},
+  check(q,el){const c=cenV(q.a);return G(el,'t',checkExprInt($('[data-k=t]',el).value,q.t,['n','x'],{domain:{n:[q.start,q.start+6],x:[c-0.4,c+0.4]}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}h.innerHTML=q.how;},
+  solution(q){return `${q.how} So ${M(q.ftex+'='+texSum(q.tTex,'n='+q.start))}.`;}
+};
+const TP_POOL=[
+  {ftex:'e^x',f:Math.exp,c:MAC.exp,a:0,ns:[2,3,4,5]},
+  {ftex:'\\sin x',f:Math.sin,c:MAC.sin,a:0,ns:[3,4,5]},
+  {ftex:'\\cos x',f:Math.cos,c:MAC.cos,a:0,ns:[2,3,4,5]},
+  {ftex:'\\ln(1+x)',f:x=>Math.log(1+x),c:MAC.ln1p,a:0,ns:[2,3,4]},
+  {ftex:'\\frac{1}{1+x}',f:x=>1/(1+x),c:MAC.inv1p,a:0,ns:[2,3,4,5]},
+  {ftex:'\\sqrt{1+x}',f:x=>Math.sqrt(1+x),c:MAC.sqrt1p,a:0,ns:[2,3]},
+  {ftex:'\\arctan x',f:Math.atan,c:MAC.atan,a:0,ns:[3,4,5]},
+  {ftex:'e^{-x^2}',f:x=>Math.exp(-x*x),c:MAC.emx2,a:0,ns:[4,5]},
+  {ftex:'xe^{x}',f:x=>x*Math.exp(x),c:MAC.xex,a:0,ns:[3,4]},
+  {ftex:'\\ln x',f:Math.log,a:2,ns:[2,3],c:k=>k===0?Math.log(2):(k%2?1:-1)/(k*Math.pow(2,k)),
+   cs:k=>k===0?'ln(2)':null,ct:k=>k===0?'\\ln 2':null},
+  {ftex:'\\ln x',f:Math.log,a:1,ns:[2,3],c:k=>k===0?0:(k%2?1:-1)/k},
+  {ftex:'\\sqrt{x}',f:Math.sqrt,a:4,ns:[2,3],c:k=>binom(0.5,k)*Math.pow(4,0.5-k)},
+  {ftex:'\\sqrt{x}',f:Math.sqrt,a:9,ns:[2],c:k=>binom(0.5,k)*Math.pow(9,0.5-k)},
+  {ftex:'\\frac{1}{x}',f:x=>1/x,a:2,ns:[2,3],c:k=>(k%2?-1:1)/Math.pow(2,k+1)},
+  {ftex:'\\sin x',f:Math.sin,a:PI2,ns:[2,3],c:k=>k%2?0:((k/2)%2?-1:1)/fact(k)},
+];
+function polyStr(cs,a,n){let out='';for(let k=0;k<=n;k++){const c=cs[k];if(Math.abs(c.v)<1e-14)continue;
+  const base=k===0?'':(k===1?xaS(a):`${xaS(a)}^${k}`);out+=(out?'+':'')+'('+c.s+')'+(base?'*'+base:'');}
+  return out||'0';}
+function polyTex(cs,a,n){let out='';for(let k=0;k<=n;k++){const v=cs[k].v;if(Math.abs(v)<1e-14)continue;
+  const base=k===0?'':(k===1?xaT(a):`${xaT(a)}^{${k}}`);let co=cs[k].t;if(base&&co==='1')co='';
+  out+=(out===''?(v<0?'-':''):(v<0?' - ':' + '))+co+base;}
+  return out||'0';}
+Q.taylorPoly={name:'Taylor polynomial',
+  gen(){let q;
+    for(let i=0;i<40;i++){
+      const p=pick(TP_POOL),n=pick(p.ns),av=cenV(p.a);
+      const cs=[];for(let k=0;k<=n;k++){const v=p.c(k);cs.push({v,s:(p.cs&&p.cs(k))||ratStr(v),t:(p.ct&&p.ct(k))||ratTex(Math.abs(v))});}
+      const T=x=>{let s=0;for(let k=0;k<=n;k++)s+=cs[k].v*Math.pow(x-av,k);return s;};
+      /* verify: f - T_n must vanish to order n+1 at the center */
+      const h=0.1,r1=(p.f(av+h)-T(av+h))/Math.pow(h,n+1),r2=(p.f(av+h/2)-T(av+h/2))/Math.pow(h/2,n+1);
+      if(!Number.isFinite(r1)||!Number.isFinite(r2))continue;
+      if(Math.abs(r1-r2)>0.35*Math.max(1,Math.abs(r1)))continue;
+      q={...p,n,av,cs,T,str:polyStr(cs,p.a,n),tex:polyTex(cs,p.a,n)};break;}
+    return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the Taylor polynomial ${M('T_{'+q.n+'}(x)')} for ${M('f(x)='+q.ftex)} centered at ${M('a='+cenT(q.a))}.</p>
+    <p class="small muted">Powers of ${M(xaT(q.a))} or a fully expanded polynomial are both accepted. Zero terms may be left out.</p>`;
+    numIn(el,'p',M('T_{'+q.n+'}(x)='),{xwide:true,placeholder:'a polynomial in x'});},
+  check(q,el){return G(el,'p',checkExpr($('[data-k=p]',el).value,env=>q.T(env.x),['x'],{domain:{x:[q.av-0.5,q.av+0.5]}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}
+    h.innerHTML=`The coefficients are ${M('c_k=f^{(k)}('+cenT(q.a)+')/k!')}. Here ${M('c_0='+q.cs[0].s.replace('ln(2)','\\ln 2'))} and ${M('c_1='+ratTex(q.cs[1].v))}.`;},
+  solution(q){return `Take derivatives at ${M('x='+cenT(q.a))} and divide by ${M('k!')}: ${M('T_{'+q.n+'}(x)='+q.tex)}.`;}
+};
+Q.binomial={name:'binomial series coefficients',
+  gen(){let q;
+    for(let i=0;i<30;i++){
+      const k=pick([0.5,-0.5,-2,1/3,1.5]),m=rint(2,4);
+      const ktex={'0.5':'\\tfrac12','-0.5':'-\\tfrac12','-2':'-2','0.3333333333333333':'\\tfrac13','1.5':'\\tfrac32'}[String(k)];
+      const c=binom(k,m);
+      const s=seriesSum(j=>binom(k,j)*Math.pow(0.3,j),0,120);
+      if(Math.abs(s-Math.pow(1.3,k))>1e-9)continue;
+      const facs=[];for(let j=0;j<m;j++)facs.push(`\\left(${ratTex(k-j)}\\right)`);
+      q={k,ktex,m,c,R:1,facs:facs.join('')};break;}
+    return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Expand ${M('(1+x)^{'+q.ktex+'}')} as a binomial series. Give the coefficient of ${M('x^{'+q.m+'}')} exactly, and the radius of convergence.</p>`;
+    numIn(el,'c',M('c_{'+q.m+'}='));numIn(el,'R',M('R='));},
+  check(q,el){return Gall(el,[['c',checkNumber($('[data-k=c]',el).value,q.c)],['R',checkNumber($('[data-k=R]',el).value,1)]]);},
+  solution(q){return `${M(R`\binom{${q.ktex}}{${q.m}}=\frac{${q.facs}}{${q.m}!}=${ratTex(q.c)}`)}. The binomial series always has ${M('R=1')} (for a non-integer exponent).`;}
+};
+const SFT=[
+  ()=>({tex:texSum('\\frac{(-1)^n\\pi^{2n}}{6^{2n}(2n)!}','n=0'),term:n=>(n%2?-1:1)*Math.pow(Math.PI/6,2*n)/fact(2*n),start:0,
+    val:Math.cos(Math.PI/6),ans:'\\cos\\tfrac{\\pi}{6}=\\tfrac{\\sqrt3}{2}',why:'the cosine series at \\(x=\\pi/6\\)'}),
+  ()=>{const a=pick([2,3]);return {tex:texSum(`\\frac{${a}^n}{n!}`,'n=0'),term:n=>Math.pow(a,n)/fact(n),start:0,val:Math.exp(a),ans:`e^{${a}}`,
+    why:`the exponential series at \\(x=${a}\\)`};},
+  ()=>({tex:texSum('\\frac{(-1)^n}{n!}','n=0'),term:n=>(n%2?-1:1)/fact(n),start:0,val:Math.exp(-1),ans:'e^{-1}',why:'the exponential series at \\(x=-1\\)'}),
+  ()=>{const a=pick([2,3]);return {tex:texSum(`\\frac{(\\ln ${a})^n}{n!}`,'n=0'),term:n=>Math.pow(Math.log(a),n)/fact(n),start:0,val:a,ans:String(a),
+    why:`the exponential series at \\(x=\\ln ${a}\\), and \\(e^{\\ln ${a}}=${a}\\)`};},
+  ()=>({tex:texSum('\\frac{(-1)^n\\pi^{2n+1}}{4^{2n+1}(2n+1)!}','n=0'),term:n=>(n%2?-1:1)*Math.pow(Math.PI/4,2*n+1)/fact(2*n+1),start:0,
+    val:Math.SQRT1_2,ans:'\\sin\\tfrac{\\pi}{4}=\\tfrac{\\sqrt2}{2}',why:'the sine series at \\(x=\\pi/4\\)'}),
+  ()=>({tex:texSum('\\frac{(-1)^n\\pi^{2n+1}}{6^{2n+1}(2n+1)!}','n=0'),term:n=>(n%2?-1:1)*Math.pow(Math.PI/6,2*n+1)/fact(2*n+1),start:0,
+    val:0.5,ans:'\\sin\\tfrac{\\pi}{6}=\\tfrac12',why:'the sine series at \\(x=\\pi/6\\)'}),
+  ()=>({tex:texSum('\\frac{(-1)^{n+1}}{n\\,2^n}','n=1'),term:n=>(n%2?1:-1)/(n*Math.pow(2,n)),start:1,val:Math.log(1.5),ans:'\\ln\\tfrac32',
+    why:'the \\(\\ln(1+x)\\) series at \\(x=\\tfrac12\\)'}),
+];
+Q.sumFromTable={name:'recognize a series as a value',
+  gen(){let q;for(let i=0;i<30;i++){q=SFT[rint(0,SFT.length-1)]();if(verifySum(q.term,q.start,q.val,{N:4000,tol:1e-6}))break;q=null;}return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Each of these is a series from the table with a specific number substituted for ${M('x')}. Find the exact sum.</p>${D(q.tex)}
+    <p class="small muted">Exact value: <code>sqrt(3)/2</code>, <code>e^3</code>, <code>ln(3/2)</code> and the like.</p>`;
+    numIn(el,'v','Sum =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  solution(q){return `This is ${q.why}, so the sum is ${M(q.ans)} ${M('\\approx '+fmtDec(q.val,5))}.`;}
+};
+
+/* ---------- chapter 4: error bounds and applications ---------- */
+const TB_POOL=[
+  ()=>{const tri=pick([{ftex:'\\sin x',f:Math.sin,c:MAC.sin},{ftex:'\\cos x',f:Math.cos,c:MAC.cos}]);
+    const c=pick([0.5,1,0.25,1/3,2]),n=rint(2,5);
+    return {...tri,n,lo:-c,hi:c,ivTex:`|x|\\le ${texNum(c)}`,M:1,Mtex:'1',
+      B:Math.pow(c,n+1)/fact(n+1),Btex:`\\frac{(${texNum(c)})^{${n+1}}}{${n+1}!}`,
+      Mwhy:'every derivative of \\('+tri.ftex+'\\) is \\(\\pm\\sin\\) or \\(\\pm\\cos\\), so \\(M=1\\) works'};},
+  ()=>{const b=pick([1,0.5,2]),n=rint(2,4);
+    return {ftex:'e^x',f:Math.exp,c:MAC.exp,n,lo:0,hi:b,ivTex:`0\\le x\\le ${texNum(b)}`,M:Math.exp(b),Mtex:`e^{${texNum(b)}}`,
+      B:Math.exp(b)*Math.pow(b,n+1)/fact(n+1),Btex:`\\frac{e^{${texNum(b)}}(${texNum(b)})^{${n+1}}}{${n+1}!}`,
+      Mwhy:`\\(f^{(n+1)}(x)=e^x\\) is increasing, so on \\([0,${texNum(b)}]\\) it is at most \\(M=e^{${texNum(b)}}\\)`};},
+  ()=>{const c=pick([0.5,1/3,1]),n=rint(2,4);
+    return {ftex:'\\ln(1+x)',f:x=>Math.log(1+x),c:MAC.ln1p,n,lo:0,hi:c,ivTex:`0\\le x\\le ${texNum(c)}`,M:fact(n),Mtex:`${n}!`,
+      B:Math.pow(c,n+1)/(n+1),Btex:`\\frac{${n}!\\,(${texNum(c)})^{${n+1}}}{${n+1}!}`,
+      Mwhy:`\\(f^{(n+1)}(x)=\\dfrac{(-1)^n n!}{(1+x)^{n+1}}\\), and for \\(x\\ge 0\\) that is at most \\(M=${n}!\\)`};},
+];
+Q.taylorBound={name:"Taylor's inequality",
+  gen(){let q;for(let i=0;i<30;i++){q=pick(TB_POOL)();
+      const T=Tfn(q.c,0,q.n);const e=maxErr(q.f,T,q.lo,q.hi);
+      if(!(e<=q.B*(1+1e-9)))continue;q.trueErr=e;break;}
+    return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">${M('T_{'+q.n+'}')} is the Taylor polynomial of ${M('f(x)='+q.ftex)} at ${M('a=0')}. Use Taylor's inequality to bound the error ${M('|R_{'+q.n+'}(x)|')} on ${M(q.ivTex)}.</p>
+    <p class="small muted">Exact value, like <code>1/384</code> or <code>e/24</code>.</p>`;
+    numIn(el,'B',M('|R_{'+q.n+'}(x)|\\le'));},
+  check(q,el){return G(el,'B',checkNumber($('[data-k=B]',el).value,q.B));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}
+    h.innerHTML=`You need ${M('M')} with ${M('|f^{('+(q.n+1)+')}(t)|\\le M')} on the interval: here ${q.Mwhy}.`;},
+  solution(q){return `Taylor's inequality is ${M(R`|R_n(x)|\le\frac{M}{(n+1)!}|x|^{n+1}`)}. Here ${q.Mwhy}, and the largest ${M('|x|')} on the interval is ${M(texNum(Math.max(Math.abs(q.lo),q.hi)))}, so ${M('|R_{'+q.n+'}(x)|\\le '+q.Btex+'='+fmtDec(q.B,6))}. The true maximum error is only about ${fmtDec(q.trueErr,6)}, so the bound is honest but generous.`;}
+};
+Q.termsForAccuracy={name:'how many terms',
+  gen(){
+    const kind=pick(['e1','ehalf','sin','cos']),k=pick([4,5,6,8]);const tol=Math.pow(10,-k);
+    let n=0,ans=0,detail='',prompt='';
+    if(kind==='e1'){for(n=1;n<40;n++)if(3/fact(n+1)<tol){ans=n;break;}
+      detail=`\\dfrac{3}{(n+1)!}\\lt 10^{-${k}}`;}
+    else if(kind==='ehalf'){for(n=1;n<40;n++)if(2*Math.pow(0.5,n+1)/fact(n+1)<tol){ans=n;break;}
+      detail=`\\dfrac{2\\,(0.5)^{n+1}}{(n+1)!}\\lt 10^{-${k}}`;}
+    else if(kind==='sin'){for(n=1;n<40;n++)if(Math.pow(0.1,2*n+1)/fact(2*n+1)<tol){ans=n;break;}
+      detail=`\\dfrac{(0.1)^{2N+1}}{(2N+1)!}\\lt 10^{-${k}}`;}
+    else{for(n=1;n<40;n++)if(1/fact(2*n)<tol){ans=n;break;}
+      detail=`\\dfrac{1}{(2N)!}\\lt 10^{-${k}}`;}
+    return {kind,k,tol,ans,detail};},
+  render(q,el){
+    const p={
+      e1:`Approximate ${M('e')} by ${M('T_n(1)')} for ${M('f(x)=e^x')} at ${M('a=0')}. Using Taylor's inequality with ${M('M=3')} on ${M('[0,1]')} (Stewart's ${M('e<3')}), what is the smallest degree ${M('n')} whose bound guarantees an error less than ${M('10^{-'+q.k+'}')}?`,
+      ehalf:`Approximate ${M('e^{0.5}')} by ${M('T_n(0.5)')} at ${M('a=0')}. Using Taylor's inequality with ${M('M=2')} on ${M('[0,0.5]')}, what is the smallest degree ${M('n')} whose bound guarantees an error less than ${M('10^{-'+q.k+'}')}?`,
+      sin:`How many nonzero terms of the Maclaurin series for ${M('\\sin x')} must you add so that the alternating series estimate guarantees an error less than ${M('10^{-'+q.k+'}')} at ${M('x=0.1')}?`,
+      cos:`How many nonzero terms of the Maclaurin series for ${M('\\cos x')} must you add so that the alternating series estimate guarantees an error less than ${M('10^{-'+q.k+'}')} at ${M('x=1')}?`}[q.kind];
+    el.innerHTML=`<p class="prompt">${p}</p><p class="small muted">A whole number.</p>`;
+    numIn(el,'n',(q.kind==='e1'||q.kind==='ehalf')?M('n='):M('N='));},
+  check(q,el){return G(el,'n',checkNumber($('[data-k=n]',el).value,q.ans));},
+  solution(q){const v=(q.kind==='e1'||q.kind==='ehalf')?'n':'N';
+    return `Solve ${M(q.detail)} by testing values. At ${M(v+'='+(q.ans-1))} the quantity is still too big and at ${M(v+'='+q.ans)} it drops below ${M('10^{-'+q.k+'}')}, so the answer is ${M(v+'='+q.ans)}.`;}
+};
+const SL_POOL=[
+  {tex:'\\frac{\\sin x-x}{x^3}',f:x=>(Math.sin(x)-x)/Math.pow(x,3),val:-1/6,ans:'-\\tfrac16',
+   why:'\\(\\sin x-x=-\\frac{x^3}{6}+\\frac{x^5}{120}-\\cdots\\), so dividing by \\(x^3\\) leaves \\(-\\frac16+\\frac{x^2}{120}-\\cdots\\)'},
+  {tex:'\\frac{e^x-1-x}{x^2}',f:x=>(Math.exp(x)-1-x)/(x*x),val:0.5,ans:'\\tfrac12',
+   why:'\\(e^x-1-x=\\frac{x^2}{2}+\\frac{x^3}{6}+\\cdots\\)'},
+  {tex:'\\frac{1-\\cos x}{x^2}',f:x=>(1-Math.cos(x))/(x*x),val:0.5,ans:'\\tfrac12',
+   why:'\\(1-\\cos x=\\frac{x^2}{2}-\\frac{x^4}{24}+\\cdots\\)'},
+  {tex:'\\frac{\\arctan x-x}{x^3}',f:x=>(Math.atan(x)-x)/Math.pow(x,3),val:-1/3,ans:'-\\tfrac13',
+   why:'\\(\\arctan x-x=-\\frac{x^3}{3}+\\frac{x^5}{5}-\\cdots\\)'},
+  {tex:'\\frac{\\ln(1+x)-x}{x^2}',f:x=>(Math.log(1+x)-x)/(x*x),val:-0.5,ans:'-\\tfrac12',
+   why:'\\(\\ln(1+x)-x=-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots\\)'},
+  {tex:'\\frac{e^{x^2}-1}{x^2}',f:x=>(Math.exp(x*x)-1)/(x*x),val:1,ans:'1',
+   why:'\\(e^{x^2}-1=x^2+\\frac{x^4}{2}+\\cdots\\)'},
+  {tex:'\\frac{x-\\sin x}{x-\\tan x}',f:x=>(x-Math.sin(x))/(x-Math.tan(x)),val:-0.5,ans:'-\\tfrac12',
+   why:'\\(x-\\sin x=\\frac{x^3}{6}+\\cdots\\) and \\(x-\\tan x=-\\frac{x^3}{3}-\\cdots\\), so the ratio tends to \\(-\\frac12\\)'},
+  {tex:'\\frac{\\cos x-1+\\frac{x^2}{2}}{x^4}',f:x=>(Math.cos(x)-1+x*x/2)/Math.pow(x,4),val:1/24,ans:'\\tfrac{1}{24}',
+   why:'the first surviving term of \\(\\cos x-1+\\frac{x^2}{2}\\) is \\(\\frac{x^4}{24}\\)'},
+  {tex:'\\frac{\\sin x-x+\\frac{x^3}{6}}{x^5}',f:x=>(Math.sin(x)-x+Math.pow(x,3)/6)/Math.pow(x,5),val:1/120,ans:'\\tfrac{1}{120}',
+   why:'the first surviving term of \\(\\sin x-x+\\frac{x^3}{6}\\) is \\(\\frac{x^5}{120}\\)'},
+  {tex:'\\frac{\\tan x-x}{x^3}',f:x=>(Math.tan(x)-x)/Math.pow(x,3),val:1/3,ans:'\\tfrac13',
+   why:'\\(\\tan x=x+\\frac{x^3}{3}+\\frac{2x^5}{15}+\\cdots\\)'},
+  {tex:'\\frac{e^x-1-x-\\frac{x^2}{2}}{x^3}',f:x=>(Math.exp(x)-1-x-x*x/2)/Math.pow(x,3),val:1/6,ans:'\\tfrac16',
+   why:'the first surviving term of \\(e^x-1-x-\\frac{x^2}{2}\\) is \\(\\frac{x^3}{6}\\)'},
+];
+Q.seriesLimit={name:'limit by series',
+  gen(){let q;for(let i=0;i<30;i++){q=pick(SL_POOL);
+      const v1=q.f(0.05),v2=q.f(0.02);
+      if(!Number.isFinite(v1)||!Number.isFinite(v2))continue;
+      const sc=Math.max(1e-3,Math.abs(q.val));
+      if(Math.abs(v2-q.val)>5e-3*Math.max(1,Math.abs(q.val))||Math.abs(v1-v2)>0.05*sc)continue;
+      break;}
+    return {...q};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate the limit by replacing each function with its Maclaurin series. Exact value.</p>${D(R`\lim_{x\to 0}\;`+q.tex)}`;
+    numIn(el,'L','Limit =');},
+  check(q,el){return G(el,'L',checkNumber($('[data-k=L]',el).value,q.val));},
+  solution(q){return `Expand: ${q.why}. Dividing, every remaining term carries a positive power of ${M('x')} and dies, so the limit is ${M(q.ans)}.`;}
+};
+const IB_POOL=[
+  {itex:'e^{-x^2}',g:x=>Math.exp(-x*x),start:0,term:(n,c)=>(n%2?-1:1)*Math.pow(c,2*n+1)/(fact(n)*(2*n+1)),
+   sTex:'\\frac{(-1)^nx^{2n+1}}{n!(2n+1)}',how:'\\(e^{-x^2}=\\sum\\frac{(-1)^nx^{2n}}{n!}\\)'},
+  {itex:'\\sin(x^2)',g:x=>Math.sin(x*x),start:0,term:(n,c)=>(n%2?-1:1)*Math.pow(c,4*n+3)/(fact(2*n+1)*(4*n+3)),
+   sTex:'\\frac{(-1)^nx^{4n+3}}{(2n+1)!(4n+3)}',how:'\\(\\sin(x^2)=\\sum\\frac{(-1)^nx^{4n+2}}{(2n+1)!}\\)'},
+  {itex:'\\cos\\sqrt{x}',g:x=>Math.cos(Math.sqrt(x)),start:0,term:(n,c)=>(n%2?-1:1)*Math.pow(c,n+1)/(fact(2*n)*(n+1)),
+   sTex:'\\frac{(-1)^nx^{n+1}}{(2n)!(n+1)}',how:'\\(\\cos\\sqrt{x}=\\sum\\frac{(-1)^nx^{n}}{(2n)!}\\)'},
+  {itex:'\\frac{1-\\cos x}{x^2}',g:x=>x===0?0.5:(1-Math.cos(x))/(x*x),start:1,term:(n,c)=>(n%2?1:-1)*Math.pow(c,2*n-1)/(fact(2*n)*(2*n-1)),
+   sTex:'\\frac{(-1)^{n+1}x^{2n-1}}{(2n)!(2n-1)}',how:'\\(\\frac{1-\\cos x}{x^2}=\\sum_{n\\ge1}\\frac{(-1)^{n+1}x^{2n-2}}{(2n)!}\\)'},
+];
+Q.integralBySeries={name:'integrate by series with an error guarantee',
+  gen(){let q;
+    for(let i=0;i<30;i++){
+      const p=pick(IB_POOL),c=pick([1,0.5]),k=pick([4,5,6]);const tol=Math.pow(10,-k);
+      let N=0;for(let m=1;m<=25;m++){if(Math.abs(p.term(p.start+m,c))<tol){N=m;break;}}
+      if(!N)continue;
+      let s=0;for(let m=0;m<40;m++)s+=p.term(p.start+m,c);
+      const val=simpson(p.g,0,c,6000);
+      if(!Number.isFinite(val)||Math.abs(s-val)>1e-10)continue;
+      let partial=0;for(let m=0;m<N;m++)partial+=p.term(p.start+m,c);
+      if(Math.abs(partial-val)>=tol)continue;
+      q={...p,c,k,tol,N,val,partial};break;}
+    return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Expand the integrand in a Maclaurin series and integrate term by term.</p>${D(texInt(0,texNum(q.c),q.itex,'x'))}
+    <p class="prompt">The result alternates. How many terms does the alternating series estimate say you need so the error is less than ${M('10^{-'+q.k+'}')}, and what is the value to that accuracy?</p>`;
+    numIn(el,'N','Number of terms =');numIn(el,'v','Value =');},
+  check(q,el){return Gall(el,[['N',checkNumber($('[data-k=N]',el).value,q.N)],
+    ['v',checkNumber($('[data-k=v]',el).value,q.val,{tol:q.tol})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}
+    h.innerHTML=`${q.how}, so the integral is ${M(texSum(q.sTex,'n='+q.start)+R`\Big|_{0}^{`+texNum(q.c)+'}')} evaluated at the upper limit. Add terms until one is smaller than ${M('10^{-'+q.k+'}')}; that term is the first one you drop.`;},
+  solution(q){const ts=[];for(let m=0;m<Math.min(q.N+1,5);m++)ts.push(fmtDec(q.term(q.start+m,q.c),8));
+    return `${q.how}. Integrating term by term and putting in ${M('x='+texNum(q.c))} gives the terms ${ts.join(', ')}, .... Term number ${M(String(q.N+1))} is the first one below ${M('10^{-'+q.k+'}')}, so ${M('N='+q.N)} terms are enough and the value is ${M(fmtDec(q.val,q.k+1))}.`;}
+};
+const DF_POOL=[
+  {ftex:'xe^x',f:x=>x*Math.exp(x),c:j=>j===0?0:1/fact(j-1),ks:[3,4,5,6,7,8],
+   why:'\\(xe^x=\\sum_{n\\ge1}\\frac{x^{n}}{(n-1)!}\\)'},
+  {ftex:'\\arctan x',f:Math.atan,c:MAC.atan,ks:[3,4,5,6,7],
+   why:'\\(\\arctan x=\\sum\\frac{(-1)^nx^{2n+1}}{2n+1}\\), so every even coefficient is 0'},
+  {ftex:'\\cos(x^2)',f:x=>Math.cos(x*x),c:j=>j%4?0:(((j/4)%2)?-1:1)/fact(j/2),ks:[4,6,8],
+   why:'\\(\\cos(x^2)=\\sum\\frac{(-1)^nx^{4n}}{(2n)!}\\), so only multiples of 4 appear'},
+  {ftex:'x^2e^{-x}',f:x=>x*x*Math.exp(-x),c:j=>j<2?0:((j%2)?-1:1)/fact(j-2),ks:[3,4,5,6,7],
+   why:'\\(x^2e^{-x}=\\sum_{n\\ge2}\\frac{(-1)^{n}x^{n}}{(n-2)!}\\)'},
+  {ftex:'\\sin(2x)',f:x=>Math.sin(2*x),c:j=>j%2?(((j-1)/2)%2?-1:1)*Math.pow(2,j)/fact(j):0,ks:[3,4,5,6,7],
+   why:'\\(\\sin(2x)=\\sum\\frac{(-1)^n2^{2n+1}x^{2n+1}}{(2n+1)!}\\)'},
+  {ftex:'e^{-x^2}',f:x=>Math.exp(-x*x),c:MAC.emx2,ks:[4,5,6,8],
+   why:'\\(e^{-x^2}=\\sum\\frac{(-1)^nx^{2n}}{n!}\\), so odd coefficients are 0'},
+  {ftex:'x\\cos x',f:x=>x*Math.cos(x),c:j=>j%2?(((j-1)/2)%2?-1:1)/fact(j-1):0,ks:[3,5,6,7],
+   why:'\\(x\\cos x=\\sum\\frac{(-1)^nx^{2n+1}}{(2n)!}\\)'},
+];
+Q.derivativeFromSeries={name:'read off a derivative from the series',
+  gen(){let q;
+    for(let i=0;i<30;i++){const p=pick(DF_POOL);
+      const s=seriesSum(j=>p.c(j)*Math.pow(0.3,j),0,50);
+      if(Math.abs(s-p.f(0.3))>1e-9)continue;
+      const k=pick(p.ks);q={...p,k,ck:p.c(k),d:fact(k)*p.c(k)};break;}
+    return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Use the Maclaurin series of ${M('f(x)='+q.ftex)} to find ${M('f^{('+q.k+')}(0)')}, without differentiating ${q.k} times.</p>
+    <p class="small muted">Exact value. Zero is a legitimate answer.</p>`;
+    numIn(el,'d',M('f^{('+q.k+')}(0)='));},
+  check(q,el){return G(el,'d',checkNumber($('[data-k=d]',el).value,q.d));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}
+    h.innerHTML=`Match coefficients: ${M('c_k=f^{(k)}(0)/k!')}, so ${M('f^{(k)}(0)=k!\\,c_k')}. Here ${q.why}.`;},
+  solution(q){return `${q.why}. The coefficient of ${M('x^{'+q.k+'}')} is ${M('c_{'+q.k+'}='+ratTex(q.ck))}, and ${M('f^{(k)}(0)=k!\\,c_k')}, so ${M('f^{('+q.k+')}(0)='+q.k+'!\\cdot '+ratTex(q.ck)+'='+ratTex(q.d))}.`;}
+};
+
+/* ============================================================ chapter 1: partial sums + ratio-test walkthrough */
+(function(){
+  const PS=[
+    {n:'Σ xⁿ',lab:'1/(1 − x)',start:0,term:(k,x)=>Math.pow(x,k),f:x=>1/(1-x),lo:-1,hi:1,win:{xmin:-2.2,xmax:2.2,ymin:-3,ymax:5}},
+    {n:'Σ xⁿ/n',lab:'−ln(1 − x)',start:1,term:(k,x)=>Math.pow(x,k)/k,f:x=>-Math.log(1-x),lo:-1,hi:1,win:{xmin:-2.2,xmax:2.2,ymin:-3,ymax:4}},
+    {n:'Σ (−1)ⁿx²ⁿ/(2n)!',lab:'cos x',start:0,term:(k,x)=>(k%2?-1:1)*Math.pow(x,2*k)/fact(2*k),f:Math.cos,lo:-Infinity,hi:Infinity,win:{xmin:-9,xmax:9,ymin:-2.6,ymax:2.6}},
+    {n:'Σ xⁿ/n!',lab:'eˣ',start:0,term:(k,x)=>Math.pow(x,k)/fact(k),f:Math.exp,lo:-Infinity,hi:Infinity,win:{xmin:-4,xmax:4,ymin:-3,ymax:12}},
+  ];
+  const plot=new Plot2D('#psPlot',{xmin:-2.2,xmax:2.2,ymin:-3,ymax:5});
+  let cur=PS[0],N=4,x0=0.6;
+  const SN=x=>{let s=0;for(let k=cur.start;k<=N;k++){const t=cur.term(k,x);if(!Number.isFinite(t))return NaN;s+=t;}return s;};
+  const box=$('#psPresets');
+  PS.forEach(p=>{const b=el('button',{class:'btn small'},p.n);b.onclick=()=>{cur=p;$$('.btn',box).forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    x0=clamp(x0,p.win.xmin+0.2,p.win.xmax-0.2);sx.set(x0);draw();};box.appendChild(b);});
+  $$('.btn',box)[0].classList.add('on');
+  const sN=sliderRow($('#psSliders'),{label:'N (last term)',min:1,max:24,step:1,value:N,fmt:v=>String(v),onInput:v=>{N=v;draw();}});
+  const sx=sliderRow($('#psSliders'),{label:'x₀',min:-4,max:4,step:0.05,value:x0,onInput:v=>{x0=v;draw();}});
+  function draw(){
+    Object.assign(plot.o,cur.win);plot.begin();
+    const lo=Math.max(cur.lo,cur.win.xmin),hi=Math.min(cur.hi,cur.win.xmax);
+    const h=(cur.win.ymax-cur.win.ymin)*0.035;
+    plot.region(lo,hi,()=>-h,()=>h,{fill:'rgba(22,163,74,.20)',stroke:'rgba(22,163,74,.55)'});
+    if(Number.isFinite(cur.lo)){[cur.lo,cur.hi].forEach(e=>plot.param(t=>[e,t],cur.win.ymin,cur.win.ymax,{color:'rgba(22,163,74,.45)',width:1.2,dash:[5,4],n:2}));}
+    plot.fn(cur.f,{color:'#9db8e8',width:3.4});
+    plot.fn(SN,{color:'#d97706',width:2.2});
+    const s=SN(x0),v=cur.f(x0);
+    if(Number.isFinite(v)&&Math.abs(v)<1e4)plot.point([x0,v],{color:'#2563eb',r:4});
+    if(Number.isFinite(s)&&Math.abs(s)<1e4)plot.point([x0,s],{color:'#7c3aed',r:5,ring:true});
+    const inside=x0>cur.lo&&x0<cur.hi;
+    $('#psOut').innerHTML=`series: ${cur.n} &nbsp; → &nbsp; ${cur.lab}<br>N = ${N}, x₀ = ${fmtDec(x0,2)} (${inside?'inside':'<b>outside</b>'} the interval)<br>`+
+      `S<sub>N</sub>(x₀) = ${Number.isFinite(s)?fmtDec(s,5):'overflow'}<br>f(x₀) = ${Number.isFinite(v)?fmtDec(v,5):'undefined'}<br>`+
+      `error = ${Number.isFinite(s)&&Number.isFinite(v)?fmtDec(Math.abs(s-v),6):'n/a'}`;
+  }
+  let acc=0;const anim=animator('power',dt=>{acc+=dt;if(acc<0.32)return;acc=0;N=N>=24?1:N+1;sN.set(N);draw();});
+  $('#psPlay').onclick=()=>{anim.toggle();$('#psPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  redrawOnShow('power',draw);draw();
+
+  /* ratio-test walkthrough */
+  let W,step=0;
+  function newW(){
+    const a=pick([-3,-2,-1,0,1,2,3]),c=pick([2,3,4,5]),p=pick([1,2]);
+    const den=p===1?'n':'n^2',dTex=p===1?'n':'n^{2}';
+    W={a,c,p,tex:texSum(`\\frac{${xaT(a)}^n}{${dTex}\\,${c}^n}`,'n=1'),
+      iv:{lo:a-c,hi:a+c,loIn:true,hiIn:p===2}};
+    step=0;drawW();
+  }
+  function drawW(){
+    const {a,c,p}=W,dTex=p===1?'n':'n^{2}';
+    const L=[];
+    L.push(`<span class="t b">${M(W.tex)}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}">1. ${M(R`\left|\frac{a_{n+1}}{a_n}\right|=\frac{${xaT(a)}^{n+1}}{${p===1?'(n+1)':'(n+1)^{2}'}\,${c}^{n+1}}\cdot\frac{${dTex}\,${c}^{n}}{${xaT(a)}^{n}}`)}</span>`);
+    L.push(`<span class="${step>=2?'':'faint'}">2. ${M(R`=\left(\frac{n}{n+1}\right)^{${p}}\frac{${absT(a)}}{${c}}`)}</span>`);
+    L.push(`<span class="${step>=3?'':'faint'}">3. ${M(R`\xrightarrow[n\to\infty]{}\ \frac{${absT(a)}}{${c}}`)}</span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">4. ${M(R`\frac{${absT(a)}}{${c}}\lt 1\iff ${absT(a)}\lt ${c}`)}, so ${M('R='+c)} and the open interval is ${M(`(${texNum(a-c)},${texNum(a+c)})`)}.</span>`);
+    L.push(`<span class="${step>=5?'':'faint'}">5. Left endpoint ${M('x='+texNum(a-c))}: ${M(texSum(`\\frac{(-1)^n}{${dTex}}`,'n=1'))} ${p===1?'converges by the alternating series test':'converges absolutely (p-series, p=2)'}.</span>`);
+    L.push(`<span class="${step>=6?'':'faint'}">6. Right endpoint ${M('x='+texNum(a+c))}: ${M(texSum(`\\frac{1}{${dTex}}`,'n=1'))} ${p===1?'is the harmonic series and <b>diverges</b>':'converges (p-series, p=2)'}.</span>`);
+    L.push(`<span class="${step>=7?'':'faint'}">7. <span class="t c">${M('\\text{interval of convergence }='+ivTex(W.iv))}</span></span>`);
+    $('#wtExpr').innerHTML=L.join('<br>');
+    const st=['A power series centered at '+fmt(W.a)+'. Press Next to run the ratio test.',
+      'Write the ratio of consecutive terms, flipping the denominator of a_n up.',
+      'Cancel: the powers subtract, leaving one factor of |x − a| over c.',
+      'Take the limit. The n-fraction goes to 1 and only the x-part survives.',
+      'Solve L|x − a| < 1 for |x − a|. That distance is the radius.',
+      'Substitute the left endpoint into the original series and test it.',
+      'Substitute the right endpoint. Same series without the alternating sign.',
+      'Combine: open interval plus whichever endpoints converged.'];
+    $('#wtStatus').textContent=st[step];
+    $('#wtPrev').disabled=step===0;$('#wtNext').disabled=step===7;
+    typeset($('#wtExpr'));
+  }
+  $('#wtNext').onclick=()=>{step=Math.min(7,step+1);drawW();};
+  $('#wtPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#wtNew').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-power',section:'power',goal:7,...mixDrill([Q.radius,Q.radius,Q.interval,Q.interval,Q.endpointTest])});
+})();
+
+/* ============================================================ chapter 2: a function and its derived series */
+(function(){
+  const RP=[
+    {n:'1/(1 + x²)',start:0,term:(k,x)=>(k%2?-1:1)*Math.pow(x,2*k),f:x=>1/(1+x*x),ser:'Σ (−1)ⁿ x²ⁿ',win:{xmin:-2,xmax:2,ymin:-1.5,ymax:2.5}},
+    {n:'ln(1 + x)',start:1,term:(k,x)=>(k%2?1:-1)*Math.pow(x,k)/k,f:x=>Math.log(1+x),ser:'Σ (−1)ⁿ⁺¹xⁿ/n',win:{xmin:-2,xmax:2,ymin:-3,ymax:2}},
+    {n:'arctan x',start:0,term:(k,x)=>(k%2?-1:1)*Math.pow(x,2*k+1)/(2*k+1),f:Math.atan,ser:'Σ (−1)ⁿx²ⁿ⁺¹/(2n+1)',win:{xmin:-2,xmax:2,ymin:-2,ymax:2}},
+    {n:'1/(1 − x)²',start:0,term:(k,x)=>(k+1)*Math.pow(x,k),f:x=>1/((1-x)*(1-x)),ser:'Σ (n+1)xⁿ',win:{xmin:-2,xmax:2,ymin:-1,ymax:8}},
+  ];
+  const plot=new Plot2D('#repPlot',{xmin:-2,xmax:2,ymin:-2,ymax:2});
+  let cur=RP[0],N=5,x0=0.7;
+  const SN=x=>{let s=0;for(let k=cur.start;k<=N;k++){const t=cur.term(k,x);if(!Number.isFinite(t))return NaN;s+=t;}return s;};
+  const box=$('#repPresets');
+  RP.forEach(p=>{const b=el('button',{class:'btn small'},p.n);b.onclick=()=>{cur=p;$$('.btn',box).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};box.appendChild(b);});
+  $$('.btn',box)[0].classList.add('on');
+  const sN=sliderRow($('#repSliders'),{label:'N (last term)',min:1,max:22,step:1,value:N,fmt:v=>String(v),onInput:v=>{N=v;draw();}});
+  sliderRow($('#repSliders'),{label:'x₀',min:-1.6,max:1.6,step:0.02,value:x0,onInput:v=>{x0=v;draw();}});
+  function draw(){
+    Object.assign(plot.o,cur.win);plot.begin();
+    const h=(cur.win.ymax-cur.win.ymin)*0.035;
+    plot.region(-1,1,()=>-h,()=>h,{fill:'rgba(22,163,74,.20)',stroke:'rgba(22,163,74,.55)'});
+    [-1,1].forEach(e=>plot.param(t=>[e,t],cur.win.ymin,cur.win.ymax,{color:'rgba(22,163,74,.45)',width:1.2,dash:[5,4],n:2}));
+    plot.fn(cur.f,{color:'#9db8e8',width:3.4});
+    plot.fn(SN,{color:'#d97706',width:2.2});
+    const s=SN(x0),v=cur.f(x0);
+    if(Number.isFinite(v)&&Math.abs(v)<1e4)plot.point([x0,v],{color:'#2563eb',r:4});
+    if(Number.isFinite(s)&&Math.abs(s)<1e4)plot.point([x0,s],{color:'#7c3aed',r:5,ring:true});
+    $('#repOut').innerHTML=`f(x) = ${cur.n} &nbsp; = &nbsp; ${cur.ser}<br>N = ${N}, x₀ = ${fmtDec(x0,2)}<br>`+
+      `S<sub>N</sub>(x₀) = ${Number.isFinite(s)?fmtDec(s,6):'overflow'}<br>f(x₀) = ${Number.isFinite(v)?fmtDec(v,6):'undefined'}<br>`+
+      `error = ${Number.isFinite(s)&&Number.isFinite(v)?fmtDec(Math.abs(s-v),7):'n/a'}`;
+  }
+  redrawOnShow('represent',draw);draw();
+  new Drill({mount:'#drill-represent',section:'represent',goal:7,
+    ...mixDrill([Q.geometricRewrite,Q.geometricRewrite,Q.differentiateIntegrate,Q.differentiateIntegrate,Q.coefficient,Q.seriesIntegral,Q.sumSeries,Q.sumSeries])});
+})();
+
+/* ============================================================ chapter 3: Taylor polynomials */
+(function(){
+  const TP=[
+    {n:'sin x',f:Math.sin,c:(k,a)=>Math.sin(a+k*Math.PI/2)/fact(k),win:{xmin:-8,xmax:8,ymin:-3,ymax:3},ar:[-3,3]},
+    {n:'eˣ',f:Math.exp,c:(k,a)=>Math.exp(a)/fact(k),win:{xmin:-4,xmax:4,ymin:-3,ymax:14},ar:[-2,2]},
+    {n:'ln(1 + x)',f:x=>Math.log(1+x),c:(k,a)=>k===0?Math.log(1+a):(k%2?1:-1)/(k*Math.pow(1+a,k)),win:{xmin:-1.6,xmax:3.4,ymin:-4,ymax:2.5},ar:[-0.5,2]},
+    {n:'cos x',f:Math.cos,c:(k,a)=>Math.cos(a+k*Math.PI/2)/fact(k),win:{xmin:-8,xmax:8,ymin:-3,ymax:3},ar:[-3,3]},
+    {n:'1/(1 − x)',f:x=>1/(1-x),c:(k,a)=>1/Math.pow(1-a,k+1),win:{xmin:-3,xmax:2.6,ymin:-4,ymax:6},ar:[-2,0.6]},
+    {n:'√(1 + x)',f:x=>Math.sqrt(1+x),c:(k,a)=>binom(0.5,k)*Math.pow(1+a,0.5-k),win:{xmin:-1.6,xmax:4.4,ymin:-1,ymax:3},ar:[-0.5,2]},
+  ];
+  const plot=new Plot2D('#tayPlot',{xmin:-8,xmax:8,ymin:-3,ymax:3});
+  let cur=TP[0],N=3,a=0,x0=2;
+  const TN=x=>{let s=0;for(let k=0;k<=N;k++){const ck=cur.c(k,a);if(!Number.isFinite(ck))return NaN;s+=ck*Math.pow(x-a,k);}return s;};
+  const box=$('#tayPresets');
+  TP.forEach(p=>{const b=el('button',{class:'btn small'},p.n);b.onclick=()=>{cur=p;$$('.btn',box).forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    a=clamp(a,p.ar[0],p.ar[1]);sa.input.min=p.ar[0];sa.input.max=p.ar[1];sa.set(a);
+    x0=clamp(x0,p.win.xmin+0.3,p.win.xmax-0.3);sx.set(x0);draw();};box.appendChild(b);});
+  $$('.btn',box)[0].classList.add('on');
+  const sN=sliderRow($('#taySliders'),{label:'degree N',min:0,max:12,step:1,value:N,fmt:v=>String(v),onInput:v=>{N=v;draw();}});
+  const sa=sliderRow($('#taySliders'),{label:'center a',min:-3,max:3,step:0.25,value:a,onInput:v=>{a=v;draw();}});
+  const sx=sliderRow($('#taySliders'),{label:'x₀',min:-8,max:8,step:0.1,value:x0,onInput:v=>{x0=v;draw();}});
+  function draw(){
+    Object.assign(plot.o,cur.win);plot.begin();
+    plot.param(t=>[x0,t],cur.win.ymin,cur.win.ymax,{color:'#d8d4cc',width:1.2,dash:[4,4],n:2});
+    plot.fn(cur.f,{color:'#9db8e8',width:3.4});
+    plot.fn(TN,{color:'#d97706',width:2.2});
+    const fa=cur.f(a);if(Number.isFinite(fa))plot.point([a,fa],{color:'#7c3aed',r:6,label:'a'});
+    const t=TN(x0),v=cur.f(x0);
+    if(Number.isFinite(v)&&Math.abs(v)<1e4)plot.point([x0,v],{color:'#2563eb',r:4});
+    if(Number.isFinite(t)&&Math.abs(t)<1e4)plot.point([x0,t],{color:'#16a34a',r:5,ring:true});
+    $('#tayOut').innerHTML=`f(x) = ${cur.n}, center a = ${fmtDec(a,2)}, degree N = ${N}<br>x₀ = ${fmtDec(x0,2)} &nbsp; (distance ${fmtDec(Math.abs(x0-a),2)} from the center)<br>`+
+      `T<sub>N</sub>(x₀) = ${Number.isFinite(t)?fmtDec(t,6):'overflow'}<br>f(x₀) = ${Number.isFinite(v)?fmtDec(v,6):'undefined'}<br>`+
+      `|error| = ${Number.isFinite(t)&&Number.isFinite(v)?fmtDec(Math.abs(t-v),7):'n/a'}`;
+  }
+  let acc=0;const anim=animator('taylor',dt=>{acc+=dt;if(acc<0.38)return;acc=0;N=N>=12?0:N+1;sN.set(N);draw();});
+  $('#tayPlay').onclick=()=>{anim.toggle();$('#tayPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  redrawOnShow('taylor',draw);draw();
+  new Drill({mount:'#drill-taylor',section:'taylor',goal:8,
+    ...mixDrill([Q.maclaurinFromTable,Q.maclaurinFromTable,Q.taylorDef,Q.taylorDef,Q.taylorPoly,Q.taylorPoly,Q.binomial,Q.sumFromTable])});
+})();
+
+/* ============================================================ chapter 4: the remainder and its bound */
+(function(){
+  const EP=[
+    {n:'sin x',f:Math.sin,c:MAC.sin,M:c=>1,Mtex:c=>'1'},
+    {n:'cos x',f:Math.cos,c:MAC.cos,M:c=>1,Mtex:c=>'1'},
+    {n:'eˣ',f:Math.exp,c:MAC.exp,M:c=>Math.exp(c),Mtex:c=>'e^'+fmtDec(c,2)},
+  ];
+  const plot=new Plot2D('#errPlot',{xmin:-1,xmax:1,ymin:-1,ymax:1});
+  let cur=EP[0],N=2,c=1;
+  const box=$('#errPresets');
+  EP.forEach(p=>{const b=el('button',{class:'btn small'},p.n);b.onclick=()=>{cur=p;$$('.btn',box).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};box.appendChild(b);});
+  $$('.btn',box)[0].classList.add('on');
+  const sN=sliderRow($('#errSliders'),{label:'degree N',min:0,max:8,step:1,value:N,fmt:v=>String(v),onInput:v=>{N=v;draw();}});
+  sliderRow($('#errSliders'),{label:'interval |x| ≤ c',min:0.5,max:2.5,step:0.1,value:c,onInput:v=>{c=v;draw();}});
+  function draw(){
+    const T=Tfn(cur.c,0,N),M0=cur.M(c);
+    const bnd=x=>M0*Math.pow(Math.abs(x),N+1)/fact(N+1);
+    const B=bnd(c),lim=Math.max(B*1.3,1e-12);
+    Object.assign(plot.o,{xmin:-c,xmax:c,ymin:-lim,ymax:lim,labels:false});
+    plot.begin();
+    plot.fn(x=>bnd(x),{color:'#16a34a',width:1.8,dash:[6,4]});
+    plot.fn(x=>-bnd(x),{color:'#16a34a',width:1.8,dash:[6,4]});
+    plot.fn(x=>cur.f(x)-T(x),{color:'#d97706',width:2.4});
+    const e=maxErr(cur.f,T,-c,c);
+    $('#errOut').innerHTML=`f(x) = ${cur.n}, T<sub>N</sub> at a = 0, N = ${N}<br>M = ${fmtDec(M0,4)} on |x| ≤ ${fmtDec(c,2)}<br>`+
+      `bound at x = c: M·c<sup>${N+1}</sup>/${N+1}! = <b>${B.toExponential(3)}</b><br>`+
+      `largest actual error: ${e.toExponential(3)}<br>the bound is ${fmtDec(B/(e||1e-300),1)}× the true error`;
+  }
+  redrawOnShow('error',draw);draw();
+  new Drill({mount:'#drill-error',section:'error',goal:7,
+    ...mixDrill([Q.taylorBound,Q.taylorBound,Q.termsForAccuracy,Q.seriesLimit,Q.seriesLimit,Q.integralBySeries,Q.derivativeFromSeries])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:14,pass:11,section:'quiz',types:[
+  Q.radius,Q.interval,Q.endpointTest,Q.geometricRewrite,Q.differentiateIntegrate,Q.coefficient,Q.seriesIntegral,Q.sumSeries,
+  Q.maclaurinFromTable,Q.taylorDef,Q.taylorPoly,Q.binomial,Q.sumFromTable,Q.taylorBound,Q.termsForAccuracy,Q.seriesLimit,
+  Q.integralBySeries,Q.derivativeFromSeries]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-taylor',[
+  R`The seven Maclaurin series: \(\frac{1}{1-x}=\sum x^n\) (\(R=1\)), \(e^x=\sum\frac{x^n}{n!}\) (\(R=\infty\)), \(\sin x=\sum\frac{(-1)^nx^{2n+1}}{(2n+1)!}\), \(\cos x=\sum\frac{(-1)^nx^{2n}}{(2n)!}\) (both \(R=\infty\)), \(\arctan x=\sum\frac{(-1)^nx^{2n+1}}{2n+1}\), \(\ln(1+x)=\sum_{n\ge1}\frac{(-1)^{n+1}x^n}{n}\), \((1+x)^k=\sum\binom{k}{n}x^n\) (all \(R=1\)).`,
+  R`The coefficients are forced: \(c_n=\dfrac{f^{(n)}(a)}{n!}\), so \(f^{(n)}(a)=n!\,c_n\).`,
+  R`Taylor's inequality: \(|R_n(x)|\le\dfrac{M}{(n+1)!}|x-a|^{n+1}\) when \(|f^{(n+1)}|\le M\) on the interval.`,
+  R`Alternating series estimate: the error is smaller than the first term you drop. Usually sharper than Taylor's inequality.`,
+  R`Radius from the ratio test: \(\lim|c_{n+1}/c_n|\,|x-a|<1\). Then <b>check both endpoints separately</b>: the ratio test is silent there.`,
+  R`Termwise differentiation and integration keep the radius \(R\) (the endpoints can change), and the constant of integration is found by setting \(x=0\).`,
+  R`\(\sum_{n=0}^\infty\frac{(-1)^n}{2n+1}=\frac{\pi}{4}\), \(\sum_{n=0}^\infty\frac{1}{n!}=e\), \(\sum_{n=1}^\infty\frac{(-1)^{n+1}}{n}=\ln 2\).`,
+  R`\(\binom{k}{n}=\dfrac{k(k-1)\cdots(k-n+1)}{n!}\): exactly \(n\) descending factors on top.`,
+]));
+
+/* ============================================================ test hook */
+window.__solvers=(()=>{const S=v=>String(v);return {
+  'radius of convergence':q=>({a:S(q.a),R:q.inf?'inf':S(q.R)}),
+  'interval of convergence':q=>({iv:q.ans}),
+  'test one endpoint':q=>({t:q.tStr,_btn:q.conv?0:1}),
+  'rewrite as a power series':q=>({t:q.t,R:S(q.R)}),
+  'differentiate or integrate a known series':q=>({t:q.t,R:S(q.R)}),
+  'a particular coefficient':q=>({c:S(q.val)}),
+  'approximate an integral with a series':q=>({t:q.t,v:S(q.val)}),
+  'identify the sum':q=>({v:S(q.val)}),
+  'Maclaurin series by substitution':q=>({t:q.t}),
+  'Taylor series from the definition':q=>({t:q.t}),
+  'Taylor polynomial':q=>({p:q.str}),
+  'binomial series coefficients':q=>({c:S(q.c),R:'1'}),
+  'recognize a series as a value':q=>({v:S(q.val)}),
+  "Taylor's inequality":q=>({B:S(q.B)}),
+  'how many terms':q=>({n:S(q.ans)}),
+  'limit by series':q=>({L:S(q.val)}),
+  'integrate by series with an error guarantee':q=>({N:S(q.N),v:S(q.val)}),
+  'read off a derivative from the series':q=>({d:S(q.d)}),
+};})();
+
+initModule({key:'c2-taylor',title:'Power Series and Taylor Series',sub:'Module 11 · Stewart 11.8 to 11.11'});
+</script>
+</body>
+</html>
+
