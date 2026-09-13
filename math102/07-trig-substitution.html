@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trigonometric Substitution</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 7 · Stewart 7.3</p>
+  <h2>Trigonometric substitution</h2>
+  <p class="lead">A square root of a quadratic is unintegrable as it stands. Make \(x\) a trig function of a new angle and the root disappears. A reference triangle brings the answer back to \(x\).</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Antiderivatives are answered <b>in \(x\)</b>, not in \(\theta\), unless the question asks for the trig form. Type roots as <code>sqrt(9-x^2)</code>, inverse trig as <code>arcsin(x/3)</code>, logs as <code>ln|x + sqrt(x^2-4)|</code> or <code>ln(abs(x+sqrt(x^2-4)))</code>. The <code>+ C</code> is optional. Definite integrals want an exact value like <code>pi/6</code>, <code>9pi/4</code>, or <code>1/(9sqrt(2))</code>. Where an answer is in the new angle, type <code>theta</code> for \(\theta\).</p>
+    <p>Answer boxes work like WebAssign's calcPad: <code>sqrt</code> makes a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>|</code> absolute value, <code>theta</code> the symbol. Use the right arrow key to step out of a radical or fraction before typing what comes next. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the moving piece: \(x\), the angle \(\theta\), a limit</span>
+      <span><i class="dot" style="background:var(--b)"></i> the integrand and the region under it</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result: a value, an antiderivative</span>
+      <span><i class="dot" style="background:var(--d)"></i> the triangle and its labeled sides</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Pick the substitution from the shape of the radical, and write \(dx\) correctly.</li>
+      <li>Simplify the radical to a single trig function using the three Pythagorean identities.</li>
+      <li>Convert a \(\theta\)-answer back to \(x\) by reading the reference triangle.</li>
+      <li>Handle a definite integral by turning the limits into angles and never coming back.</li>
+      <li>Complete the square first when the quadratic has a middle term, and tell that case apart from partial fractions.</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 THE THREE SUBSTITUTIONS -->
+<section data-id="three" data-title="The three substitutions" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 7.3</p>
+  <h2>The three substitutions</h2>
+  <p class="lead">Three radicals, three substitutions, three identities. Everything in this module comes from this table.</p>
+
+  <p>Ordinary substitution fails on \(\sqrt{a^2-x^2}\) because the derivative of the inside is not sitting there as a factor. The fix is to run substitution <b>backwards</b>: instead of setting a new variable equal to something in \(x\), set \(x\) equal to a function of a new variable \(\theta\). Choose that function so the Pythagorean identity collapses the radical.</p>
+
+  <div class="formula">\(\sqrt{a^2-x^2}\;:\qquad x=a\sin\theta,\qquad dx=a\cos\theta\,d\theta,\qquad \sqrt{a^2-x^2}=a\cos\theta\)<span class="cap">Because \(a^2-a^2\sin^2\theta=a^2(1-\sin^2\theta)=a^2\cos^2\theta\). Take \(-\tfrac{\pi}{2}\le\theta\le\tfrac{\pi}{2}\), where \(\cos\theta\ge 0\), so the root is \(+a\cos\theta\).</span></div>
+  <div class="formula">\(\sqrt{a^2+x^2}\;:\qquad x=a\tan\theta,\qquad dx=a\sec^2\theta\,d\theta,\qquad \sqrt{a^2+x^2}=a\sec\theta\)<span class="cap">Because \(a^2+a^2\tan^2\theta=a^2(1+\tan^2\theta)=a^2\sec^2\theta\). Take \(-\tfrac{\pi}{2}\lt\theta\lt\tfrac{\pi}{2}\), where \(\sec\theta>0\).</span></div>
+  <div class="formula">\(\sqrt{x^2-a^2}\;:\qquad x=a\sec\theta,\qquad dx=a\sec\theta\tan\theta\,d\theta,\qquad \sqrt{x^2-a^2}=a\tan\theta\)<span class="cap">Because \(a^2\sec^2\theta-a^2=a^2(\sec^2\theta-1)=a^2\tan^2\theta\). Take \(0\le\theta\lt\tfrac{\pi}{2}\) for \(x\ge a\), where \(\tan\theta\ge 0\).</span></div>
+
+  <p>The three identities behind them are the same identity written three ways:</p>
+  <div class="formula">\(1-\sin^2\theta=\cos^2\theta,\qquad 1+\tan^2\theta=\sec^2\theta,\qquad \sec^2\theta-1=\tan^2\theta\)<span class="cap">Match the sign pattern of your radical to one of these three. Minus a square goes with sine, plus a square goes with tangent, a square minus something goes with secant.</span></div>
+
+  <div class="note"><b>Read the shape, not the letters.</b> \(\sqrt{9-4x^2}\) is \(\sqrt{a^2-u^2}\) with \(a=3\) and \(u=2x\), so \(2x=3\sin\theta\), that is \(x=\tfrac32\sin\theta\). And the radical does not have to be visible: \((4+x^2)^{3/2}\), \(\dfrac{1}{(x^2+9)^2}\), and \(\dfrac{1}{\sqrt{x^2-1}}\) are all the same three cases in disguise.</div>
+
+  <h3>The reference triangle</h3>
+  <p>Once you integrate in \(\theta\) you must return to \(x\). Do not solve \(\theta=\arcsin(x/a)\) and substitute it into every trig function. Draw a right triangle in which the substitution is true, and read the other functions straight off it.</p>
+  <p>Place \(\theta\) at one acute vertex. For \(x=a\sin\theta\), \(\sin\theta=\dfrac{x}{a}\) means <b>opposite \(=x\), hypotenuse \(=a\)</b>, so the third side is \(\sqrt{a^2-x^2}\). For \(x=a\tan\theta\), <b>opposite \(=x\), adjacent \(=a\)</b>, hypotenuse \(\sqrt{x^2+a^2}\). For \(x=a\sec\theta\), <b>hypotenuse \(=x\), adjacent \(=a\)</b>, opposite \(\sqrt{x^2-a^2}\). In every case the radical is the side that is neither \(x\) nor \(a\).</p>
+
+  <div class="card">
+    <h4>Explore: the reference triangle</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="triPlot"></canvas><p class="plotcap">The angle \(\theta\) sits at the left vertex. The purple side is the radical, the one side that is neither \(x\) nor \(a\).</p></div>
+      <div>
+        <div class="presets" id="triCase"></div>
+        <div class="row" style="gap:8px;align-items:center;margin-bottom:6px"><b>a</b> <span id="triA"></span></div>
+        <div class="sliders" id="triSliders"></div>
+        <div class="controls"><button class="btn" id="triPlay">▶ Play</button></div>
+        <div class="readout" id="triOut"></div>
+        <p class="hint">Slide \(x\) to the ends. In the sine case, \(x\to a\) squashes the adjacent side to zero and \(\theta\to 90^\circ\). In the secant case, \(x\to a\) squashes the opposite side and \(\theta\to 0\). Watch which expression each trig function reads off, and notice that only two of the three sides are ever given to you.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>\(dx\) is not \(d\theta\).</b> Every one of these substitutions changes the differential, and the new factor is what makes the integral collapse. Forgetting the \(a\cos\theta\) in \(dx\) leaves you with an integral that does not simplify, which is the signal that you dropped it.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-three"></div>
+</section>
+
+<!-- ============================================================ 2 END TO END -->
+<section data-id="work" data-title="Working an integral end to end" data-goal="7">
+  <p class="eyebrow">Chapter 2 · Stewart 7.3</p>
+  <h2>Working an integral end to end</h2>
+  <p class="lead">Substitute, simplify, integrate in \(\theta\), come back through the triangle. Five moves, always the same five.</p>
+
+  <p>Here is the whole procedure on \(\displaystyle\int\frac{\sqrt{9-x^2}}{x^2}\,dx\), Stewart's first example.</p>
+  <div class="card tint">
+    <ol>
+      <li><b>Choose.</b> The radical is \(\sqrt{a^2-x^2}\) with \(a=3\), so \(x=3\sin\theta\) and \(dx=3\cos\theta\,d\theta\), with \(-\tfrac{\pi}{2}\le\theta\le\tfrac{\pi}{2}\).</li>
+      <li><b>Rewrite.</b> \(\sqrt{9-x^2}=\sqrt{9-9\sin^2\theta}=3|\cos\theta|=3\cos\theta\) on that interval, and \(x^2=9\sin^2\theta\), so
+        \[\int\frac{\sqrt{9-x^2}}{x^2}\,dx=\int\frac{3\cos\theta}{9\sin^2\theta}\,3\cos\theta\,d\theta.\]</li>
+      <li><b>Simplify to a trig integral.</b> The 9s cancel:
+        \[\int\frac{\cos^2\theta}{\sin^2\theta}\,d\theta=\int\cot^2\theta\,d\theta=\int(\csc^2\theta-1)\,d\theta.\]
+        This is module 5 territory: every trig-substitution problem ends as a trig integral.</li>
+      <li><b>Integrate.</b> \(\displaystyle\int(\csc^2\theta-1)\,d\theta=-\cot\theta-\theta+C\).</li>
+      <li><b>Back to \(x\) with the triangle.</b> With opposite \(x\), hypotenuse 3, adjacent \(\sqrt{9-x^2}\): \(\cot\theta=\dfrac{\sqrt{9-x^2}}{x}\) and \(\theta=\arcsin\dfrac{x}{3}\). So
+        \[\int\frac{\sqrt{9-x^2}}{x^2}\,dx=-\frac{\sqrt{9-x^2}}{x}-\arcsin\frac{x}{3}+C.\]</li>
+    </ol>
+  </div>
+  <p>Sanity check the shape of an answer before you trust it: a term with the radical, and an inverse trig term for the leftover \(\theta\). If your answer still has a \(\theta\) in it, you skipped step 5.</p>
+
+  <div class="note"><b>Definite integrals: change the limits and never come back.</b> For \(\displaystyle\int_0^{3/2}\frac{dx}{\sqrt{9-x^2}}\) with \(x=3\sin\theta\): at \(x=0\), \(\sin\theta=0\) so \(\theta=0\); at \(x=\tfrac32\), \(\sin\theta=\tfrac12\) so \(\theta=\tfrac{\pi}{6}\). The integral becomes \(\int_0^{\pi/6}d\theta=\tfrac{\pi}{6}\). No triangle needed, no back-substitution, and the answer is a number.</div>
+
+  <div class="card">
+    <h4>Explore: the limits become angles</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="limPlot"></canvas><p class="plotcap">Blue curve: the integrand. Shaded: the area counted so far. The orange line is the moving upper limit \(b\).</p></div>
+      <div>
+        <div class="presets" id="limPresets"></div>
+        <div class="sliders" id="limSliders"></div>
+        <div class="controls"><button class="btn" id="limPlay">▶ Play</button></div>
+        <div class="readout" id="limOut"></div>
+        <p class="hint">Push \(b\) to the right end of each preset and read the angle. In the sine case \(b=a\) gives exactly \(\theta=\tfrac{\pi}{2}\), which is why quarter-circle areas come out as multiples of \(\pi\). The \(x\)-integral and the \(\theta\)-integral in the readout are always the same number, and one of them is elementary.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: one integral, all six moves</h4>
+    <div class="expr" id="w2Expr"></div>
+    <div class="controls">
+      <button class="btn" id="w2Prev">◀ Back</button>
+      <button class="btn primary" id="w2Next">Next step ▶</button>
+      <button class="btn" id="w2New">New problem</button>
+      <span class="status" id="w2Status"></span>
+    </div>
+    <p class="hint">Cover the screen after step 2 and finish it yourself, then step forward to compare. The step people skip is the third one: cancel the constants before integrating, so you can see which trig integral you actually have.</p>
+  </div>
+
+  <div class="warn"><b>The answer must be in \(x\).</b> An indefinite trig substitution is only finished after the triangle. A definite one is finished at the number, and going back to \(x\) is wasted work that invites sign errors.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-work"></div>
+</section>
+
+<!-- ============================================================ 3 COMPLETING THE SQUARE -->
+<section data-id="square" data-title="Completing the square first" data-goal="5">
+  <p class="eyebrow">Chapter 3 · Stewart 7.3</p>
+  <h2>Completing the square first</h2>
+  <p class="lead">A middle term is not a new problem. Shift the variable and you are back to one of the three cases.</p>
+
+  <p>Any quadratic can be written with its middle term absorbed into a square:</p>
+  <div class="formula">\(x^2+bx+c=\left(x+\tfrac{b}{2}\right)^2+\left(c-\tfrac{b^2}{4}\right)\)<span class="cap">Half the middle coefficient goes inside the square, and its square comes back out. Then \(u=x+\tfrac{b}{2}\), \(du=dx\), and the three cases apply to \(u\).</span></div>
+  <p>Two examples. For \(\displaystyle\int\frac{dx}{\sqrt{x^2+2x+5}}\), half of 2 is 1, so \(x^2+2x+5=(x+1)^2+4\). With \(u=x+1\) this is \(\int\frac{du}{\sqrt{u^2+4}}=\ln\left|u+\sqrt{u^2+4}\right|+C\), that is \(\ln\left|x+1+\sqrt{x^2+2x+5}\right|+C\).</p>
+  <p>For \(\displaystyle\int\frac{dx}{\sqrt{3-2x-x^2}}\), factor the sign out of the \(x\) terms first: \(3-2x-x^2=3-(x^2+2x)=3+1-(x+1)^2=4-(x+1)^2\). Now it is the sine case with \(a=2\), and the answer is \(\arcsin\dfrac{x+1}{2}+C\).</p>
+  <div class="note"><b>Which of the three you land in is decided by the completed square.</b> \((x+h)^2+a^2\) is the tangent case, \(a^2-(x+h)^2\) is the sine case, \((x+h)^2-a^2\) is the secant case. Nothing about the original middle term matters once the square is complete.</div>
+
+  <div class="card">
+    <h4>Explore: completing the square is a shift</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="sqPlot"></canvas><p class="plotcap">Purple: \(y=x^2+2hx+(h^2+k)\). Green dashed: the same parabola slid to the origin, \(y=u^2+k\).</p></div>
+      <div>
+        <div class="sliders" id="sqSliders"></div>
+        <div class="controls"><button class="btn" id="sqPlay">▶ Play the shift</button></div>
+        <div class="readout" id="sqOut"></div>
+        <p class="hint">Move \(h\) and watch the vertex slide to \(x=-h\) while its height \(k\) never changes. That height is the whole story: \(k>0\) leaves \(u^2+a^2\) (tangent case), \(k<0\) leaves \(u^2-a^2\) (secant case), and a leading minus sign in front of \(x^2\) leaves \(a^2-u^2\) (sine case).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: complete, shift, name the case</h4>
+    <div class="expr" id="w3Expr"></div>
+    <div class="controls">
+      <button class="btn" id="w3Prev">◀ Back</button>
+      <button class="btn primary" id="w3Next">Next step ▶</button>
+      <button class="btn" id="w3New">New problem</button>
+      <span class="status" id="w3Status"></span>
+    </div>
+    <p class="hint">Say the case out loud at step 4 before you look. Getting \(u^2+a^2\) versus \(a^2-u^2\) right is the only decision in this chapter.</p>
+  </div>
+
+  <div class="warn"><b>Not every quadratic denominator wants trig substitution.</b> For \(\displaystyle\int\frac{dx}{x^2+bx+c}\) look at the discriminant \(b^2-4c\) first. Positive means the quadratic factors into distinct linear pieces, so it is <b>partial fractions</b> (module 3) and the answer is logs. Negative means the completed square is \((x+h)^2+a^2\), which is <b>arctan</b>. Zero means it is a perfect square and the power rule finishes it.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-square"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from all three chapters. Score 10 or more to complete the module. This is the last topic before Midterm 1, so treat a miss as a signal to go back to the chapter.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+/* coefficient TeX: '' for 1, '-' for -1, a \tfrac otherwise */
+const CF=(n,d=1)=>{const t=texFrac(n,d,{tf:true});return t==='1'?'':t==='-1'?'-':t;};
+/* a leading integer coefficient in front of another number: 1 disappears, anything else gets a dot */
+const KC=k=>k===1?'':k+'\\cdot ';
+const iTex=(body,lo,hi)=>(lo==null?R`\int `:R`\int_{${lo}}^{${hi}} `)+body+R`\,dx`;
+const hintBox=(el,html)=>{let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}h.innerHTML=html;return h;};
+
+/* numeric check: is F an antiderivative of f on dom? central differences at three interior points */
+function verifyAnti(FStr,fStr,dom){
+  let F,f;try{F=Expr.compile(FStr);f=Expr.compile(fStr);}catch(e){return false;}
+  const [lo,hi]=dom;
+  for(let i=1;i<=3;i++){
+    const x=lo+(hi-lo)*i/4,h=1e-5*Math.max(1,Math.abs(x));
+    const d=(F({x:x+h})-F({x:x-h}))/(2*h),t=f({x});
+    if(!Number.isFinite(d)||!Number.isFinite(t))return false;
+    if(Math.abs(d-t)>1e-4*Math.max(1,Math.abs(t)))return false;
+  }
+  return true;
+}
+/* numeric check for a definite integral: F' = f inside, and F(hi) - F(lo) is the stored value */
+function verifyDef(FStr,fStr,lo,hi,val){
+  if(!verifyAnti(FStr,fStr,[lo,hi]))return false;
+  let F;try{F=Expr.compile(FStr);}catch(e){return false;}
+  const v=F({x:hi})-F({x:lo});
+  return Number.isFinite(v)&&Math.abs(v-val)<=1e-6*Math.max(1,Math.abs(val));
+}
+/* pick a case from a list of builders, keep only draws whose stored answer verifies */
+function drawVerified(build,test,label){
+  for(let i=0;i<30;i++){const c=build();if(test(c))return c;}
+  throw new Error('no verified draw for '+label);
+}
+/* (x + h) as TeX and as a plain string */
+const shTex=h=>h===0?'x':`(x${h>0?'+':'-'}${Math.abs(h)})`;
+const shStr=h=>h===0?'x':`(x${h>0?'+':'-'}${Math.abs(h)})`;
+const shBare=h=>h===0?'x':`x${h>0?'+':'-'}${Math.abs(h)}`;
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1: the three substitutions ---------- */
+/* Every case carries the expression shown (TeX and a plain string in x), the substitution x(theta),
+   the dx factor, and what the expression simplifies to. References are built by composing the
+   x-expression with x(theta), so any equivalent form the learner writes is accepted. */
+const SUBCASES=[
+  ()=>{const a=rint(2,6);return {kind:'sin',a,b:1,
+    eTex:R`\sqrt{${a*a}-x^2}`,eStr:`sqrt(${a*a}-x^2)`,
+    xTex:`${a}\\sin\\theta`,xStr:`${a}*sin(theta)`,
+    dTex:`${a}\\cos\\theta`,dStr:`${a}*cos(theta)`,rTex:`${a}\\cos\\theta`,rStr:`${a}*cos(theta)`};},
+  ()=>{const a=rint(2,6);return {kind:'sin',a,b:1,
+    eTex:R`\left(${a*a}-x^2\right)^{3/2}`,eStr:`(${a*a}-x^2)^(3/2)`,
+    xTex:`${a}\\sin\\theta`,xStr:`${a}*sin(theta)`,
+    dTex:`${a}\\cos\\theta`,dStr:`${a}*cos(theta)`,rTex:`${a*a*a}\\cos^3\\theta`,rStr:`${a*a*a}*cos(theta)^3`};},
+  ()=>{const a=rint(2,6);return {kind:'tan',a,b:1,
+    eTex:R`\sqrt{x^2+${a*a}}`,eStr:`sqrt(x^2+${a*a})`,
+    xTex:`${a}\\tan\\theta`,xStr:`${a}*tan(theta)`,
+    dTex:`${a}\\sec^2\\theta`,dStr:`${a}*sec(theta)^2`,rTex:`${a}\\sec\\theta`,rStr:`${a}*sec(theta)`};},
+  ()=>{const a=rint(2,5);return {kind:'tan',a,b:1,
+    eTex:R`\left(x^2+${a*a}\right)^{2}`,eStr:`(x^2+${a*a})^2`,
+    xTex:`${a}\\tan\\theta`,xStr:`${a}*tan(theta)`,
+    dTex:`${a}\\sec^2\\theta`,dStr:`${a}*sec(theta)^2`,rTex:`${a*a*a*a}\\sec^4\\theta`,rStr:`${a*a*a*a}*sec(theta)^4`};},
+  ()=>{const a=rint(2,6);return {kind:'sec',a,b:1,
+    eTex:R`\sqrt{x^2-${a*a}}`,eStr:`sqrt(x^2-${a*a})`,
+    xTex:`${a}\\sec\\theta`,xStr:`${a}*sec(theta)`,
+    dTex:`${a}\\sec\\theta\\tan\\theta`,dStr:`${a}*sec(theta)*tan(theta)`,rTex:`${a}\\tan\\theta`,rStr:`${a}*tan(theta)`};},
+  ()=>{const a=pick([2,3,4,5]),b=pick([2,3]);return {kind:'sin',a,b,
+    eTex:R`\sqrt{${a*a}-${b*b}x^2}`,eStr:`sqrt(${a*a}-${b*b}*x^2)`,
+    xTex:`${CF(a,b)}\\sin\\theta`,xStr:`(${a}/${b})*sin(theta)`,
+    dTex:`${CF(a,b)}\\cos\\theta`,dStr:`(${a}/${b})*cos(theta)`,rTex:`${a}\\cos\\theta`,rStr:`${a}*cos(theta)`};},
+  ()=>{const a=pick([2,3,4,5]),b=pick([2,3]);return {kind:'tan',a,b,
+    eTex:R`\sqrt{${b*b}x^2+${a*a}}`,eStr:`sqrt(${b*b}*x^2+${a*a})`,
+    xTex:`${CF(a,b)}\\tan\\theta`,xStr:`(${a}/${b})*tan(theta)`,
+    dTex:`${CF(a,b)}\\sec^2\\theta`,dStr:`(${a}/${b})*sec(theta)^2`,rTex:`${a}\\sec\\theta`,rStr:`${a}*sec(theta)`};},
+  ()=>{const a=pick([2,3,4,5]),b=pick([2,3]);return {kind:'sec',a,b,
+    eTex:R`\sqrt{${b*b}x^2-${a*a}}`,eStr:`sqrt(${b*b}*x^2-${a*a})`,
+    xTex:`${CF(a,b)}\\sec\\theta`,xStr:`(${a}/${b})*sec(theta)`,
+    dTex:`${CF(a,b)}\\sec\\theta\\tan\\theta`,dStr:`(${a}/${b})*sec(theta)*tan(theta)`,rTex:`${a}\\tan\\theta`,rStr:`${a}*tan(theta)`};}
+];
+const WHY={sin:R`1-\sin^2\theta=\cos^2\theta`,tan:R`1+\tan^2\theta=\sec^2\theta`,sec:R`\sec^2\theta-1=\tan^2\theta`};
+const CASENAME={sin:R`\sqrt{a^2-x^2}`,tan:R`\sqrt{a^2+x^2}`,sec:R`\sqrt{x^2-a^2}`};
+
+Q.pickSub={name:'choose the substitution',
+  gen(){
+    const c=pick(SUBCASES)();
+    const xf=Expr.compile(c.xStr),ef=Expr.compile(c.eStr);
+    c.xRef=env=>xf({theta:env.theta});
+    c.dRef=Expr.compile(c.dStr);
+    c.rRef=env=>ef({x:xf({theta:env.theta})});
+    return c;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">An integral contains ${M(q.eTex)}. Set up the trigonometric substitution: give ${M('x')} in terms of ${M(R`\theta`)}, the factor that multiplies ${M(R`d\theta`)} in ${M('dx')}, and what the expression above becomes. Type <code>theta</code> for ${M(R`\theta`)}.</p>`;
+    numIn(el,'x',M('x='),{wide:true,placeholder:'a function of theta'});
+    numIn(el,'dx',M('dx='),{wide:true,placeholder:'factor',after:M(R`d\theta`)});
+    numIn(el,'rad',M(q.eTex+'='),{wide:true,placeholder:'in theta'});},
+  check(q,el){
+    const d={theta:[0.2,1.2]};
+    return Gall(el,[
+      ['x',checkExpr($('[data-k=x]',el).value,q.xRef,['theta'],{domain:d})],
+      ['dx',checkExpr($('[data-k=dx]',el).value,q.dRef,['theta'],{domain:d})],
+      ['rad',checkExpr($('[data-k=rad]',el).value,q.rRef,['theta'],{domain:d})]]);},
+  hint(q,el){hintBox(el,`This is the ${M(CASENAME[q.kind])} case, so the identity that collapses it is ${M(WHY[q.kind])}.`);},
+  solution(q){
+    const TRIGOF={sin:R`\sin\theta`,tan:R`\tan\theta`,sec:R`\sec\theta`};
+    return `The shape is ${M(CASENAME[q.kind])} with ${M('a='+q.a)}${q.b>1?`, and the quantity being squared is ${M(q.b+'x')}, so ${M(q.b+'x='+q.a+TRIGOF[q.kind])}`:''}. So ${M('x='+q.xTex)} and ${M('dx='+q.dTex+R`\,d\theta`)}. Using ${M(WHY[q.kind])},`+
+      D(q.eTex+'='+q.rTex);}
+};
+
+/* backToX: read one trig function of theta off the reference triangle, in terms of x */
+const TRIQ=[
+  {k:'sin',tex:R`\sin\theta`},{k:'cos',tex:R`\cos\theta`},{k:'tan',tex:R`\tan\theta`},
+  {k:'sec',tex:R`\sec\theta`},{k:'theta',tex:R`\theta`},{k:'sin2',tex:R`\sin 2\theta`}];
+function triData(kind,a){
+  const A2=a*a;
+  if(kind==='sin')return {sub:`x=${a}\\sin\\theta`,dom:[0.2*a,0.8*a],
+    ans:{sin:[`\\frac{x}{${a}}`,`x/${a}`],cos:[`\\frac{\\sqrt{${A2}-x^2}}{${a}}`,`sqrt(${A2}-x^2)/${a}`],
+      tan:[`\\frac{x}{\\sqrt{${A2}-x^2}}`,`x/sqrt(${A2}-x^2)`],sec:[`\\frac{${a}}{\\sqrt{${A2}-x^2}}`,`${a}/sqrt(${A2}-x^2)`],
+      theta:[`\\arcsin\\frac{x}{${a}}`,`arcsin(x/${a})`],
+      sin2:[`\\frac{2x\\sqrt{${A2}-x^2}}{${A2}}`,`2*x*sqrt(${A2}-x^2)/${A2}`]},
+    sides:`opposite ${M('x')}, hypotenuse ${M(String(a))}, and therefore adjacent ${M(`\\sqrt{${A2}-x^2}`)}`};
+  if(kind==='tan')return {sub:`x=${a}\\tan\\theta`,dom:[0.3,2.5],
+    ans:{sin:[`\\frac{x}{\\sqrt{x^2+${A2}}}`,`x/sqrt(x^2+${A2})`],cos:[`\\frac{${a}}{\\sqrt{x^2+${A2}}}`,`${a}/sqrt(x^2+${A2})`],
+      tan:[`\\frac{x}{${a}}`,`x/${a}`],sec:[`\\frac{\\sqrt{x^2+${A2}}}{${a}}`,`sqrt(x^2+${A2})/${a}`],
+      theta:[`\\arctan\\frac{x}{${a}}`,`arctan(x/${a})`],
+      sin2:[`\\frac{${2*a}x}{x^2+${A2}}`,`${2*a}*x/(x^2+${A2})`]},
+    sides:`opposite ${M('x')}, adjacent ${M(String(a))}, and therefore hypotenuse ${M(`\\sqrt{x^2+${A2}}`)}`};
+  return {sub:`x=${a}\\sec\\theta`,dom:[1.2*a,3*a],
+    ans:{sin:[`\\frac{\\sqrt{x^2-${A2}}}{x}`,`sqrt(x^2-${A2})/x`],cos:[`\\frac{${a}}{x}`,`${a}/x`],
+      tan:[`\\frac{\\sqrt{x^2-${A2}}}{${a}}`,`sqrt(x^2-${A2})/${a}`],sec:[`\\frac{x}{${a}}`,`x/${a}`],
+      theta:[`\\arccos\\frac{${a}}{x}`,`arccos(${a}/x)`],
+      sin2:[`\\frac{${2*a}\\sqrt{x^2-${A2}}}{x^2}`,`${2*a}*sqrt(x^2-${A2})/x^2`]},
+    sides:`hypotenuse ${M('x')}, adjacent ${M(String(a))}, and therefore opposite ${M(`\\sqrt{x^2-${A2}}`)}`};
+}
+Q.backToX={name:'convert back with the triangle',
+  gen(){
+    const kind=pick(['sin','tan','sec']),a=rint(2,6),w=pick(TRIQ);
+    const t=triData(kind,a);
+    return {kind,a,w,t,ansStr:t.ans[w.k][1],ansTex:t.ans[w.k][0]};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">You substituted ${M(q.t.sub)}, and your ${M(R`\theta`)}-answer contains ${M(q.w.tex)}. Write ${M(q.w.tex)} in terms of ${M('x')} using the reference triangle.${q.kind==='sec'&&q.w.k==='theta'?` Write ${M(R`\operatorname{arcsec}\frac{x}{a}`)} as ${M(R`\arccos\frac{a}{x}`)}.`:''}</p>`;
+    numIn(el,'e',M(q.w.tex+'='),{wide:true,placeholder:'in terms of x'});},
+  check(q,el){return G(el,'e',checkExpr($('[data-k=e]',el).value,q.ansStr,['x'],{domain:{x:q.t.dom}}));},
+  hint(q,el){hintBox(el,`Draw the triangle with ${q.t.sides}.`);},
+  solution(q){
+    return `From ${M(q.t.sub)} the triangle has ${q.t.sides}.`+
+      (q.w.k==='sin2'?` Then ${M(R`\sin 2\theta=2\sin\theta\cos\theta`)}, so multiply the two ratios:`:` Reading it off:`)+
+      D(q.w.tex+'='+q.ansTex);}
+};
+
+/* simplifyRadical: substitute and simplify an expression in x to a trig expression */
+const SIMPCASES=[
+  ()=>{const a=rint(2,6);return {kind:'sin',a,eTex:R`\sqrt{${a*a}-x^2}`,eStr:`sqrt(${a*a}-x^2)`,
+    ansTex:`${a}\\cos\\theta`,ansStr:`${a}*cos(theta)`};},
+  ()=>{const a=rint(2,6);return {kind:'sin',a,eTex:R`\left(${a*a}-x^2\right)^{3/2}`,eStr:`(${a*a}-x^2)^(3/2)`,
+    ansTex:`${a*a*a}\\cos^3\\theta`,ansStr:`${a*a*a}*cos(theta)^3`};},
+  ()=>{const a=rint(2,6);return {kind:'sin',a,eTex:R`\frac{x^2}{\sqrt{${a*a}-x^2}}`,eStr:`x^2/sqrt(${a*a}-x^2)`,
+    ansTex:`\\frac{${a}\\sin^2\\theta}{\\cos\\theta}`,ansStr:`${a}*sin(theta)^2/cos(theta)`};},
+  ()=>{const a=rint(2,6);return {kind:'sin',a,eTex:R`\frac{\sqrt{${a*a}-x^2}}{x^2}`,eStr:`sqrt(${a*a}-x^2)/x^2`,
+    ansTex:`\\frac{\\cos\\theta}{${a}\\sin^2\\theta}`,ansStr:`cos(theta)/(${a}*sin(theta)^2)`};},
+  ()=>{const a=rint(2,6);return {kind:'tan',a,eTex:R`\sqrt{x^2+${a*a}}`,eStr:`sqrt(x^2+${a*a})`,
+    ansTex:`${a}\\sec\\theta`,ansStr:`${a}*sec(theta)`};},
+  ()=>{const a=rint(2,5);return {kind:'tan',a,eTex:R`\left(${a*a}+x^2\right)^{3/2}`,eStr:`(${a*a}+x^2)^(3/2)`,
+    ansTex:`${a*a*a}\\sec^3\\theta`,ansStr:`${a*a*a}*sec(theta)^3`};},
+  ()=>{const a=rint(2,5);return {kind:'tan',a,eTex:R`\frac{1}{x^2+${a*a}}`,eStr:`1/(x^2+${a*a})`,
+    ansTex:`\\frac{\\cos^2\\theta}{${a*a}}`,ansStr:`cos(theta)^2/${a*a}`};},
+  ()=>{const a=rint(2,6);return {kind:'sec',a,eTex:R`\frac{\sqrt{x^2-${a*a}}}{x}`,eStr:`sqrt(x^2-${a*a})/x`,
+    ansTex:`\\sin\\theta`,ansStr:`sin(theta)`};},
+  ()=>{const a=rint(2,6);return {kind:'sec',a,eTex:R`\sqrt{x^2-${a*a}}`,eStr:`sqrt(x^2-${a*a})`,
+    ansTex:`${a}\\tan\\theta`,ansStr:`${a}*tan(theta)`};},
+  ()=>{const a=rint(2,5);return {kind:'sec',a,eTex:R`x^2\sqrt{x^2-${a*a}}`,eStr:`x^2*sqrt(x^2-${a*a})`,
+    ansTex:`${a*a*a}\\sec^2\\theta\\tan\\theta`,ansStr:`${a*a*a}*sec(theta)^2*tan(theta)`};}
+];
+const SUBTEX={sin:a=>`x=${a}\\sin\\theta`,tan:a=>`x=${a}\\tan\\theta`,sec:a=>`x=${a}\\sec\\theta`};
+const SUBFN={sin:a=>t=>a*Math.sin(t),tan:a=>t=>a*Math.tan(t),sec:a=>t=>a/Math.cos(t)};
+Q.simplifyRadical={name:'simplify after substituting',
+  gen(){
+    const c=pick(SIMPCASES)();
+    const ef=Expr.compile(c.eStr),xf=SUBFN[c.kind](c.a);
+    c.ref=env=>ef({x:xf(env.theta)});
+    return c;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Substitute ${M(SUBTEX[q.kind](q.a))} into ${M(q.eTex)} and simplify to an expression in ${M(R`\theta`)} with no radical left. Assume ${M(R`\theta`)} lies in the range where the radical is nonnegative. Type <code>theta</code> for ${M(R`\theta`)}.</p>`;
+    numIn(el,'e',M(q.eTex+'='),{wide:true,placeholder:'in theta'});},
+  check(q,el){return G(el,'e',checkExpr($('[data-k=e]',el).value,q.ref,['theta'],{domain:{theta:[0.2,1.2]}}));},
+  hint(q,el){hintBox(el,`Use ${M(WHY[q.kind])} on the radical first, then cancel what you can.`);},
+  solution(q){
+    const rad={sin:`\\sqrt{${q.a*q.a}-x^2}=${q.a}\\cos\\theta`,tan:`\\sqrt{x^2+${q.a*q.a}}=${q.a}\\sec\\theta`,sec:`\\sqrt{x^2-${q.a*q.a}}=${q.a}\\tan\\theta`}[q.kind];
+    return `With ${M(SUBTEX[q.kind](q.a))}, the identity ${M(WHY[q.kind])} gives ${M(rad)}. Substitute that and cancel:`+
+      D(q.eTex+'='+q.ansTex);}
+};
+
+/* ---------- chapter 2: whole integrals ---------- */
+/* Each builder takes (a, k) and returns everything needed to display, check, solve and explain.
+   fStr is the integrand and FStr the stored antiderivative; gen() differentiates FStr numerically
+   and compares it with fStr before handing the question over. */
+const SIN_ITEMS=[
+  (a,k)=>{const A=a*a,S=R`\sqrt{${A}-x^2}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{${S}}`,fStr:`${k}/sqrt(${A}-x^2)`,
+    FTex:`${c}\\arcsin\\frac{x}{${a}}`,FStr:`${k}*arcsin(x/${a})`,
+    trig:R`\int\frac{${KC(k)}${a}\cos\theta}{${a}\cos\theta}\,d\theta=${c}\int d\theta=${c}\theta`,
+    back:R`\theta=\arcsin\frac{x}{${a}}`};},
+  (a,k)=>{const A=a*a,S=R`\sqrt{${A}-x^2}`,c=k===1?'':String(k);return {
+    fTex:`${c}${S}`,fStr:`${k}*sqrt(${A}-x^2)`,
+    FTex:`${CF(k,2)}x${S}+${CF(k*A,2)}\\arcsin\\frac{x}{${a}}`,
+    FStr:`${k}*x*sqrt(${A}-x^2)/2+${k*A}*arcsin(x/${a})/2`,
+    trig:R`\int ${KC(k)}${a}\cos\theta\cdot ${a}\cos\theta\,d\theta=${k*A}\int\cos^2\theta\,d\theta=${CF(k*A,2)}\left(\theta+\sin\theta\cos\theta\right)`,
+    back:R`\sin\theta=\frac{x}{${a}},\qquad \cos\theta=\frac{${S}}{${a}}`};},
+  (a,k)=>{const A=a*a,S=R`\sqrt{${A}-x^2}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${c}x^2}{${S}}`,fStr:`${k}*x^2/sqrt(${A}-x^2)`,
+    FTex:`${CF(k*A,2)}\\arcsin\\frac{x}{${a}}-${CF(k,2)}x${S}`,
+    FStr:`${k*A}*arcsin(x/${a})/2-${k}*x*sqrt(${A}-x^2)/2`,
+    trig:R`\int\frac{${KC(k)}${A}\sin^2\theta}{${a}\cos\theta}\,${a}\cos\theta\,d\theta=${k*A}\int\sin^2\theta\,d\theta=${CF(k*A,2)}\left(\theta-\sin\theta\cos\theta\right)`,
+    back:R`\sin\theta=\frac{x}{${a}},\qquad \cos\theta=\frac{${S}}{${a}}`};},
+  (a,k)=>{const A=a*a,S=R`\sqrt{${A}-x^2}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{x^2${S}}`,fStr:`${k}/(x^2*sqrt(${A}-x^2))`,
+    FTex:`-\\frac{${c}${S}}{${A}x}`,FStr:`-${k}*sqrt(${A}-x^2)/(${A}*x)`,
+    trig:R`\int\frac{${KC(k)}${a}\cos\theta\,d\theta}{${A}\sin^2\theta\cdot ${a}\cos\theta}=${CF(k,A)}\int\csc^2\theta\,d\theta=-${CF(k,A)}\cot\theta`,
+    back:R`\cot\theta=\frac{${S}}{x}`};},
+  (a,k)=>{const A=a*a,S=R`\sqrt{${A}-x^2}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${c}${S}}{x^2}`,fStr:`${k}*sqrt(${A}-x^2)/x^2`,
+    FTex:`-\\frac{${c}${S}}{x}-${c}\\arcsin\\frac{x}{${a}}`,
+    FStr:`-${k}*sqrt(${A}-x^2)/x-${k}*arcsin(x/${a})`,
+    trig:R`\int\frac{${KC(k)}${a}\cos\theta}{${A}\sin^2\theta}\,${a}\cos\theta\,d\theta=${c}\int\cot^2\theta\,d\theta=${c}\left(-\cot\theta-\theta\right)`,
+    back:R`\cot\theta=\frac{${S}}{x},\qquad \theta=\arcsin\frac{x}{${a}}`};}
+];
+const TAN_ITEMS=[
+  (a,k)=>{const A=a*a,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{x^2+${A}}`,fStr:`${k}/(x^2+${A})`,
+    FTex:`${CF(k,a)}\\arctan\\frac{x}{${a}}`,FStr:`(${k}/${a})*arctan(x/${a})`,
+    trig:R`\int\frac{${KC(k)}${a}\sec^2\theta\,d\theta}{${A}\sec^2\theta}=${CF(k,a)}\int d\theta=${CF(k,a)}\theta`,
+    back:R`\theta=\arctan\frac{x}{${a}}`};},
+  (a,k)=>{const A=a*a,T=R`\sqrt{x^2+${A}}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{${T}}`,fStr:`${k}/sqrt(x^2+${A})`,
+    FTex:`${c}\\ln\\left|x+${T}\\right|`,FStr:`${k}*ln(abs(x+sqrt(x^2+${A})))`,
+    trig:R`\int\frac{${KC(k)}${a}\sec^2\theta\,d\theta}{${a}\sec\theta}=${c}\int\sec\theta\,d\theta=${c}\ln\left|\sec\theta+\tan\theta\right|`,
+    back:R`\sec\theta=\frac{${T}}{${a}},\qquad \tan\theta=\frac{x}{${a}}`,
+    note:R`\ln\left|\frac{${T}+x}{${a}}\right|=\ln\left|x+${T}\right|-\ln ${a}`};},
+  (a,k)=>{const A=a*a,T=R`\sqrt{x^2+${A}}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{x^2${T}}`,fStr:`${k}/(x^2*sqrt(x^2+${A}))`,
+    FTex:`-\\frac{${c}${T}}{${A}x}`,FStr:`-${k}*sqrt(x^2+${A})/(${A}*x)`,
+    trig:R`\int\frac{${KC(k)}${a}\sec^2\theta\,d\theta}{${A}\tan^2\theta\cdot ${a}\sec\theta}=${CF(k,A)}\int\frac{\cos\theta}{\sin^2\theta}\,d\theta=-${CF(k,A)}\csc\theta`,
+    back:R`\csc\theta=\frac{${T}}{x}`};},
+  (a,k)=>{const A=a*a,T=R`\sqrt{x^2+${A}}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{\left(x^2+${A}\right)^{3/2}}`,fStr:`${k}/(x^2+${A})^(3/2)`,
+    FTex:`\\frac{${c}x}{${A}${T}}`,FStr:`${k}*x/(${A}*sqrt(x^2+${A}))`,
+    trig:R`\int\frac{${KC(k)}${a}\sec^2\theta\,d\theta}{${a*a*a}\sec^3\theta}=${CF(k,A)}\int\cos\theta\,d\theta=${CF(k,A)}\sin\theta`,
+    back:R`\sin\theta=\frac{x}{${T}}`};},
+  (a,k)=>{const A=a*a,c=k===1?'':String(k);return {
+    fTex:R`\frac{${c}x^2}{x^2+${A}}`,fStr:`${k}*x^2/(x^2+${A})`,
+    FTex:`${c}x-${CF(k*a,1)}\\arctan\\frac{x}{${a}}`,FStr:`${k}*x-${k*a}*arctan(x/${a})`,
+    trig:R`\int\frac{${KC(k)}${A}\tan^2\theta}{${A}\sec^2\theta}\,${a}\sec^2\theta\,d\theta=${k*a}\int\tan^2\theta\,d\theta=${k*a}\left(\tan\theta-\theta\right)`,
+    back:R`\tan\theta=\frac{x}{${a}},\qquad \theta=\arctan\frac{x}{${a}}`};},
+  (a,k)=>{const A=a*a,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{\left(x^2+${A}\right)^{2}}`,fStr:`${k}/(x^2+${A})^2`,
+    FTex:`\\frac{${c}x}{${2*A}\\left(x^2+${A}\\right)}+${CF(k,2*A*a)}\\arctan\\frac{x}{${a}}`,
+    FStr:`${k}*x/(${2*A}*(x^2+${A}))+(${k}/${2*A*a})*arctan(x/${a})`,
+    trig:R`\int\frac{${KC(k)}${a}\sec^2\theta\,d\theta}{${A*A}\sec^4\theta}=${CF(k,A*a)}\int\cos^2\theta\,d\theta=${CF(k,2*A*a)}\left(\theta+\sin\theta\cos\theta\right)`,
+    back:R`\sin\theta\cos\theta=\frac{x}{\sqrt{x^2+${A}}}\cdot\frac{${a}}{\sqrt{x^2+${A}}}=\frac{${a}x}{x^2+${A}}`};}
+];
+const SEC_ITEMS=[
+  (a,k)=>{const A=a*a,U=R`\sqrt{x^2-${A}}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{${U}}`,fStr:`${k}/sqrt(x^2-${A})`,
+    FTex:`${c}\\ln\\left|x+${U}\\right|`,FStr:`${k}*ln(abs(x+sqrt(x^2-${A})))`,
+    trig:R`\int\frac{${KC(k)}${a}\sec\theta\tan\theta\,d\theta}{${a}\tan\theta}=${c}\int\sec\theta\,d\theta=${c}\ln\left|\sec\theta+\tan\theta\right|`,
+    back:R`\sec\theta=\frac{x}{${a}},\qquad \tan\theta=\frac{${U}}{${a}}`};},
+  (a,k)=>{const A=a*a,U=R`\sqrt{x^2-${A}}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${c}${U}}{x}`,fStr:`${k}*sqrt(x^2-${A})/x`,
+    FTex:`${c}${U}-${CF(k*a,1)}\\arccos\\frac{${a}}{x}`,FStr:`${k}*sqrt(x^2-${A})-${k*a}*arccos(${a}/x)`,
+    trig:R`\int\frac{${KC(k)}${a}\tan\theta}{${a}\sec\theta}\,${a}\sec\theta\tan\theta\,d\theta=${k*a}\int\tan^2\theta\,d\theta=${k*a}\left(\tan\theta-\theta\right)`,
+    back:R`\tan\theta=\frac{${U}}{${a}},\qquad \theta=\operatorname{arcsec}\frac{x}{${a}}=\arccos\frac{${a}}{x}`,arcsec:true};},
+  (a,k)=>{const A=a*a,U=R`\sqrt{x^2-${A}}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${k}}{x${U}}`,fStr:`${k}/(x*sqrt(x^2-${A}))`,
+    FTex:`${CF(k,a)}\\arccos\\frac{${a}}{x}`,FStr:`(${k}/${a})*arccos(${a}/x)`,
+    trig:R`\int\frac{${KC(k)}${a}\sec\theta\tan\theta\,d\theta}{${a}\sec\theta\cdot ${a}\tan\theta}=${CF(k,a)}\int d\theta=${CF(k,a)}\theta`,
+    back:R`\theta=\operatorname{arcsec}\frac{x}{${a}}=\arccos\frac{${a}}{x}`,arcsec:true};},
+  (a,k)=>{const A=a*a,U=R`\sqrt{x^2-${A}}`,c=k===1?'':String(k);return {
+    fTex:R`\frac{${c}x}{${U}}`,fStr:`${k}*x/sqrt(x^2-${A})`,
+    FTex:`${c}${U}`,FStr:`${k}*sqrt(x^2-${A})`,
+    trig:R`\int\frac{${KC(k)}${a}\sec\theta}{${a}\tan\theta}\,${a}\sec\theta\tan\theta\,d\theta=${k*a}\int\sec^2\theta\,d\theta=${k*a}\tan\theta`,
+    back:R`\tan\theta=\frac{${U}}{${a}}`,
+    plain:R`u=x^2-${A},\; du=2x\,dx`};}
+];
+function antiType(name,items,subOf,domOf,caseTex){
+  return {name,
+    gen(){
+      return drawVerified(()=>{
+        const a=rint(2,5),k=pick([1,1,1,2,3]),i=rint(0,items.length-1);
+        const c=items[i](a,k);c.a=a;c.k=k;c.dom=domOf(a);c.sub=subOf(a);c.ansStr=c.FStr;return c;},
+        c=>verifyAnti(c.FStr,c.fStr,c.dom),name);},
+    render(q,el){
+      el.innerHTML=`<p class="prompt">Evaluate the integral. Give the answer in terms of ${M('x')}; the ${M('+\\,C')} is optional.${q.arcsec?` Write ${M(R`\operatorname{arcsec}\frac{x}{a}`)} as ${M(R`\arccos\frac{a}{x}`)}.`:''}</p>
+        ${D(iTex(q.fTex))}`;
+      numIn(el,'F','',{xwide:true,placeholder:'antiderivative in x'});},
+    check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.FStr,['x'],{domain:{x:q.dom}}));},
+    hint(q,el){hintBox(el,`This is the ${M(caseTex)} case with ${M('a='+q.a)}: substitute ${M(q.sub)}.`);},
+    solution(q){
+      return `Substitute ${M(q.sub)}. The integral becomes`+
+        D(q.trig)+
+        (q.plain?`A plain substitution ${M(q.plain)} would have done this one faster: no triangle, no trig. Always check for that first. `:'')+
+        `The triangle gives ${M(q.back)}${q.note?`, and ${M(q.note)} differs from the answer below by a constant`:''}, so`+
+        D(iTex(q.fTex)+'='+q.FTex+'+C');}};
+}
+Q.sinCase=antiType('integrate with x = a sin θ',SIN_ITEMS,a=>`x=${a}\\sin\\theta,\\; dx=${a}\\cos\\theta\\,d\\theta`,a=>[0.2*a,0.8*a],CASENAME.sin);
+Q.tanCase=antiType('integrate with x = a tan θ',TAN_ITEMS,a=>`x=${a}\\tan\\theta,\\; dx=${a}\\sec^2\\theta\\,d\\theta`,()=>[0.3,2],CASENAME.tan);
+Q.secCase=antiType('integrate with x = a sec θ',SEC_ITEMS,a=>`x=${a}\\sec\\theta,\\; dx=${a}\\sec\\theta\\tan\\theta\\,d\\theta`,a=>[1.2*a,3*a],CASENAME.sec);
+
+/* definite integrals: the limits become angles */
+const DEF_ITEMS=[
+  a=>{const A=a*a;return {lo:0,hi:a/2,loT:'0',hiT:texNum(a/2),
+    fTex:R`\frac{1}{\sqrt{${A}-x^2}}`,fStr:`1/sqrt(${A}-x^2)`,FStr:`arcsin(x/${a})`,
+    val:PI/6,valTex:R`\tfrac{\pi}{6}`,ansStr:'pi/6',
+    sub:`x=${a}\\sin\\theta`,lim:R`x=0\Rightarrow\theta=0,\qquad x=`+texNum(a/2)+R`\Rightarrow\sin\theta=\tfrac12\Rightarrow\theta=\tfrac{\pi}{6}`,
+    trig:R`\int_0^{\pi/6}\frac{${a}\cos\theta}{${a}\cos\theta}\,d\theta=\int_0^{\pi/6}d\theta`};},
+  a=>{const A=a*a;return {lo:0,hi:a,loT:'0',hiT:String(a),
+    fTex:R`\sqrt{${A}-x^2}`,fStr:`sqrt(${A}-x^2)`,FStr:`x*sqrt(${A}-x^2)/2+${A}*arcsin(x/${a})/2`,
+    val:PI*A/4,valTex:`${CF(A,4)}\\pi`,ansStr:`${A}*pi/4`,
+    sub:`x=${a}\\sin\\theta`,lim:R`x=0\Rightarrow\theta=0,\qquad x=${a}\Rightarrow\sin\theta=1\Rightarrow\theta=\tfrac{\pi}{2}`,
+    trig:R`${A}\int_0^{\pi/2}\cos^2\theta\,d\theta=${A}\cdot\tfrac{\pi}{4}`,
+    why:'This is a quarter of the disk of radius '+a+', so the answer had to be a multiple of \\(\\pi\\).'};},
+  a=>{const A=a*a;return {lo:0,hi:a,loT:'0',hiT:String(a),
+    fTex:R`\frac{1}{x^2+${A}}`,fStr:`1/(x^2+${A})`,FStr:`arctan(x/${a})/${a}`,
+    val:PI/(4*a),valTex:`${CF(1,4*a)}\\pi`,ansStr:`pi/${4*a}`,
+    sub:`x=${a}\\tan\\theta`,lim:R`x=0\Rightarrow\theta=0,\qquad x=${a}\Rightarrow\tan\theta=1\Rightarrow\theta=\tfrac{\pi}{4}`,
+    trig:R`${CF(1,a)}\int_0^{\pi/4}d\theta=${CF(1,a)}\cdot\tfrac{\pi}{4}`};},
+  a=>{const A=a*a;return {lo:0,hi:a*Math.sqrt(3),loT:'0',hiT:`${a}\\sqrt{3}`,
+    fTex:R`\frac{1}{x^2+${A}}`,fStr:`1/(x^2+${A})`,FStr:`arctan(x/${a})/${a}`,
+    val:PI/(3*a),valTex:`${CF(1,3*a)}\\pi`,ansStr:`pi/${3*a}`,
+    sub:`x=${a}\\tan\\theta`,lim:R`x=0\Rightarrow\theta=0,\qquad x=${a}\sqrt3\Rightarrow\tan\theta=\sqrt3\Rightarrow\theta=\tfrac{\pi}{3}`,
+    trig:R`${CF(1,a)}\int_0^{\pi/3}d\theta=${CF(1,a)}\cdot\tfrac{\pi}{3}`};},
+  a=>{const A=a*a;return {lo:a,hi:2*a,loT:String(a),hiT:String(2*a),
+    fTex:R`\frac{1}{x\sqrt{x^2-${A}}}`,fStr:`1/(x*sqrt(x^2-${A}))`,FStr:`arccos(${a}/x)/${a}`,
+    val:PI/(3*a),valTex:`${CF(1,3*a)}\\pi`,ansStr:`pi/${3*a}`,
+    sub:`x=${a}\\sec\\theta`,lim:R`x=${a}\Rightarrow\sec\theta=1\Rightarrow\theta=0,\qquad x=${2*a}\Rightarrow\sec\theta=2\Rightarrow\theta=\tfrac{\pi}{3}`,
+    trig:R`${CF(1,a)}\int_0^{\pi/3}d\theta=${CF(1,a)}\cdot\tfrac{\pi}{3}`};},
+  a=>{const A=a*a;return {lo:0,hi:a/2,loT:'0',hiT:texNum(a/2),
+    fTex:R`\frac{x^2}{\sqrt{${A}-x^2}}`,fStr:`x^2/sqrt(${A}-x^2)`,FStr:`${A}*arcsin(x/${a})/2-x*sqrt(${A}-x^2)/2`,
+    val:A*(PI/12-Math.sqrt(3)/8),valTex:`${CF(A,12)}\\pi-${CF(A,8)}\\sqrt{3}`,ansStr:`${A}*pi/12-${A}*sqrt(3)/8`,
+    sub:`x=${a}\\sin\\theta`,lim:R`x=0\Rightarrow\theta=0,\qquad x=`+texNum(a/2)+R`\Rightarrow\theta=\tfrac{\pi}{6}`,
+    trig:R`${A}\int_0^{\pi/6}\sin^2\theta\,d\theta=${CF(A,2)}\Big[\theta-\sin\theta\cos\theta\Big]_0^{\pi/6}`};},
+  a=>{const A=a*a;return {lo:0,hi:a,loT:'0',hiT:String(a),
+    fTex:R`\frac{1}{\left(x^2+${A}\right)^{3/2}}`,fStr:`1/(x^2+${A})^(3/2)`,FStr:`x/(${A}*sqrt(x^2+${A}))`,
+    val:1/(A*Math.SQRT2),valTex:R`\frac{1}{${A}\sqrt{2}}`,ansStr:`1/(${A}*sqrt(2))`,
+    sub:`x=${a}\\tan\\theta`,lim:R`x=0\Rightarrow\theta=0,\qquad x=${a}\Rightarrow\theta=\tfrac{\pi}{4}`,
+    trig:R`${CF(1,A)}\int_0^{\pi/4}\cos\theta\,d\theta=${CF(1,A)}\sin\tfrac{\pi}{4}`};},
+  a=>{const A=a*a;return {lo:0,hi:a,loT:'0',hiT:String(a),
+    fTex:R`\frac{1}{\sqrt{x^2+${A}}}`,fStr:`1/sqrt(x^2+${A})`,FStr:`ln(abs(x+sqrt(x^2+${A})))`,
+    val:Math.log(1+Math.SQRT2),valTex:R`\ln\left(1+\sqrt{2}\right)`,ansStr:'ln(1+sqrt(2))',
+    sub:`x=${a}\\tan\\theta`,lim:R`x=0\Rightarrow\theta=0,\qquad x=${a}\Rightarrow\theta=\tfrac{\pi}{4}`,
+    trig:R`\int_0^{\pi/4}\sec\theta\,d\theta=\Big[\ln\left|\sec\theta+\tan\theta\right|\Big]_0^{\pi/4}=\ln\left(\sqrt2+1\right)`};},
+  a=>{const A=a*a;return {lo:0,hi:a/2,loT:'0',hiT:texNum(a/2),
+    fTex:R`\frac{1}{\left(${A}-x^2\right)^{3/2}}`,fStr:`1/(${A}-x^2)^(3/2)`,FStr:`x/(${A}*sqrt(${A}-x^2))`,
+    val:1/(A*Math.sqrt(3)),valTex:R`\frac{1}{${A}\sqrt{3}}`,ansStr:`1/(${A}*sqrt(3))`,
+    sub:`x=${a}\\sin\\theta`,lim:R`x=0\Rightarrow\theta=0,\qquad x=`+texNum(a/2)+R`\Rightarrow\theta=\tfrac{\pi}{6}`,
+    trig:R`${CF(1,A)}\int_0^{\pi/6}\sec^2\theta\,d\theta=${CF(1,A)}\tan\tfrac{\pi}{6}`};},
+  a=>{const A=a*a;return {lo:a,hi:a*Math.SQRT2,loT:String(a),hiT:`${a}\\sqrt{2}`,
+    fTex:R`\frac{1}{x^2\sqrt{x^2-${A}}}`,fStr:`1/(x^2*sqrt(x^2-${A}))`,FStr:`sqrt(x^2-${A})/(${A}*x)`,
+    val:1/(A*Math.SQRT2),valTex:R`\frac{1}{${A}\sqrt{2}}`,ansStr:`1/(${A}*sqrt(2))`,
+    sub:`x=${a}\\sec\\theta`,lim:R`x=${a}\Rightarrow\theta=0,\qquad x=${a}\sqrt2\Rightarrow\sec\theta=\sqrt2\Rightarrow\theta=\tfrac{\pi}{4}`,
+    trig:R`${CF(1,A)}\int_0^{\pi/4}\cos\theta\,d\theta=${CF(1,A)}\sin\tfrac{\pi}{4}`};}
+];
+Q.definiteTrigSub={name:'definite integral, limits become angles',
+  gen(){return drawVerified(()=>DEF_ITEMS[rint(0,DEF_ITEMS.length-1)](rint(2,4)),
+    c=>verifyDef(c.FStr,c.fStr,c.lo,c.hi,c.val),'definiteTrigSub');},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate the definite integral. Change the limits into angles rather than converting back to ${M('x')}. Give the exact value, like <code>pi/6</code> or <code>1/(4sqrt(2))</code>.</p>
+      ${D(iTex(q.fTex,q.loT,q.hiT))}`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){hintBox(el,`Substitute ${M(q.sub)}, then ${M(q.lim)}.`);},
+  solution(q){
+    return `Substitute ${M(q.sub)} and move the limits: ${M(q.lim)}. Then`+
+      D(iTex(q.fTex,q.loT,q.hiT)+'='+q.trig+'='+q.valTex+(Number.isInteger(q.val)?'':`\\approx ${fmtDec(q.val,4)}`))+
+      (q.why||'');}
+};
+
+/* ---------- chapter 3: completing the square ---------- */
+const quadTex=(h,c)=>texPoly([1,2*h,c],'x');
+const quadStr=(h,c)=>`x^2${2*h>=0?'+':'-'}${Math.abs(2*h)}*x${c>=0?'+':'-'}${Math.abs(c)}`;
+const polyStr=(b,c)=>`x^2${b>=0?'+':'-'}${Math.abs(b)}*x${c>=0?'+':'-'}${Math.abs(c)}`;
+const negQuadTex=(h,K)=>`${K}${-2*h>=0?' + ':' - '}${Math.abs(2*h)===1?'':Math.abs(2*h)}x - x^2`;
+const negQuadStr=(h,K)=>`${K}${-2*h>=0?'+':'-'}${Math.abs(2*h)}*x-x^2`;
+
+Q.completeSquare={name:'complete the square',
+  gen(){
+    if(Math.random()<0.5){
+      let h,k;do{h=rnz(-4,4);k=rnz(-9,9);}while(h*h+k===0);
+      return {form:'plus',h,k,qTex:quadTex(h,h*h+k)};
+    }
+    let h,k;do{h=rnz(-4,4);k=rint(1,9);}while(k-h*h===0);
+    return {form:'minus',h,k,K:k-h*h,qTex:negQuadTex(h,k-h*h)};},
+  render(q,el){
+    const target=q.form==='plus'?R`(x+h)^2+k`:R`k-(x+h)^2`;
+    el.innerHTML=`<p class="prompt">Complete the square: write ${M(q.qTex)} in the form ${M(target)}. Give ${M('h')} and ${M('k')}; either may be negative.</p>`;
+    numIn(el,'h',M('h='));
+    numIn(el,'k',M('k='));},
+  check(q,el){return Gall(el,[
+    ['h',checkNumber($('[data-k=h]',el).value,q.h)],
+    ['k',checkNumber($('[data-k=k]',el).value,q.k)]]);},
+  hint(q,el){hintBox(el,q.form==='plus'?`Half the coefficient of ${M('x')} is ${M('h')}. Then ${M('k')} is whatever is left over after you subtract ${M('h^2')}.`:`Factor the minus sign out of the ${M('x')} terms first: ${M(negQuadTex(q.h,q.K)+R`=${q.K}-\left(x^2${2*q.h>=0?'+':'-'}${Math.abs(2*q.h)}x\right)`)}.`);},
+  solution(q){
+    const A2=q.h*q.h;
+    return q.form==='plus'
+      ?`Half of ${M(String(2*q.h))} is ${M(String(q.h))}, and ${M(`(x${q.h>=0?'+':'-'}${Math.abs(q.h)})^2=x^2${2*q.h>=0?'+':'-'}${Math.abs(2*q.h)}x+${A2}`)}, so subtract the extra ${M(String(A2))}:`+
+        D(`${q.qTex}=${shTex(q.h)}^2${q.k>=0?'+':'-'}${Math.abs(q.k)}`)
+      :`Pull the minus sign out of the ${M('x')} terms, then complete the square inside:`+
+        D(`${q.qTex}=${q.K}-\\left(x^2${2*q.h>=0?'+':'-'}${Math.abs(2*q.h)}x\\right)=${q.K}+${A2}-${shTex(q.h)}^2=${q.k}-${shTex(q.h)}^2`);}
+};
+
+const SQ_ITEMS=[
+  ()=>{const h=rnz(-3,3),a=rint(2,3),U=shStr(h),c=h*h+a*a;return {
+    qTex:quadTex(h,c),
+    fTex:R`\frac{1}{\sqrt{${quadTex(h,c)}}}`,fStr:`1/sqrt(${quadStr(h,c)})`,
+    FTex:R`\ln\left|${shBare(h)}+\sqrt{${quadTex(h,c)}}\right|`,FStr:`ln(abs(${U}+sqrt(${U}^2+${a*a})))`,
+    sqTex:`${shTex(h)}^2+${a*a}`,caseTex:CASENAME.tan,subTex:`u=${a}\\tan\\theta`,
+    uAns:R`\ln\left|u+\sqrt{u^2+${a*a}}\right|`,dom:[-h+0.3,-h+2],h,a};},
+  ()=>{const a=pick([2,3]),h=pick(a===2?[-1,1]:[-2,-1,1,2]),U=shStr(h),K=a*a-h*h;return {
+    qTex:negQuadTex(h,K),
+    fTex:R`\frac{1}{\sqrt{${negQuadTex(h,K)}}}`,fStr:`1/sqrt(${negQuadStr(h,K)})`,
+    FTex:R`\arcsin\frac{${shBare(h)}}{${a}}`,FStr:`arcsin(${U}/${a})`,
+    sqTex:`${a*a}-${shTex(h)}^2`,caseTex:CASENAME.sin,subTex:`u=${a}\\sin\\theta`,
+    uAns:R`\arcsin\frac{u}{${a}}`,dom:[-h-0.8*a,-h+0.8*a],h,a};},
+  ()=>{const h=rnz(-3,3),a=rint(2,3),U=shStr(h),c=h*h+a*a;return {
+    qTex:quadTex(h,c),
+    fTex:R`\frac{1}{${quadTex(h,c)}}`,fStr:`1/(${quadStr(h,c)})`,
+    FTex:`${CF(1,a)}\\arctan\\frac{${shBare(h)}}{${a}}`,FStr:`arctan(${U}/${a})/${a}`,
+    sqTex:`${shTex(h)}^2+${a*a}`,caseTex:CASENAME.tan,subTex:`u=${a}\\tan\\theta`,
+    uAns:`${CF(1,a)}\\arctan\\frac{u}{${a}}`,dom:[-h-2,-h+2],h,a};},
+  ()=>{const h=rnz(-3,3),a=rint(2,3),U=shStr(h),c=h*h+a*a;return {
+    qTex:quadTex(h,c),
+    fTex:R`\frac{1}{\left(${quadTex(h,c)}\right)^{3/2}}`,fStr:`1/(${quadStr(h,c)})^(3/2)`,
+    FTex:R`\frac{${shBare(h)}}{${a*a}\sqrt{${quadTex(h,c)}}}`,FStr:`${U}/(${a*a}*sqrt(${U}^2+${a*a}))`,
+    sqTex:`${shTex(h)}^2+${a*a}`,caseTex:CASENAME.tan,subTex:`u=${a}\\tan\\theta`,
+    uAns:R`\frac{u}{${a*a}\sqrt{u^2+${a*a}}}`,dom:[-h-2,-h+2],h,a};}
+];
+Q.squareThenSub={name:'integrate after completing the square',
+  gen(){return drawVerified(()=>{const c=SQ_ITEMS[rint(0,SQ_ITEMS.length-1)]();c.ansStr=c.FStr;return c;},
+    c=>verifyAnti(c.FStr,c.fStr,c.dom),'squareThenSub');},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Complete the square first, then integrate. Give the answer in terms of ${M('x')}; the ${M('+\\,C')} is optional.</p>
+      ${D(iTex(q.fTex))}`;
+    numIn(el,'F','',{xwide:true,placeholder:'antiderivative in x'});},
+  check(q,el){return G(el,'F',checkExprUpToConstant($('[data-k=F]',el).value,q.FStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,el){hintBox(el,`${M(q.qTex+'='+q.sqTex)}, so put ${M('u='+shTex(q.h).replace(/[()]/g,''))} and ${M('du=dx')}.`);},
+  solution(q){
+    return `Half the middle coefficient is ${M(String(q.h))}, so ${M(q.qTex+'='+q.sqTex)}. With ${M('u='+shTex(q.h).replace(/[()]/g,''))}, ${M('du=dx')}, this is the ${M(q.caseTex)} case with ${M('a='+q.a)} (${M(q.subTex)}):`+
+      D(iTex(q.fTex)+'='+q.uAns+'+C')+
+      `Now put ${M('u='+shTex(q.h).replace(/[()]/g,''))} back:`+
+      D(q.FTex+'+C');}
+};
+
+Q.discriminantRoute={name:'discriminant: factor or complete the square',
+  gen(){
+    return drawVerified(()=>{
+      if(Math.random()<0.5){
+        const h=rnz(-3,3),a=rint(2,3),c=h*h+a*a,U=shStr(h);
+        return {kind:'neg',h,a,b:2*h,c,D:-4*a*a,qTex:quadTex(h,c),
+          FTex:`${CF(1,a)}\\arctan\\frac{${shBare(h)}}{${a}}`,FStr:`arctan(${U}/${a})/${a}`,
+          fStr:`1/(${quadStr(h,c)})`,dom:[-h-2,-h+2]};
+      }
+      let r,s;do{r=rint(-4,4);s=rint(-4,4);}while(r>=s);
+      const b=-(r+s),c=r*s,D=(s-r)*(s-r);
+      return {kind:'pos',r,s,b,c,D,qTex:texPoly([1,b,c],'x'),
+        FTex:`${CF(1,r-s)}\\left(\\ln\\left|x${-r>=0?'+':'-'}${Math.abs(r)}\\right|-\\ln\\left|x${-s>=0?'+':'-'}${Math.abs(s)}\\right|\\right)`,
+        FStr:`(1/${r-s})*(ln(abs(x-(${r})))-ln(abs(x-(${s}))))`,
+        fStr:`1/(${polyStr(b,c)})`,dom:[s+0.5,s+3]};},
+      q=>verifyAnti(q.FStr,q.fStr,q.dom),'discriminantRoute');},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">First the discriminant ${M('b^2-4c')}, then the antiderivative. A positive discriminant means the quadratic factors, so the integral is partial fractions and the answer has logs; a negative discriminant means the completed square is ${M('(x+h)^2+a^2')} and the answer is an arctangent. You may leave ${M(R`\ln`)} in the answer, and ${M('+\\,C')} is optional.</p>
+      ${D(iTex(R`\frac{1}{`+q.qTex+'}'))}`;
+    numIn(el,'d',M('b^2-4c='));
+    numIn(el,'F',M(iTex(R`\frac{1}{`+q.qTex+'}')+'='),{xwide:true,placeholder:'antiderivative in x'});},
+  check(q,el){return Gall(el,[
+    ['d',checkNumber($('[data-k=d]',el).value,q.D)],
+    ['F',checkExprUpToConstant($('[data-k=F]',el).value,q.FStr,['x'],{domain:{x:q.dom}})]]);},
+  hint(q,el){hintBox(el,q.kind==='pos'
+    ?`${M(String(q.D))} is positive, so the quadratic factors: ${M(q.qTex+`=(x${-q.r>=0?'+':'-'}${Math.abs(q.r)})(x${-q.s>=0?'+':'-'}${Math.abs(q.s)})`)}. Split it with partial fractions.`
+    :`${M(String(q.D))} is negative, so complete the square: ${M(q.qTex+'='+shTex(q.h)+'^2+'+q.a*q.a)}.`);},
+  solution(q){
+    if(q.kind==='pos')return `${M(`b^2-4c=(${q.b})^2-4(${q.c})=${q.D}\\gt 0`)}, so the quadratic factors: ${M(q.qTex+`=(x${-q.r>=0?'+':'-'}${Math.abs(q.r)})(x${-q.s>=0?'+':'-'}${Math.abs(q.s)})`)}. Partial fractions give ${M(R`\frac{1}{(x-r)(x-s)}=\frac{1}{r-s}\left(\frac{1}{x-r}-\frac{1}{x-s}\right)`)} with ${M(`r=${q.r}`)} and ${M(`s=${q.s}`)}, so`+
+      D(q.FTex+'+C');
+    return `${M(`b^2-4c=(${q.b})^2-4(${q.c})=${q.D}\\lt 0`)}, so the quadratic never factors over the reals. Complete the square: ${M(q.qTex+'='+shTex(q.h)+`^2+${q.a*q.a}`)}. With ${M('u='+shTex(q.h).replace(/[()]/g,''))} this is ${M(R`\int\frac{du}{u^2+`+q.a*q.a+'}')}, an arctangent:`+
+      D(q.FTex+'+C');}
+};
+
+/* ============================================================ chapter 1: the reference triangle */
+(function(){
+  const CX={a:'#d97706',b:'#2563eb',rad:'#7c3aed'};
+  const p=new Plot2D('#triPlot',{xmin:-1,xmax:5,ymin:-1,ymax:5,grid:false,axes:false,labels:false});
+  let kind='sin',a=3,x=1.5,sl=null;
+  const cbox=$('#triCase');
+  [['√(a² − x²) : x = a sin θ','sin'],['√(a² + x²) : x = a tan θ','tan'],['√(x² − a²) : x = a sec θ','sec']]
+    .forEach(([lab,k])=>{const b=el('button',{class:'btn small'},lab);
+      b.onclick=()=>{kind=k;$$('.btn',cbox).forEach(y=>y.classList.remove('on'));b.classList.add('on');buildSlider();draw();};
+      cbox.appendChild(b);});
+  $$('.btn',cbox)[0].classList.add('on');
+  stepper('#triA',a,1,6,v=>{a=v;buildSlider();draw();});
+  function range(){return kind==='sin'?[0.08*a,0.97*a]:kind==='tan'?[0.08,3*a]:[1.03*a,3*a];}
+  function buildSlider(){
+    const [lo,hi]=range();x=clamp(x,lo,hi);
+    $('#triSliders').innerHTML='';
+    sl=sliderRow($('#triSliders'),{label:'x',min:lo,max:hi,step:(hi-lo)/200,value:x,onInput:v=>{x=v;draw();}});
+  }
+  function geom(){
+    const A=a*a;
+    if(kind==='sin')return {opp:x,adj:Math.sqrt(Math.max(0,A-x*x)),hyp:a,
+      lo:'x',la:`√(${A} − x²)`,lh:String(a),co:CX.a,ca:CX.rad,ch:CX.b,
+      rad:`√(${A} − x²)`,radside:'the adjacent side'};
+    if(kind==='tan')return {opp:x,adj:a,hyp:Math.hypot(x,a),
+      lo:'x',la:String(a),lh:`√(x² + ${A})`,co:CX.a,ca:CX.b,ch:CX.rad,
+      rad:`√(x² + ${A})`,radside:'the hypotenuse'};
+    return {opp:Math.sqrt(Math.max(0,x*x-A)),adj:a,hyp:x,
+      lo:`√(x² − ${A})`,la:String(a),lh:'x',co:CX.rad,ca:CX.b,ch:CX.a,
+      rad:`√(x² − ${A})`,radside:'the opposite side'};
+  }
+  function draw(){
+    const g=geom(),L=Math.max(g.adj,g.opp,1e-6);
+    Object.assign(p.o,{xmin:-0.22*L,xmax:1.30*L,ymin:-0.30*L,ymax:1.22*L});
+    p.begin();
+    const O=[0,0],B=[g.adj,0],T=[g.adj,g.opp];
+    p.poly([O,B,T],{fill:'rgba(124,58,237,.07)',stroke:'',width:0});
+    p.poly([O,B],{close:false,fill:'',stroke:g.ca,width:3.4});
+    p.poly([B,T],{close:false,fill:'',stroke:g.co,width:3.4});
+    p.poly([O,T],{close:false,fill:'',stroke:g.ch,width:3.4});
+    const s=0.055*L;
+    p.poly([[g.adj-s,0],[g.adj-s,s],[g.adj,s]],{close:false,fill:'',stroke:'#b9b5ab',width:1.4});
+    const th=Math.atan2(g.opp,g.adj),r=0.22*L;
+    p.param(t=>[r*Math.cos(t),r*Math.sin(t)],0,th,{color:'#8b877e',width:1.6,n:60});
+    p.text([r*1.35*Math.cos(th/2),r*1.35*Math.sin(th/2)],'θ',{color:'#57534e',font:'600 15px -apple-system,Segoe UI,sans-serif'});
+    p.text([g.adj/2,-0.10*L],g.la,{color:g.ca,align:'center',font:'600 13px -apple-system,Segoe UI,sans-serif'});
+    p.text([g.adj+0.03*L,g.opp/2],g.lo,{color:g.co,font:'600 13px -apple-system,Segoe UI,sans-serif'});
+    p.text([g.adj*0.42-0.02*L,g.opp*0.42+0.07*L],g.lh,{color:g.ch,align:'right',font:'600 13px -apple-system,Segoe UI,sans-serif'});
+    const A=a*a,S=g.hyp,sinv=g.opp/g.hyp,cosv=g.adj/g.hyp;
+    const F={sin:{s:`x/${a}`,c:`√(${A} − x²)/${a}`,t:`x/√(${A} − x²)`,e:`${a}/√(${A} − x²)`,th:`arcsin(x/${a})`},
+      tan:{s:`x/√(x² + ${A})`,c:`${a}/√(x² + ${A})`,t:`x/${a}`,e:`√(x² + ${A})/${a}`,th:`arctan(x/${a})`},
+      sec:{s:`√(x² − ${A})/x`,c:`${a}/x`,t:`√(x² − ${A})/${a}`,e:`x/${a}`,th:`arccos(${a}/x)`}}[kind];
+    $('#triOut').innerHTML=
+      `x = ${fmtDec(x,3)}, a = ${a} &nbsp;→&nbsp; sides ${fmtDec(g.opp,3)} (opp), ${fmtDec(g.adj,3)} (adj), ${fmtDec(g.hyp,3)} (hyp)<br>`+
+      `the radical <b>${g.rad}</b> is ${g.radside}<br>`+
+      `θ = ${F.th} = <b>${fmtDec(th,4)}</b> rad = ${fmtDec(th*180/PI,2)}°<br>`+
+      `sin θ = ${F.s} = ${fmtDec(sinv,4)}<br>`+
+      `cos θ = ${F.c} = ${fmtDec(cosv,4)}<br>`+
+      `tan θ = ${F.t} = ${fmtDec(cosv?sinv/cosv:Infinity,4)}<br>`+
+      `sec θ = ${F.e} = ${fmtDec(cosv?1/cosv:Infinity,4)}`;
+  }
+  let dir=1;
+  const anim=animator('three',dt=>{
+    const [lo,hi]=range();x+=dir*dt*(hi-lo)*0.35;
+    if(x>=hi){x=hi;dir=-1;}if(x<=lo){x=lo;dir=1;}
+    if(sl)sl.set(x);draw();});
+  $('#triPlay').onclick=()=>{anim.toggle();$('#triPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  buildSlider();redrawOnShow('three',draw);draw();
+  new Drill({mount:'#drill-three',section:'three',goal:7,
+    ...mixDrill([Q.pickSub,Q.pickSub,Q.backToX,Q.backToX,Q.simplifyRadical,Q.simplifyRadical])});
+})();
+
+/* ============================================================ chapter 2: limits become angles + walkthrough */
+(function(){
+  const LIMP=[
+    {n:'√(9 − x²)',a:3,x0:0,x1:3,ymax:3.5,sub:'x = 3 sin θ',thT:'arcsin(b/3)',
+     f:x=>Math.sqrt(Math.max(0,9-x*x)),F:x=>x*Math.sqrt(Math.max(0,9-x*x))/2+4.5*Math.asin(clamp(x/3,-1,1)),
+     th:x=>Math.asin(clamp(x/3,-1,1)),
+     tex:R`\int_0^{b}\sqrt{9-x^2}\,dx=9\int_0^{\theta_b}\cos^2\theta\,d\theta,\qquad \theta_b=\arcsin\frac{b}{3}`},
+    {n:'1/√(x² + 4)',a:2,x0:0,x1:6,ymax:0.62,sub:'x = 2 tan θ',thT:'arctan(b/2)',
+     f:x=>1/Math.sqrt(x*x+4),F:x=>Math.log(x+Math.sqrt(x*x+4)),th:x=>Math.atan(x/2),
+     tex:R`\int_0^{b}\frac{dx}{\sqrt{x^2+4}}=\int_0^{\theta_b}\sec\theta\,d\theta,\qquad \theta_b=\arctan\frac{b}{2}`},
+    {n:'1/(x² + 4)',a:2,x0:0,x1:6,ymax:0.3,sub:'x = 2 tan θ',thT:'arctan(b/2)',
+     f:x=>1/(x*x+4),F:x=>Math.atan(x/2)/2,th:x=>Math.atan(x/2),
+     tex:R`\int_0^{b}\frac{dx}{x^2+4}=\tfrac12\int_0^{\theta_b}d\theta=\tfrac{\theta_b}{2},\qquad \theta_b=\arctan\frac{b}{2}`},
+    {n:'√(x² − 4)/x',a:2,x0:2,x1:6,ymax:1.05,sub:'x = 2 sec θ',thT:'arccos(2/b)',
+     f:x=>Math.sqrt(Math.max(0,x*x-4))/x,F:x=>Math.sqrt(Math.max(0,x*x-4))-2*Math.acos(clamp(2/x,-1,1)),
+     th:x=>Math.acos(clamp(2/x,-1,1)),
+     tex:R`\int_2^{b}\frac{\sqrt{x^2-4}}{x}\,dx=2\int_0^{\theta_b}\tan^2\theta\,d\theta,\qquad \theta_b=\operatorname{arcsec}\frac{b}{2}=\arccos\frac{2}{b}`}
+  ];
+  const p=new Plot2D('#limPlot',{xmin:-0.5,xmax:6.5,ymin:-0.4,ymax:3.6,grid:false});
+  let cur=LIMP[0],b=1.6,sl=null;
+  $('#limOut').innerHTML='<div id="limTex"></div><div id="limNums"></div>';
+  const pb=$('#limPresets');
+  LIMP.forEach(pr=>{const bt=el('button',{class:'btn small'},pr.n);
+    bt.onclick=()=>{cur=pr;$$('.btn',pb).forEach(y=>y.classList.remove('on'));bt.classList.add('on');
+      $('#limTex').innerHTML=D(pr.tex);typeset($('#limTex'));buildSlider();draw();};
+    pb.appendChild(bt);});
+  $$('.btn',pb)[0].classList.add('on');
+  function buildSlider(){
+    b=clamp(b,cur.x0+(cur.x1-cur.x0)*0.05,cur.x1);
+    $('#limSliders').innerHTML='';
+    sl=sliderRow($('#limSliders'),{label:'upper limit b',min:cur.x0,max:cur.x1,step:(cur.x1-cur.x0)/240,value:b,onInput:v=>{b=v;draw();}});
+  }
+  function draw(){
+    Object.assign(p.o,{xmin:cur.x0-0.5,xmax:cur.x1+0.5,ymin:-0.12*cur.ymax,ymax:cur.ymax});
+    p.begin();
+    p.region(cur.x0,Math.max(b,cur.x0+1e-6),()=>0,cur.f,{fill:'rgba(37,99,235,.16)',stroke:'rgba(37,99,235,.35)'});
+    p.fn(cur.f,{color:'#2563eb',width:2.4,xmin:cur.x0,xmax:cur.x1});
+    p.poly([[b,0],[b,cur.f(b)]],{close:false,fill:'',stroke:'#d97706',width:2.4});
+    p.point([b,cur.f(b)],{color:'#d97706',r:4.5});
+    p.point([b,0],{color:'#d97706',r:3.5});
+    p.text([b,-0.06*cur.ymax],'b = '+fmtDec(b,2),{color:'#d97706',align:'center',font:'600 12px -apple-system,Segoe UI,sans-serif'});
+    const val=cur.F(b)-cur.F(cur.x0),th=cur.th(b);
+    $('#limNums').innerHTML=`substitution ${cur.sub}<br>`+
+      `upper limit x = ${fmtDec(b,3)} &nbsp;→&nbsp; θ<sub>b</sub> = ${cur.thT.replace('b',fmtDec(b,3))} = <b>${fmtDec(th,4)}</b> rad = ${fmtDec(th*180/PI,2)}°<br>`+
+      `shaded area = value of the integral = <b>${fmtDec(val,5)}</b><br>`+
+      `the θ-integral over [0, ${fmtDec(th,4)}] gives the same number`;
+  }
+  let dir=1;
+  const anim=animator('work',dt=>{const lo=cur.x0,hi=cur.x1;b+=dir*dt*(hi-lo)*0.3;
+    if(b>=hi){b=hi;dir=-1;}if(b<=lo){b=lo;dir=1;}if(sl)sl.set(b);draw();});
+  $('#limPlay').onclick=()=>{anim.toggle();$('#limPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  $('#limTex').innerHTML=D(cur.tex);
+  buildSlider();redrawOnShow('work',draw);draw();
+
+  /* ---- walkthrough: one integral, all six moves ---- */
+  const WT=[
+    a=>{const A=a*a,S=R`\sqrt{${A}-x^2}`;return [
+      R`\int\frac{${S}}{x^2}\,dx`,
+      R`\sqrt{a^2-x^2}\ \text{with}\ a=${a}:\quad x=${a}\sin\theta,\quad dx=${a}\cos\theta\,d\theta`,
+      R`\int\frac{${a}\cos\theta}{${A}\sin^2\theta}\cdot ${a}\cos\theta\,d\theta`,
+      R`\int\frac{\cos^2\theta}{\sin^2\theta}\,d\theta=\int\cot^2\theta\,d\theta=\int\left(\csc^2\theta-1\right)d\theta`,
+      R`=-\cot\theta-\theta+C`,
+      R`\cot\theta=\frac{${S}}{x},\qquad \theta=\arcsin\frac{x}{${a}}`,
+      R`-\frac{${S}}{x}-\arcsin\frac{x}{${a}}+C`];},
+    a=>{const A=a*a,T=R`\sqrt{x^2+${A}}`;return [
+      R`\int\frac{dx}{x^2\sqrt{x^2+${A}}}`,
+      R`\sqrt{a^2+x^2}\ \text{with}\ a=${a}:\quad x=${a}\tan\theta,\quad dx=${a}\sec^2\theta\,d\theta`,
+      R`\int\frac{${a}\sec^2\theta\,d\theta}{${A}\tan^2\theta\cdot ${a}\sec\theta}`,
+      R`${CF(1,A)}\int\frac{\sec\theta}{\tan^2\theta}\,d\theta=${CF(1,A)}\int\frac{\cos\theta}{\sin^2\theta}\,d\theta`,
+      R`=-${CF(1,A)}\csc\theta+C`,
+      R`\csc\theta=\frac{${T}}{x}`,
+      R`-\frac{${T}}{${A}x}+C`];},
+    a=>{const A=a*a,T=R`\sqrt{x^2+${A}}`;return [
+      R`\int\frac{dx}{\left(x^2+${A}\right)^{3/2}}`,
+      R`\sqrt{a^2+x^2}\ \text{with}\ a=${a}:\quad x=${a}\tan\theta,\quad dx=${a}\sec^2\theta\,d\theta`,
+      R`\int\frac{${a}\sec^2\theta\,d\theta}{${a*A}\sec^3\theta}`,
+      R`${CF(1,A)}\int\cos\theta\,d\theta`,
+      R`=${CF(1,A)}\sin\theta+C`,
+      R`\sin\theta=\frac{x}{${T}}`,
+      R`\frac{x}{${A}${T}}+C`];},
+    a=>{const A=a*a,U=R`\sqrt{x^2-${A}}`;return [
+      R`\int\frac{${U}}{x}\,dx`,
+      R`\sqrt{x^2-a^2}\ \text{with}\ a=${a}:\quad x=${a}\sec\theta,\quad dx=${a}\sec\theta\tan\theta\,d\theta`,
+      R`\int\frac{${a}\tan\theta}{${a}\sec\theta}\cdot ${a}\sec\theta\tan\theta\,d\theta`,
+      R`${a}\int\tan^2\theta\,d\theta=${a}\int\left(\sec^2\theta-1\right)d\theta`,
+      R`=${a}\left(\tan\theta-\theta\right)+C`,
+      R`\tan\theta=\frac{${U}}{${a}},\qquad \theta=\operatorname{arcsec}\frac{x}{${a}}=\arccos\frac{${a}}{x}`,
+      R`${U}-${a}\arccos\frac{${a}}{x}+C`];}
+  ];
+  const WSTAT=['The integral. Which of the three radicals is it?',
+    'Name the case, write the substitution, and write dx.',
+    'Substitute into the integrand and into dx. Nothing is simplified yet.',
+    'Cancel the constants. What is left is a trig integral from module 5.',
+    'Integrate in θ.',
+    'Draw the triangle and read every θ-quantity off it.',
+    'Back in x. That is the answer.'];
+  let L=[],step=0;
+  function newW(){L=WT[rint(0,WT.length-1)](rint(2,5));step=0;drawW();}
+  function drawW(){
+    const cls=['b','a','a','a','c','d','c'];
+    const html=L.map((line,i)=>`<span class="${i<=step?'':'faint'}">${i>=1&&i<=4?'':''}<span class="t ${cls[i]} ${i===step?'now':''}">${M(line)}</span></span>`);
+    $('#w2Expr').innerHTML=html.join('<br>');
+    $('#w2Status').textContent=WSTAT[step];
+    $('#w2Prev').disabled=step===0;$('#w2Next').disabled=step===L.length-1;
+    typeset($('#w2Expr'));
+  }
+  $('#w2Next').onclick=()=>{step=Math.min(L.length-1,step+1);drawW();};
+  $('#w2Prev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#w2New').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-work',section:'work',goal:7,
+    ...mixDrill([Q.sinCase,Q.sinCase,Q.tanCase,Q.tanCase,Q.secCase,Q.secCase,Q.definiteTrigSub,Q.definiteTrigSub])});
+})();
+
+/* ============================================================ chapter 3: the shift + walkthrough */
+(function(){
+  const p=new Plot2D('#sqPlot',{xmin:-6,xmax:6,ymin:-6,ymax:8,grid:true});
+  let h=2,k=3,s=0;
+  $('#sqOut').innerHTML='<div id="sqTex"></div><div id="sqNums"></div>';
+  const sb=$('#sqSliders');
+  const sh=sliderRow(sb,{label:'h (half the middle coefficient)',min:-3,max:3,step:1,value:h,fmt:v=>String(v),onInput:v=>{h=v;s=0;algebra();draw();}});
+  const sk=sliderRow(sb,{label:'k (the leftover constant)',min:-4,max:4,step:1,value:k,fmt:v=>String(v),onInput:v=>{k=v;algebra();draw();}});
+  function algebra(){
+    const c=h*h+k;
+    $('#sqTex').innerHTML=D(`${quadTex(h,c)}=${shTex(h)}^2${k>=0?'+':'-'}${Math.abs(k)}`);
+    typeset($('#sqTex'));
+  }
+  function draw(){
+    const shift=h*(1-s);
+    p.begin();
+    p.fn(x=>(x+h)*(x+h)+k,{color:'#7c3aed',width:2.4});
+    p.fn(x=>x*x+k,{color:'#16a34a',width:2,dash:[6,5]});
+    if(s>0&&s<1)p.fn(x=>(x+shift)*(x+shift)+k,{color:'#d97706',width:2});
+    p.poly([[-h,k],[0,k]],{close:false,fill:'',stroke:'#d97706',width:1.6});
+    p.point([-h,k],{color:'#7c3aed',r:5,label:'(-h, k)'});
+    p.point([0,k],{color:'#16a34a',r:5,label:'(0, k)'});
+    const kind=k>0?'u² + a² : the tangent case, a = √'+fmtDec(k,3)
+      :k<0?'u² - a² : the secant case, a = √'+fmtDec(-k,3)
+      :'a perfect square u², no trig substitution needed';
+    $('#sqNums').innerHTML=`vertex of the purple parabola at x = ${-h}, height k = ${k}<br>`+
+      `substituting u = x ${h>=0?'+':'-'} ${Math.abs(h)} slides it onto the green one<br>`+
+      `what is left under the substitution: <b>${kind}</b>`;
+  }
+  let dir=1;
+  const anim=animator('square',dt=>{s+=dir*dt*0.6;if(s>=1){s=1;dir=-1;}if(s<=0){s=0;dir=1;}draw();});
+  $('#sqPlay').onclick=()=>{anim.toggle();$('#sqPlay').textContent=anim.running?'❚❚ Pause':'▶ Play the shift';};
+  algebra();redrawOnShow('square',draw);draw();
+
+  /* ---- walkthrough: complete, shift, name the case ---- */
+  const WT=[
+    ()=>{const h=rnz(-3,3),a=rint(2,3),c=h*h+a*a,u=shTex(h).replace(/[()]/g,'');return [
+      R`\int\frac{dx}{\sqrt{${quadTex(h,c)}}}`,
+      R`\text{half of }${2*h}\text{ is }${h},\text{ and }${h}^2=${h*h}`,
+      R`${quadTex(h,c)}=${shTex(h)}^2+${a*a}`,
+      R`u=${u},\quad du=dx:\qquad \int\frac{du}{\sqrt{u^2+${a*a}}}`,
+      R`\sqrt{a^2+u^2}\text{ with }a=${a}:\quad u=${a}\tan\theta\;\Rightarrow\;\ln\left|u+\sqrt{u^2+${a*a}}\right|+C`,
+      R`\ln\left|${shBare(h)}+\sqrt{${quadTex(h,c)}}\right|+C`];},
+    ()=>{const a=pick([2,3]),h=pick(a===2?[-1,1]:[-2,-1,1,2]),K=a*a-h*h,u=shTex(h).replace(/[()]/g,'');return [
+      R`\int\frac{dx}{\sqrt{${negQuadTex(h,K)}}}`,
+      R`\text{pull the minus out: }${negQuadTex(h,K)}=${K}-\left(x^2${2*h>=0?'+':'-'}${Math.abs(2*h)}x\right)`,
+      R`=${K}+${h*h}-${shTex(h)}^2=${a*a}-${shTex(h)}^2`,
+      R`u=${u},\quad du=dx:\qquad \int\frac{du}{\sqrt{${a*a}-u^2}}`,
+      R`\sqrt{a^2-u^2}\text{ with }a=${a}:\quad u=${a}\sin\theta\;\Rightarrow\;\arcsin\frac{u}{${a}}+C`,
+      R`\arcsin\frac{${shBare(h)}}{${a}}+C`];},
+    ()=>{const h=rnz(-3,3),a=rint(2,3),c=h*h+a*a,u=shTex(h).replace(/[()]/g,'');return [
+      R`\int\frac{dx}{${quadTex(h,c)}}`,
+      R`\text{half of }${2*h}\text{ is }${h},\text{ and }${h}^2=${h*h}`,
+      R`${quadTex(h,c)}=${shTex(h)}^2+${a*a}`,
+      R`u=${u},\quad du=dx:\qquad \int\frac{du}{u^2+${a*a}}`,
+      R`\text{no radical, but the same case: }u=${a}\tan\theta\;\Rightarrow\;${CF(1,a)}\arctan\frac{u}{${a}}+C`,
+      R`${CF(1,a)}\arctan\frac{${shBare(h)}}{${a}}+C`];}
+  ];
+  const WSTAT=['The integral. The middle term blocks the three cases.',
+    'Take half the middle coefficient. That number is h.',
+    'The completed square. The leftover constant decides the case.',
+    'Shift with u = x + h. The differential does not change.',
+    'Name the case in u and integrate.',
+    'Put u = x + h back. Answer in x.'];
+  let L=[],step=0;
+  function newW(){L=WT[rint(0,WT.length-1)]();step=0;drawW();}
+  function drawW(){
+    const cls=['b','a','a','a','c','c'];
+    $('#w3Expr').innerHTML=L.map((line,i)=>
+      `<span class="${i<=step?'':'faint'}"><span class="t ${cls[i]} ${i===step?'now':''}">${M(line)}</span></span>`).join('<br>');
+    $('#w3Status').textContent=WSTAT[step];
+    $('#w3Prev').disabled=step===0;$('#w3Next').disabled=step===L.length-1;
+    typeset($('#w3Expr'));
+  }
+  $('#w3Next').onclick=()=>{step=Math.min(L.length-1,step+1);drawW();};
+  $('#w3Prev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#w3New').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-square',section:'square',goal:5,
+    ...mixDrill([Q.completeSquare,Q.completeSquare,Q.squareThenSub,Q.squareThenSub,Q.discriminantRoute,Q.discriminantRoute])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.pickSub,Q.backToX,Q.simplifyRadical,
+  Q.sinCase,Q.tanCase,Q.secCase,Q.definiteTrigSub,
+  Q.completeSquare,Q.squareThenSub,Q.discriminantRoute]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-trigsub',[
+  R`\(\sqrt{a^2-x^2}\): \(x=a\sin\theta\), \(dx=a\cos\theta\,d\theta\), radical \(=a\cos\theta\), \(-\tfrac{\pi}{2}\le\theta\le\tfrac{\pi}{2}\).`,
+  R`\(\sqrt{a^2+x^2}\): \(x=a\tan\theta\), \(dx=a\sec^2\theta\,d\theta\), radical \(=a\sec\theta\), \(-\tfrac{\pi}{2}\lt\theta\lt\tfrac{\pi}{2}\).`,
+  R`\(\sqrt{x^2-a^2}\): \(x=a\sec\theta\), \(dx=a\sec\theta\tan\theta\,d\theta\), radical \(=a\tan\theta\), \(0\le\theta\lt\tfrac{\pi}{2}\) for \(x\ge a\).`,
+  R`The three identities: \(1-\sin^2\theta=\cos^2\theta\), \(1+\tan^2\theta=\sec^2\theta\), \(\sec^2\theta-1=\tan^2\theta\).`,
+  R`The triangles: sine case has opposite \(x\) and hypotenuse \(a\); tangent case has opposite \(x\) and adjacent \(a\); secant case has hypotenuse \(x\) and adjacent \(a\). The radical is always the third side.`,
+  R`\(\displaystyle\int\frac{dx}{\sqrt{a^2-x^2}}=\arcsin\frac{x}{a}+C\).`,
+  R`\(\displaystyle\int\frac{dx}{a^2+x^2}=\frac1a\arctan\frac{x}{a}+C\).`,
+  R`\(\displaystyle\int\frac{dx}{\sqrt{x^2\pm a^2}}=\ln\left|x+\sqrt{x^2\pm a^2}\right|+C\).`,
+  R`\(\displaystyle\int\sec\theta\,d\theta=\ln\left|\sec\theta+\tan\theta\right|+C\), the one you need after a tangent or secant substitution.`,
+  R`Completing the square: \(x^2+bx+c=\left(x+\tfrac{b}{2}\right)^2+\left(c-\tfrac{b^2}{4}\right)\).`
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'choose the substitution':q=>({x:q.xStr,dx:q.dStr,rad:q.rStr}),
+  'convert back with the triangle':q=>({e:q.ansStr}),
+  'simplify after substituting':q=>({e:q.ansStr}),
+  'integrate with x = a sin θ':q=>({F:q.FStr}),
+  'integrate with x = a tan θ':q=>({F:q.FStr}),
+  'integrate with x = a sec θ':q=>({F:q.FStr}),
+  'definite integral, limits become angles':q=>({v:q.ansStr}),
+  'complete the square':q=>({h:String(q.h),k:String(q.k)}),
+  'integrate after completing the square':q=>({F:q.FStr}),
+  'discriminant: factor or complete the square':q=>({d:String(q.D),F:q.FStr})
+};
+
+initModule({key:'c2-trigsub',title:'Trigonometric Substitution',sub:'Module 7 · Stewart 7.3'});
+</script>
+</body>
