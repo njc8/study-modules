@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polar Coordinates</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 4 · Stewart 10.3 to 10.4</p>
+  <h2>Polar coordinates</h2>
+  <p class="lead">A second address system for the plane. Circles and spirals that need two ugly Cartesian equations become one line, and area stops being a height times a width: it becomes half of an integral of \(r^2\).</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or sweep, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Angles are radians, typed as <code>pi/4</code>, <code>7pi/6</code>, <code>-pi/3</code>. Points are typed with parentheses: a polar point is <code>(r, theta)</code> and a Cartesian point is <code>(x, y)</code>. Answers are exact unless a problem says otherwise, so write <code>3sqrt(3)/2</code>, <code>pi - 3sqrt(3)/2</code>, or <code>pi/4 + 3sqrt(3)/4</code> rather than a decimal. A Cartesian equation may be typed in any equivalent form, like <code>x^2+y^2=2y</code>. Lists are comma separated: <code>2pi/3, 4pi/3</code>.</p>
+    <p>Answer boxes work like WebAssign's calcPad: <code>sqrt</code> makes a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>pi</code> and <code>theta</code> the Greek letters. Use the right arrow key to step out of a radical or fraction, and press <kbd>Enter</kbd> to check.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the moving piece: the sweeping ray, one sector, the tangent</span>
+      <span><i class="dot" style="background:var(--b)"></i> the second curve or the comparison</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result: an area, a length, a value</span>
+      <span><i class="dot" style="background:var(--d)"></i> the polar curve and marked points</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Convert points and equations between Cartesian and polar, in both directions, with the quadrant handled correctly.</li>
+      <li>Recognize the standard curves on sight: circles through the origin, cardioids, limaçons with and without an inner loop, roses, lemniscates.</li>
+      <li>Say where a curve passes through the pole, and use those angles as the tangent directions there and as the limits of a loop.</li>
+      <li>Find \(dy/dx\) on a polar curve and locate the horizontal and vertical tangents.</li>
+      <li>Set up and evaluate areas: one petal, an inner loop, inside one curve and outside another, inside both. Also arc length.</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 POINTS -->
+<section data-id="points" data-title="Points and conversions" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 10.3</p>
+  <h2>Points and conversions</h2>
+  <p class="lead">A Cartesian address says how far right and how far up. A polar address says how far out and in which direction.</p>
+
+  <p>The polar point \((r,\theta)\) means: face in the direction \(\theta\) measured counterclockwise from the positive \(x\)-axis, then walk a <b>signed distance</b> \(r\). Signed is the whole subtlety. If \(r<0\) you walk backwards, so the point lands in the opposite direction.</p>
+  <div class="formula">\(x=r\cos\theta,\qquad y=r\sin\theta,\qquad r^2=x^2+y^2,\qquad \tan\theta=\dfrac{y}{x}\)<span class="cap">Left to right: polar to Cartesian, which is always a plug-in. Right to left: Cartesian to polar, which needs care, because the last two equations do not determine \(r\) and \(\theta\) by themselves.</span></div>
+
+  <p>Going from polar to Cartesian is mechanical. Going the other way has two traps.</p>
+  <div class="warn"><b>The arctangent does not know the quadrant.</b> \(\arctan(y/x)\) always returns an angle in \((-\pi/2,\pi/2)\), so it is only right when the point is in quadrant I or IV. For a point in quadrant II or III, <b>add \(\pi\)</b>. Check your answer against the picture every time: the point \((-1,1)\) has \(\tan\theta=-1\), but \(\theta=3\pi/4\), not \(-\pi/4\).</div>
+  <p>The second trap is that a point has infinitely many polar names. Adding \(2\pi\) to \(\theta\) returns to the same direction, and flipping the sign of \(r\) while adding \(\pi\) to \(\theta\) also lands in the same place:</p>
+  <div class="formula">\((r,\theta)=(r,\theta+2\pi k)=(-r,\theta+\pi)\)<span class="cap">The origin is the extreme case: \((0,\theta)\) is the pole for every \(\theta\). That is why the pole needs separate handling in almost every problem in this module.</span></div>
+
+  <div class="card">
+    <h4>Explore: one point, many names</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="ptPlot"></canvas><p class="plotcap">Drag anywhere to move the point. Faint circles are \(r=\) constant, faint spokes are \(\theta=\) constant, spaced \(\pi/6\) apart.</p></div>
+      <div>
+        <div class="presets" id="ptPresets"></div>
+        <div class="readout" id="ptOut"></div>
+        <p class="hint">Drag the point into the second quadrant and compare the two angles in the readout: the one the picture demands and the one \(\arctan(y/x)\) hands you. They differ by exactly \(\pi\). Then read the third line: the same point written with a negative \(r\) points the ray the other way and walks backwards.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Curves as equations</h3>
+  <p>The same substitutions convert equations. To go from polar to Cartesian, multiply by \(r\) or square when it helps, then replace \(r\cos\theta\) by \(x\), \(r\sin\theta\) by \(y\), and \(r^2\) by \(x^2+y^2\). For example \(r=4\cos\theta\) has no obvious Cartesian form until you multiply both sides by \(r\):</p>
+  <div class="formula">\(r=4\cos\theta \;\Longrightarrow\; r^2=4r\cos\theta \;\Longrightarrow\; x^2+y^2=4x\)<span class="cap">Completing the square gives \((x-2)^2+y^2=4\), the circle of radius 2 centered at \((2,0)\). Multiplying by \(r\) adds the pole to the solution set, and the pole is already on the curve (at \(\theta=\pi/2\)), so nothing is lost.</span></div>
+  <p>Going the other way, substitute \(x=r\cos\theta\) and \(y=r\sin\theta\) and then <b>solve for \(r\)</b>. A vertical line \(x=c\) becomes \(r\cos\theta=c\), that is \(r=c\sec\theta\). A line through the origin \(y=mx\) has no \(r\) in it at all: it is \(\theta=\arctan m\).</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-points"></div>
+</section>
+
+<!-- ============================================================ 2 CURVES -->
+<section data-id="curves" data-title="The polar curve zoo" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 10.3</p>
+  <h2>The polar curve zoo</h2>
+  <p class="lead">Six families cover almost every polar curve you will be asked about. Learn what each one looks like and where it touches the pole, and sketching stops being guesswork.</p>
+
+  <p>A polar graph is drawn by letting \(\theta\) run and plotting the point at distance \(r(\theta)\) in the direction \(\theta\). It helps to think of it in two stages: first graph \(r\) against \(\theta\) on ordinary axes, then wrap that graph around the origin. Where the ordinary graph dips below the axis, \(r\) is negative and the wrapped point jumps to the opposite side.</p>
+  <ul>
+    <li><b>Circles.</b> \(r=a\) is the circle of radius \(a\) about the origin. \(r=2a\cos\theta\) is the circle of radius \(a\) centered at \((a,0)\); \(r=2a\sin\theta\) is the circle of radius \(a\) centered at \((0,a)\). Both pass through the origin and are traced once as \(\theta\) moves through an interval of length \(\pi\).</li>
+    <li><b>Cardioids.</b> \(r=a(1\pm\cos\theta)\) and \(r=a(1\pm\sin\theta)\): heart shapes with a cusp at the pole, maximum \(|r|=2a\).</li>
+    <li><b>Limaçons.</b> \(r=a+b\cos\theta\). If \(a&lt;b\) there is an <b>inner loop</b>; if \(b&lt;a&lt;2b\) there is a dimple; if \(a\ge 2b\) the curve is convex. The cardioid is the boundary case \(a=b\).</li>
+    <li><b>Roses.</b> \(r=a\cos(n\theta)\) or \(a\sin(n\theta)\) has \(n\) petals when \(n\) is odd and \(2n\) petals when \(n\) is even, each of length \(|a|\).</li>
+    <li><b>Lemniscate.</b> \(r^2=a^2\cos 2\theta\): a figure eight lying along the \(x\)-axis, only defined where \(\cos 2\theta\ge 0\).</li>
+    <li><b>Spiral.</b> \(r=\theta\): the radius grows with the angle forever.</li>
+  </ul>
+  <div class="note"><b>Why \(n\) even doubles the petal count.</b> For \(r=\cos(n\theta)\) the tips sit at \(\theta=k\pi/n\), which is \(2n\) directions. When \(n\) is odd the negative-\(r\) tips land on top of the positive-\(r\) ones, so half of them are duplicates and you see \(n\) petals. When \(n\) is even nothing collides and you see all \(2n\).</div>
+
+  <div class="card">
+    <h4>Explore: sweep the angle</h4>
+    <div class="minis two">
+      <div><canvas class="scene" id="zooPolar"></canvas><p class="cap">the polar picture, traced up to \(\theta_{\max}\)</p></div>
+      <div><canvas class="scene" id="zooRT"></canvas><p class="cap">the same \(r(\theta)\) on ordinary \(\theta r\)-axes</p></div>
+    </div>
+    <div class="presets" id="zooPresets"></div>
+    <div class="sliders three" id="zooSliders"></div>
+    <div class="controls"><button class="btn primary" id="zooPlay">▶ Play</button><button class="btn" id="zooReset">Reset sweep</button></div>
+    <div class="readout" id="zooOut"></div>
+    <p class="hint">Watch what happens when \(r\) goes negative on the right-hand graph: on the left the point jumps to the opposite side of the origin and traces the inner loop. Try the limaçon with \(a=1\), \(b=2\) and stop the sweep at \(\theta=2\pi/3\), exactly where \(r\) crosses zero. Then set \(n=3\) on the rose and count the petals against the number of arches on the right.</p>
+  </div>
+
+  <h3>Symmetry, and where the curve hits the pole</h3>
+  <p>Three tests save half the work when sketching:</p>
+  <div class="formula">\(\theta\to-\theta \text{ leaves the equation unchanged}\;\Rightarrow\;\text{symmetric about the }x\text{-axis}\)<span class="cap">Cosine survives \(\theta\to-\theta\), so every \(r=f(\cos\theta)\) curve is symmetric about the polar axis. Replacing \(\theta\) by \(\pi-\theta\) tests the \(y\)-axis, and replacing \(r\) by \(-r\) (or \(\theta\) by \(\theta+\pi\)) tests the origin.</span></div>
+  <p>The angles where \(r=0\) matter more than any other feature. They are where the curve passes through the pole, they are the endpoints of an inner loop or a petal, and they are the directions of the tangent lines at the origin. Solve \(f(\theta)=0\) first, every time.</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-curves"></div>
+</section>
+
+<!-- ============================================================ 3 TANGENTS -->
+<section data-id="tangents" data-title="Tangents to polar curves" data-goal="5">
+  <p class="eyebrow">Chapter 3 · Stewart 10.3</p>
+  <h2>Tangents to polar curves</h2>
+  <p class="lead">There is no new rule here. Write the curve parametrically in \(\theta\) and use the parametric slope formula.</p>
+
+  <p>With \(r=f(\theta)\), the curve is the parametrized path \(x=r\cos\theta\), \(y=r\sin\theta\). Differentiate each with the product rule:</p>
+  <div class="formula">\(\dfrac{dy}{dx}=\dfrac{dy/d\theta}{dx/d\theta}=\dfrac{\dfrac{dr}{d\theta}\sin\theta+r\cos\theta}{\dfrac{dr}{d\theta}\cos\theta-r\sin\theta}\)<span class="cap">Numerator: the derivative of \(r\sin\theta\). Denominator: the derivative of \(r\cos\theta\), where the minus sign comes from differentiating \(\cos\theta\). Do not memorize it as a new formula; rebuild it from the product rule if you forget.</span></div>
+  <ul>
+    <li><b>Horizontal tangent:</b> \(dy/d\theta=0\) and \(dx/d\theta\ne 0\).</li>
+    <li><b>Vertical tangent:</b> \(dx/d\theta=0\) and \(dy/d\theta\ne 0\).</li>
+    <li><b>At the pole:</b> if \(f(\theta_0)=0\) and \(f'(\theta_0)\ne 0\), then \(dy/dx=\tan\theta_0\), so the tangent line at the origin is simply the line \(\theta=\theta_0\).</li>
+  </ul>
+  <div class="note"><b>The pole shortcut.</b> Setting \(r=0\) in the big fraction leaves \(\dfrac{f'\sin\theta_0}{f'\cos\theta_0}=\tan\theta_0\). So the angles you already found by solving \(r=0\) are exactly the tangent directions at the origin. One computation, two uses.</div>
+  <div class="warn"><b>When both derivatives vanish.</b> At the cusp of a cardioid, \(dy/d\theta\) and \(dx/d\theta\) are both zero and the fraction is \(0/0\). The slope there is a limit, not a substitution. Stewart handles those points separately, and so should you.</div>
+
+  <div class="card">
+    <h4>Explore: the tangent line as \(\theta\) moves</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="tanPlot"></canvas><p class="plotcap">Green dots: horizontal tangents. Blue dots: vertical tangents. The orange line is the tangent at the current \(\theta\).</p></div>
+      <div>
+        <div class="presets" id="tanPresets"></div>
+        <div class="sliders" id="tanSliders"></div>
+        <div class="readout" id="tanOut"></div>
+        <p class="hint">Slide \(\theta\) until the readout for \(dy/d\theta\) crosses zero and watch the tangent line flatten: those crossings are the green dots. Then find a \(\theta\) where \(dx/d\theta\) crosses zero and the slope blows up. On the cardioid, stop at \(\theta=\pi\): both derivatives are zero at once, and the tangent is undefined there.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-tangents"></div>
+</section>
+
+<!-- ============================================================ 4 AREA -->
+<section data-id="area" data-title="Area and arc length" data-goal="7">
+  <p class="eyebrow">Chapter 4 · Stewart 10.4</p>
+  <h2>Area and arc length in polar coordinates</h2>
+  <p class="lead">The area element is a thin sector, not a thin rectangle. That single fact produces every formula in this chapter.</p>
+
+  <p>A circular sector of radius \(r\) and angle \(\Delta\theta\) is the fraction \(\Delta\theta/2\pi\) of a full disk, so its area is \(\tfrac{\Delta\theta}{2\pi}\pi r^2=\tfrac12 r^2\Delta\theta\). Slice the region into thin sectors, add, and take the limit:</p>
+  <div class="formula">\(\displaystyle A=\int_\alpha^\beta \tfrac12\,[f(\theta)]^2\,d\theta=\tfrac12\int_\alpha^\beta r^2\,d\theta\)<span class="cap">The \(r\) is squared because a sector's area grows with the square of its radius. Doubling the distance from the origin quadruples the area swept by the same angle.</span></div>
+  <div class="warn"><b>Half, and squared.</b> The two most common slips are dropping the \(\tfrac12\) and integrating \(r\) instead of \(r^2\). Sanity check on the circle \(r=a\): \(\tfrac12\int_0^{2\pi}a^2\,d\theta=\pi a^2\). If your formula does not give \(\pi a^2\) there, it is wrong.</div>
+
+  <div class="card">
+    <h4>Explore: sectors filling the region</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="areaPlot"></canvas><p class="plotcap">Orange wedges are the sector approximation with the radius taken at the middle of each wedge.</p></div>
+      <div>
+        <div class="presets" id="areaPresets"></div>
+        <div class="sliders" id="areaSliders"></div>
+        <div class="readout" id="areaOut"></div>
+        <p class="hint">Push \(n\) from 3 to 40 and watch the sector sum close in on the exact area. Sectors, not rectangles: the piece of area at angle \(\theta\) is \(\tfrac12 r^2 d\theta\), which is why \(r\) must be squared. The last preset shades the region inside one curve and outside another; the two dashed rays are the intersection angles that become the limits.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Choosing the limits</h3>
+  <p>The integral is easy. Deciding \(\alpha\) and \(\beta\) is the actual problem.</p>
+  <ul>
+    <li><b>A whole cardioid or limaçon:</b> \(0\) to \(2\pi\), which traces it exactly once.</li>
+    <li><b>One petal of \(r=a\cos(n\theta)\):</b> from \(-\pi/2n\) to \(\pi/2n\), the interval on which \(r\ge 0\) around \(\theta=0\). For \(r=a\sin(n\theta)\) the first petal is \(0\) to \(\pi/n\).</li>
+    <li><b>An inner loop:</b> between the two consecutive angles where \(r=0\), the ones on which \(r\) is negative.</li>
+    <li><b>Inside \(r=f\) and outside \(r=g\):</b> solve \(f(\theta)=g(\theta)\) for the crossing angles, check which curve is farther out between them, and integrate \(\tfrac12(f^2-g^2)\).</li>
+    <li><b>Inside both:</b> split at the crossing angle and use whichever curve is closer in on each piece.</li>
+  </ul>
+  <div class="note"><b>Half-angle identities, coming up in module 5.</b> Every one of these integrals ends in \(\int\cos^2\) or \(\int\sin^2\), so keep these two on the tip of your tongue: \(\cos^2\theta=\dfrac{1+\cos 2\theta}{2}\) and \(\sin^2\theta=\dfrac{1-\cos 2\theta}{2}\). Over a full period both average to \(\tfrac12\), so \(\int_0^{2\pi}\cos^2\theta\,d\theta=\pi\). Module 5 drills these properly.</div>
+
+  <div class="card">
+    <h4>Step-by-step: inside one curve, outside another</h4>
+    <div class="expr" id="wtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wtPrev">◀ Back</button>
+      <button class="btn primary" id="wtNext">Next step ▶</button>
+      <button class="btn" id="wtNew">New problem</button>
+      <span class="status" id="wtStatus"></span>
+    </div>
+    <p class="hint">Step 2 is the one people skip. Two curves that cross divide the plane into pieces, and only a test value tells you which curve is on the outside between the crossings. Plug in the midpoint angle and compare the two radii.</p>
+  </div>
+
+  <h3>Arc length</h3>
+  <p>The same parametrization \(x=r\cos\theta\), \(y=r\sin\theta\) gives \(\left(\frac{dx}{d\theta}\right)^2+\left(\frac{dy}{d\theta}\right)^2=r^2+\left(\frac{dr}{d\theta}\right)^2\) after the cross terms cancel, so:</p>
+  <div class="formula">\(\displaystyle L=\int_\alpha^\beta\sqrt{r^2+\left(\dfrac{dr}{d\theta}\right)^2}\;d\theta\)<span class="cap">Compare with area, which uses \(\tfrac12 r^2\). Length has no \(\tfrac12\) and no square: it has a square root, and it needs \(dr/d\theta\).</span></div>
+  <p>Simplify inside the root before integrating. For the cardioid \(r=a(1+\cos\theta)\) the root collapses to \(a\sqrt{2+2\cos\theta}=2a\left|\cos\tfrac{\theta}{2}\right|\), and the total length comes out to the clean \(8a\).</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-area"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI, TAU=2*Math.PI;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+const COL={a:'#d97706',b:'#2563eb',c:'#16a34a',d:'#7c3aed',faint:'#d8d4ca'};
+
+/* pi-multiples: texPiF(2,3) -> \tfrac{2\pi}{3} ; strPiF(2,3) -> '2pi/3' */
+function texPiF(n,d=1){const [p,q]=fr(n,d);if(p===0)return '0';const s=p<0?'-':'';const a=Math.abs(p);const body=(a===1?'':a)+'\\pi';return s+(q===1?body:`\\tfrac{${body}}{${q}}`);}
+function strPiF(n,d=1){const [p,q]=fr(n,d);if(p===0)return '0';return `${p}*pi${q===1?'':'/'+q}`;}
+const valPiF=(n,d=1)=>n*PI/d;
+/* a value as exact TeX when it is a simple rational or a simple multiple of a square root */
+function exactTex(v){
+  if(!Number.isFinite(v))return String(v);
+  const rat=x=>{for(let d=1;d<=24;d++){const n=x*d;if(Math.abs(n-Math.round(n))<1e-9)return [Math.round(n),d];}return null;};
+  let r=rat(v);if(r)return texFrac(r[0],r[1],{tf:true});
+  for(const d of [2,3,5,6]){const k=rat(v/Math.sqrt(d));if(k){const [n,q]=k;const a=Math.abs(n);const body=(a===1?'':a)+`\\sqrt{${d}}`;return (n<0?'-':'')+(q===1?body:`\\tfrac{${body}}{${q}}`);}}
+  return fmtDec(v,4);
+}
+/* integer times a square root, as TeX and as a typed string: 0 -> '0', (2,3) -> 2\sqrt3 */
+const texRad=(k,n)=>k===0?'0':(n===1?String(k):(k===1?'':k===-1?'-':String(k))+`\\sqrt{${n}}`);
+const strRad=(k,n)=>k===0?'0':(n===1?String(k):`${k}*sqrt(${n})`);
+
+/* ============================================================ numeric verification
+   Every stored exact answer is checked against a numerical integral (or a numerical
+   root scan) inside gen(). A mismatch throws, which the harness reports, so a wrong
+   closed form can never reach the learner. */
+function simpson(f,a,b,n=1200){if(n%2)n++;const h=(b-a)/n;let s=f(a)+f(b);for(let i=1;i<n;i++)s+=(i%2?4:2)*f(a+i*h);return s*h/3;}
+function trap(f,a,b,n=40000){const h=(b-a)/n;let s=(f(a)+f(b))/2;for(let i=1;i<n;i++)s+=f(a+i*h);return s*h;}
+/* area swept by r(theta) from a to b */
+const areaNum=(rf,a,b,n=1200)=>0.5*simpson(t=>{const r=rf(t);return r*r;},a,b,n);
+const areaTrap=(rf,a,b,n=40000)=>0.5*trap(t=>{const r=rf(t);return r*r;},a,b,n);
+/* must(str, num, tag): the typed answer string must evaluate to the numerically computed value */
+function must(str,num,tag,tol=1e-6){
+  const v=Expr.evalNumber(str);
+  if(!(Math.abs(v-num)<=tol*Math.max(1,Math.abs(num))))throw new Error(`${tag}: stored "${str}" = ${v}, numeric check gives ${num}`);
+  return str;
+}
+/* all roots of g on [lo,hi), sign changes and tangencies, refined by bisection */
+function rootsOn(g,lo,hi,N=6000){
+  const at=i=>lo+(hi-lo)*i/N,out=[];
+  if(Math.abs(g(lo))<1e-9)out.push(lo);
+  for(let i=1;i<=N;i++){
+    const t=at(i),p=g(at(i-1)),v=g(t);
+    if(p*v<0){let a=at(i-1),b=t;for(let k=0;k<60;k++){const m=(a+b)/2;if(g(a)*g(m)<=0)b=m;else a=m;}out.push((a+b)/2);continue;}
+    if(Math.abs(v)<1e-4&&i<N){const pm=Math.abs(g(at(i-1))),nm=Math.abs(g(at(i+1)));if(Math.abs(v)<pm&&Math.abs(v)<nm)out.push(t);}
+  }
+  const ded=[];out.sort((a,b)=>a-b).forEach(t=>{if(!ded.some(u=>Math.abs(u-t)<1e-3))ded.push(t);});
+  return ded.filter(t=>t>=lo-1e-9&&t<hi-1e-9);
+}
+/* the stored list must be exactly the numerically found root set */
+function mustRoots(list,g,lo,hi,tag){
+  const found=rootsOn(g,lo,hi);
+  if(found.length!==list.length)throw new Error(`${tag}: stored ${list.length} angles, scan found ${found.length}`);
+  const left=found.slice();
+  list.forEach(t=>{const i=left.findIndex(u=>Math.abs(u-t)<2e-3);if(i<0)throw new Error(`${tag}: stored angle ${t} is not a root`);left.splice(i,1);});
+  return list;
+}
+/* Cartesian points with a horizontal tangent, found numerically (pole excluded) */
+function horizNum(rf){
+  const e=1e-5,x=t=>rf(t)*Math.cos(t),y=t=>rf(t)*Math.sin(t);
+  const dy=t=>(y(t+e)-y(t-e))/(2*e),dx=t=>(x(t+e)-x(t-e))/(2*e);
+  const pts=[];
+  rootsOn(dy,0,TAU).forEach(t=>{
+    if(Math.abs(rf(t))<1e-4)return;                 /* the pole is handled separately */
+    if(Math.abs(dx(t))<1e-4)return;                 /* cusp: 0/0, not a horizontal tangent */
+    const p=[x(t),y(t)];
+    if(!pts.some(q=>Math.hypot(q[0]-p[0],q[1]-p[1])<1e-3))pts.push(p);
+  });
+  return pts;
+}
+function mustPoints(list,pts,tag){
+  if(list.length!==pts.length)throw new Error(`${tag}: stored ${list.length} points, scan found ${pts.length}`);
+  const left=pts.slice();
+  list.forEach(p=>{const i=left.findIndex(q=>Math.hypot(q[0]-p[0],q[1]-p[1])<1e-3);if(i<0)throw new Error(`${tag}: stored point (${p}) not found`);left.splice(i,1);});
+  return list;
+}
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1: points and conversions ---------- */
+const DEGS=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+
+Q.polarToCart={name:'polar to Cartesian',
+  gen(){
+    const r=pick([1,2,3,4,-1,-2,-3,-4]),deg=pick(DEGS);
+    const [ct,cv,cs]=cosExact(deg),[st,sv,ss]=sinExact(deg);
+    const x=r*cv,y=r*sv;
+    const xs=`(${r})*(${cs})`,ys=`(${r})*(${ss})`;
+    must(xs,x,'polarToCart x');must(ys,y,'polarToCart y');
+    return {r,deg,ct,st,x,y,ansStr:`(${xs}, ${ys})`};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Convert the polar point ${M(R`(r,\theta)=\left(${q.r},\,${ANGLE_TEX[q.deg]}\right)`)} to Cartesian coordinates. Exact values, so ${M(R`\tfrac{3\sqrt3}{2}`)} rather than a decimal.</p>`;
+    numIn(el,'p',M('(x,y)='),{wide:true,placeholder:'(x, y)'});
+  },
+  check(q,el){return G(el,'p',checkVector($('[data-k=p]',el).value,[q.x,q.y]));},
+  solution(q){
+    return `Substitute straight into ${M(R`x=r\cos\theta`)} and ${M(R`y=r\sin\theta`)}: `+
+      D(R`x=(${q.r})\left(${q.ct}\right)=${exactTex(q.x)},\qquad y=(${q.r})\left(${q.st}\right)=${exactTex(q.y)}`)+
+      (q.r<0?`The negative ${M('r')} means you face the direction ${M(ANGLE_TEX[q.deg])} and then walk backwards, which is why the point ends up in the opposite quadrant.`:'');}
+};
+
+/* Cartesian to polar: build the point from a special angle so both r and theta are exact */
+function cartPointDraw(){
+  const k=rint(1,4);
+  const fam=pick(['axis','diag','thirty','sixty']);
+  if(fam==='axis'){const deg=pick([0,90,180,270]);
+    const X=[[k,1],[0,1],[-k,1],[0,1]][deg/90],Y=[[0,1],[k,1],[0,1],[-k,1]][deg/90];
+    return {deg,X,Y,rStr:String(k),rVal:k};}
+  if(fam==='diag'){const deg=pick([45,135,225,315]);
+    const sx=(deg===45||deg===315)?1:-1,sy=(deg===45||deg===135)?1:-1;
+    return {deg,X:[sx*k,1],Y:[sy*k,1],rStr:`${k}*sqrt(2)`,rVal:k*Math.SQRT2};}
+  if(fam==='thirty'){const deg=pick([30,150,210,330]);
+    const sx=(deg===30||deg===330)?1:-1,sy=(deg===30||deg===150)?1:-1;
+    return {deg,X:[sx*k,3],Y:[sy*k,1],rStr:String(2*k),rVal:2*k};}
+  const deg=pick([60,120,240,300]);
+  const sx=(deg===60||deg===300)?1:-1,sy=(deg===60||deg===120)?1:-1;
+  return {deg,X:[sx*k,1],Y:[sy*k,3],rStr:String(2*k),rVal:2*k};
+}
+function cartToPolarGen(neg){
+  const c=cartPointDraw();
+  const x=c.X[0]*Math.sqrt(c.X[1]),y=c.Y[0]*Math.sqrt(c.Y[1]);
+  if(Math.abs(Math.hypot(x,y)-c.rVal)>1e-9)throw new Error('cartToPolar: r does not match the point');
+  const deg2=neg?(c.deg+180)%360:c.deg;
+  const rVal=neg?-c.rVal:c.rVal,rStr=neg?`-${c.rStr}`:c.rStr;
+  const th=valPiF(deg2,180);
+  if(Math.abs(rVal*Math.cos(th)-x)>1e-9||Math.abs(rVal*Math.sin(th)-y)>1e-9)throw new Error('cartToPolar: (r,theta) does not land on the point');
+  return {x,y,xT:texRad(c.X[0],c.X[1]),yT:texRad(c.Y[0],c.Y[1]),deg:deg2,rVal,rStr,th,neg,
+    ansStr:`(${rStr}, ${ANGLE_STR[deg2]})`};
+}
+Q.cartToPolar={name:'Cartesian to polar',
+  gen(){return cartToPolarGen(false);},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find polar coordinates ${M(R`(r,\theta)`)} of the point ${M(`(${q.xT},\\,${q.yT})`)} with ${M('r>0')} and ${M(R`0\le\theta<2\pi`)}. Type it as <code>(r, theta)</code>, with the angle as a multiple of ${M('\\pi')}.</p>`;
+    numIn(el,'p',M(R`(r,\theta)=`),{wide:true,placeholder:'(r, theta)'});
+  },
+  check(q,el){return G(el,'p',checkPolar($('[data-k=p]',el).value,[q.rVal,q.th]));},
+  solution(q){
+    return `${M(R`r=\sqrt{x^2+y^2}=${exactTex(q.rVal)}`)}, and the point lies in ${quadName(q.x,q.y)}, so ${M(R`\theta=${ANGLE_TEX[q.deg]}`)}. `+
+      `Check it forwards: ${M(R`r\cos\theta=${exactTex(q.x)}`)} and ${M(R`r\sin\theta=${exactTex(q.y)}`)}.`;}
+};
+Q.cartToPolarNeg={name:'Cartesian to polar with negative r',
+  gen(){return cartToPolarGen(true);},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Now write the same point ${M(`(${q.xT},\\,${q.yT})`)} with ${M('r<0')} and ${M(R`0\le\theta<2\pi`)}.</p>`;
+    numIn(el,'p',M(R`(r,\theta)=`),{wide:true,placeholder:'(r, theta)'});
+  },
+  check(q,el){return G(el,'p',checkPolar($('[data-k=p]',el).value,[q.rVal,q.th]));},
+  solution(q){
+    return `With ${M('r>0')} the point is ${M(R`\left(${exactTex(-q.rVal)},\,${ANGLE_TEX[(q.deg+180)%360]}\right)`)}. Flipping the sign of ${M('r')} means turning the ray around, so add ${M('\\pi')} to the angle: ${M(R`\left(${exactTex(q.rVal)},\,${ANGLE_TEX[q.deg]}\right)`)}.`;}
+};
+const quadName=(x,y)=>Math.abs(x)<1e-9?(y>0?'on the positive \\(y\\)-axis':'on the negative \\(y\\)-axis').replace(/\\\(|\\\)/g,''):
+  Math.abs(y)<1e-9?(x>0?'on the positive x-axis':'on the negative x-axis'):
+  x>0?(y>0?'quadrant I':'quadrant IV'):(y>0?'quadrant II':'quadrant III');
+
+/* polar equation -> Cartesian equation */
+const P2C=[
+  ()=>{const a=rint(2,6);return {pol:R`r=${a}\cos\theta`,ref:e=>e.x*e.x+e.y*e.y-a*e.x,ans:`x^2+y^2=${a}x`,
+    tex:`x^2+y^2=${a}x`,why:R`Multiply both sides by \(r\): \(r^2=${a}r\cos\theta\), then \(r^2=x^2+y^2\) and \(r\cos\theta=x\). Completing the square gives the circle \((x-${a/2===Math.round(a/2)?a/2:`\\tfrac{${a}}{2}`})^2+y^2=${a*a/4===Math.round(a*a/4)?a*a/4:`\\tfrac{${a*a}}{4}`}\).`};},
+  ()=>{const a=rint(2,6);return {pol:R`r=${a}\sin\theta`,ref:e=>e.x*e.x+e.y*e.y-a*e.y,ans:`x^2+y^2=${a}y`,
+    tex:`x^2+y^2=${a}y`,why:R`Multiply by \(r\): \(r^2=${a}r\sin\theta\), and \(r\sin\theta=y\).`};},
+  ()=>{const a=rnz(-5,5);return {pol:R`r=${a}\sec\theta`,ref:e=>e.x-a,ans:`x=${a}`,
+    tex:`x=${a}`,why:R`Write \(\sec\theta=1/\cos\theta\) and multiply: \(r\cos\theta=${a}\), which is \(x=${a}\). A vertical line.`};},
+  ()=>{const a=rnz(-5,5);return {pol:R`r=${a}\csc\theta`,ref:e=>e.y-a,ans:`y=${a}`,
+    tex:`y=${a}`,why:R`\(\csc\theta=1/\sin\theta\), so \(r\sin\theta=${a}\), which is \(y=${a}\). A horizontal line.`};},
+  ()=>{const a=rint(2,6);return {pol:R`r=${a}`,ref:e=>e.x*e.x+e.y*e.y-a*a,ans:`x^2+y^2=${a*a}`,
+    tex:`x^2+y^2=${a*a}`,why:R`Square both sides: \(r^2=${a*a}\), and \(r^2=x^2+y^2\). The circle of radius ${a} about the origin.`};},
+  ()=>{const c=pick([2,4,6,8]);return {pol:R`r^2\sin 2\theta=${c}`,ref:e=>2*e.x*e.y-c,ans:`2xy=${c}`,
+    tex:`2xy=${c}`,why:R`\(\sin2\theta=2\sin\theta\cos\theta\), so the left side is \(2(r\cos\theta)(r\sin\theta)=2xy\). The hyperbola \(xy=${c/2}\).`};},
+  ()=>{const a=rint(2,5),b=rint(2,5);return {pol:R`r=${a}\cos\theta+${b}\sin\theta`,ref:e=>e.x*e.x+e.y*e.y-a*e.x-b*e.y,ans:`x^2+y^2=${a}x+${b}y`,
+    tex:`x^2+y^2=${a}x+${b}y`,why:R`Multiply by \(r\): \(r^2=${a}r\cos\theta+${b}r\sin\theta\), which is \(x^2+y^2=${a}x+${b}y\). A circle through the origin.`};},
+  ()=>{const deg=pick([45,135]);const m=deg===45?1:-1;return {pol:R`\theta=${ANGLE_TEX[deg]}`,ref:e=>e.y-m*e.x,ans:`y=${m===1?'':'-'}x`,
+    tex:`y=${m===1?'':'-'}x`,why:R`Every point with that direction satisfies \(\tan\theta=y/x=${m}\), so the curve is the line \(y=${m===1?'':'-'}x\) through the origin.`};}
+];
+Q.polarEqToCart={name:'polar equation to Cartesian',
+  gen(){const c=pick(P2C)();return c;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find a Cartesian equation for the curve ${M(q.pol)}. Any equivalent form is accepted.</p>`;
+    numIn(el,'eq','equation:',{xwide:true,placeholder:'an equation in x and y'});
+  },
+  check(q,el){return G(el,'eq',checkEquation($('[data-k=eq]',el).value,q.ref,['x','y']));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Look for ${M(R`r\cos\theta`)}, ${M(R`r\sin\theta`)}, or ${M('r^2')}. If none of them is there yet, multiply both sides by ${M('r')} or square.`;},
+  solution(q){return q.why+D(q.tex);}
+};
+
+/* Cartesian equation -> polar equation */
+const C2P=[
+  ()=>{const a=rint(2,6);return {cart:`x^2+y^2=${a}x`,ref:e=>e.r-a*Math.cos(e.theta),ans:`r=${a}*cos(theta)`,
+    tex:R`r=${a}\cos\theta`,dom:{r:[0.5,3],theta:[0.1,1.2]},
+    why:R`Substitute \(x^2+y^2=r^2\) and \(x=r\cos\theta\): \(r^2=${a}r\cos\theta\). Divide by \(r\) (the pole is already on the curve).`};},
+  ()=>{const a=rint(2,6);return {cart:`x^2+y^2=${a}y`,ref:e=>e.r-a*Math.sin(e.theta),ans:`r=${a}*sin(theta)`,
+    tex:R`r=${a}\sin\theta`,dom:{r:[0.5,3],theta:[0.1,1.2]},
+    why:R`\(r^2=${a}r\sin\theta\), so \(r=${a}\sin\theta\): the circle of radius \(${a/2===Math.round(a/2)?a/2:`\\tfrac{${a}}{2}`}\) centered on the \(y\)-axis.`};},
+  ()=>{const c=rnz(-5,5);return {cart:`y=${c}`,ref:e=>e.r-c/Math.sin(e.theta),ans:`r=${c}/sin(theta)`,
+    tex:R`r=${c}\csc\theta`,dom:{r:[0.5,3],theta:[0.3,1.2]},
+    why:R`\(y=r\sin\theta\), so \(r\sin\theta=${c}\) and \(r=${c}\csc\theta\).`};},
+  ()=>{const c=rnz(-5,5);return {cart:`x=${c}`,ref:e=>e.r-c/Math.cos(e.theta),ans:`r=${c}/cos(theta)`,
+    tex:R`r=${c}\sec\theta`,dom:{r:[0.5,3],theta:[0.1,1.0]},
+    why:R`\(x=r\cos\theta\), so \(r\cos\theta=${c}\) and \(r=${c}\sec\theta\).`};},
+  ()=>{const c=pick([1,4,9]);return {cart:`x^2-y^2=${c}`,ref:e=>e.r*e.r-c/Math.cos(2*e.theta),ans:`r^2=${c}/cos(2theta)`,
+    tex:R`r^2=${c}\sec 2\theta`,dom:{r:[0.5,3],theta:[0.1,0.6]},
+    why:R`\(x^2-y^2=r^2\cos^2\theta-r^2\sin^2\theta=r^2\cos2\theta\), so \(r^2\cos2\theta=${c}\).`};},
+  ()=>{const [ms,mt,deg]=pick([['1','1',45],['sqrt(3)','\\sqrt3',60],['1/sqrt(3)','\\tfrac{1}{\\sqrt3}',30]]);
+    const m=Expr.evalNumber(ms);
+    return {cart:`y=${mt}\\,x`,ref:e=>e.theta-Math.atan(m),ans:`theta=${ANGLE_STR[deg]}`,
+      tex:R`\theta=${ANGLE_TEX[deg]}`,dom:{r:[0.5,3],theta:[0.1,1.2]},
+      why:R`A line through the origin has one direction: \(\tan\theta=${mt}\), so \(\theta=${ANGLE_TEX[deg]}\). There is no \(r\) in the answer.`};}
+];
+Q.cartEqToPolar={name:'Cartesian equation to polar',
+  gen(){return pick(C2P)();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find a polar equation for the curve ${M(q.cart)}. Solve for ${M('r')} (or for ${M('r^2')}); if the curve is a line through the origin, give ${M('\\theta')}.</p>`;
+    numIn(el,'eq','equation:',{xwide:true,placeholder:'r = ... or theta = ...'});
+  },
+  check(q,el){return G(el,'eq',checkEquation($('[data-k=eq]',el).value,q.ref,['r','theta'],{domain:q.dom}));},
+  solution(q){return q.why+D(q.tex);}
+};
+
+/* ---------- chapter 2: the curve zoo ---------- */
+Q.petals={name:'petals of a rose',
+  gen(){
+    const a=rint(1,4),n=rint(2,6),sin=Math.random()<0.5;
+    const rf=t=>a*(sin?Math.sin(n*t):Math.cos(n*t));
+    /* count petals numerically: the tips are the distinct points where |r| is maximal */
+    const tips=[];
+    for(let k=0;k<2*n;k++){
+      const t=(sin?PI/(2*n):0)+k*PI/n,r=rf(t),p=[r*Math.cos(t),r*Math.sin(t)];
+      if(Math.abs(Math.abs(r)-a)>1e-9)throw new Error('petals: tip radius is not a');
+      if(!tips.some(u=>Math.hypot(u[0]-p[0],u[1]-p[1])<1e-6))tips.push(p);
+    }
+    const count=n%2?n:2*n;
+    if(tips.length!==count)throw new Error(`petals: formula says ${count}, geometry says ${tips.length}`);
+    return {a,n,sin,count,ansStr:[String(count),String(a)]};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The rose ${M(`r=${q.a===1?'':q.a}\\${q.sin?'sin':'cos'}(${q.n}\\theta)`)} is graphed for ${M(R`0\le\theta<2\pi`)}. How many petals does it have, and how far from the origin does each petal reach?</p>`;
+    numIn(el,'k','number of petals:');
+    numIn(el,'m',M(R`\max |r|=`));
+  },
+  check(q,el){return Gall(el,[['k',checkNumber($('[data-k=k]',el).value,q.count)],['m',checkNumber($('[data-k=m]',el).value,q.a)]]);},
+  solution(q){
+    return `${M(`\\${q.sin?'sin':'cos'}(${q.n}\\theta)`)} runs between ${M('-1')} and ${M('1')}, so ${M(R`\max|r|=${q.a}`)}. `+
+      `The petal count rule: ${M(`n=${q.n}`)} is ${q.n%2?'odd, so there are':'even, so there are'} ${M(String(q.count))} petals`+
+      (q.n%2?`, because the negative-\\(r\\) petals fall exactly on top of the positive ones.`:`, one for each of the \\(2n\\) directions where \\(|r|\\) is maximal.`);}
+};
+
+const POLE=[
+  ()=>({tex:R`r=1+2\cos\theta`,rf:t=>1+2*Math.cos(t),ths:[[2,3],[4,3]]}),
+  ()=>({tex:R`r=1+2\sin\theta`,rf:t=>1+2*Math.sin(t),ths:[[7,6],[11,6]]}),
+  ()=>({tex:R`r=2\sin\theta-1`,rf:t=>2*Math.sin(t)-1,ths:[[1,6],[5,6]]}),
+  ()=>({tex:R`r=2\cos\theta-1`,rf:t=>2*Math.cos(t)-1,ths:[[1,3],[5,3]]}),
+  ()=>({tex:R`r=\cos 2\theta`,rf:t=>Math.cos(2*t),ths:[[1,4],[3,4],[5,4],[7,4]]}),
+  ()=>({tex:R`r=\sin 2\theta`,rf:t=>Math.sin(2*t),ths:[[0,1],[1,2],[1,1],[3,2]]}),
+  ()=>({tex:R`r=1+\cos\theta`,rf:t=>1+Math.cos(t),ths:[[1,1]]}),
+  ()=>({tex:R`r=1-\sin\theta`,rf:t=>1-Math.sin(t),ths:[[1,2]]})
+];
+Q.poleAngles={name:'angles where the curve passes through the pole',
+  gen(){
+    const c=pick(POLE)();
+    const vals=c.ths.map(([n,d])=>valPiF(n,d));
+    mustRoots(vals,c.rf,0,TAU,'poleAngles '+c.tex);
+    return {...c,vals,ansStr:c.ths.map(([n,d])=>strPiF(n,d)).join(', ')};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find every ${M('\\theta')} in ${M(R`[0,2\pi)`)} for which the curve ${M(q.tex)} passes through the pole. Comma-separated list, exact angles like <code>2pi/3</code>.</p>`;
+    numIn(el,'ths',M('\\theta='),{xwide:true,placeholder:'e.g. 2pi/3, 4pi/3'});
+  },
+  check(q,el){return G(el,'ths',checkNumberList($('[data-k=ths]',el).value,q.vals,{tol:1e-4}));},
+  solution(q){
+    return `Set ${M('r=0')} and solve on ${M(R`[0,2\pi)`)}: `+
+      D(q.tex.replace(/^r=/,'0=')+R`\quad\Longrightarrow\quad \theta=`+q.ths.map(([n,d])=>texPiF(n,d)).join(',\\;'))+
+      `Those are also the directions in which the curve leaves the origin, so they are the tangent lines at the pole.`;}
+};
+
+const ONCURVE=[
+  ()=>{const a=rint(1,3);return {tex:`r=${a===1?'':a}(1+\\cos\\theta)`,rStr:d=>`${a}*(1+(${cosExact(d)[2]}))`,rf:t=>a*(1+Math.cos(t))};},
+  ()=>{const a=rint(1,3);return {tex:`r=${a===1?'':a}(1-\\sin\\theta)`,rStr:d=>`${a}*(1-(${sinExact(d)[2]}))`,rf:t=>a*(1-Math.sin(t))};},
+  ()=>{const a=rint(1,3),b=rint(1,3);return {tex:`r=${a}+${b===1?'':b}\\cos\\theta`,rStr:d=>`${a}+${b}*(${cosExact(d)[2]})`,rf:t=>a+b*Math.cos(t)};},
+  ()=>{const a=rint(2,4);return {tex:`r=${a}\\sin\\theta`,rStr:d=>`${a}*(${sinExact(d)[2]})`,rf:t=>a*Math.sin(t)};},
+  ()=>{const a=rint(2,4);return {tex:`r=${a}\\cos\\theta`,rStr:d=>`${a}*(${cosExact(d)[2]})`,rf:t=>a*Math.cos(t)};},
+  ()=>({tex:R`r=\cos 2\theta`,rStr:d=>`(${cosExact(2*d)[2]})`,rf:t=>Math.cos(2*t)})
+];
+Q.pointOnCurve={name:'point on a polar curve',
+  gen(){
+    let c,deg,rS,rv;
+    for(let i=0;i<40;i++){
+      c=pick(ONCURVE)();deg=pick([0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330]);
+      rS=c.rStr(deg);rv=c.rf(valPiF(deg,180));
+      if(Math.abs(rv)>1e-9)break;
+    }
+    must(rS,rv,'pointOnCurve r');
+    const [ct,cv,cs]=cosExact(deg),[st,sv,ss]=sinExact(deg);
+    const xs=`(${rS})*(${cs})`,ys=`(${rS})*(${ss})`;
+    const x=rv*cv,y=rv*sv;
+    must(xs,x,'pointOnCurve x');must(ys,y,'pointOnCurve y');
+    return {c,deg,rS,rv,ct,st,x,y,ansStr:`(${xs}, ${ys})`};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The curve is ${M(q.c.tex)}. Find the Cartesian coordinates of the point on it at ${M(R`\theta=${ANGLE_TEX[q.deg]}`)}. Exact values.</p>`;
+    numIn(el,'p',M('(x,y)='),{wide:true,placeholder:'(x, y)'});
+  },
+  check(q,el){return G(el,'p',checkVector($('[data-k=p]',el).value,[q.x,q.y]));},
+  solution(q){
+    return `First the radius: ${M(R`r=${exactTex(q.rv)}`)} at ${M(R`\theta=${ANGLE_TEX[q.deg]}`)}. Then convert:`+
+      D(R`x=r\cos\theta=\left(${exactTex(q.rv)}\right)\left(${q.ct}\right)=${exactTex(q.x)},\qquad y=r\sin\theta=\left(${exactTex(q.rv)}\right)\left(${q.st}\right)=${exactTex(q.y)}`);}
+};
+
+const LOOPRANGE=[
+  ()=>({tex:R`r=1+2\cos\theta`,rf:t=>1+2*Math.cos(t),lo:[2,3],hi:[4,3],why:R`\(1+2\cos\theta=0\) gives \(\cos\theta=-\tfrac12\).`}),
+  ()=>({tex:R`r=\sqrt2+2\cos\theta`,rf:t=>Math.SQRT2+2*Math.cos(t),lo:[3,4],hi:[5,4],why:R`\(\cos\theta=-\tfrac{\sqrt2}{2}\).`}),
+  ()=>({tex:R`r=\sqrt3+2\cos\theta`,rf:t=>Math.sqrt(3)+2*Math.cos(t),lo:[5,6],hi:[7,6],why:R`\(\cos\theta=-\tfrac{\sqrt3}{2}\).`}),
+  ()=>({tex:R`r=1+2\sin\theta`,rf:t=>1+2*Math.sin(t),lo:[7,6],hi:[11,6],why:R`\(\sin\theta=-\tfrac12\).`}),
+  ()=>({tex:R`r=\sqrt2+2\sin\theta`,rf:t=>Math.SQRT2+2*Math.sin(t),lo:[5,4],hi:[7,4],why:R`\(\sin\theta=-\tfrac{\sqrt2}{2}\).`}),
+  ()=>({tex:R`r=\sqrt3+2\sin\theta`,rf:t=>Math.sqrt(3)+2*Math.sin(t),lo:[4,3],hi:[5,3],why:R`\(\sin\theta=-\tfrac{\sqrt3}{2}\).`})
+];
+Q.innerLoopRange={name:'theta-interval of the inner loop',
+  gen(){
+    const c=pick(LOOPRANGE)();
+    const a=valPiF(...c.lo),b=valPiF(...c.hi);
+    mustRoots([a,b],c.rf,0,TAU,'innerLoopRange '+c.tex);
+    if(c.rf((a+b)/2)>=0)throw new Error('innerLoopRange: r is not negative between the two angles');
+    return {...c,a,b,ansStr:[strPiF(...c.lo),strPiF(...c.hi)]};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The limaçon ${M(q.tex)} has an inner loop. The loop is traced as ${M('\\theta')} runs between the two angles where ${M('r=0')}. Give those two angles, smaller one first, as exact multiples of ${M('\\pi')}.</p>`;
+    numIn(el,'t1',M(R`\theta_1=`));
+    numIn(el,'t2',M(R`\theta_2=`));
+  },
+  check(q,el){return Gall(el,[['t1',checkNumber($('[data-k=t1]',el).value,q.a,{tol:1e-6})],['t2',checkNumber($('[data-k=t2]',el).value,q.b,{tol:1e-6})]]);},
+  solution(q){
+    return `Set ${M('r=0')}: ${q.why} On ${M(R`[0,2\pi)`)} that gives ${M(texPiF(...q.lo))} and ${M(texPiF(...q.hi))}. `+
+      `Between them ${M('r<0')} (at the midpoint ${M(R`r=${fmtDec(q.rf((q.a+q.b)/2),3)}`)}), which is exactly the inner loop: the point is plotted on the opposite side of the origin.`;}
+};
+
+/* ---------- chapter 3: tangents ---------- */
+const TANC=[
+  ()=>{const a=rint(1,3);return {tex:`r=${a===1?'':a}(1+\\cos\\theta)`,rf:t=>a*(1+Math.cos(t)),dr:t=>-a*Math.sin(t),drT:R`-${a===1?'':a}\sin\theta`};},
+  ()=>{const a=rint(1,3),b=rint(1,3);return {tex:`r=${a}+${b===1?'':b}\\cos\\theta`,rf:t=>a+b*Math.cos(t),dr:t=>-b*Math.sin(t),drT:R`-${b===1?'':b}\sin\theta`};},
+  ()=>{const a=rint(2,4);return {tex:`r=${a}\\sin\\theta`,rf:t=>a*Math.sin(t),dr:t=>a*Math.cos(t),drT:R`${a}\cos\theta`};},
+  ()=>{const a=rint(2,4);return {tex:`r=${a}\\cos\\theta`,rf:t=>a*Math.cos(t),dr:t=>-a*Math.sin(t),drT:R`-${a}\sin\theta`};},
+  ()=>({tex:R`r=\cos 2\theta`,rf:t=>Math.cos(2*t),dr:t=>-2*Math.sin(2*t),drT:R`-2\sin 2\theta`}),
+  ()=>({tex:R`r=e^{\theta}`,rf:t=>Math.exp(t),dr:t=>Math.exp(t),drT:R`e^{\theta}`})
+];
+Q.slopeAt={name:'slope of the tangent at a given angle',
+  gen(){
+    let c,deg,r,dr,num,den;
+    for(let i=0;i<60;i++){
+      c=pick(TANC)();deg=pick([0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330]);
+      const t=valPiF(deg,180);r=c.rf(t);dr=c.dr(t);
+      num=dr*Math.sin(t)+r*Math.cos(t);den=dr*Math.cos(t)-r*Math.sin(t);
+      if(Math.abs(num)<1e-9&&Math.abs(den)<1e-9)continue;      /* 0/0: a cusp, skip */
+      if(Math.abs(den)>1e-12&&Math.abs(den)<1e-6)continue;      /* numerically ambiguous */
+      break;
+    }
+    const t=valPiF(deg,180);
+    /* verify against a direct numerical derivative of y(theta) and x(theta) */
+    const e=1e-6,X=s=>c.rf(s)*Math.cos(s),Y=s=>c.rf(s)*Math.sin(s);
+    const dxN=(X(t+e)-X(t-e))/(2*e),dyN=(Y(t+e)-Y(t-e))/(2*e);
+    if(Math.abs(dxN-den)>1e-4*Math.max(1,Math.abs(den))||Math.abs(dyN-num)>1e-4*Math.max(1,Math.abs(num)))
+      throw new Error('slopeAt: the formula and the numerical derivative disagree');
+    const vert=Math.abs(den)<1e-12;
+    const slope=vert?'DNE':num/den;
+    return {c,deg,t,r,dr,num,den,vert,slope,ansStr:vert?'DNE':String(slope)};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find ${M(R`\dfrac{dy}{dx}`)} for ${M(q.c.tex)} at ${M(R`\theta=${ANGLE_TEX[q.deg]}`)}. Exact value; type <code>DNE</code> if the tangent is vertical.</p>`;
+    numIn(el,'m',M(R`\frac{dy}{dx}=`),{wide:true});
+  },
+  check(q,el){return G(el,'m',checkLimit($('[data-k=m]',el).value,q.slope));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`\frac{dr}{d\theta}=${q.c.drT}`)+`, and at this angle ${M(R`r=${fmtDec(q.r,4)}`)}, ${M(R`\frac{dr}{d\theta}=${fmtDec(q.dr,4)}`)}. Now put them into the quotient.`;},
+  solution(q){
+    return `With ${M(R`\frac{dr}{d\theta}=${q.c.drT}`)}:`+
+      D(R`\frac{dy}{dx}=\frac{\frac{dr}{d\theta}\sin\theta+r\cos\theta}{\frac{dr}{d\theta}\cos\theta-r\sin\theta}
+         =\frac{${exactTex(q.num)}}{${exactTex(q.den)}}`)+
+      (q.vert?`The denominator ${M(R`dx/d\theta`)} is zero while the numerator is not, so the tangent line is vertical and the slope does not exist.`
+             :`So ${M(R`\frac{dy}{dx}=${exactTex(q.slope)}\approx ${fmtDec(q.slope,4)}`)}.`);}
+};
+
+const HORIZ=[
+  ()=>{const a=rint(1,2);return {tex:`r=${a===1?'':a}(1+\\cos\\theta)`,rf:t=>a*(1+Math.cos(t)),
+    pts:[[3*a/4,3*a*Math.sqrt(3)/4],[3*a/4,-3*a*Math.sqrt(3)/4]],
+    strs:[[`${3*a}/4`,`${3*a}*sqrt(3)/4`],[`${3*a}/4`,`-${3*a}*sqrt(3)/4`]],
+    why:R`\(y=r\sin\theta=${a===1?'':a}(1+\cos\theta)\sin\theta\), so \(\frac{dy}{d\theta}=${a===1?'':a}(2\cos\theta-1)(\cos\theta+1)\). It vanishes at \(\cos\theta=\tfrac12\), that is \(\theta=\tfrac{\pi}{3},\tfrac{5\pi}{3}\), and at \(\theta=\pi\), which is the cusp at the pole (there \(dx/d\theta=0\) too, so it is not a horizontal tangent).`};},
+  ()=>{const a=rint(1,2);return {tex:`r=${a===1?'':a}(1-\\cos\\theta)`,rf:t=>a*(1-Math.cos(t)),
+    pts:[[-3*a/4,3*a*Math.sqrt(3)/4],[-3*a/4,-3*a*Math.sqrt(3)/4]],
+    strs:[[`-${3*a}/4`,`${3*a}*sqrt(3)/4`],[`-${3*a}/4`,`-${3*a}*sqrt(3)/4`]],
+    why:R`\(\frac{dy}{d\theta}=-${a===1?'':a}(2\cos\theta+1)(\cos\theta-1)=0\) at \(\cos\theta=-\tfrac12\), that is \(\theta=\tfrac{2\pi}{3},\tfrac{4\pi}{3}\), where \(r=\tfrac{3${a===1?'':a}}{2}\).`};},
+  ()=>{const a=rint(2,4);return {tex:`r=${a}\\sin\\theta`,rf:t=>a*Math.sin(t),
+    pts:[[0,a]],strs:[['0',`${a}`]],
+    why:R`\(y=${a}\sin^2\theta\), so \(\frac{dy}{d\theta}=${a}\sin2\theta=0\) at \(\theta=0\) and \(\theta=\tfrac{\pi}{2}\). At \(\theta=0\) the point is the pole, so only \(\theta=\tfrac{\pi}{2}\) counts: the top of the circle.`};},
+  ()=>{const a=rint(2,4);return {tex:`r=${a}\\cos\\theta`,rf:t=>a*Math.cos(t),
+    pts:[[a/2,a/2],[a/2,-a/2]],strs:[[`${a}/2`,`${a}/2`],[`${a}/2`,`-${a}/2`]],
+    why:R`\(y=${a}\cos\theta\sin\theta=\tfrac{${a}}{2}\sin2\theta\), so \(\frac{dy}{d\theta}=${a}\cos2\theta=0\) at \(\theta=\tfrac{\pi}{4},\tfrac{3\pi}{4}\). Those are the top and the bottom of the circle.`};},
+  ()=>{const a=rint(1,2);return {tex:`r=${a===1?'':a}(1+\\sin\\theta)`,rf:t=>a*(1+Math.sin(t)),
+    pts:[[0,2*a],[-a*Math.sqrt(3)/4,-a/4],[a*Math.sqrt(3)/4,-a/4]],
+    strs:[['0',`${2*a}`],[`-${a}*sqrt(3)/4`,`-${a}/4`],[`${a}*sqrt(3)/4`,`-${a}/4`]],
+    why:R`\(\frac{dy}{d\theta}=${a===1?'':a}\cos\theta(1+2\sin\theta)=0\) at \(\theta=\tfrac{\pi}{2}\) (the top, \(r=2${a===1?'':a}\)) and at \(\sin\theta=-\tfrac12\), that is \(\theta=\tfrac{7\pi}{6},\tfrac{11\pi}{6}\) where \(r=\tfrac{${a}}{2}\). At \(\theta=\tfrac{3\pi}{2}\) the curve is at the pole.`};},
+  ()=>{const a=rint(1,2);return {tex:`r=${a===1?'':a}(1-\\sin\\theta)`,rf:t=>a*(1-Math.sin(t)),
+    pts:[[-a*Math.sqrt(3)/4,a/4],[a*Math.sqrt(3)/4,a/4],[0,-2*a]],
+    strs:[[`-${a}*sqrt(3)/4`,`${a}/4`],[`${a}*sqrt(3)/4`,`${a}/4`],['0',`-${2*a}`]],
+    why:R`\(\frac{dy}{d\theta}=${a===1?'':a}\cos\theta(1-2\sin\theta)=0\) at \(\sin\theta=\tfrac12\), that is \(\theta=\tfrac{\pi}{6},\tfrac{5\pi}{6}\) where \(r=\tfrac{${a}}{2}\), and at \(\theta=\tfrac{3\pi}{2}\) where \(r=2${a===1?'':a}\). At \(\theta=\tfrac{\pi}{2}\) the curve is at the pole.`};}
+];
+Q.horizontalTangents={name:'points with horizontal tangents',
+  gen(){
+    const c=pick(HORIZ)();
+    const ord=c.pts.map((p,i)=>i).sort((i,j)=>(c.pts[j][1]-c.pts[i][1])||(c.pts[i][0]-c.pts[j][0]));
+    const pts=ord.map(i=>c.pts[i]),strs=ord.map(i=>c.strs[i]);
+    mustPoints(pts,horizNum(c.rf),'horizontalTangents '+c.tex);
+    strs.forEach((s,i)=>{must(s[0],pts[i][0],'horizontalTangents x');must(s[1],pts[i][1],'horizontalTangents y');});
+    const ansStr={};pts.forEach((p,i)=>{ansStr['x'+(i+1)]=strs[i][0];ansStr['y'+(i+1)]=strs[i][1];});
+    return {...c,pts,strs,ansStr};
+  },
+  render(q,el){
+    const n=q.pts.length;
+    el.innerHTML=`<p class="prompt">Find every point on ${M(q.tex)} where the tangent line is horizontal, not counting the pole. There ${n===1?'is <b>one</b> such point':`are <b>${n===2?'two':'three'}</b> such points`}. Give <b>Cartesian</b> coordinates, exact, listed from the highest point down (left to right if two are level).</p>`;
+    q.pts.forEach((p,i)=>{numIn(el,'x'+(i+1),M(`x_{${i+1}}=`));numIn(el,'y'+(i+1),M(`y_{${i+1}}=`));});
+  },
+  check(q,el){
+    const pairs=[];
+    q.pts.forEach((p,i)=>{
+      pairs.push(['x'+(i+1),checkNumber($(`[data-k=x${i+1}]`,el).value,p[0],{tol:1e-6})]);
+      pairs.push(['y'+(i+1),checkNumber($(`[data-k=y${i+1}]`,el).value,p[1],{tol:1e-6})]);});
+    return Gall(el,pairs);},
+  solution(q){
+    return `Horizontal means ${M(R`dy/d\theta=0`)} with ${M(R`dx/d\theta\ne0`)}. ${q.why} Converting those angles to Cartesian coordinates:`+
+      D(q.pts.map(p=>`\\left(${exactTex(p[0])},\\,${exactTex(p[1])}\\right)`).join(',\\quad '));}
+};
+
+const POLETAN=[
+  ()=>({tex:R`r=1+2\cos\theta`,rf:t=>1+2*Math.cos(t),ths:[[2,3]]}),
+  ()=>({tex:R`r=2\sin\theta-1`,rf:t=>2*Math.sin(t)-1,ths:[[1,6],[5,6]]}),
+  ()=>({tex:R`r=\cos 2\theta`,rf:t=>Math.cos(2*t),ths:[[1,4],[3,4]]}),
+  ()=>({tex:R`r=\sin 2\theta`,rf:t=>Math.sin(2*t),ths:[[0,1],[1,2]]}),
+  ()=>({tex:R`r=\cos 3\theta`,rf:t=>Math.cos(3*t),ths:[[1,6],[1,2],[5,6]]}),
+  ()=>({tex:R`r=\sin 3\theta`,rf:t=>Math.sin(3*t),ths:[[0,1],[1,3],[2,3]]})
+];
+Q.tangentAtPole={name:'tangent directions at the pole',
+  gen(){
+    const c=pick(POLETAN)();
+    const vals=c.ths.map(([n,d])=>valPiF(n,d));
+    mustRoots(vals,c.rf,0,PI,'tangentAtPole '+c.tex);
+    return {...c,vals,ansStr:c.ths.map(([n,d])=>strPiF(n,d)).join(', ')};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The curve ${M(q.tex)} passes through the origin. Find the directions of its tangent lines there: list every ${M('\\theta')} in ${M(R`[0,\pi)`)} with ${M('r=0')}. Comma-separated, exact.</p>`;
+    numIn(el,'ths',M('\\theta='),{xwide:true,placeholder:'e.g. pi/4, 3pi/4'});
+  },
+  check(q,el){return G(el,'ths',checkNumberList($('[data-k=ths]',el).value,q.vals,{tol:1e-4}));},
+  solution(q){
+    return `At a point where ${M('r=0')} and ${M(R`dr/d\theta\ne0`)}, the slope reduces to ${M(R`\frac{f'(\theta_0)\sin\theta_0}{f'(\theta_0)\cos\theta_0}=\tan\theta_0`)}, so the tangent line is ${M(R`\theta=\theta_0`)}. Solving ${M('r=0')} on ${M(R`[0,\pi)`)}:`+
+      D(R`\theta=`+q.ths.map(([n,d])=>texPiF(n,d)).join(',\\;'));}
+};
+
+/* ---------- chapter 4: area and arc length ---------- */
+const AREAS=[
+  ()=>{const a=rint(1,4);return {what:`the circle ${M(`r=${a}`)}`,rf:()=>a,lo:0,hi:TAU,
+    ans:`pi*${a*a}`,tex:`\\pi\\cdot${a}^2=${a*a}\\pi`,
+    setup:R`A=\tfrac12\int_0^{2\pi}${a}^2\,d\theta`};},
+  ()=>{const a=rint(1,4);return {what:`the circle ${M(`r=${2*a}\\cos\\theta`)}`,rf:t=>2*a*Math.cos(t),lo:-PI/2,hi:PI/2,
+    ans:`pi*${a*a}`,tex:`${a*a}\\pi`,
+    setup:R`A=\tfrac12\int_{-\pi/2}^{\pi/2}${4*a*a}\cos^2\theta\,d\theta=${2*a*a}\int_{-\pi/2}^{\pi/2}\frac{1+\cos2\theta}{2}\,d\theta`};},
+  ()=>{const a=rint(1,4);return {what:`the circle ${M(`r=${2*a}\\sin\\theta`)}`,rf:t=>2*a*Math.sin(t),lo:0,hi:PI,
+    ans:`pi*${a*a}`,tex:`${a*a}\\pi`,
+    setup:R`A=\tfrac12\int_{0}^{\pi}${4*a*a}\sin^2\theta\,d\theta`};},
+  ()=>{const a=rint(1,3);return {what:`the cardioid ${M(`r=${a===1?'':a}(1+\\cos\\theta)`)}`,rf:t=>a*(1+Math.cos(t)),lo:0,hi:TAU,
+    ans:`3*pi*${a*a}/2`,tex:`\\tfrac{3${a===1?'':a*a}\\pi}{2}`,
+    setup:R`A=\tfrac{${a*a}}{2}\int_0^{2\pi}\left(1+2\cos\theta+\cos^2\theta\right)d\theta=\tfrac{${a*a}}{2}\left(2\pi+0+\pi\right)`};},
+  ()=>{const a=rint(1,3);return {what:`the cardioid ${M(`r=${a===1?'':a}(1-\\sin\\theta)`)}`,rf:t=>a*(1-Math.sin(t)),lo:0,hi:TAU,
+    ans:`3*pi*${a*a}/2`,tex:`\\tfrac{3${a===1?'':a*a}\\pi}{2}`,
+    setup:R`A=\tfrac{${a*a}}{2}\int_0^{2\pi}\left(1-2\sin\theta+\sin^2\theta\right)d\theta=\tfrac{${a*a}}{2}\left(2\pi-0+\pi\right)`};},
+  ()=>{const b=rint(1,3),a=b+rint(1,3);return {what:`the limaçon ${M(`r=${a}+${b===1?'':b}\\sin\\theta`)}`,rf:t=>a+b*Math.sin(t),lo:0,hi:TAU,
+    ans:`pi*(${a*a}+${b*b}/2)`,tex:`\\pi\\left(${a*a}+\\tfrac{${b*b}}{2}\\right)`,
+    setup:R`A=\tfrac12\int_0^{2\pi}\left(${a*a}+${2*a*b}\sin\theta+${b*b}\sin^2\theta\right)d\theta=\tfrac12\left(${2*a*a}\pi+0+${b*b}\pi\right)`};},
+  ()=>{const a=rint(1,4);return {what:`the lemniscate ${M(`r^2=${a*a}\\cos 2\\theta`)} (both loops)`,rf:t=>a*Math.sqrt(Math.max(0,Math.cos(2*t))),lo:-PI/4,hi:PI/4,two:true,
+    ans:`${a*a}`,tex:`${a*a}`,
+    setup:R`A=2\cdot\tfrac12\int_{-\pi/4}^{\pi/4}${a*a}\cos2\theta\,d\theta=${a*a}\left[\tfrac{\sin2\theta}{2}\right]_{-\pi/4}^{\pi/4}`};}
+];
+Q.areaEnclosed={name:'area enclosed by a polar curve',
+  gen(){
+    const c=pick(AREAS)();
+    const num=(c.two?2:1)*areaNum(c.rf,c.lo,c.hi,2000);
+    must(c.ans,num,'areaEnclosed '+c.what);
+    return {...c,num};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the area enclosed by ${q.what}. Exact value with <code>pi</code>.</p>`;
+    numIn(el,'ar','Area =',{wide:true});
+  },
+  check(q,el){return G(el,'ar',checkNumber($('[data-k=ar]',el).value,q.num,{rel:1e-5}));},
+  solution(q){
+    return `Use ${M(R`A=\tfrac12\int r^2\,d\theta`)} over the ${M('\\theta')}-interval that traces the curve once:`+
+      D(q.setup+R`=${q.tex}\approx ${fmtDec(q.num,4)}`);}
+};
+
+Q.petalArea={name:'one petal: limits and area',
+  gen(){
+    const a=rint(1,3),n=rint(2,5),sin=Math.random()<0.5;
+    const rf=t=>a*(sin?Math.sin(n*t):Math.cos(n*t));
+    const lo=sin?0:-PI/(2*n),hi=sin?PI/n:PI/(2*n);
+    const loS=sin?'0':`-pi/${2*n}`,hiS=sin?`pi/${n}`:`pi/${2*n}`;
+    const loT=sin?'0':`-\\tfrac{\\pi}{${2*n}}`,hiT=sin?`\\tfrac{\\pi}{${n}}`:`\\tfrac{\\pi}{${2*n}}`;
+    if(Math.abs(rf(lo))>1e-9||Math.abs(rf(hi))>1e-9)throw new Error('petalArea: the limits are not zeros of r');
+    if(rf((lo+hi)/2)<=0)throw new Error('petalArea: r is not positive on the petal');
+    const num=areaNum(rf,lo,hi,2000);
+    const ans=`pi*${a*a}/${4*n}`;
+    must(ans,num,'petalArea');
+    return {a,n,sin,lo,hi,loS,hiS,loT,hiT,num,ansStr:[loS,hiS,ans]};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">One petal of the rose ${M(`r=${q.a===1?'':q.a}\\${q.sin?'sin':'cos'}(${q.n}\\theta)`)} is traced as ${M('\\theta')} goes from ${M('\\theta_1')} to ${M('\\theta_2')}, two consecutive zeros of ${M('r')}: take ${q.sin?`the first petal, the one that starts at ${M(R`\theta=0`)}`:`the petal centered on the polar axis, so ${M(R`\theta_1<0<\theta_2`)}`}. Give those limits and the area of that petal.</p>`;
+    numIn(el,'t1',M('\\theta_1='));
+    numIn(el,'t2',M('\\theta_2='));
+    numIn(el,'ar','Area =',{wide:true});
+  },
+  check(q,el){return Gall(el,[
+    ['t1',checkNumber($('[data-k=t1]',el).value,q.lo,{tol:1e-6})],
+    ['t2',checkNumber($('[data-k=t2]',el).value,q.hi,{tol:1e-6})],
+    ['ar',checkNumber($('[data-k=ar]',el).value,q.num,{rel:1e-5})]]);},
+  solution(q){
+    return `The petal runs between consecutive zeros of ${M('r')}: ${M(`\\theta=${q.loT}`)} to ${M(`\\theta=${q.hiT}`)}. Then`+
+      D(R`A=\tfrac12\int_{${q.loT}}^{${q.hiT}}${q.a===1?'':q.a*q.a}${q.sin?'\\sin':'\\cos'}^2(${q.n}\theta)\,d\theta
+        =\tfrac{${q.a*q.a}}{2}\int_{${q.loT}}^{${q.hiT}}\frac{1${q.sin?'-':'+'}\cos(${2*q.n}\theta)}{2}\,d\theta=\tfrac{${q.a*q.a}\pi}{${4*q.n}}`)+
+      `The pattern is worth remembering: one petal of ${M(`r=a\\cos(n\\theta)`)} always has area ${M(R`\tfrac{\pi a^2}{4n}`)}.`;}
+};
+
+const LOOPS=[
+  ()=>{const k=rint(1,3);return {tex:`r=${k===1?'':k}(1+2\\cos\\theta)`,rf:t=>k*(1+2*Math.cos(t)),
+    lo:2*PI/3,hi:4*PI/3,loT:R`\tfrac{2\pi}{3}`,hiT:R`\tfrac{4\pi}{3}`,k,
+    ans:`${k*k}*(pi - 3*sqrt(3)/2)`,tex2:`${k===1?'':k*k}\\left(\\pi-\\tfrac{3\\sqrt3}{2}\\right)`,
+    exp:R`${k*k}\left(3+4\cos\theta+2\cos2\theta\right)`,anti:R`${k*k}\left(3\theta+4\sin\theta+\sin2\theta\right)`};},
+  ()=>{const k=rint(1,3);return {tex:`r=${k===1?'':k}(1+2\\sin\\theta)`,rf:t=>k*(1+2*Math.sin(t)),
+    lo:7*PI/6,hi:11*PI/6,loT:R`\tfrac{7\pi}{6}`,hiT:R`\tfrac{11\pi}{6}`,k,
+    ans:`${k*k}*(pi - 3*sqrt(3)/2)`,tex2:`${k===1?'':k*k}\\left(\\pi-\\tfrac{3\\sqrt3}{2}\\right)`,
+    exp:R`${k*k}\left(3+4\sin\theta-2\cos2\theta\right)`,anti:R`${k*k}\left(3\theta-4\cos\theta-\sin2\theta\right)`};}
+];
+Q.innerLoop={name:'area of the inner loop',
+  gen(){
+    const c=pick(LOOPS)();
+    if(Math.abs(c.rf(c.lo))>1e-9||Math.abs(c.rf(c.hi))>1e-9)throw new Error('innerLoop: limits are not zeros');
+    const num=areaNum(c.rf,c.lo,c.hi,2000);
+    must(c.ans,num,'innerLoop '+c.tex);
+    return {...c,num};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the area enclosed by the <b>inner loop</b> of the limaçon ${M(q.tex)}. Exact value.</p>`;
+    numIn(el,'ar','Area =',{wide:true});
+  },
+  check(q,el){return G(el,'ar',checkNumber($('[data-k=ar]',el).value,q.num,{rel:1e-5}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Solve ${M('r=0')} first. The inner loop is traced for ${M(`${q.loT}\\le\\theta\\le${q.hiT}`)}, the interval on which ${M('r<0')}.`;},
+  solution(q){
+    return `The loop is traced between the two zeros of ${M('r')}, which are ${M(q.loT)} and ${M(q.hiT)}. Square and expand with the half-angle identity:`+
+      D(R`A=\tfrac12\int_{${q.loT}}^{${q.hiT}}${q.exp}\,d\theta=\tfrac12\Big[${q.anti}\Big]_{${q.loT}}^{${q.hiT}}=${q.tex2}\approx ${fmtDec(q.num,4)}`)+
+      `The squaring makes the negative ${M('r')} harmless: only ${M('r^2')} enters the integral.`;}
+};
+
+const OUTERS=[
+  ()=>{const k=rint(1,3);return {tex:`r=${k===1?'':k}\\left(\\tfrac12+\\cos\\theta\\right)`,rf:t=>k*(0.5+Math.cos(t)),
+    o:[-2*PI/3,2*PI/3],i:[2*PI/3,4*PI/3],oT:[R`-\tfrac{2\pi}{3}`,R`\tfrac{2\pi}{3}`],iT:[R`\tfrac{2\pi}{3}`,R`\tfrac{4\pi}{3}`],
+    ans:`${k*k}*(pi/4 + 3*sqrt(3)/4)`,tex2:`${k===1?'':k*k}\\left(\\tfrac{\\pi}{4}+\\tfrac{3\\sqrt3}{4}\\right)`};},
+  ()=>{const k=rint(1,3);return {tex:`r=${k===1?'':k}(1+2\\cos\\theta)`,rf:t=>k*(1+2*Math.cos(t)),
+    o:[-2*PI/3,2*PI/3],i:[2*PI/3,4*PI/3],oT:[R`-\tfrac{2\pi}{3}`,R`\tfrac{2\pi}{3}`],iT:[R`\tfrac{2\pi}{3}`,R`\tfrac{4\pi}{3}`],
+    ans:`${k*k}*(pi + 3*sqrt(3))`,tex2:`${k===1?'':k*k}\\left(\\pi+3\\sqrt3\\right)`};},
+  ()=>{const k=rint(1,3);return {tex:`r=${k===1?'':k}(1+2\\sin\\theta)`,rf:t=>k*(1+2*Math.sin(t)),
+    o:[-PI/6,7*PI/6],i:[7*PI/6,11*PI/6],oT:[R`-\tfrac{\pi}{6}`,R`\tfrac{7\pi}{6}`],iT:[R`\tfrac{7\pi}{6}`,R`\tfrac{11\pi}{6}`],
+    ans:`${k*k}*(pi + 3*sqrt(3))`,tex2:`${k===1?'':k*k}\\left(\\pi+3\\sqrt3\\right)`};}
+];
+Q.outerLoop={name:'area between the two loops of a limacon',
+  gen(){
+    const c=pick(OUTERS)();
+    const A=areaNum(c.rf,c.o[0],c.o[1],2000),B=areaNum(c.rf,c.i[0],c.i[1],2000);
+    const num=A-B;
+    if(!(B>0&&A>B))throw new Error('outerLoop: loop areas are not ordered');
+    must(c.ans,num,'outerLoop '+c.tex);
+    return {...c,A,B,num};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The limaçon ${M(q.tex)} has a large loop and a small inner loop. Find the area of the region that lies <b>inside the large loop and outside the small loop</b>. Exact value.</p>`;
+    numIn(el,'ar','Area =',{wide:true});
+  },
+  check(q,el){return G(el,'ar',checkNumber($('[data-k=ar]',el).value,q.num,{rel:1e-5}));},
+  solution(q){
+    return `Both loops come from the same formula, split at the zeros of ${M('r')}. The large loop is traced for ${M(`${q.oT[0]}\\le\\theta\\le${q.oT[1]}`)} and the small one for ${M(`${q.iT[0]}\\le\\theta\\le${q.iT[1]}`)}:`+
+      D(R`A_{\text{large}}=\tfrac12\int_{${q.oT[0]}}^{${q.oT[1]}}r^2\,d\theta=${fmtDec(q.A,4)},\qquad A_{\text{small}}=\tfrac12\int_{${q.iT[0]}}^{${q.iT[1]}}r^2\,d\theta=${fmtDec(q.B,4)}`)+
+      `The small loop sits inside the large one, so subtract:`+
+      D(R`A=A_{\text{large}}-A_{\text{small}}=${q.tex2}\approx ${fmtDec(q.num,4)}`);}
+};
+
+const BETWEEN=[
+  k=>({f:t=>2*k*Math.cos(t),g:()=>k,
+    fT:`r=${2*k}\\cos\\theta`,gT:`r=${k}`,
+    th:[-PI/3,PI/3],thS:['-pi/3','pi/3'],thT:[R`-\tfrac{\pi}{3}`,R`\tfrac{\pi}{3}`],
+    cross:R`${2*k}\cos\theta=${k}\;\Rightarrow\;\cos\theta=\tfrac12`,
+    exp:R`${k*k}\left(1+2\cos2\theta\right)`,anti:R`${k*k}\left(\theta+\sin2\theta\right)`,
+    ans:`${k*k}*(pi/3 + sqrt(3)/2)`,tex:`${k===1?'':k*k}\\left(\\tfrac{\\pi}{3}+\\tfrac{\\sqrt3}{2}\\right)`}),
+  k=>({f:t=>3*k*Math.sin(t),g:t=>k*(1+Math.sin(t)),
+    fT:`r=${3*k}\\sin\\theta`,gT:`r=${k===1?'':k}(1+\\sin\\theta)`,
+    th:[PI/6,5*PI/6],thS:['pi/6','5pi/6'],thT:[R`\tfrac{\pi}{6}`,R`\tfrac{5\pi}{6}`],
+    cross:R`${3*k}\sin\theta=${k===1?'':k}(1+\sin\theta)\;\Rightarrow\;\sin\theta=\tfrac12`,
+    exp:R`${k*k}\left(3-4\cos2\theta-2\sin\theta\right)`,anti:R`${k*k}\left(3\theta-2\sin2\theta+2\cos\theta\right)`,
+    ans:`pi*${k*k}`,tex:`${k===1?'':k*k}\\pi`}),
+  k=>({f:t=>k*(1+Math.cos(t)),g:()=>k,
+    fT:`r=${k===1?'':k}(1+\\cos\\theta)`,gT:`r=${k}`,
+    th:[-PI/2,PI/2],thS:['-pi/2','pi/2'],thT:[R`-\tfrac{\pi}{2}`,R`\tfrac{\pi}{2}`],
+    cross:R`${k===1?'':k}(1+\cos\theta)=${k}\;\Rightarrow\;\cos\theta=0`,
+    exp:R`${k*k}\left(2\cos\theta+\tfrac12+\tfrac{\cos2\theta}{2}\right)`,anti:R`${k*k}\left(2\sin\theta+\tfrac{\theta}{2}+\tfrac{\sin2\theta}{4}\right)`,
+    ans:`${k*k}*(2 + pi/4)`,tex:`${k===1?'':k*k}\\left(2+\\tfrac{\\pi}{4}\\right)`}),
+  k=>({f:()=>2*k,g:t=>2*k*(1-Math.cos(t)),
+    fT:`r=${2*k}`,gT:`r=${2*k}(1-\\cos\\theta)`,
+    th:[-PI/2,PI/2],thS:['-pi/2','pi/2'],thT:[R`-\tfrac{\pi}{2}`,R`\tfrac{\pi}{2}`],
+    cross:R`${2*k}=${2*k}(1-\cos\theta)\;\Rightarrow\;\cos\theta=0`,
+    exp:R`${4*k*k}\left(2\cos\theta-\tfrac12-\tfrac{\cos2\theta}{2}\right)`,anti:R`${4*k*k}\left(2\sin\theta-\tfrac{\theta}{2}-\tfrac{\sin2\theta}{4}\right)`,
+    ans:`${k*k}*(8 - pi)`,tex:`${k===1?'':k*k}\\left(8-\\pi\\right)`})
+];
+const betweenDraw=()=>{const k=rint(1,2);const c=pick(BETWEEN)(k);
+  const num=0.5*simpson(t=>{const F=c.f(t),Gg=c.g(t);return F*F-Gg*Gg;},c.th[0],c.th[1],2000);
+  if(c.f((c.th[0]+c.th[1])/2)<=c.g((c.th[0]+c.th[1])/2))throw new Error('betweenCurves: f is not outside g');
+  must(c.ans,num,'betweenCurves '+c.fT);
+  return {...c,k,num};};
+Q.betweenCurves={name:'inside one curve and outside another',
+  gen(){return betweenDraw();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the area of the region that lies inside ${M(q.fT)} and outside ${M(q.gT)}. First the two angles where the curves cross (list them, choosing values in ${M(R`(-\pi,\pi]`)}), then the area.</p>`;
+    numIn(el,'ths','crossing angles:',{wide:true,placeholder:'e.g. -pi/3, pi/3'});
+    numIn(el,'ar','Area =',{wide:true});
+  },
+  check(q,el){return Gall(el,[
+    ['ths',checkNumberList($('[data-k=ths]',el).value,q.th,{tol:1e-4})],
+    ['ar',checkNumber($('[data-k=ar]',el).value,q.num,{rel:1e-5})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Set the two radii equal: ${M(q.cross)}. Between those angles, test the midpoint to see which curve is farther out.`;},
+  solution(q){
+    return `Set the radii equal: ${M(q.cross)}, so the curves cross at ${M(q.thT[0])} and ${M(q.thT[1])}. Between them ${M(q.fT.replace('r=',''))} is the outer curve, so subtract the squares:`+
+      D(R`A=\tfrac12\int_{${q.thT[0]}}^{${q.thT[1]}}\left(f^2-g^2\right)d\theta=\tfrac12\int_{${q.thT[0]}}^{${q.thT[1]}}${q.exp}\,d\theta`)+
+      D(R`=\tfrac12\Big[${q.anti}\Big]_{${q.thT[0]}}^{${q.thT[1]}}=${q.tex}\approx ${fmtDec(q.num,4)}`);}
+};
+
+const BOTH=[
+  k=>({aT:`r=${k}`,bT:`r=${2*k}\\sin\\theta`,
+    inner:t=>Math.min(k,Math.max(0,2*k*Math.sin(t))),lo:0,hi:PI,
+    ans:`${k*k}*(2*pi/3 - sqrt(3)/2)`,tex:`${k===1?'':k*k}\\left(\\tfrac{2\\pi}{3}-\\tfrac{\\sqrt3}{2}\\right)`,
+    cross:R`${2*k}\sin\theta=${k}\;\Rightarrow\;\sin\theta=\tfrac12,\ \theta=\tfrac{\pi}{6},\tfrac{5\pi}{6}`,
+    split:R`A=2\left[\tfrac12\int_0^{\pi/6}\left(${2*k}\sin\theta\right)^2d\theta+\tfrac12\int_{\pi/6}^{\pi/2}${k}^2\,d\theta\right]`,
+    words:`On \\(0\\le\\theta\\le\\tfrac{\\pi}{6}\\) the small circle \\(r=${2*k}\\sin\\theta\\) is the inner boundary; past \\(\\tfrac{\\pi}{6}\\) the circle \\(r=${k}\\) is. The region is symmetric about \\(\\theta=\\tfrac{\\pi}{2}\\), so double the half.`}),
+  k=>({aT:`r=${k===1?'':k}\\sin 2\\theta`,bT:`r=${k===1?'':k}\\cos 2\\theta`,
+    inner:t=>k*Math.min(Math.abs(Math.sin(2*t)),Math.abs(Math.cos(2*t))),lo:0,hi:TAU,
+    ans:`${k*k}*(pi/2 - 1)`,tex:`${k===1?'':k*k}\\left(\\tfrac{\\pi}{2}-1\\right)`,
+    cross:R`${k===1?'':k}\sin2\theta=${k===1?'':k}\cos2\theta\;\Rightarrow\;\tan2\theta=1,\ \theta=\tfrac{\pi}{8}+\tfrac{k\pi}{4}`,
+    split:R`A=16\cdot\tfrac12\int_0^{\pi/8}\left(${k===1?'':k}\sin2\theta\right)^2d\theta`,
+    words:`The two four-petaled roses are the same shape rotated by \\(\\tfrac{\\pi}{8}\\). Their overlap is 8 congruent leaf shapes, each split by its axis into 2 congruent sectors, so 16 copies of the sector from \\(0\\) to \\(\\tfrac{\\pi}{8}\\).`}),
+  k=>({aT:`r=${k===1?'':k}(1+\\cos\\theta)`,bT:`r=${k===1?'':k}(1-\\cos\\theta)`,
+    inner:t=>k*Math.min(1+Math.cos(t),1-Math.cos(t)),lo:0,hi:TAU,
+    ans:`${k*k}*(3*pi/2 - 4)`,tex:`${k===1?'':k*k}\\left(\\tfrac{3\\pi}{2}-4\\right)`,
+    cross:R`1+\cos\theta=1-\cos\theta\;\Rightarrow\;\cos\theta=0,\ \theta=\pm\tfrac{\pi}{2}`,
+    split:R`A=4\cdot\tfrac12\int_0^{\pi/2}\left(${k===1?'':k}(1-\cos\theta)\right)^2d\theta`,
+    words:`The two cardioids point in opposite directions and cross on the \\(y\\)-axis. On \\(0\\le\\theta\\le\\tfrac{\\pi}{2}\\) the smaller radius is \\(${k===1?'':k}(1-\\cos\\theta)\\), and the picture has four congruent quarters.`})
+];
+Q.insideBoth={name:'area inside both curves',
+  gen(){
+    const k=rint(1,2),c=BOTH[rint(0,BOTH.length-1)](k);
+    const num=areaTrap(c.inner,c.lo,c.hi,40000);
+    must(c.ans,num,'insideBoth '+c.aT,1e-5);
+    return {...c,k,num};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the area of the region that lies inside <b>both</b> ${M(q.aT)} and ${M(q.bT)}. Exact value.</p>`;
+    numIn(el,'ar','Area =',{wide:true});
+  },
+  check(q,el){return G(el,'ar',checkNumber($('[data-k=ar]',el).value,q.num,{rel:1e-4}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Find the crossings first: ${M(q.cross)}. Inside both means you always take the <b>smaller</b> radius, so the integral has to be split where the two curves swap places.`;},
+  solution(q){
+    return `${q.words} Where the curves cross: ${M(q.cross)}.`+
+      D(q.split+R`=${q.tex}\approx ${fmtDec(q.num,4)}`);}
+};
+
+const ARCS=[
+  ()=>{const a=rint(1,3);return {tex:`r=${a===1?'':a}(1+\\cos\\theta)`,
+    ig:t=>a*Math.sqrt(2+2*Math.cos(t)),igT:R`${a===1?'':a}\sqrt{2+2\cos\theta}=2${a===1?'':a}\left|\cos\tfrac{\theta}{2}\right|`,igS:`${a}*sqrt(2+2cos(theta))`,
+    loT:'0',hiT:R`2\pi`,half:[0,PI],twice:true,
+    ans:`${8*a}`,ansT:`${8*a}`,
+    work:R`r^2+\left(\tfrac{dr}{d\theta}\right)^2=${a*a}(1+\cos\theta)^2+${a*a}\sin^2\theta=${a*a}(2+2\cos\theta)`};},
+  ()=>{const a=rint(1,3);return {tex:`r=${2*a}\\sin\\theta`,
+    ig:()=>2*a,igT:`${2*a}`,igS:`${2*a}`,
+    loT:'0',hiT:R`\pi`,half:[0,PI],
+    ans:`${2*a}*pi`,ansT:`${2*a}\\pi`,
+    work:R`r^2+\left(\tfrac{dr}{d\theta}\right)^2=${4*a*a}\sin^2\theta+${4*a*a}\cos^2\theta=${4*a*a}`};},
+  ()=>{const a=rint(1,3),b=pick([1,2]);return {tex:`r=${a===1?'':a}e^{${b===1?'':b}\\theta}`,
+    ig:t=>a*Math.sqrt(1+b*b)*Math.exp(b*t),igT:R`${a===1?'':a}\sqrt{1+${b*b}}\,e^{${b===1?'':b}\theta}`,igS:`${a}*sqrt(${1+b*b})*e^(${b}theta)`,
+    loT:'0',hiT:'1',half:[0,1],
+    ans:`${a}*sqrt(${1+b*b})*(e^(${b})-1)/${b}`,ansT:`\\tfrac{${a===1?'':a}\\sqrt{${1+b*b}}}{${b}}\\left(e^{${b===1?'':b}}-1\\right)`,
+    work:R`r^2+\left(\tfrac{dr}{d\theta}\right)^2=${a*a}e^{${2*b===2?'2':2*b}\theta}+${a*a*b*b}e^{${2*b===2?'2':2*b}\theta}=${a*a*(1+b*b)}e^{${2*b===2?'2':2*b}\theta}`};},
+  ()=>{const c=rint(1,3);return {tex:R`r=\theta^2`,
+    ig:t=>t*Math.sqrt(t*t+4),igT:R`\sqrt{\theta^4+4\theta^2}=\theta\sqrt{\theta^2+4}`,igS:`theta*sqrt(theta^2+4)`,
+    loT:'0',hiT:String(c),half:[0,c],
+    ans:`((${c*c}+4)^(3/2)-8)/3`,ansT:`\\tfrac{(${c*c+4})^{3/2}-8}{3}`,
+    work:R`r^2+\left(\tfrac{dr}{d\theta}\right)^2=\theta^4+4\theta^2`};}
+];
+Q.arcLength={name:'arc length of a polar curve',
+  gen(){
+    const c=pick(ARCS)();
+    const L=(c.twice?2:1)*simpson(c.ig,c.half[0],c.half[1],4000);
+    must(c.ans,L,'arcLength '+c.tex);
+    /* the stored integrand must really be sqrt(r^2 + r'^2) */
+    const f=Expr.compile(c.igS);
+    for(const t of [0.3,0.7,1.1,1.4]){const v=f({theta:t});if(Math.abs(v-c.ig(t))>1e-8*Math.max(1,Math.abs(v)))throw new Error('arcLength: integrand string does not match');}
+    return {...c,L};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the length of the curve ${M(q.tex)} for ${M(`${q.loT}\\le\\theta\\le${q.hiT}`)}. Give the simplified integrand ${M(R`\sqrt{r^2+(dr/d\theta)^2}`)} as a function of <code>theta</code>, then the length.</p>`;
+    numIn(el,'ig',M(R`\sqrt{r^2+\left(\tfrac{dr}{d\theta}\right)^2}=`),{xwide:true,placeholder:'expression in theta'});
+    numIn(el,'L',M('L='),{wide:true});
+  },
+  check(q,el){return Gall(el,[
+    ['ig',checkExpr($('[data-k=ig]',el).value,q.igS,['theta'],{domain:{theta:[0.2,1.4]}})],
+    ['L',checkNumber($('[data-k=L]',el).value,q.L,{rel:1e-5})]]);},
+  solution(q){
+    return `Build the radicand first:`+D(q.work)+
+      `so the integrand is ${M(q.igT)} and`+
+      D(R`L=\int_{${q.loT}}^{${q.hiT}}${q.igT.split('=')[0]}\,d\theta=${q.ansT}\approx ${fmtDec(q.L,4)}`);}
+};
+
+/* ============================================================ chapter 1 explore: one point, many names */
+(function(){
+  const p=new Plot2D('#ptPlot',{xmin:-4.6,xmax:4.6,ymin:-4.6,ymax:4.6,grid:false});
+  let pt=[2.5,1.5],snapOn=true;
+  const place=w=>{
+    let r=Math.hypot(w[0],w[1]),th=Math.atan2(w[1],w[0]);
+    if(snapOn){r=Math.round(r*2)/2;th=Math.round(th/(PI/12))*(PI/12);}
+    r=clamp(r,0.5,4.2);
+    pt=[r*Math.cos(th),r*Math.sin(th)];
+  };
+  p.on('down',w=>{place(w);draw();}).on('drag',w=>{place(w);draw();});
+  const pb=$('#ptPresets');
+  const mkBtn=(label,fn)=>{const b=el('button',{class:'btn small'},label);b.onclick=()=>{fn(b);draw();};pb.appendChild(b);return b;};
+  const snapBtn=mkBtn('snap to special angles: on',b=>{snapOn=!snapOn;b.textContent='snap to special angles: '+(snapOn?'on':'off');if(snapOn)place(pt);});
+  snapBtn.classList.add('on');
+  [['(3, 0)',[3,0]],['(−1, 1)',[-1,1]],['(0, −2)',[0,-2]],['(−√3, −1)',[-Math.sqrt(3),-1]],['(2, 2√3)',[2,2*Math.sqrt(3)]]]
+    .forEach(([n,v])=>mkBtn(n,()=>{pt=v.slice();}));
+  function angText(t){
+    const k=Math.round(t/PI*24);
+    if(Math.abs(t-k*PI/24)<1e-9){const [n,d]=fr(k,24);if(n===0)return '0';const a=Math.abs(n);return (n<0?'-':'')+(a===1?'π':a+'π')+(d===1?'':'/'+d);}
+    return fmtDec(t,3);
+  }
+  function draw(){
+    p.begin();polarGrid(p,{rmax:4});
+    const r=Math.hypot(pt[0],pt[1]);let th=Math.atan2(pt[1],pt[0]);if(th<0)th+=TAU;
+    p.param(t=>[r*Math.cos(t),r*Math.sin(t)],0,TAU,{color:COL.faint,width:1.2,dash:[4,4]});
+    /* the angle arc */
+    const ctx=p.ctx,[ox,oy]=p.px(0,0);
+    ctx.strokeStyle=COL.a;ctx.lineWidth=2;ctx.beginPath();ctx.arc(ox,oy,30,0,-th,true);ctx.stroke();
+    p.vector([0,0],pt,{color:COL.a,width:2.4});
+    p.vector([0,0],[-pt[0],-pt[1]],{color:COL.b,width:1.6,dash:[5,4]});
+    p.point(pt,{color:COL.d,r:6,label:'P'});
+    p.text([r*Math.cos(th/2)*0.42,r*Math.sin(th/2)*0.42],'θ',{color:COL.a,dx:6,dy:-4});
+    const arctan=Math.atan2(pt[1],pt[0]);
+    const naive=pt[0]===0?null:Math.atan(pt[1]/pt[0]);
+    $('#ptOut').innerHTML=
+      `Cartesian: (x, y) = (<b>${fmtDec(pt[0],3)}</b>, <b>${fmtDec(pt[1],3)}</b>)<br>`+
+      `r = √(x² + y²) = <b>${fmtDec(r,3)}</b><br>`+
+      `polar, r &gt; 0 and 0 ≤ θ &lt; 2π: (<b>${fmtDec(r,3)}</b>, <b>${angText(th)}</b>)<br>`+
+      `same point with r &lt; 0: (${fmtDec(-r,3)}, ${angText((th+PI)%TAU)})<br>`+
+      `same point with a negative angle: (${fmtDec(r,3)}, ${angText(th-TAU)})<br>`+
+      (naive===null?`x = 0, so arctan is undefined: read θ off the picture`:
+        `arctan(y/x) = ${fmtDec(naive,3)} rad ${Math.abs(naive-arctan)>1e-9?`<b>← off by π, this point is in quadrant ${pt[0]<0?(pt[1]>=0?'II':'III'):'I or IV'}</b>`:'(correct here)'}`);
+  }
+  redrawOnShow('points',draw);draw();
+  new Drill({mount:'#drill-points',section:'points',goal:7,
+    ...mixDrill([Q.polarToCart,Q.polarToCart,Q.cartToPolar,Q.cartToPolar,Q.cartToPolarNeg,Q.polarEqToCart,Q.polarEqToCart,Q.cartEqToPolar,Q.cartEqToPolar])});
+})();
+
+/* ============================================================ chapter 2 explore: sweep */
+(function(){
+  const pp=new Plot2D('#zooPolar',{xmin:-4.4,xmax:4.4,ymin:-4.4,ymax:4.4,grid:false});
+  const pr=new Plot2D('#zooRT',{xmin:0,xmax:TAU,ymin:-3,ymax:3,grid:false,labels:true});
+  const FAM=[
+    {n:'circle r = a',f:(t,P)=>P.a,tmax:TAU,use:['a'],tex:'r=a'},
+    {n:'circle r = 2a cos θ',f:(t,P)=>2*P.a*Math.cos(t),tmax:TAU,use:['a'],tex:R`r=2a\cos\theta`},
+    {n:'cardioid r = a(1 + cos θ)',f:(t,P)=>P.a*(1+Math.cos(t)),tmax:TAU,use:['a'],tex:R`r=a(1+\cos\theta)`},
+    {n:'limaçon r = a + b cos θ',f:(t,P)=>P.a+P.b*Math.cos(t),tmax:TAU,use:['a','b'],tex:R`r=a+b\cos\theta`},
+    {n:'rose r = a cos(nθ)',f:(t,P)=>P.a*Math.cos(P.n*t),tmax:TAU,use:['a','n'],tex:R`r=a\cos(n\theta)`},
+    {n:'lemniscate r² = a² cos 2θ',f:(t,P)=>{const v=Math.cos(2*t);return v<0?NaN:P.a*Math.sqrt(v);},tmax:TAU,use:['a'],pm:true,tex:R`r^2=a^2\cos2\theta`},
+    {n:'spiral r = θ',f:t=>t,tmax:4*PI,use:[],tex:R`r=\theta`}
+  ];
+  let cur=FAM[2],P={a:1.5,b:2,n:3},tmax=TAU,anim=null;
+  const pb=$('#zooPresets'),sb=$('#zooSliders');
+  let sA,sB,sN,sT;
+  FAM.forEach(fm=>{const b=el('button',{class:'btn small'},fm.n);b.onclick=()=>{cur=fm;tmax=fm.tmax;
+    $$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');sT.input.max=fm.tmax;sT.set(fm.tmax);draw();};pb.appendChild(b);});
+  $$('.btn',pb)[2].classList.add('on');
+  sA=sliderRow(sb,{label:'a',min:0.5,max:3,step:0.1,value:P.a,onInput:v=>{P.a=v;draw();}});
+  sB=sliderRow(sb,{label:'b',min:0,max:3,step:0.1,value:P.b,onInput:v=>{P.b=v;draw();}});
+  sN=sliderRow(sb,{label:'n',min:1,max:6,step:1,value:P.n,fmt:v=>String(v),onInput:v=>{P.n=v;draw();}});
+  sT=sliderRow(sb,{label:'θ max',min:0.05,max:TAU,step:0.01,value:TAU,fmt:v=>fmtDec(v/PI,2)+'π',onInput:v=>{tmax=v;draw();}});
+  anim=animator('curves',dt=>{tmax+=dt*1.6;if(tmax>cur.tmax){tmax=0.05;}sT.set(tmax);draw();});
+  $('#zooPlay').onclick=()=>{anim.toggle();$('#zooPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  $('#zooReset').onclick=()=>{tmax=cur.tmax;sT.set(tmax);draw();};
+  function rOf(t){return cur.f(t,P);}
+  function draw(){
+    const rr=[];for(let i=0;i<=400;i++){const v=rOf(cur.tmax*i/400);if(Number.isFinite(v))rr.push(Math.abs(v));}
+    const rmax=Math.max(0.6,...rr);
+    const W=Math.max(2,Math.min(12,rmax*1.25));
+    Object.assign(pp.o,{xmin:-W,xmax:W,ymin:-W,ymax:W});
+    pp.begin();polarGrid(pp,{rmax:Math.ceil(W)});
+    const path=(t0,t1,opts)=>pp.param(t=>{const r=rOf(t);return [r*Math.cos(t),r*Math.sin(t)];},t0,t1,{n:700,...opts});
+    path(0,cur.tmax,{color:COL.faint,width:1.6});
+    if(cur.pm)pp.param(t=>{const r=-rOf(t);return [r*Math.cos(t),r*Math.sin(t)];},0,cur.tmax,{n:700,color:COL.faint,width:1.6});
+    path(0,tmax,{color:COL.d,width:2.6});
+    if(cur.pm)pp.param(t=>{const r=-rOf(t);return [r*Math.cos(t),r*Math.sin(t)];},0,tmax,{n:700,color:COL.d,width:2.6});
+    const r=rOf(tmax);
+    if(Number.isFinite(r)){
+      pp.vector([0,0],[W*0.99*Math.cos(tmax),W*0.99*Math.sin(tmax)],{color:COL.faint,width:1,dash:[4,4]});
+      pp.vector([0,0],[r*Math.cos(tmax),r*Math.sin(tmax)],{color:r<0?COL.b:COL.a,width:2.4,dash:r<0?[6,4]:null});
+      pp.point([r*Math.cos(tmax),r*Math.sin(tmax)],{color:COL.a,r:6});
+    }
+    Object.assign(pr.o,{xmin:0,xmax:cur.tmax,ymin:-rmax*1.2,ymax:rmax*1.2});
+    pr.begin();
+    pr.fn(t=>rOf(t),{color:COL.faint,width:1.6,xmin:0,xmax:cur.tmax});
+    pr.fn(t=>t<=tmax?rOf(t):NaN,{color:COL.d,width:2.6,xmin:0,xmax:cur.tmax});
+    pr.param(t=>[tmax,t],-rmax*1.2,rmax*1.2,{color:COL.a,width:1.4,dash:[5,4]});
+    if(Number.isFinite(r))pr.point([tmax,r],{color:COL.a,r:5});
+    pr.text([cur.tmax*0.5,-rmax*1.08],'θ across, r up',{color:'#8b877e',align:'center'});
+    $('#zooOut').innerHTML=
+      `${cur.n}${cur.use.length?' with '+cur.use.map(k=>`${k} = ${fmtDec(P[k],2)}`).join(', '):''}<br>`+
+      `θ = <b>${fmtDec(tmax,3)}</b> = ${fmtDec(tmax/PI,3)}π &nbsp; r(θ) = <b>${Number.isFinite(r)?fmtDec(r,3):'undefined here'}</b>`+
+      (Number.isFinite(r)&&r<0?' <b>← negative: the point is plotted in the opposite direction</b>':'')+`<br>`+
+      `point: (${Number.isFinite(r)?fmtDec(r*Math.cos(tmax),3):'-'}, ${Number.isFinite(r)?fmtDec(r*Math.sin(tmax),3):'-'}) &nbsp; max |r| so far = ${fmtDec(Math.max(...rr.filter((_,i)=>cur.tmax*i/400<=tmax).concat([0])),3)}`;
+  }
+  redrawOnShow('curves',draw);draw();
+  new Drill({mount:'#drill-curves',section:'curves',goal:6,
+    ...mixDrill([Q.petals,Q.poleAngles,Q.poleAngles,Q.pointOnCurve,Q.pointOnCurve,Q.innerLoopRange])});
+})();
+
+/* ============================================================ chapter 3 explore: tangent line */
+(function(){
+  const p=new Plot2D('#tanPlot',{xmin:-3.2,xmax:3.2,ymin:-3.2,ymax:3.2,grid:false});
+  const CV=[
+    {n:'cardioid r = 1 + cos θ',f:t=>1+Math.cos(t),d:t=>-Math.sin(t),W:2.6},
+    {n:'circle r = 2 sin θ',f:t=>2*Math.sin(t),d:t=>2*Math.cos(t),W:2.4},
+    {n:'rose r = 2 cos 2θ',f:t=>2*Math.cos(2*t),d:t=>-4*Math.sin(2*t),W:2.6},
+    {n:'limaçon r = 1 + 2 cos θ',f:t=>1+2*Math.cos(t),d:t=>-2*Math.sin(t),W:3.4}
+  ];
+  let cur=CV[0],th=PI/3;
+  const pb=$('#tanPresets');
+  CV.forEach(c=>{const b=el('button',{class:'btn small'},c.n);b.onclick=()=>{cur=c;
+    $$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};pb.appendChild(b);});
+  $$('.btn',pb)[0].classList.add('on');
+  const sl=sliderRow($('#tanSliders'),{label:'θ',min:0,max:TAU,step:TAU/240,value:th,fmt:v=>fmtDec(v/PI,3)+'π',onInput:v=>{th=v;draw();}});
+  const dyOf=t=>cur.d(t)*Math.sin(t)+cur.f(t)*Math.cos(t);
+  const dxOf=t=>cur.d(t)*Math.cos(t)-cur.f(t)*Math.sin(t);
+  function marks(g){
+    const out=[];const N=1440;
+    for(let i=1;i<=N;i++){const a=TAU*(i-1)/N,b=TAU*i/N;
+      if(g(a)*g(b)<0){let lo=a,hi=b;for(let k=0;k<40;k++){const m=(lo+hi)/2;if(g(lo)*g(m)<=0)hi=m;else lo=m;}out.push((lo+hi)/2);}}
+    return out;
+  }
+  function draw(){
+    Object.assign(p.o,{xmin:-cur.W,xmax:cur.W,ymin:-cur.W,ymax:cur.W});
+    p.begin();polarGrid(p,{rmax:Math.ceil(cur.W)});
+    polarCurve(p,cur.f,0,TAU,{color:COL.d,width:2.4});
+    const r=cur.f(th),P0=[r*Math.cos(th),r*Math.sin(th)];
+    const dy=dyOf(th),dx=dxOf(th);
+    marks(dyOf).forEach(t=>{if(Math.abs(cur.f(t))<1e-6||Math.abs(dxOf(t))<1e-6)return;p.point([cur.f(t)*Math.cos(t),cur.f(t)*Math.sin(t)],{color:COL.c,r:4});});
+    marks(dxOf).forEach(t=>{if(Math.abs(cur.f(t))<1e-6||Math.abs(dyOf(t))<1e-6)return;p.point([cur.f(t)*Math.cos(t),cur.f(t)*Math.sin(t)],{color:COL.b,r:4});});
+    const L=cur.W*1.4;
+    if(Math.abs(dx)<1e-8)p.param(s=>[P0[0],P0[1]+s],-L,L,{color:COL.a,width:2});
+    else{const m=dy/dx;p.param(s=>[P0[0]+s,P0[1]+m*s],-L,L,{color:COL.a,width:2});}
+    p.vector([0,0],P0,{color:COL.faint,width:1.4,dash:[4,4]});
+    p.point(P0,{color:COL.a,r:6});
+    const vert=Math.abs(dx)<1e-8,horiz=Math.abs(dy)<1e-8;
+    $('#tanOut').innerHTML=
+      `θ = ${fmtDec(th,3)} = ${fmtDec(th/PI,3)}π &nbsp; r = <b>${fmtDec(r,3)}</b><br>`+
+      `dr/dθ = ${fmtDec(cur.d(th),3)}<br>`+
+      `dy/dθ = ${fmtDec(dy,4)} &nbsp; dx/dθ = ${fmtDec(dx,4)}<br>`+
+      `dy/dx = <b>${vert&&horiz?'0/0, undefined (a cusp)':vert?'undefined, vertical tangent':fmtDec(dy/dx,4)}</b>`+
+      (horiz&&!vert?' <b>← horizontal tangent</b>':'')+`<br>`+
+      `point: (${fmtDec(P0[0],3)}, ${fmtDec(P0[1],3)})`;
+  }
+  redrawOnShow('tangents',draw);draw();
+  new Drill({mount:'#drill-tangents',section:'tangents',goal:5,
+    ...mixDrill([Q.slopeAt,Q.slopeAt,Q.horizontalTangents,Q.tangentAtPole,Q.tangentAtPole])});
+})();
+
+/* ============================================================ chapter 4 explore: sectors + walkthrough */
+(function(){
+  const p=new Plot2D('#areaPlot',{xmin:-3,xmax:3,ymin:-3,ymax:3,grid:false});
+  const CASES=[
+    {n:'cardioid r = 1 + cos θ',f:t=>1+Math.cos(t),lo:0,hi:TAU,W:2.4,exact:'3π/2'},
+    {n:'one petal of r = 2 cos 3θ',f:t=>2*Math.cos(3*t),lo:-PI/6,hi:PI/6,W:2.4,exact:'π/3'},
+    {n:'circle r = 2 cos θ',f:t=>2*Math.cos(t),lo:-PI/2,hi:PI/2,W:2.4,exact:'π'},
+    {n:'inner loop of r = 1 + 2 cos θ',f:t=>1+2*Math.cos(t),lo:2*PI/3,hi:4*PI/3,W:3.2,exact:'π − 3√3/2'},
+    {n:'inside r = 3 sin θ, outside r = 1 + sin θ',f:t=>3*Math.sin(t),g:t=>1+Math.sin(t),lo:PI/6,hi:5*PI/6,W:3.2,exact:'π'}
+  ];
+  let cur=CASES[0],n=8;
+  const pb=$('#areaPresets');
+  CASES.forEach(c=>{const b=el('button',{class:'btn small'},c.n);b.onclick=()=>{cur=c;
+    $$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};pb.appendChild(b);});
+  $$('.btn',pb)[0].classList.add('on');
+  sliderRow($('#areaSliders'),{label:'n (sectors)',min:2,max:40,step:1,value:n,fmt:v=>String(v),onInput:v=>{n=v;draw();}});
+  function wedge(r0,r1,t0,t1,opts){
+    const pts=[];const N=12;
+    for(let i=0;i<=N;i++){const t=t0+(t1-t0)*i/N;pts.push([r1*Math.cos(t),r1*Math.sin(t)]);}
+    for(let i=N;i>=0;i--){const t=t0+(t1-t0)*i/N;pts.push([r0*Math.cos(t),r0*Math.sin(t)]);}
+    p.poly(pts,opts);
+  }
+  function draw(){
+    Object.assign(p.o,{xmin:-cur.W,xmax:cur.W,ymin:-cur.W,ymax:cur.W});
+    p.begin();polarGrid(p,{rmax:Math.ceil(cur.W)});
+    const g=cur.g||(()=>0);
+    /* the region itself */
+    const reg=[];const N=240;
+    for(let i=0;i<=N;i++){const t=cur.lo+(cur.hi-cur.lo)*i/N;reg.push([cur.f(t)*Math.cos(t),cur.f(t)*Math.sin(t)]);}
+    for(let i=N;i>=0;i--){const t=cur.lo+(cur.hi-cur.lo)*i/N;reg.push([g(t)*Math.cos(t),g(t)*Math.sin(t)]);}
+    p.poly(reg,{fill:'rgba(37,99,235,.13)',stroke:'rgba(37,99,235,.35)',width:1.4});
+    polarCurve(p,cur.f,cur.lo,cur.hi,{color:COL.d,width:2.4});
+    if(cur.g)polarCurve(p,cur.g,cur.lo,cur.hi,{color:COL.b,width:2.2});
+    /* the sector approximation, midpoint radius on each wedge */
+    const dt=(cur.hi-cur.lo)/n;let S=0;
+    for(let i=0;i<n;i++){
+      const t0=cur.lo+i*dt,t1=t0+dt,tm=t0+dt/2;
+      const rf=cur.f(tm),rg=g(tm);
+      S+=0.5*(rf*rf-rg*rg)*dt;
+      wedge(Math.abs(rg),Math.abs(rf),t0,t1,{fill:'rgba(217,119,6,.30)',stroke:'rgba(217,119,6,.7)',width:1});
+    }
+    if(cur.g){
+      [cur.lo,cur.hi].forEach(t=>p.param(s=>[s*Math.cos(t),s*Math.sin(t)],0,cur.W*1.1,{color:'#8b877e',width:1.2,dash:[5,4]}));
+    }
+    const exact=0.5*simpson(t=>{const A=cur.f(t),B=g(t);return A*A-B*B;},cur.lo,cur.hi,2000);
+    $('#areaOut').innerHTML=
+      `${cur.n}<br>`+
+      `limits: θ from ${fmtDec(cur.lo/PI,3)}π to ${fmtDec(cur.hi/PI,3)}π, Δθ = ${fmtDec(dt,4)}<br>`+
+      `sector sum with n = ${n}: <b>${fmtDec(S,5)}</b><br>`+
+      `exact ½∫(r²${cur.g?' − g²':''}) dθ = <b>${fmtDec(exact,5)}</b> = ${cur.exact}<br>`+
+      `error = ${fmtDec(S-exact,6)}`;
+  }
+  redrawOnShow('area',draw);draw();
+
+  /* walkthrough: inside f, outside g */
+  let wq,step=0;
+  function newW(){wq=betweenDraw();step=0;drawW();}
+  function drawW(){
+    const q=wq,L=[];
+    L.push(`<span class="t b">${M(R`\text{inside }`+q.fT+R`\text{, outside }`+q.gT)}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}">1. cross where <span class="t ${step===1?'now':''} a">${M(q.cross)}</span>${step>=1?` &rarr; ${M(R`\theta=${q.thT[0]},\;${q.thT[1]}`)}`:''}</span>`);
+    L.push(`<span class="${step>=2?'':'faint'}">2. midpoint test: <span class="t ${step===2?'now':''} a">${M(R`\theta=${fmtDec((q.th[0]+q.th[1])/2,3)}`)}</span>${step>=2?` gives ${M(`f=${fmtDec(q.f((q.th[0]+q.th[1])/2),3)}`)} and ${M(`g=${fmtDec(q.g((q.th[0]+q.th[1])/2),3)}`)}, so ${M('f')} is outside`:''}</span>`);
+    L.push(`<span class="${step>=3?'':'faint'}">3. <span class="t ${step===3?'now':''} b">${M(R`A=\tfrac12\int_{${q.thT[0]}}^{${q.thT[1]}}\left(f^2-g^2\right)d\theta`)}</span></span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">4. expand with the half-angle identity: <span class="t ${step===4?'now':''} b">${M(R`f^2-g^2=${q.exp}`)}</span></span>`);
+    L.push(`<span class="${step>=5?'':'faint'}">5. antiderivative: <span class="t ${step===5?'now':''} b">${M(R`\tfrac12\Big[${q.anti}\Big]_{${q.thT[0]}}^{${q.thT[1]}}`)}</span></span>`);
+    L.push(`<span class="${step>=6?'':'faint'}">6. <span class="t ${step===6?'now':''} c">${M(R`A=${q.tex}\approx ${fmtDec(q.num,4)}`)}</span></span>`);
+    $('#wtExpr').innerHTML=L.join('<br>');
+    const st=['Two curves, one region. Press Next.',
+      'Set the radii equal and solve for the crossing angles.',
+      'Between the crossings, one curve is farther from the origin. A midpoint test settles which.',
+      'Set up the difference of squares, with the outer curve first.',
+      'Expand the squares and turn every cos² or sin² into a half-angle form.',
+      'Antidifferentiate term by term.',
+      'Substitute the limits. That number is the area.'];
+    $('#wtStatus').textContent=st[step];
+    $('#wtPrev').disabled=step===0;$('#wtNext').disabled=step===6;
+    typeset($('#wtExpr'));
+  }
+  $('#wtNext').onclick=()=>{step=Math.min(6,step+1);drawW();};
+  $('#wtPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#wtNew').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-area',section:'area',goal:7,
+    ...mixDrill([Q.areaEnclosed,Q.areaEnclosed,Q.petalArea,Q.innerLoop,Q.outerLoop,Q.betweenCurves,Q.betweenCurves,Q.insideBoth,Q.arcLength,Q.arcLength])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.polarToCart,Q.cartToPolar,Q.polarEqToCart,Q.cartEqToPolar,
+  Q.petals,Q.poleAngles,Q.pointOnCurve,Q.innerLoopRange,
+  Q.slopeAt,Q.horizontalTangents,Q.tangentAtPole,
+  Q.areaEnclosed,Q.petalArea,Q.innerLoop,Q.outerLoop,Q.betweenCurves,Q.insideBoth,Q.arcLength]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'polar to Cartesian':q=>({p:q.ansStr}),
+  'Cartesian to polar':q=>({p:q.ansStr}),
+  'Cartesian to polar with negative r':q=>({p:q.ansStr}),
+  'polar equation to Cartesian':q=>({eq:q.ans}),
+  'Cartesian equation to polar':q=>({eq:q.ans}),
+  'petals of a rose':q=>({k:q.ansStr[0],m:q.ansStr[1]}),
+  'angles where the curve passes through the pole':q=>({ths:q.ansStr}),
+  'point on a polar curve':q=>({p:q.ansStr}),
+  'theta-interval of the inner loop':q=>({t1:q.ansStr[0],t2:q.ansStr[1]}),
+  'slope of the tangent at a given angle':q=>({m:q.ansStr}),
+  'points with horizontal tangents':q=>q.ansStr,
+  'tangent directions at the pole':q=>({ths:q.ansStr}),
+  'area enclosed by a polar curve':q=>({ar:q.ans}),
+  'one petal: limits and area':q=>({t1:q.ansStr[0],t2:q.ansStr[1],ar:q.ansStr[2]}),
+  'area of the inner loop':q=>({ar:q.ans}),
+  'area between the two loops of a limacon':q=>({ar:q.ans}),
+  'inside one curve and outside another':q=>({ths:q.thS.join(', '),ar:q.ans}),
+  'area inside both curves':q=>({ar:q.ans}),
+  'arc length of a polar curve':q=>({ig:q.igS,L:q.ans})
+};
+
+$('#memcard').replaceWith(memoryCard('c2-polar',[
+  R`\(x=r\cos\theta\), \(y=r\sin\theta\), \(r^2=x^2+y^2\), \(\tan\theta=y/x\)`,
+  R`The same point: \((r,\theta)=(r,\theta+2\pi k)=(-r,\theta+\pi)\)`,
+  R`Circles: \(r=a\); \(r=2a\cos\theta\) (center \((a,0)\)); \(r=2a\sin\theta\) (center \((0,a)\))`,
+  R`Cardioid \(r=a(1\pm\cos\theta)\); limaçon \(r=a+b\cos\theta\) has an inner loop when \(a&lt;b\)`,
+  R`Rose \(r=a\cos(n\theta)\): \(n\) petals if \(n\) is odd, \(2n\) if \(n\) is even`,
+  R`Area: \(A=\tfrac12\displaystyle\int_\alpha^\beta r^2\,d\theta\)`,
+  R`Arc length: \(L=\displaystyle\int_\alpha^\beta\sqrt{r^2+\left(\tfrac{dr}{d\theta}\right)^2}\,d\theta\)`,
+  R`Slope: \(\dfrac{dy}{dx}=\dfrac{\frac{dr}{d\theta}\sin\theta+r\cos\theta}{\frac{dr}{d\theta}\cos\theta-r\sin\theta}\)`,
+  R`Half-angle: \(\cos^2\theta=\tfrac{1+\cos2\theta}{2}\), \(\sin^2\theta=\tfrac{1-\cos2\theta}{2}\)`
+]));
+
+initModule({key:'c2-polar',title:'Polar Coordinates',sub:'Module 4 · Stewart 10.3 to 10.4'});
+</script>
+</body>
+</html>
