@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parametric Curves</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 6 · Stewart 10.1 to 10.2</p>
+  <h2>Parametric curves</h2>
+  <p class="lead">A curve as a motion: time goes in, a position comes out. Loops, self-crossings, and vertical tangents stop being a problem, because nothing has to be a function of \(x\) any more.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide, play, and watch, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats: a parametrization is typed as <code>&lt;x(t), y(t)&gt;</code>, for example <code>&lt;3cos(t), 3sin(t)&gt;</code>. A point is <code>(a, b)</code>, a list of points is <code>(1,2), (3,-1)</code>, and <code>DNE</code> means there are none. Cartesian equations are typed as equations: <code>y = x^2 - 1</code> or <code>x^2/4 + y^2/9 = 1</code>. Numbers are exact unless the problem says otherwise: <code>24/5</code>, <code>2(2sqrt(2)-1)</code>, <code>pi/3</code>, <code>6pi</code>.</p>
+    <p>Answer boxes work like WebAssign's calcPad: <code>sqrt</code> makes a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>pi</code> the symbol, <code>&lt;</code> and <code>&gt;</code> the vector brackets. Use the right arrow key to step out of a radical, fraction, or exponent, and press <kbd>Enter</kbd> to check, then <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the moving point, the first particle</span>
+      <span><i class="dot" style="background:var(--b)"></i> the velocity vector, the second particle</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result: a tangent line, a length, an area</span>
+      <span><i class="dot" style="background:var(--d)"></i> the curve itself</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Sketch a parametric curve with its orientation, and eliminate the parameter to get a Cartesian equation.</li>
+      <li>Write parametric equations for a circle described in words (which way, from where, how many times) and for a line segment.</li>
+      <li>Decide whether two particles collide, and where, or only cross paths.</li>
+      <li>Compute \(dy/dx\) and \(d^2y/dx^2\), find horizontal and vertical tangents, and say where the curve is concave up.</li>
+      <li>Compute the area between a parametric curve and an axis, the area enclosed by a closed curve, arc length, and surface area of revolution.</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 CURVES -->
+<section data-id="curves" data-title="Curves that are not graphs" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 10.1</p>
+  <h2>Curves that are not graphs</h2>
+  <p class="lead">Give \(x\) and \(y\) each their own formula in a third variable and you can draw anything: circles, loops, spirals, the track of a point on a rolling wheel.</p>
+
+  <p>A <b>parametric curve</b> is a pair of equations</p>
+  <div class="formula">\(x=f(t),\qquad y=g(t),\qquad t\in[\alpha,\beta]\)<span class="cap">As \(t\) runs through the interval, the point \((f(t),g(t))\) traces the curve. Think of \(t\) as time and the point as a particle: the pair of formulas is a motion, and the curve is its track.</span></div>
+  <p>Nothing forces \(y\) to be a function of \(x\). The curve may loop, cross itself, or double back, and it may be traced more than once. That freedom is the whole point.</p>
+  <p>A parametrization carries more information than the curve does. It also carries the <b>orientation</b> (which way the point moves), the <b>speed</b>, the <b>starting point</b>, and how much of the curve is covered. Two different parametrizations can trace exactly the same picture in completely different ways, and WebAssign's "as described" problems test precisely that difference.</p>
+
+  <div class="card">
+    <h4>Explore: motion, velocity, and orientation</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="motionPlot"></canvas><p class="plotcap">The faint line is the whole curve. The purple part is what has been traced so far, the orange dot is the particle, the blue arrow is the velocity \(\langle x'(t),y'(t)\rangle\).</p></div>
+      <div>
+        <div class="presets" id="motionPresets"></div>
+        <div class="controls"><button class="btn primary" id="motionPlay">▶ Play</button><button class="btn" id="motionReset">Restart</button></div>
+        <div class="sliders" id="motionSliders"></div>
+        <div class="readout" id="motionOut"></div>
+        <p class="hint">Play the cycloid and watch the velocity arrow: it shrinks to nothing at each cusp, because the point of the wheel touching the ground is momentarily at rest. On the loop \(x=t^3-3t,\ y=t^2\), stop at the crossing point and notice that the particle passes through it at two different times, with two different velocity arrows.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Eliminating the parameter</h3>
+  <p>To get a Cartesian equation, remove \(t\). There are two moves and you pick whichever is easier.</p>
+  <p><b>Solve and substitute.</b> If one equation can be solved for \(t\), do that and substitute into the other. From \(x=t+3\) you get \(t=x-3\), so \(y=t^2\) becomes \(y=(x-3)^2\).</p>
+  <p><b>Use an identity.</b> When \(t\) sits inside trig or exponential functions, combine the two equations so that a Pythagorean identity kills the parameter:</p>
+  <div class="formula">\(\cos^2t+\sin^2t=1,\qquad \sec^2t-\tan^2t=1,\qquad \cosh^2t-\sinh^2t=1,\qquad e^t\cdot e^{-t}=1\)<span class="cap">So \(x=a\cos t,\ y=b\sin t\) gives \(\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1\), an ellipse, and \(x=a\sec t,\ y=b\tan t\) gives \(\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}=1\), a hyperbola.</span></div>
+  <div class="warn"><b>The Cartesian equation usually says too much.</b> For \(x=t^2,\ y=t^4\) the equation is \(y=x^2\), but the curve is only the half with \(x\ge 0\). For \(x=\sqrt t\) only \(x\ge0\) occurs, and for \(x=\sin t\) only \(-1\le x\le 1\). Always state the piece of the graph the parametrization actually traces.</div>
+
+  <h3>The same path, traced differently</h3>
+  <p>All four of these trace the unit circle, and no two of them are the same motion. This is the whole content of the "particle moving on a circle as described" problems.</p>
+  <div class="card">
+    <h4>Explore: four motions, one circle</h4>
+    <div class="minis two" id="miniBox"></div>
+    <div class="controls" style="margin-top:10px"><button class="btn primary" id="miniPlay">▶ Play</button></div>
+    <div class="readout" id="miniOut"></div>
+    <p class="hint">Watch where each dot starts (the ring) and which way it goes. Reading a description backwards is the reliable method: the starting point tells you which of \(\cos\) and \(\sin\) goes where, the direction tells you the sign, and the number of trips tells you the coefficient in front of \(t\).</p>
+  </div>
+
+  <div class="formula">\(\text{radius }a\text{ about }(h,k):\quad \langle h+a\cos t,\ k+a\sin t\rangle \ \text{counterclockwise from } (h+a,k),\qquad \langle h+a\cos t,\ k-a\sin t\rangle\ \text{clockwise}\)<span class="cap">To go around \(n\) times while \(t\) runs over \([0,2\pi]\), replace \(t\) by \(nt\). To start somewhere else, start the angle there: from the top \((h,k+a)\) counterclockwise is \(\langle h-a\sin t,\ k+a\cos t\rangle\).</span></div>
+
+  <h3>Line segments</h3>
+  <p>The straight path from \(P\) to \(Q\) that takes one unit of time is a weighted average of the endpoints:</p>
+  <div class="formula">\(\langle x,y\rangle = P + t\,(Q-P),\qquad 0\le t\le 1\)<span class="cap">At \(t=0\) you are at \(P\), at \(t=1\) at \(Q\). In coordinates, \(x=p_1+(q_1-p_1)t\) and \(y=p_2+(q_2-p_2)t\). Because the interval is fixed at \([0,1]\), the answer is unique.</span></div>
+
+  <h3>The cycloid</h3>
+  <p>Mark a point on the rim of a wheel of radius \(r\) and roll the wheel along the \(x\)-axis. The marked point traces a <b>cycloid</b>:</p>
+  <div class="formula">\(x=r(\theta-\sin\theta),\qquad y=r(1-\cos\theta)\)<span class="cap">\(\theta\) is the angle the wheel has turned. The \(r\theta\) is how far the center has moved, the \(-r\sin\theta,\ -r\cos\theta\) is where the point sits on the rim. One arch takes \(0\le\theta\le2\pi\). This curve has no reasonable Cartesian equation, which is exactly why parametric equations exist.</span></div>
+  <div class="note"><b>Two particles meet only if they are there at the same time.</b> Paths crossing is a statement about two sets of points. A collision is a statement about one value of \(t\) that works in all four coordinate equations at once. Solve \(x_1(t)=x_2(t)\) and \(y_1(t)=y_2(t)\) as a system in the single unknown \(t\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-curves"></div>
+</section>
+
+<!-- ============================================================ 2 TANGENTS -->
+<section data-id="tangents" data-title="Tangents and concavity" data-goal="7">
+  <p class="eyebrow">Chapter 2 · Stewart 10.2</p>
+  <h2>Tangents and concavity</h2>
+  <p class="lead">The slope of the curve is a ratio of two ordinary derivatives. Take that ratio twice, carefully, and you get concavity.</p>
+
+  <p>The chain rule says \(\dfrac{dy}{dt}=\dfrac{dy}{dx}\cdot\dfrac{dx}{dt}\). Divide, and the parameter drops out of the slope:</p>
+  <div class="formula">\(\dfrac{dy}{dx}=\dfrac{dy/dt}{dx/dt}\qquad\text{whenever }\dfrac{dx}{dt}\neq 0\)<span class="cap">This is the slope of the curve at the point, not the slope of anything in \(t\). Both derivatives are functions of \(t\), so the slope comes out as a function of \(t\) as well.</span></div>
+  <ul>
+    <li><b>Horizontal tangent</b> where \(\dfrac{dy}{dt}=0\) and \(\dfrac{dx}{dt}\neq0\): the slope is 0.</li>
+    <li><b>Vertical tangent</b> where \(\dfrac{dx}{dt}=0\) and \(\dfrac{dy}{dt}\neq0\): the slope is undefined.</li>
+    <li>If <b>both</b> are 0, look closer. The curve usually has a cusp or a corner there, and you need the limit of \(dy/dx\) to see what happens (the cycloid at \(\theta=0\) is the standard example).</li>
+  </ul>
+  <p>The tangent line at the point with parameter \(t_0\) is then the ordinary point-slope line through \(\big(x(t_0),y(t_0)\big)\):</p>
+  <div class="formula">\(y-y(t_0)=m\,\big(x-x(t_0)\big),\qquad m=\dfrac{y'(t_0)}{x'(t_0)}\)<span class="cap">Find the point first, then the slope, then write the line. A curve that crosses itself has two tangent lines at the crossing point, one for each \(t\) that lands there.</span></div>
+
+  <h3>The second derivative</h3>
+  <p>\(d^2y/dx^2\) is the derivative of \(dy/dx\) with respect to \(x\). So apply the same rule again, this time to the function \(dy/dx\):</p>
+  <div class="formula">\(\dfrac{d^2y}{dx^2}=\dfrac{\dfrac{d}{dt}\!\left(\dfrac{dy}{dx}\right)}{\dfrac{dx}{dt}}\)<span class="cap">Differentiate the slope with respect to \(t\), then divide by \(dx/dt\) one more time. The curve is <b>concave up</b> where this is positive and <b>concave down</b> where it is negative.</span></div>
+  <div class="warn"><b>It is not \(\dfrac{d^2y/dt^2}{d^2x/dt^2}\).</b> That expression is wrong, and it is the most common mistake in Stewart 10.2. The first derivative is a ratio of first derivatives, but the second derivative is not a ratio of second derivatives: differentiate the quotient \(dy/dx\) with the quotient rule, then divide by \(dx/dt\).</div>
+
+  <div class="card">
+    <h4>Explore: slope, tangent line, and the special points</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="tanPlot"></canvas><p class="plotcap">Blue dots: horizontal tangents. Orange dots: vertical tangents. The green line is the tangent at the current \(t\).</p></div>
+      <div>
+        <div class="presets" id="tanPresets"></div>
+        <div class="controls"><button class="btn primary" id="tanPlay">▶ Play</button></div>
+        <div class="sliders" id="tanSliders"></div>
+        <div class="readout" id="tanOut"></div>
+        <p class="hint">Slide through a vertical tangent and watch \(dy/dx\) blow up and change sign. On the loop, park the point at the self-crossing, note the slope, then find the other \(t\) that reaches the same point and note the other slope. Watch the sign of \(d^2y/dx^2\) flip exactly where the curve changes its bend.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: from a parametrization to \(d^2y/dx^2\)</h4>
+    <div class="expr" id="wtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wtPrev">◀ Back</button>
+      <button class="btn primary" id="wtNext">Next step ▶</button>
+      <button class="btn" id="wtNew">New curve</button>
+      <span class="status" id="wtStatus"></span>
+    </div>
+    <p class="hint">Check yourself at the third step: \(dy/dx\) must be a function of \(t\) alone, and it is the thing you differentiate next. Dividing by \(dx/dt\) at the end is the step everyone forgets.</p>
+  </div>
+
+  <div class="note"><b>Reading the sign.</b> Once you have \(d^2y/dx^2\) as a single fraction in \(t\), concavity is a sign question, not a calculation. Factor the numerator and the denominator, mark the values of \(t\) where each is zero, and read off the intervals.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-tangents"></div>
+</section>
+
+<!-- ============================================================ 3 AREAS -->
+<section data-id="areas" data-title="Areas, arc length, and surface area" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 10.2</p>
+  <h2>Areas, arc length, and surface area</h2>
+  <p class="lead">Every formula in this chapter is a first-year formula with \(dx\), \(dy\), and \(ds\) rewritten in terms of \(t\).</p>
+
+  <p>The area under a curve is \(\int y\,dx\). Substituting \(y=g(t)\) and \(dx=f'(t)\,dt\) turns it into an ordinary integral in \(t\):</p>
+  <div class="formula">\(A=\int_{a}^{b} y\,dx=\int_{\alpha}^{\beta} g(t)\,f'(t)\,dt\)<span class="cap">The limits are the \(t\)-values that produce the \(x\)-limits. If the curve is traced left to right, take \(\alpha\) to \(\beta\) in that order and the answer is positive; traced right to left the integral comes out negative, and you take the absolute value.</span></div>
+  <p>The same substitution with the roles swapped gives the area between the curve and the \(y\)-axis:</p>
+  <div class="formula">\(A=\int_{c}^{d} x\,dy=\int_{\alpha}^{\beta} f(t)\,g'(t)\,dt\)<span class="cap">Use this one when the region is bounded by the \(y\)-axis instead: the strips are horizontal, of length \(x\) and thickness \(dy\).</span></div>
+  <p>For a <b>closed</b> curve traced once, either formula gives the enclosed area up to sign. The ellipse \(x=a\cos t,\ y=b\sin t\) gives \(\left|\int_0^{2\pi} (b\sin t)(-a\sin t)\,dt\right|=\pi ab\), the formula you already know, and the astroid \(x=a\cos^3t,\ y=a\sin^3t\) gives \(\tfrac38\pi a^2\).</p>
+
+  <div class="formula">\(L=\int_{\alpha}^{\beta}\sqrt{\left(\dfrac{dx}{dt}\right)^{2}+\left(\dfrac{dy}{dt}\right)^{2}}\;dt\)<span class="cap">The integrand is the speed. Distance is speed times time, so arc length is the integral of speed. Simplify what is under the radical <b>before</b> integrating: these problems are built so that it collapses to something like \(t+1\) or \(6t\sqrt{1+t^2}\).</span></div>
+  <div class="warn"><b>Traced once.</b> The arc length formula measures distance travelled, not the length of the picture. If the parametrization goes around twice, the integral is twice the length of the curve. Check the interval before you integrate.</div>
+
+  <p>Rotating the curve gives a surface, and the band at parameter \(t\) has circumference \(2\pi\times(\text{distance to the axis})\) and width \(ds\):</p>
+  <div class="formula">\(S=\int 2\pi y\,ds\ \ (\text{about the }x\text{-axis}),\qquad S=\int 2\pi x\,ds\ \ (\text{about the }y\text{-axis}),\qquad ds=\sqrt{\left(\dfrac{dx}{dt}\right)^{2}+\left(\dfrac{dy}{dt}\right)^{2}}\,dt\)<span class="cap">The same \(ds\) as arc length, with one radius factor in front. Rotating a half circle of radius \(a\) about the \(x\)-axis gives \(4\pi a^{2}\), the surface of a sphere.</span></div>
+
+  <div class="card">
+    <h4>Explore: polygons approximate length, strips approximate area</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="lenPlot"></canvas><p class="plotcap">Length mode: the inscribed polygon with \(n\) sides. Area mode: the region swept between the curve and the \(x\)-axis up to the current \(t\).</p></div>
+      <div>
+        <div class="presets" id="lenPresets"></div>
+        <div class="presets" id="lenModes"></div>
+        <div class="sliders" id="lenSliders"></div>
+        <div class="readout" id="lenOut"></div>
+        <p class="hint">In length mode, push \(n\) up and watch the polygon length climb toward the exact value from below: a straight chord is always shorter than the arc it cuts. In area mode, sweep \(t\) across the astroid quarter and watch the running integral come out negative, because that piece is traced right to left.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: area between a parametric curve and the \(x\)-axis</h4>
+    <div class="expr" id="awExpr"></div>
+    <div class="controls">
+      <button class="btn" id="awPrev">◀ Back</button>
+      <button class="btn primary" id="awNext">Next step ▶</button>
+      <button class="btn" id="awNew">New curve</button>
+      <span class="status" id="awStatus"></span>
+    </div>
+    <p class="hint">The first step is always the same: find the \(t\)-values where the curve meets the axis. Those are the limits of integration, and forgetting to convert the \(x\)-limits into \(t\)-limits is the mistake that makes these problems go wrong.</p>
+  </div>
+
+  <div class="note"><b>Do not integrate blind.</b> Every one of these integrals is built so that the algebra collapses. If you are looking at \(\sqrt{9t^4+4t^2}\), pull \(t^2\) out of the radical before you do anything else and it becomes \(t\sqrt{9t^2+4}\), which is a routine substitution.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-areas"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from all three chapters. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI, TAU=2*Math.PI;
+const S=v=>String(v);
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+
+/* numerics: every stored area, length, point, and derivative is checked against these inside gen() */
+const simpson=(f,a,b,n=400)=>{n=2*Math.round(n/2);const h=(b-a)/n;let s=f(a)+f(b);for(let i=1;i<n;i++)s+=(i%2?4:2)*f(a+i*h);return s*h/3;};
+const ddt=(f,t,h=1e-5)=>(f(t+h)-f(t-h))/(2*h);
+const spd=(xf,yf)=>t=>Math.hypot(ddt(xf,t),ddt(yf,t));
+const vnear=(a,b,tol=3e-4)=>Math.abs(a-b)<=tol*Math.max(1,Math.abs(b));
+const vfy=(cond,what)=>{if(!cond)throw new Error('06-parametric-curves generator check failed: '+what);};
+
+/* small formatting helpers */
+const frS=(n,d)=>{const [a,b]=fr(n,d);return b===1?S(a):`${a}/${b}`;};
+const frV=(n,d)=>{const [a,b]=fr(n,d);return a/b;};
+const ptT=(x,y)=>`\\left(${texNum(x)},\\;${texNum(y)}\\right)`;
+const vecT=(a,b)=>`\\left\\langle ${a},\\;${b}\\right\\rangle`;
+const shiftT=(h,body)=>h===0?body:(body[0]==='-'?`${h} - ${body.slice(1)}`:`${h} + ${body}`);
+const shiftS=(h,body)=>h===0?body:`${h}+(${body})`;
+const coefT=(c,body)=>c===1?body:(c===-1?'-'+body:`${c}${body}`);
+const fcoef=(n,d)=>{const [a,b]=fr(n,d);return b===1?(a===1?'':(a===-1?'-':S(a))):texFrac(n,d,{tf:true});};
+const listS=pts=>pts.length?pts.map(p=>`(${p[0]},${p[1]})`).join(', '):'DNE';
+const listT=pts=>pts.length?pts.map(p=>ptT(p[0],p[1])).join(',\\; '):'\\text{none}';
+const ANGD=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+const rad=d=>d*PI/180;
+
+const Q={};
+
+/* ============================================================ chapter 1 question types */
+const ELIM=[
+  ()=>{const a=rnz(-4,4),b=rint(-3,3);
+    return {xT:'t'+texTerm(a,''),yT:'t^2'+texTerm(b,''),xf:u=>u+a,yf:u=>u*u+b,tr:[-2,2],
+      ref:e=>e.y-Math.pow(e.x-a,2)-b,dom:{x:[-3,3],y:[-4,4]},ans:`y=(x-(${a}))^2+(${b})`,
+      why:`Solve the first equation for the parameter: ${M('t=x'+texTerm(-a,''))}. Substituting into ${M('y=t^2'+texTerm(b,''))} gives ${M(`y=(x${texTerm(-a,'')})^2${texTerm(b,'')}`)}. Every real ${M('t')} occurs, so the whole parabola is traced, left to right.`};},
+  ()=>({xT:'e^{t}',yT:'e^{2t}',xf:u=>Math.exp(u),yf:u=>Math.exp(2*u),tr:[-1,1],ref:e=>e.y-e.x*e.x,dom:{x:[0.3,3],y:[0.3,9]},ans:'y=x^2',
+    why:`${M('y=e^{2t}=\\left(e^{t}\\right)^2=x^2')}. Because ${M('e^t>0')} for every ${M('t')}, only the right half ${M('x>0')} of the parabola is traced, moving up and to the right.`}),
+  ()=>{let a=rint(1,5),b=rint(1,5);while(b===a)b=rint(1,5);
+    return {xT:coefT(a,'\\cos t'),yT:coefT(b,'\\sin t'),
+      xf:u=>a*Math.cos(u),yf:u=>b*Math.sin(u),tr:[0,TAU],
+      ref:e=>e.x*e.x/(a*a)+e.y*e.y/(b*b)-1,dom:{x:[-a,a],y:[-b,b]},ans:`x^2/${a*a}+y^2/${b*b}=1`,
+      why:`Isolate the trig functions: ${M(`\\cos t=\\frac{x}{${a}}`)} and ${M(`\\sin t=\\frac{y}{${b}}`)}. Then ${M('\\cos^2t+\\sin^2t=1')} gives ${M(`\\frac{x^2}{${a*a}}+\\frac{y^2}{${b*b}}=1`)}, an ellipse traced once counterclockwise.`};},
+  ()=>{const a=rint(1,4),b=rint(1,4);
+    return {xT:coefT(a,'\\sec t'),yT:coefT(b,'\\tan t'),rng:`, \\ -\\tfrac{\\pi}{2}<t<\\tfrac{\\pi}{2}`,
+      xf:u=>a/Math.cos(u),yf:u=>b*Math.tan(u),tr:[-1.2,1.2],
+      ref:e=>e.x*e.x/(a*a)-e.y*e.y/(b*b)-1,dom:{x:[a,3*a],y:[-3,3]},ans:`x^2/${a*a}-y^2/${b*b}=1`,
+      why:`${M(`\\sec t=\\frac{x}{${a}}`)} and ${M(`\\tan t=\\frac{y}{${b}}`)}, so ${M('\\sec^2t-\\tan^2t=1')} gives ${M(`\\frac{x^2}{${a*a}}-\\frac{y^2}{${b*b}}=1`)}. On this ${M('t')}-interval ${M('\\sec t>0')}, so only the right branch is traced.`};},
+  ()=>({xT:'\\ln t',yT:'t^2',rng:', \\ t>0',xf:u=>Math.log(u),yf:u=>u*u,tr:[0.3,3],ref:e=>e.y-Math.exp(2*e.x),dom:{x:[-1,1.1],y:[0.1,8]},ans:'y=e^(2x)',
+    why:`From ${M('x=\\ln t')} we get ${M('t=e^{x}')}, so ${M('y=t^2=e^{2x}')}. As ${M('t')} runs over ${M('(0,\\infty)')}, ${M('x')} runs over all of ${M('\\mathbb{R}')} and the whole exponential curve is traced.`}),
+  ()=>({xT:'\\sin t',yT:'\\cos 2t',xf:u=>Math.sin(u),yf:u=>Math.cos(2*u),tr:[0,TAU],ref:e=>e.y-1+2*e.x*e.x,dom:{x:[-1,1],y:[-1,1]},ans:'y=1-2x^2',
+    why:`Use the double angle identity ${M('\\cos 2t=1-2\\sin^2 t')}. Since ${M('x=\\sin t')}, this is ${M('y=1-2x^2')}. Only the arc with ${M('-1\\le x\\le 1')} is traced, back and forth forever.`}),
+  ()=>({xT:'t^2',yT:'t^3',xf:u=>u*u,yf:u=>u*u*u,tr:[-2,2],ref:e=>e.y*e.y-Math.pow(e.x,3),dom:{x:[0,3],y:[-4,4]},ans:'y^2=x^3',
+    why:`Cube the first and square the second: ${M('x^3=t^6=y^2')}, so ${M('y^2=x^3')}. Only ${M('x\\ge0')} occurs. This curve has a cusp at the origin, and it is not the graph of any function.`}),
+  ()=>{const c=rint(1,5);
+    return {xT:'\\sqrt{t}',yT:'t'+texTerm(-c,''),rng:', \\ t\\ge 0',
+      xf:u=>Math.sqrt(u),yf:u=>u-c,tr:[0.05,4],
+      ref:e=>e.y-e.x*e.x+c,dom:{x:[0,3],y:[-6,4]},ans:`y=x^2-${c}`,
+      why:`From ${M('x=\\sqrt t')} we get ${M('t=x^2')}, so ${M(`y=x^2${texTerm(-c,'')}`)}. Because ${M('\\sqrt t\\ge 0')}, only the right half ${M('x\\ge 0')} of this parabola is traced.`};},
+  ()=>{const a=rnz(-4,4);
+    return {xT:'t^2',yT:'t'+texTerm(a,''),xf:u=>u*u,yf:u=>u+a,tr:[-2,2],ref:e=>e.x-Math.pow(e.y-a,2),dom:{x:[0,4],y:[-3,3]},ans:`x=(y-(${a}))^2`,
+      why:`Here it is easier to solve the second equation: ${M('t=y'+texTerm(-a,''))}. Substituting into ${M('x=t^2')} gives ${M(`x=(y${texTerm(-a,'')})^2`)}, a parabola opening to the right.`};}
+];
+Q.eliminate={name:'eliminate the parameter',
+  gen(){const c=pick(ELIM)();
+    /* the stored equation has to vanish on the curve the prompt actually shows */
+    for(let i=0;i<=10;i++){const u=c.tr[0]+(c.tr[1]-c.tr[0])*i/10;
+      const X=c.xf(u),Y=c.yf(u);if(!Number.isFinite(X)||!Number.isFinite(Y))continue;
+      vfy(Math.abs(c.ref({x:X,y:Y}))<1e-6*(1+Math.abs(X)+Math.abs(Y)),'Cartesian equation at t='+fmtDec(u,3));}
+    return c;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Eliminate the parameter to find a Cartesian equation of the curve ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}${q.rng||''}`)}. Give an equation in ${M('x')} and ${M('y')} with no ${M('t')} in it, for example <code>y = x^2 - 1</code> or <code>x^2/4 + y^2/9 = 1</code>.</p>`;
+    numIn(el,'eq','equation:',{xwide:true,placeholder:'an equation in x and y'});},
+  check(q,el){return G(el,'eq',checkEquation($('[data-k=eq]',el).value,q.ref,['x','y'],{domain:q.dom}));},
+  solution(q){return q.why;}
+};
+
+Q.pointAt={name:'point at a parameter value',
+  gen(){
+    const kind=pick(['poly','poly','trig','cyc']);
+    if(kind==='poly'){const a=rnz(-4,4),b=rint(1,5),t=rint(-3,3);
+      const x=t*t+a*t,y=t*t*t-b*t;
+      return {xT:'t^2'+texTerm(a,'t'),yT:'t^3'+texTerm(-b,'t'),tT:S(t),pt:[x,y],
+        work:`${M(`x=(${t})^2${texTerm(a,'')}\\cdot(${t})=${x}`)} and ${M(`y=(${t})^3${texTerm(-b,'')}\\cdot(${t})=${y}`)}`};}
+    if(kind==='trig'){const A=rint(1,5),B=rint(1,5),d=pick(ANGD);
+      const [cT,cV]=cosExact(d),[sT,sV]=sinExact(d);
+      return {xT:coefT(A,'\\cos t'),yT:coefT(B,'\\sin t'),tT:ANGLE_TEX[d],pt:[A*cV,B*sV],
+        work:`${M(`\\cos ${ANGLE_TEX[d]}=${cT}`)} and ${M(`\\sin ${ANGLE_TEX[d]}=${sT}`)}, so the point is ${M(vecT(`${A}\\left(${cT}\\right)`,`${B}\\left(${sT}\\right)`).replace('\\langle','(').replace('\\rangle',')'))}`};}
+    const r=rint(1,3),d=pick([60,90,120,180,240,270,300]);
+    const t=rad(d),[sT,sV]=sinExact(d),[cT,cV]=cosExact(d);
+    return {xT:coefT(r,'(t-\\sin t)'),yT:coefT(r,'(1-\\cos t)'),tT:ANGLE_TEX[d],pt:[r*(t-sV),r*(1-cV)],
+      work:`${M(`x=${r}\\left(${ANGLE_TEX[d]}-${sT}\\right)`)} and ${M(`y=${r}\\left(1-${cT}\\right)`)}`};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The curve is ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}`)}. Find the point on the curve at ${M(`t=${q.tT}`)}. Exact coordinates, entered as <code>(a, b)</code>.</p>`;
+    numIn(el,'p','point =',{wide:true,placeholder:'(a, b)'});},
+  check(q,el){return G(el,'p',checkVector($('[data-k=p]',el).value,q.pt));},
+  solution(q){return `Substitute the parameter value into both coordinate functions: ${q.work}.`;}
+};
+
+const CIRCDESC=[
+  (a,h,k)=>({d:`once around counterclockwise, starting at ${M(ptT(h+a,k))}`,int:'0\\le t\\le 2\\pi',
+    xb:coefT(a,'\\cos t'),yb:coefT(a,'\\sin t'),xs:`${a}*cos(t)`,ys:`${a}*sin(t)`,
+    why:`Counterclockwise from the rightmost point is the standard parametrization: the angle is just ${M('t')}.`}),
+  (a,h,k)=>({d:`once around clockwise, starting at ${M(ptT(h+a,k))}`,int:'0\\le t\\le 2\\pi',
+    xb:coefT(a,'\\cos t'),yb:coefT(-a,'\\sin t'),xs:`${a}*cos(t)`,ys:`-${a}*sin(t)`,
+    why:`Reversing the direction means running the angle backwards: replace ${M('t')} by ${M('-t')}, which flips only the sine.`}),
+  (a,h,k)=>({d:`three times around counterclockwise, starting at ${M(ptT(h+a,k))}`,int:'0\\le t\\le 2\\pi',
+    xb:coefT(a,'\\cos 3t'),yb:coefT(a,'\\sin 3t'),xs:`${a}*cos(3*t)`,ys:`${a}*sin(3*t)`,
+    why:`To go around three times while ${M('t')} covers ${M('[0,2\\pi]')}, the angle must sweep ${M('6\\pi')}, so the angle is ${M('3t')}.`}),
+  (a,h,k)=>({d:`halfway around counterclockwise, starting at ${M(ptT(h,k+a))}`,int:'0\\le t\\le \\pi',
+    xb:coefT(-a,'\\sin t'),yb:coefT(a,'\\cos t'),xs:`-${a}*sin(t)`,ys:`${a}*cos(t)`,
+    why:`Starting at the top means starting at angle ${M('\\tfrac{\\pi}{2}')}, so the angle is ${M('t+\\tfrac{\\pi}{2}')}: ${M('\\cos\\left(t+\\tfrac{\\pi}{2}\\right)=-\\sin t')} and ${M('\\sin\\left(t+\\tfrac{\\pi}{2}\\right)=\\cos t')}. Half a turn is ${M('0\\le t\\le\\pi')}.`}),
+  (a,h,k)=>({d:`once around counterclockwise, starting at ${M(ptT(h,k-a))}`,int:'0\\le t\\le 2\\pi',
+    xb:coefT(a,'\\sin t'),yb:coefT(-a,'\\cos t'),xs:`${a}*sin(t)`,ys:`-${a}*cos(t)`,
+    why:`Starting at the bottom is starting at angle ${M('-\\tfrac{\\pi}{2}')}, so the angle is ${M('t-\\tfrac{\\pi}{2}')}: ${M('\\cos\\left(t-\\tfrac{\\pi}{2}\\right)=\\sin t')} and ${M('\\sin\\left(t-\\tfrac{\\pi}{2}\\right)=-\\cos t')}.`}),
+  (a,h,k)=>({d:`twice around clockwise, starting at ${M(ptT(h+a,k))}`,int:'0\\le t\\le 2\\pi',
+    xb:coefT(a,'\\cos 2t'),yb:coefT(-a,'\\sin 2t'),xs:`${a}*cos(2*t)`,ys:`-${a}*sin(2*t)`,
+    why:`Two trips need the angle ${M('2t')}, and clockwise flips the sign of the sine.`})
+];
+/* what each description promises: the starting point, the signed angle swept, and over which interval */
+const CIRCEXPECT=[
+  (a,h,k)=>({st:[h+a,k],sw:TAU,T:TAU}),
+  (a,h,k)=>({st:[h+a,k],sw:-TAU,T:TAU}),
+  (a,h,k)=>({st:[h+a,k],sw:3*TAU,T:TAU}),
+  (a,h,k)=>({st:[h,k+a],sw:PI,T:PI}),
+  (a,h,k)=>({st:[h,k-a],sw:TAU,T:TAU}),
+  (a,h,k)=>({st:[h+a,k],sw:-2*TAU,T:TAU})
+];
+/* total signed angle swept about (h,k), unwrapped */
+function windSweep(xf,yf,h,k,T){
+  let prev=Math.atan2(yf(0)-k,xf(0)-h),tot=0;
+  for(let i=1;i<=4000;i++){const u=T*i/4000;let a=Math.atan2(yf(u)-k,xf(u)-h);
+    let d=a-prev;while(d>PI)d-=TAU;while(d<-PI)d+=TAU;tot+=d;prev=a;}
+  return tot;
+}
+Q.circleAsDescribed={name:'parametrize a circle as described',
+  gen(){const a=rint(1,5),h=pick([0,0,rint(-4,4)]),k=pick([0,0,rint(-4,4)]);
+    const idx=rint(0,CIRCDESC.length-1);
+    const c=CIRCDESC[idx](a,h,k),ex=CIRCEXPECT[idx](a,h,k);
+    const xs=shiftS(h,c.xs),ys=shiftS(k,c.ys);
+    const xc=Expr.compile(xs),yc=Expr.compile(ys);
+    const xf=u=>xc({t:u}),yf=u=>yc({t:u});
+    /* the parametrization must sit on the right circle, start where the words say, and wind the right way */
+    for(let i=0;i<=12;i++){const u=TAU*i/12;vfy(vnear(Math.hypot(xf(u)-h,yf(u)-k),a),'circle radius');}
+    vfy(vnear(xf(0),ex.st[0],1e-6)&&vnear(yf(0),ex.st[1],1e-6),'starting point matches the description');
+    vfy(Math.abs(windSweep(xf,yf,h,k,ex.T)-ex.sw)<1e-3,'direction and number of trips match the description');
+    return {a,h,k,...c,xs,ys,xT:shiftT(h,c.xb),yT:shiftT(k,c.yb)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Write parametric equations for a particle that moves on the circle of radius ${M(S(q.a))} centered at ${M(ptT(q.h,q.k))}, ${q.d}, for ${M(q.int)}. Answer as ${M(R`\langle x(t),\,y(t)\rangle`)}.</p>`;
+    numIn(el,'r',M(R`\langle x(t),\,y(t)\rangle=`),{xwide:true,placeholder:'<x(t), y(t)>'});},
+  check(q,el){return G(el,'r',checkExprVector($('[data-k=r]',el).value,[q.xs,q.ys],['t'],{domain:{t:[0,TAU]}}));},
+  solution(q){return `The circle of radius ${M(S(q.a))} about ${M(ptT(q.h,q.k))} is ${M(vecT(shiftT(q.h,'a\\cos\\theta').replace('a',S(q.a)),shiftT(q.k,'a\\sin\\theta').replace('a',S(q.a))))} where ${M('\\theta')} is the angle. ${q.why} That gives ${M(vecT(q.xT,q.yT))} on ${M(q.int)}.`;}
+};
+
+Q.segment={name:'parametrize a segment',
+  gen(){let P,Qp;do{P=[rint(-5,5),rint(-5,5)];Qp=[rint(-5,5),rint(-5,5)];}while(P[0]===Qp[0]&&P[1]===Qp[1]);
+    const dx=Qp[0]-P[0],dy=Qp[1]-P[1];
+    vfy(P[0]+dx===Qp[0]&&P[1]+dy===Qp[1],'segment endpoint at t=1');
+    return {P,Qp,dx,dy,xs:`${P[0]}+(${dx})*t`,ys:`${P[1]}+(${dy})*t`,
+      xT:shiftT(P[0],coefT(dx,'t')),yT:shiftT(P[1],coefT(dy,'t'))};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Write parametric equations for the line segment from ${M('P'+ptT(q.P[0],q.P[1]))} to ${M('Q'+ptT(q.Qp[0],q.Qp[1]))}, traversed once for ${M('0\\le t\\le 1')}. Answer as ${M(R`\langle x(t),\,y(t)\rangle`)}.</p>`;
+    numIn(el,'r',M(R`\langle x(t),\,y(t)\rangle=`),{xwide:true,placeholder:'<x(t), y(t)>'});},
+  check(q,el){return G(el,'r',checkExprVector($('[data-k=r]',el).value,[q.xs,q.ys],['t'],{domain:{t:[0,1]}}));},
+  solution(q){return `Use ${M('P+t(Q-P)')}. Here ${M('Q-P='+vecT(S(q.dx),S(q.dy)))}, so the segment is ${M(vecT(q.xT,q.yT))} for ${M('0\\le t\\le 1')}. Check the endpoints: ${M('t=0')} gives ${M(ptT(q.P[0],q.P[1]))} and ${M('t=1')} gives ${M(ptT(q.Qp[0],q.Qp[1]))}.`;}
+};
+
+Q.collision={name:'do the particles collide?',
+  gen(){
+    const TS=[[0,'0','0'],[PI/2,'\\tfrac{\\pi}{2}','pi/2'],[PI,'\\pi','pi'],[3*PI/2,'\\tfrac{3\\pi}{2}','3pi/2']];
+    for(let tries=0;tries<400;tries++){
+      const hit=Math.random()<0.55;
+      const [t0,t0T,t0S]=pick(TS);
+      const a1=rint(1,4),a2=rint(1,4),h2=rint(-3,3),k2=rint(-3,3);
+      let h1=Math.round(h2+a2*Math.cos(t0)-a1*Math.sin(t0));
+      let k1=Math.round(k2+a2*Math.sin(t0)-a1*Math.cos(t0));
+      if(!hit){const off=pick([[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[2,0],[0,2]]);h1+=off[0];k1+=off[1];}
+      const r1=t=>[h1+a1*Math.sin(t),k1+a1*Math.cos(t)];
+      const r2=t=>[h2+a2*Math.cos(t),k2+a2*Math.sin(t)];
+      const dist=t=>{const A=r1(t),B=r2(t);return Math.hypot(A[0]-B[0],A[1]-B[1]);};
+      let minAll=Infinity,minAway=Infinity;
+      for(let i=0;i<=3000;i++){const t=TAU*i/3000,v=dist(t);
+        if(v<minAll)minAll=v;
+        let g=Math.abs(t-t0);if(g>PI)g=TAU-g;
+        if(g>0.05&&v<minAway)minAway=v;}
+      const dc=Math.hypot(h1-h2,k1-k2);
+      const pathsCross=dc<a1+a2-0.2&&dc>Math.abs(a1-a2)+0.2;
+      const core={a1,a2,h1,k1,h2,k2,
+        x1T:shiftT(h1,coefT(a1,'\\sin t')),y1T:shiftT(k1,coefT(a1,'\\cos t')),
+        x2T:shiftT(h2,coefT(a2,'\\cos t')),y2T:shiftT(k2,coefT(a2,'\\sin t')),pathsCross};
+      if(hit){
+        if(!(minAll<1e-7))continue;
+        if(!(minAway>0.3))continue;
+        const P=r1(t0).map(v=>Math.round(v));
+        vfy(vnear(dist(t0),0,1),'collision distance');
+        vfy(Math.abs(r2(t0)[0]-P[0])<1e-6&&Math.abs(r2(t0)[1]-P[1])<1e-6,'collision point');
+        return {...core,hit:true,pt:P,tVal:t0,tT:t0T,tS:t0S};
+      }else{
+        if(!(minAll>0.4))continue;
+        if(!pathsCross)continue;
+        return {...core,hit:false,pt:null,minAll};
+      }
+    }
+    throw new Error('06-parametric-curves: could not build a collision question');},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Two particles travel for ${M('0\\le t\\le 2\\pi')} along
+      ${M(R`\mathbf{r}_1(t)=`+vecT(q.x1T,q.y1T))} and ${M(R`\mathbf{r}_2(t)=`+vecT(q.x2T,q.y2T))}.
+      Do they collide? Give the collision point and the time it happens, or type <code>DNE</code> in both boxes if they never meet.</p>`;
+    numIn(el,'p','collision point:',{wide:true,placeholder:'(a, b) or DNE'});
+    numIn(el,'t',M('t='),{placeholder:'value of t, or DNE'});},
+  check(q,el){return Gall(el,[
+    ['p',checkPointList($('[data-k=p]',el).value,q.hit?[q.pt]:[])],
+    ['t',checkNumber($('[data-k=t]',el).value,q.hit?q.tVal:'DNE')]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`A collision needs one value of ${M('t')} that solves both equations at once:`+
+      D(`${q.x1T}=${q.x2T}\\quad\\text{and}\\quad ${q.y1T}=${q.y2T}`);},
+  solution(q){
+    if(q.hit)return `Set the coordinates equal and solve the pair as one system in ${M('t')}: ${M(`${q.x1T}=${q.x2T}`)} and ${M(`${q.y1T}=${q.y2T}`)}. Both hold at ${M('t='+q.tT)}, and at that time both particles are at ${M(ptT(q.pt[0],q.pt[1]))}. No other ${M('t')} in ${M('[0,2\\pi]')} satisfies both, so that is the only collision.`;
+    return `The two circular paths do cross, but the particles are never at the crossing points at the same moment: the closest the two positions ever get is about ${fmtDec(q.minAll,2)} units. Solving ${M(`${q.x1T}=${q.x2T}`)} and ${M(`${q.y1T}=${q.y2T}`)} gives no common ${M('t')}, so there is no collision. Crossing paths is not the same as colliding.`;}
+};
+
+/* ============================================================ chapter 2 question types */
+/* exact TeX when the value is a simple fraction, otherwise the given exact form */
+const exT=(v,alt)=>Math.abs(v*24-Math.round(v*24))<1e-9?texNum(v):alt;
+const COT2={60:'\\sqrt{3}',90:'1',120:'\\tfrac{\\sqrt{3}}{3}',180:'0',240:'-\\tfrac{\\sqrt{3}}{3}',270:'-1',300:'-\\sqrt{3}'};
+
+/* one curve plus one parameter value, with exact TeX for every quantity involved */
+function curveSample(){
+  const kind=pick(['poly','poly','ell','cyc']);
+  if(kind==='poly'){
+    const A=pick([1,1,2]),a=rnz(-4,4),c=rint(1,6);
+    let t=rint(-3,3);
+    if(Math.random()<0.22){const tv=-a/(2*A);if(Number.isInteger(tv)&&Math.abs(tv)<=4)t=tv;}
+    const dx=2*A*t+a,dy=3*t*t-c,x0=A*t*t+a*t,y0=t*t*t-c*t;
+    return {kind,t,tT:S(t),
+      xT:texTerm(A,'t^2',true)+texTerm(a,'t'),yT:'t^3'+texTerm(-c,'t'),
+      dxT:texTerm(2*A,'t',true)+texTerm(a,''),dyT:'3t^2'+texTerm(-c,''),
+      xf:u=>A*u*u+a*u,yf:u=>u*u*u-c*u,dxf:u=>2*A*u+a,dyf:u=>3*u*u-c,
+      dx,dy,x0,y0,dxAt:texNum(dx),dyAt:texNum(dy),x0T:texNum(x0),y0T:texNum(y0)};
+  }
+  if(kind==='ell'){
+    const A=rint(1,5),B=rint(1,5),d=pick(ANGD),t=rad(d);
+    const [cT,cV]=cosExact(d),[sT,sV]=sinExact(d);
+    const dx=-A*sV,dy=B*cV,x0=A*cV,y0=B*sV;
+    return {kind,t,tT:ANGLE_TEX[d],deg:d,
+      xT:coefT(A,'\\cos t'),yT:coefT(B,'\\sin t'),
+      dxT:coefT(-A,'\\sin t'),dyT:coefT(B,'\\cos t'),
+      xf:u=>A*Math.cos(u),yf:u=>B*Math.sin(u),dxf:u=>-A*Math.sin(u),dyf:u=>B*Math.cos(u),
+      dx,dy,x0,y0,
+      dxAt:exT(dx,`-${A}\\left(${sT}\\right)`),dyAt:exT(dy,`${B}\\left(${cT}\\right)`),
+      x0T:exT(x0,`${A}\\left(${cT}\\right)`),y0T:exT(y0,`${B}\\left(${sT}\\right)`)};
+  }
+  const r=rint(1,3),d=pick([60,90,120,180,240,270,300]),t=rad(d);
+  const [cT,cV]=cosExact(d),[sT,sV]=sinExact(d);
+  const dx=r*(1-cV),dy=r*sV,x0=r*(t-sV),y0=r*(1-cV);
+  return {kind:'cyc',t,tT:ANGLE_TEX[d],deg:d,
+    xT:coefT(r,'(t-\\sin t)'),yT:coefT(r,'(1-\\cos t)'),
+    dxT:coefT(r,'(1-\\cos t)'),dyT:coefT(r,'\\sin t'),
+    xf:u=>r*(u-Math.sin(u)),yf:u=>r*(1-Math.cos(u)),dxf:u=>r*(1-Math.cos(u)),dyf:u=>r*Math.sin(u),
+    dx,dy,x0,y0,
+    dxAt:exT(dx,`${r}\\left(1-${cT}\\right)`),dyAt:exT(dy,`${r}\\left(${sT}\\right)`),
+    x0T:`${r===1?'':r}\\left(${ANGLE_TEX[d]}-${sT}\\right)`,y0T:exT(y0,`${r}\\left(1-${cT}\\right)`)};
+}
+const slopeTex=c=>{
+  if(Math.abs(c.dx)<1e-9)return '\\text{undefined}';
+  const m=c.dy/c.dx;
+  if(c.kind==='cyc')return exT(m,COT2[c.deg]);
+  return exT(m,`\\dfrac{${c.dyAt}}{${c.dxAt}}`);
+};
+
+Q.slope={name:'dy/dx at a parameter value',
+  gen(){
+    for(let i=0;i<60;i++){
+      const c=curveSample();
+      if(Math.abs(c.dx)<1e-9&&Math.abs(c.dy)<1e-9)continue;
+      vfy(vnear(c.dx,ddt(c.xf,c.t),1e-3),'dx/dt at t');
+      vfy(vnear(c.dy,ddt(c.yf,c.t),1e-3),'dy/dt at t');
+      const m=Math.abs(c.dx)<1e-9?'DNE':c.dy/c.dx;
+      return {...c,m,mT:slopeTex(c)};
+    }
+    throw new Error('06-parametric-curves: no usable slope draw');},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">For the curve ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}`)}, find ${M(R`\dfrac{dy}{dx}`)} at ${M(`t=${q.tT}`)}. Give an exact value, or type <code>DNE</code> if the tangent there is vertical.</p>`;
+    numIn(el,'m',M(R`\dfrac{dy}{dx}=`),{wide:true});},
+  check(q,el){return G(el,'m',checkLimit($('[data-k=m]',el).value,q.m));},
+  solution(q){
+    const head=`Differentiate each coordinate: ${M(`\\dfrac{dx}{dt}=${q.dxT}`)} and ${M(`\\dfrac{dy}{dt}=${q.dyT}`)}. At ${M('t='+q.tT)} these are ${M(q.dxAt)} and ${M(q.dyAt)}.`;
+    if(q.m==='DNE')return head+` The ${M('x')}-derivative is zero while the ${M('y')}-derivative is not, so the tangent line is vertical and ${M('dy/dx')} does not exist there.`;
+    return head+` So ${M(`\\dfrac{dy}{dx}=\\dfrac{${q.dyAt}}{${q.dxAt}}=${q.mT}`)}${Number.isInteger(q.m)?'':`, about ${fmtDec(q.m,3)}`}.`;}
+};
+
+Q.tangentLine={name:'equation of the tangent line',
+  gen(){
+    for(let i=0;i<60;i++){
+      const c=curveSample();
+      if(Math.abs(c.dx)<1e-9)continue;
+      const m=c.dy/c.dx;
+      vfy(vnear(m,ddt(c.yf,c.t)/ddt(c.xf,c.t),1e-3),'slope by difference quotient');
+      return {...c,m,mT:slopeTex(c),
+        ref:e=>e.y-(c.y0+m*(e.x-c.x0)),
+        ans:`y=(${c.y0})+(${m})*(x-(${c.x0}))`};
+    }
+    throw new Error('06-parametric-curves: no usable tangent line draw');},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find an equation of the tangent line to ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}`)} at the point where ${M(`t=${q.tT}`)}. Write it in the form ${M('y=\\ldots')} (exact values; <code>pi</code> and <code>sqrt</code> are fine).</p>`;
+    numIn(el,'eq',M('y='),{xwide:true,placeholder:'an expression in x'});},
+  check(q,el){
+    let v=cleanAns($('[data-k=eq]',el).value);
+    if(v&&!/=/.test(v))v='y='+v;
+    return G(el,'eq',checkEquation(v,q.ref,['x','y']));},
+  solution(q){
+    return `The point is ${M(`\\left(${q.x0T},\\;${q.y0T}\\right)`)}, from ${M('t='+q.tT)}. The slope is ${M(`\\dfrac{dy}{dx}=\\dfrac{${q.dyT}}{${q.dxT}}`)}, which at ${M('t='+q.tT)} equals ${M(`\\dfrac{${q.dyAt}}{${q.dxAt}}=${q.mT}`)}. Point-slope form gives `+
+      D(`y-\\left(${q.y0T}\\right)=${q.mT}\\left(x-\\left(${q.x0T}\\right)\\right)`)+
+      `, that is ${M(`y\\approx ${fmtDec(q.m,4)}x${texTerm(q.y0-q.m*q.x0,'')||' + 0'}`)} in slope-intercept form.`;}
+};
+
+Q.secondDerivative={name:'second derivative and concavity',
+  gen(){
+    const A=pick([1,1,2,3]),b=rint(-3,3),c=rint(1,6);
+    const xf=u=>A*u*u+b,yf=u=>u*u*u-c*u;
+    const d2=u=>(3*u*u+c)/(4*A*A*u*u*u);
+    /* verify the stored formula against a numerical second derivative */
+    [0.7,1.3,2.1,2.8,-1.4].forEach(u=>{
+      const g=w=>ddt(yf,w)/ddt(xf,w);
+      vfy(vnear(ddt(g,u)/ddt(xf,u),d2(u),2e-3),'d2y/dx2 at t='+u);});
+    return {A,b,c,
+      xT:texTerm(A,'t^2',true)+texTerm(b,''),yT:'t^3'+texTerm(-c,'t'),
+      dxT:texTerm(2*A,'t',true),dyT:'3t^2'+texTerm(-c,''),
+      slopeT:`\\dfrac{3t^2${texTerm(-c,'')}}{${2*A}t}`,
+      dslopeT:`\\dfrac{3t^2${texTerm(c,'')}}{${2*A}t^2}`,
+      d2T:`\\dfrac{3t^2${texTerm(c,'')}}{${4*A*A}t^3}`,
+      d2Str:`(3*t^2+${c})/(${4*A*A}*t^3)`};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">For the curve ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}`)}, find ${M(R`\dfrac{d^2y}{dx^2}`)} as a function of ${M('t')}, then say for which ${M('t')} the curve is concave up. Write the condition as an inequality like <code>t &gt; 0</code>.</p>`;
+    numIn(el,'d2',M(R`\dfrac{d^2y}{dx^2}=`),{xwide:true,placeholder:'an expression in t'});
+    numIn(el,'cond','concave up for:',{placeholder:'t > 0'});},
+  check(q,el){return Gall(el,[
+    ['d2',checkExpr($('[data-k=d2]',el).value,q.d2Str,['t'],{domain:{t:[0.4,3]}})],
+    ['cond',checkCondition($('[data-k=cond]',el).value,{v:'t',op:'>',val:0})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`First slope, then differentiate it in ${M('t')}, then divide by ${M('dx/dt')} again:`+D(`\\dfrac{dy}{dx}=${q.slopeT}`);},
+  solution(q){
+    return `Start with ${M(`\\dfrac{dx}{dt}=${q.dxT}`)} and ${M(`\\dfrac{dy}{dt}=${q.dyT}`)}, so ${M(`\\dfrac{dy}{dx}=${q.slopeT}`)}. Now differentiate that quotient with respect to ${M('t')}:`+
+      D(`\\dfrac{d}{dt}\\left(${q.slopeT}\\right)=${q.dslopeT}`)+
+      `and divide by ${M(`\\dfrac{dx}{dt}=${q.dxT}`)} one more time:`+
+      D(`\\dfrac{d^2y}{dx^2}=${q.d2T}`)+
+      `The numerator ${M(`3t^2${texTerm(q.c,'')}`)} is positive for every ${M('t')}, so the sign is the sign of ${M('t^3')}. The curve is concave up exactly when ${M('t>0')}.`;}
+};
+
+/* numerical scan for horizontal and vertical tangents, used to verify the stored point lists */
+function tangentScan(xf,yf,t0,t1,N=6000){
+  const dxf=u=>ddt(xf,u),dyf=u=>ddt(yf,u);
+  const zeros=f=>{const out=[];let pv=f(t0);
+    for(let i=1;i<=N;i++){const u=t0+(t1-t0)*i/N,v=f(u);
+      if((pv<0)!==(v<0)){let lo=t0+(t1-t0)*(i-1)/N,hi=u,fl=pv;
+        for(let k=0;k<60;k++){const mid=(lo+hi)/2,fm=f(mid);if((fl<0)!==(fm<0))hi=mid;else{lo=mid;fl=fm;}}
+        out.push((lo+hi)/2);}
+      pv=v;}
+    return out;};
+  const uniq=ps=>{const o=[];ps.forEach(p=>{if(!o.some(r=>Math.abs(r[0]-p[0])<2e-3&&Math.abs(r[1]-p[1])<2e-3))o.push(p);});return o;};
+  return {hor:uniq(zeros(dyf).filter(u=>Math.abs(dxf(u))>1e-3).map(u=>[xf(u),yf(u)])),
+          ver:uniq(zeros(dxf).filter(u=>Math.abs(dyf(u))>1e-3).map(u=>[xf(u),yf(u)]))};
+}
+const sameSet=(A,B,tol=3e-3)=>{if(A.length!==B.length)return false;const left=B.slice();
+  for(const p of A){const i=left.findIndex(r=>Math.abs(p[0]-r[0])<tol&&Math.abs(p[1]-r[1])<tol);if(i<0)return false;left.splice(i,1);}
+  return true;};
+
+const HVFAMS=[
+  ()=>{const m=pick([0,2,-2]),b=rint(-3,3);
+    return {xT:'t^3-3t',yT:'t^2'+texTerm(-2*m,'t')+texTerm(b,''),rng:'',
+      xf:u=>u*u*u-3*u,yf:u=>u*u-2*m*u+b,scan:[-4,4],
+      dxT:'3t^2-3',dyT:'2t'+texTerm(-2*m,''),
+      hor:[[m*m*m-3*m,-m*m+b]],ver:[[-2,1-2*m+b],[2,1+2*m+b]],
+      horT:[`t=${m}`],verT:['t=1','t=-1'],
+      why:`${M('dy/dt=0')} at ${M('t='+m)}, and ${M('dx/dt=3t^2-3=0')} at ${M('t=\\pm1')}. None of these three values makes both derivatives vanish, so each one really is a tangent point.`};},
+  ()=>{const p=pick([2,-2]);
+    return {xT:'t^2'+texTerm(-2*p,'t'),yT:'t^3-3t',rng:'',
+      xf:u=>u*u-2*p*u,yf:u=>u*u*u-3*u,scan:[-4,4],
+      dxT:'2t'+texTerm(-2*p,''),dyT:'3t^2-3',
+      hor:[[1-2*p,-2],[1+2*p,2]],ver:[[-p*p,p*p*p-3*p]],
+      horT:['t=1','t=-1'],verT:[`t=${p}`],
+      why:`${M('dy/dt=3t^2-3=0')} at ${M('t=\\pm1')}, and ${M('dx/dt=2t'+texTerm(-2*p,'')+'=0')} at ${M('t='+p)}.`};},
+  ()=>{const A=rint(1,4),B=rint(1,4);
+    return {xT:coefT(A,'\\cos t'),yT:coefT(B,'\\sin t'),rng:', \\ 0\\le t\\le 2\\pi',
+      xf:u=>A*Math.cos(u),yf:u=>B*Math.sin(u),scan:[-0.3,TAU+0.3],
+      dxT:coefT(-A,'\\sin t'),dyT:coefT(B,'\\cos t'),
+      hor:[[0,B],[0,-B]],ver:[[A,0],[-A,0]],
+      horT:['t=\\tfrac{\\pi}{2}','t=\\tfrac{3\\pi}{2}'],verT:['t=0','t=\\pi'],
+      why:`${M('dy/dt='+coefT(B,'\\cos t')+'=0')} at ${M('t=\\tfrac{\\pi}{2},\\tfrac{3\\pi}{2}')} (the top and bottom of the ellipse), and ${M('dx/dt='+coefT(-A,'\\sin t')+'=0')} at ${M('t=0,\\pi')} (the two ends).`};},
+  ()=>{const A=rint(1,3),B=rint(1,4),h=A*Math.SQRT2/2;
+    return {xT:coefT(A,'\\cos t'),yT:coefT(B,'\\sin 2t'),rng:', \\ 0\\le t\\le 2\\pi',
+      xf:u=>A*Math.cos(u),yf:u=>B*Math.sin(2*u),scan:[-0.3,TAU+0.3],
+      dxT:coefT(-A,'\\sin t'),dyT:coefT(2*B,'\\cos 2t'),
+      hor:[[h,B],[-h,B],[-h,-B],[h,-B]],ver:[[A,0],[-A,0]],
+      horT:['t=\\tfrac{\\pi}{4}','t=\\tfrac{3\\pi}{4}','t=\\tfrac{5\\pi}{4}','t=\\tfrac{7\\pi}{4}'],verT:['t=0','t=\\pi'],
+      why:`${M('dy/dt='+coefT(2*B,'\\cos 2t')+'=0')} at the four values ${M('t=\\tfrac{\\pi}{4},\\tfrac{3\\pi}{4},\\tfrac{5\\pi}{4},\\tfrac{7\\pi}{4}')}, where ${M('x=\\pm'+texNum(h))}; ${M('dx/dt='+coefT(-A,'\\sin t')+'=0')} at ${M('t=0,\\pi')}. This figure eight crosses itself at the origin, but that is not a tangent point.`};}
+];
+Q.horizVert={name:'horizontal and vertical tangents',
+  gen(){const c=pick(HVFAMS)();
+    const sc=tangentScan(c.xf,c.yf,c.scan[0],c.scan[1]);
+    vfy(sameSet(sc.hor,c.hor),'horizontal tangent points');
+    vfy(sameSet(sc.ver,c.ver),'vertical tangent points');
+    return c;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find every point on the curve ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}${q.rng}`)} where the tangent line is horizontal, and every point where it is vertical. Enter points as <code>(a, b)</code> separated by commas, or <code>DNE</code> if there are none.</p>`;
+    numIn(el,'h','horizontal tangents:',{xwide:true,placeholder:'(a, b), (c, d) or DNE'});
+    numIn(el,'v','vertical tangents:',{xwide:true,placeholder:'(a, b), (c, d) or DNE'});},
+  check(q,el){return Gall(el,[
+    ['h',checkPointList($('[data-k=h]',el).value,q.hor)],
+    ['v',checkPointList($('[data-k=v]',el).value,q.ver)]]);},
+  solution(q){
+    return `Horizontal needs ${M('dy/dt=0')} with ${M('dx/dt\\neq0')}; vertical needs ${M('dx/dt=0')} with ${M('dy/dt\\neq0')}. Here ${M(`\\dfrac{dx}{dt}=${q.dxT}`)} and ${M(`\\dfrac{dy}{dt}=${q.dyT}`)}. ${q.why} Substituting each parameter value back into the curve: horizontal at ${M(q.horT.join(',\\; '))} gives ${M(listT(q.hor))}, and vertical at ${M(q.verT.join(',\\; '))} gives ${M(listT(q.ver))}.`;}
+};
+
+/* ============================================================ chapter 3 question types */
+const AREAX=[
+  ()=>{const a=rint(2,4),c=rint(0,3);
+    return {xT:'t^3'+texTerm(c,''),yT:texTerm(a,'t',true)+'-t^2',
+      xf:u=>u*u*u+c,yf:u=>a*u-u*u,ts:[0,a],
+      An:3*Math.pow(a,5),Ad:20,
+      setup:`\\int_0^{${a}}\\left(${texTerm(a,'t',true)}-t^2\\right)\\left(3t^2\\right)dt=\\int_0^{${a}}\\left(${texTerm(3*a,'t^3',true)}-3t^4\\right)dt`,
+      anti:`${texFrac(3*a,4,{tf:true})}t^4-${texFrac(3,5,{tf:true})}t^5`,
+      why:`${M('y=0')} when ${M(`t\\left(${a}-t\\right)=0`)}, so ${M('t=0')} and ${M('t='+a)}. Between them ${M('y\\ge0')} and ${M('x')} increases, so the region really is under the curve.`};},
+  ()=>{const k=rint(1,3);
+    return {xT:'t^2',yT:texTerm(k*k,'t',true)+'-t^3',rng:', \\ t\\ge 0',
+      xf:u=>u*u,yf:u=>k*k*u-u*u*u,ts:[0,k],
+      An:4*Math.pow(k,5),Ad:15,
+      setup:`\\int_0^{${k}}\\left(${texTerm(k*k,'t',true)}-t^3\\right)\\left(2t\\right)dt=\\int_0^{${k}}\\left(${texTerm(2*k*k,'t^2',true)}-2t^4\\right)dt`,
+      anti:`${texFrac(2*k*k,3,{tf:true})}t^3-${texFrac(2,5,{tf:true})}t^5`,
+      why:`${M('y=0')} when ${M(`t\\left(${k*k}-t^2\\right)=0`)}, so for ${M('t\\ge0')} the curve is on the axis at ${M('t=0')} and ${M('t='+k)}.`};}
+];
+const AREAY=[
+  ()=>{const a=rint(2,4);
+    return {xT:texTerm(a,'t',true)+'-t^2',yT:'t^3',
+      xf:u=>a*u-u*u,yf:u=>u*u*u,ts:[0,a],
+      An:3*Math.pow(a,5),Ad:20,
+      setup:`\\int_0^{${a}}\\left(${texTerm(a,'t',true)}-t^2\\right)\\left(3t^2\\right)dt=\\int_0^{${a}}\\left(${texTerm(3*a,'t^3',true)}-3t^4\\right)dt`,
+      anti:`${texFrac(3*a,4,{tf:true})}t^4-${texFrac(3,5,{tf:true})}t^5`,
+      why:`${M('x=0')} when ${M(`t\\left(${a}-t\\right)=0`)}, so ${M('t=0')} and ${M('t='+a)}. Between them ${M('x\\ge0')} and ${M('y')} increases.`};},
+  ()=>{const k=rint(1,3);
+    return {xT:texTerm(k*k,'t',true)+'-t^3',yT:'t^2',rng:', \\ t\\ge 0',
+      xf:u=>k*k*u-u*u*u,yf:u=>u*u,ts:[0,k],
+      An:4*Math.pow(k,5),Ad:15,
+      setup:`\\int_0^{${k}}\\left(${texTerm(k*k,'t',true)}-t^3\\right)\\left(2t\\right)dt=\\int_0^{${k}}\\left(${texTerm(2*k*k,'t^2',true)}-2t^4\\right)dt`,
+      anti:`${texFrac(2*k*k,3,{tf:true})}t^3-${texFrac(2,5,{tf:true})}t^5`,
+      why:`${M('x=0')} when ${M(`t\\left(${k*k}-t^2\\right)=0`)}, so for ${M('t\\ge0')} the curve touches the ${M('y')}-axis at ${M('t=0')} and ${M('t='+k)}.`};}
+];
+function areaCore(c,axis){
+  const A=frV(c.An,c.Ad);
+  const num=axis==='x'?simpson(u=>c.yf(u)*ddt(c.xf,u),c.ts[0],c.ts[1],600)
+                      :simpson(u=>c.xf(u)*ddt(c.yf,u),c.ts[0],c.ts[1],600);
+  vfy(vnear(num,A,1e-3),'area by Simpson vs stored value');
+  return {...c,A,aStr:frS(c.An,c.Ad),aT:texFrac(c.An,c.Ad),tsStr:c.ts.join(', ')};
+}
+Q.areaUnder={name:'area between the curve and the x-axis',
+  gen(){return areaCore(pick(AREAX)(),'x');},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The curve ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}${q.rng||''}`)} starts and ends on the ${M('x')}-axis. Find the two ${M('t')}-values where it meets the axis, then find the exact area of the region enclosed by the curve and the ${M('x')}-axis. Fractions like <code>24/5</code> are fine.</p>`;
+    numIn(el,'ts',M('t')+'-values:',{wide:true,placeholder:'comma separated'});
+    numIn(el,'a','Area =',{wide:true});},
+  check(q,el){return Gall(el,[
+    ['ts',checkNumberList($('[data-k=ts]',el).value,q.ts)],
+    ['a',checkNumber($('[data-k=a]',el).value,q.A)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Set ${M('y=0')} to get the limits, then use ${M(R`A=\int y\,dx=\int y(t)\,x'(t)\,dt`)}.`;},
+  solution(q){return `${q.why} Then ${M(R`A=\int y\,dx=\int_{t_1}^{t_2} y(t)\,x'(t)\,dt`)}:`+
+    D(`A=${q.setup}=\\Big[\\,${q.anti}\\,\\Big]_0^{${q.ts[1]}}=${q.aT}${Number.isInteger(q.A)?'':`\\approx ${fmtDec(q.A,4)}`}`);}
+};
+Q.areaBesideY={name:'area between the curve and the y-axis',
+  gen(){return areaCore(pick(AREAY)(),'y');},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The curve ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}${q.rng||''}`)} starts and ends on the ${M('y')}-axis. Find the two ${M('t')}-values where it meets the axis, then find the exact area of the region enclosed by the curve and the ${M('y')}-axis.</p>`;
+    numIn(el,'ts',M('t')+'-values:',{wide:true,placeholder:'comma separated'});
+    numIn(el,'a','Area =',{wide:true});},
+  check(q,el){return Gall(el,[
+    ['ts',checkNumberList($('[data-k=ts]',el).value,q.ts)],
+    ['a',checkNumber($('[data-k=a]',el).value,q.A)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Horizontal strips this time: ${M(R`A=\int x\,dy=\int x(t)\,y'(t)\,dt`)}.`;},
+  solution(q){return `${q.why} The strips are horizontal, so ${M(R`A=\int x\,dy=\int_{t_1}^{t_2} x(t)\,y'(t)\,dt`)}:`+
+    D(`A=${q.setup}=\\Big[\\,${q.anti}\\,\\Big]_0^{${q.ts[1]}}=${q.aT}${Number.isInteger(q.A)?'':`\\approx ${fmtDec(q.A,4)}`}`);}
+};
+
+Q.ellipseArea={name:'area enclosed by a closed curve',
+  gen(){
+    const kind=pick(['ellipse','astroid']);
+    let c;
+    if(kind==='ellipse'){const a=rint(1,6);let b=rint(1,6);
+      c={xT:coefT(a,'\\cos t'),yT:coefT(b,'\\sin t'),xf:u=>a*Math.cos(u),yf:u=>b*Math.sin(u),
+        name:a===b?`the circle of radius ${a}`:'the ellipse',
+        A:PI*a*b,aStr:`pi*${a*b}`,aT:`${a*b===1?'':a*b}\\pi`,
+        work:`A=\\left|\\int_0^{2\\pi}\\left(${coefT(b,'\\sin t')}\\right)\\left(${coefT(-a,'\\sin t')}\\right)dt\\right|=${a*b}\\int_0^{2\\pi}\\sin^2t\\,dt=${a*b}\\cdot\\pi=${a*b===1?'':a*b}\\pi`,
+        why:`For ${M(`x=${coefT(a,'\\cos t')}`)}, ${M('dx=' +coefT(-a,'\\sin t')+'\\,dt')}, and ${M('\\int_0^{2\\pi}\\sin^2t\\,dt=\\pi')}. This is the familiar ${M('\\pi ab')} with ${M('a='+a)} and ${M('b='+b)}.`};}
+    else{const a=rint(1,4);
+      c={xT:coefT(a,'\\cos^3 t'),yT:coefT(a,'\\sin^3 t'),xf:u=>a*Math.pow(Math.cos(u),3),yf:u=>a*Math.pow(Math.sin(u),3),
+        name:'the astroid',
+        A:3*PI*a*a/8,aStr:`3*pi*${a*a}/8`,aT:texFrac(3*a*a,8,{tf:true})+'\\pi',
+        work:`A=\\left|\\int_0^{2\\pi}\\left(${coefT(a,'\\sin^3t')}\\right)\\left(${coefT(-3*a,'\\cos^2t\\sin t')}\\right)dt\\right|=${3*a*a}\\int_0^{2\\pi}\\sin^4t\\cos^2t\\,dt=${3*a*a}\\cdot\\tfrac{\\pi}{8}=${texFrac(3*a*a,8,{tf:true})}\\pi`,
+        why:`With ${M('x='+coefT(a,'\\cos^3t'))} we get ${M('dx='+coefT(-3*a,'\\cos^2t\\sin t')+'\\,dt')}, and ${M('\\int_0^{2\\pi}\\sin^4t\\cos^2t\\,dt=\\tfrac{\\pi}{8}')}. The enclosed area of an astroid is ${M('\\tfrac38\\pi a^2')}, three eighths of the circle it fits inside.`};}
+    const num=Math.abs(simpson(u=>c.yf(u)*ddt(c.xf,u),0,TAU,1200));
+    vfy(vnear(num,c.A,1e-3),'enclosed area by Simpson');
+    return c;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the area enclosed by ${q.name} ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}`)}, traced once for ${M('0\\le t\\le 2\\pi')}. Exact value, with <code>pi</code>.</p>`;
+    numIn(el,'a','Area =',{wide:true});},
+  check(q,el){return G(el,'a',checkNumber($('[data-k=a]',el).value,q.A,{rel:1e-6}));},
+  solution(q){return `For a closed curve traced once, ${M(R`A=\left|\int y\,dx\right|=\left|\int_0^{2\pi} y(t)\,x'(t)\,dt\right|`)}. ${q.why}`+
+    D(q.work)+`So the area is ${M(q.aT)}, about ${fmtDec(q.A,4)}.`;}
+};
+
+const ARCPOOL=[
+  ()=>{const k=rint(1,3);return {xT:coefT(3*k,'t^2'),yT:coefT(2*k,'t^3'),t0:0,t1:1,t0T:'0',t1T:'1',
+    xf:u=>3*k*u*u,yf:u=>2*k*u*u*u,
+    spStr:`${6*k}*t*sqrt(1+t^2)`,spT:`${6*k}t\\sqrt{1+t^2}`,
+    LStr:`${2*k}*(2*sqrt(2)-1)`,Lval:2*k*(2*Math.SQRT2-1),LT:`${2*k}\\left(2\\sqrt{2}-1\\right)`,
+    work:`x'=${coefT(6*k,'t')},\\ y'=${coefT(6*k,'t^2')},\\ \\text{so}\\ x'^2+y'^2=${36*k*k}t^2\\left(1+t^2\\right)`,
+    anti:`${2*k}\\left(1+t^2\\right)^{3/2}`};},
+  ()=>{const k=rint(1,3);return {xT:`${k===1?'':k}e^{t}\\cos t`,yT:`${k===1?'':k}e^{t}\\sin t`,t0:0,t1:PI,t0T:'0',t1T:'\\pi',
+    xf:u=>k*Math.exp(u)*Math.cos(u),yf:u=>k*Math.exp(u)*Math.sin(u),
+    spStr:`${k}*sqrt(2)*e^t`,spT:`${k===1?'':k}\\sqrt{2}\\,e^{t}`,
+    LStr:`${k}*sqrt(2)*(e^(pi)-1)`,Lval:k*Math.SQRT2*(Math.exp(PI)-1),LT:`${k===1?'':k}\\sqrt{2}\\left(e^{\\pi}-1\\right)`,
+    work:`x'=${k===1?'':k}e^{t}\\left(\\cos t-\\sin t\\right),\\ y'=${k===1?'':k}e^{t}\\left(\\sin t+\\cos t\\right),\\ \\text{and the cross terms cancel}`,
+    anti:`${k===1?'':k}\\sqrt{2}\\,e^{t}`};},
+  ()=>{const k=rint(1,2),T=pick([1,2,3]);return {xT:`${k===1?'':k}\\left(\\cos t+t\\sin t\\right)`,yT:`${k===1?'':k}\\left(\\sin t-t\\cos t\\right)`,t0:0,t1:T,t0T:'0',t1T:S(T),
+    xf:u=>k*(Math.cos(u)+u*Math.sin(u)),yf:u=>k*(Math.sin(u)-u*Math.cos(u)),
+    spStr:`${k}*t`,spT:coefT(k,'t'),
+    LStr:frS(k*T*T,2),Lval:k*T*T/2,LT:texFrac(k*T*T,2),
+    work:`x'=${coefT(k,'t\\cos t')},\\ y'=${coefT(k,'t\\sin t')},\\ \\text{so}\\ x'^2+y'^2=${k*k}t^2`,
+    anti:`${texFrac(k,2,{tf:true})}t^2`};},
+  ()=>{const k=rint(1,2),c=pick([1,2]);const K=4+9*c*c;
+    return {xT:coefT(k,'t^2'),yT:coefT(k,'t^3'),t0:0,t1:c,t0T:'0',t1T:S(c),
+    xf:u=>k*u*u,yf:u=>k*u*u*u,
+    spStr:`${k}*t*sqrt(4+9*t^2)`,spT:`${k===1?'':k}t\\sqrt{4+9t^2}`,
+    LStr:`${k}*((${K})^(3/2)-8)/27`,Lval:k*(Math.pow(K,1.5)-8)/27,LT:`${texFrac(k,27,{tf:true})}\\left(${K}^{3/2}-8\\right)`,
+    work:`x'=${coefT(2*k,'t')},\\ y'=${coefT(3*k,'t^2')},\\ \\text{so}\\ x'^2+y'^2=${k*k}t^2\\left(4+9t^2\\right)`,
+    anti:`${texFrac(k,27,{tf:true})}\\left(4+9t^2\\right)^{3/2}`};},
+  ()=>{const a=rint(1,5);return {xT:coefT(a,'\\cos t'),yT:coefT(a,'\\sin t'),t0:0,t1:TAU,t0T:'0',t1T:'2\\pi',
+    xf:u=>a*Math.cos(u),yf:u=>a*Math.sin(u),
+    spStr:S(a),spT:S(a),LStr:`2*pi*${a}`,Lval:TAU*a,LT:`${2*a}\\pi`,
+    work:`x'=${coefT(-a,'\\sin t')},\\ y'=${coefT(a,'\\cos t')},\\ \\text{so}\\ x'^2+y'^2=${a*a}`,
+    anti:`${a===1?'':a}t`};},
+  ()=>{const r=rint(1,3);return {xT:`${r===1?'':r}\\left(t-\\sin t\\right)`,yT:`${r===1?'':r}\\left(1-\\cos t\\right)`,t0:0,t1:TAU,t0T:'0',t1T:'2\\pi',
+    xf:u=>r*(u-Math.sin(u)),yf:u=>r*(1-Math.cos(u)),
+    spStr:`${2*r}*sin(t/2)`,spT:`${2*r}\\sin\\tfrac{t}{2}`,
+    LStr:S(8*r),Lval:8*r,LT:S(8*r),
+    work:`x'=${r===1?'':r}\\left(1-\\cos t\\right),\\ y'=${coefT(r,'\\sin t')},\\ \\text{so}\\ x'^2+y'^2=${2*r*r}\\left(1-\\cos t\\right)=${4*r*r}\\sin^2\\tfrac{t}{2}`,
+    anti:`-${4*r}\\cos\\tfrac{t}{2}`};},
+  ()=>{const a=rint(1,4);return {xT:coefT(a,'\\cos^3 t'),yT:coefT(a,'\\sin^3 t'),t0:0,t1:PI/2,t0T:'0',t1T:'\\tfrac{\\pi}{2}',
+    xf:u=>a*Math.pow(Math.cos(u),3),yf:u=>a*Math.pow(Math.sin(u),3),
+    spStr:`${3*a}*sin(t)*cos(t)`,spT:`${3*a}\\sin t\\cos t`,
+    LStr:frS(3*a,2),Lval:3*a/2,LT:texFrac(3*a,2),
+    work:`x'=${coefT(-3*a,'\\cos^2t\\sin t')},\\ y'=${coefT(3*a,'\\sin^2t\\cos t')},\\ \\text{so}\\ x'^2+y'^2=${9*a*a}\\sin^2t\\cos^2t`,
+    anti:`${texFrac(3*a,2,{tf:true})}\\sin^2 t`};},
+  ()=>{const k=rint(1,3);return {xT:`${fcoef(k,2)}t^2`,yT:`${fcoef(k,3)}\\left(2t+1\\right)^{3/2}`,t0:0,t1:4,t0T:'0',t1T:'4',
+    xf:u=>k*u*u/2,yf:u=>k*Math.pow(2*u+1,1.5)/3,
+    spStr:`${k}*(t+1)`,spT:`${k===1?'':k}\\left(t+1\\right)`,
+    LStr:S(12*k),Lval:12*k,LT:S(12*k),
+    work:`x'=${coefT(k,'t')},\\ y'=${k===1?'':k}\\sqrt{2t+1},\\ \\text{so}\\ x'^2+y'^2=${k*k}\\left(t^2+2t+1\\right)=${k*k}\\left(t+1\\right)^2`,
+    anti:`${k===1?'':k}\\left(\\tfrac{t^2}{2}+t\\right)`};}
+];
+Q.arcLength={name:'arc length',
+  gen(){const c=pick(ARCPOOL)();
+    const sf=Expr.compile(c.spStr),sn=spd(c.xf,c.yf);
+    for(let i=1;i<10;i++){const u=c.t0+(c.t1-c.t0)*i/10;
+      vfy(vnear(sf({t:u}),sn(u),1e-3),'speed formula at t='+fmtDec(u,3));}
+    vfy(vnear(simpson(u=>sf({t:u}),c.t0,c.t1,800),c.Lval,1e-4),'arc length by Simpson');
+    return c;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the exact length of the curve ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}`)} for ${M(`${q.t0T}\\le t\\le ${q.t1T}`)}. Give the simplified speed first, then the length.</p>`;
+    numIn(el,'sp',M(R`\sqrt{\left(\tfrac{dx}{dt}\right)^2+\left(\tfrac{dy}{dt}\right)^2}=`),{xwide:true,placeholder:'simplified, in t'});
+    numIn(el,'L',M('L='),{wide:true});},
+  check(q,el){return Gall(el,[
+    ['sp',checkExpr($('[data-k=sp]',el).value,q.spStr,['t'],{domain:{t:[q.t0,q.t1]}})],
+    ['L',checkNumber($('[data-k=L]',el).value,q.Lval,{rel:1e-6})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=D(q.work);},
+  solution(q){return `Differentiate and simplify under the radical:`+D(q.work)+
+    `so the speed is ${M(q.spT)} and`+
+    D(R`L=\int_{${q.t0T}}^{${q.t1T}}${q.spT}\,dt=\Big[\,${q.anti}\,\Big]_{${q.t0T}}^{${q.t1T}}=${q.LT}\approx ${fmtDec(q.Lval,4)}`);}
+};
+
+const SURFPOOL=[
+  ()=>{const a=rint(1,4);return {xT:coefT(a,'\\cos t'),yT:coefT(a,'\\sin t'),t0:0,t1:PI,t0T:'0',t1T:'\\pi',axis:'x',
+    xf:u=>a*Math.cos(u),yf:u=>a*Math.sin(u),
+    dsT:S(a),SStr:`4*pi*${a*a}`,Sval:4*PI*a*a,ST:`${4*a*a}\\pi`,
+    setup:`S=\\int_0^{\\pi}2\\pi\\left(${coefT(a,'\\sin t')}\\right)\\left(${a}\\right)dt=${2*a*a}\\pi\\int_0^{\\pi}\\sin t\\,dt=${2*a*a}\\pi\\cdot 2=${4*a*a}\\pi`,
+    note:`This is a half circle of radius ${M(S(a))} spun about the ${M('x')}-axis, so the surface is a sphere and the answer must be ${M('4\\pi r^2')}.`};},
+  ()=>{const a=rint(1,4);return {xT:coefT(a,'\\cos t'),yT:coefT(a,'\\sin t'),t0:0,t1:PI/2,t0T:'0',t1T:'\\tfrac{\\pi}{2}',axis:'y',
+    xf:u=>a*Math.cos(u),yf:u=>a*Math.sin(u),
+    dsT:S(a),SStr:`2*pi*${a*a}`,Sval:2*PI*a*a,ST:`${2*a*a}\\pi`,
+    setup:`S=\\int_0^{\\pi/2}2\\pi\\left(${coefT(a,'\\cos t')}\\right)\\left(${a}\\right)dt=${2*a*a}\\pi\\int_0^{\\pi/2}\\cos t\\,dt=${2*a*a}\\pi`,
+    note:`A quarter circle spun about the ${M('y')}-axis is a hemisphere, and ${M('2\\pi r^2')} is half of ${M('4\\pi r^2')}.`};},
+  ()=>{const k=rint(1,3);return {xT:coefT(3*k,'t^2'),yT:coefT(2*k,'t^3'),t0:0,t1:1,t0T:'0',t1T:'1',axis:'y',
+    xf:u=>3*k*u*u,yf:u=>2*k*u*u*u,
+    dsT:`${6*k}t\\sqrt{1+t^2}`,SStr:`24*pi*${k*k}*(sqrt(2)+1)/5`,Sval:24*PI*k*k*(Math.SQRT2+1)/5,
+    ST:`${texFrac(24*k*k,5,{tf:true})}\\pi\\left(\\sqrt{2}+1\\right)`,
+    setup:`S=\\int_0^{1}2\\pi\\left(${coefT(3*k,'t^2')}\\right)\\left(${6*k}t\\sqrt{1+t^2}\\right)dt=${36*k*k}\\pi\\int_0^1 t^3\\sqrt{1+t^2}\\,dt=${36*k*k}\\pi\\cdot\\tfrac{2\\sqrt2+2}{15}`,
+    note:`For the inner integral substitute ${M('u=1+t^2')}, so ${M('t^2=u-1')} and ${M('t\\,dt=\\tfrac12\\,du')}.`};},
+  ()=>{const k=rint(1,3);return {xT:coefT(4*k,'t'),yT:coefT(3*k,'t'),t0:0,t1:1,t0T:'0',t1T:'1',axis:'x',
+    xf:u=>4*k*u,yf:u=>3*k*u,
+    dsT:S(5*k),SStr:`15*pi*${k*k}`,Sval:15*PI*k*k,ST:`${15*k*k}\\pi`,
+    setup:`S=\\int_0^{1}2\\pi\\left(${coefT(3*k,'t')}\\right)\\left(${5*k}\\right)dt=${30*k*k}\\pi\\int_0^1 t\\,dt=${15*k*k}\\pi`,
+    note:`The segment is the slant side of a cone of radius ${M(S(3*k))} and slant height ${M(S(5*k))}, and ${M('\\pi r\\ell')} agrees.`};}
+];
+Q.surfaceArea={name:'surface area of revolution',
+  gen(){const c=pick(SURFPOOL)();
+    const sn=spd(c.xf,c.yf);
+    const f=u=>2*PI*(c.axis==='x'?c.yf(u):c.xf(u))*sn(u);
+    vfy(vnear(simpson(f,c.t0,c.t1,1000),c.Sval,1e-3),'surface area by Simpson');
+    return c;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The arc ${M(`x=${q.xT}`)}, ${M(`y=${q.yT}`)}, ${M(`${q.t0T}\\le t\\le ${q.t1T}`)}, is rotated about the ${M(q.axis)}-axis. Find the exact area of the surface it sweeps out, with <code>pi</code>.</p>`;
+    numIn(el,'s','S =',{xwide:true});},
+  check(q,el){return G(el,'s',checkNumber($('[data-k=s]',el).value,q.Sval,{rel:1e-6}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Radius times ${M('2\\pi')} times ${M('ds')}, with ${M(`ds=${q.dsT}\\,dt`)}:`+
+      D(R`S=\int_{${q.t0T}}^{${q.t1T}}2\pi\,${q.axis==='x'?'y':'x'}\;ds`);},
+  solution(q){return `About the ${M(q.axis)}-axis the radius of the band is ${M(q.axis==='x'?'y':'x')}, and ${M(`ds=\\sqrt{x'^2+y'^2}\\,dt=${q.dsT}\\,dt`)}. So`+
+    D(q.setup)+`${q.note} The surface area is ${M(q.ST)}, about ${fmtDec(q.Sval,4)}.`;}
+};
+
+/* ============================================================ chapter 1 widgets */
+(function(){
+  const P=[
+    {n:'circle',lab:'x = cos t, y = sin t',xf:u=>Math.cos(u),yf:u=>Math.sin(u),t0:0,t1:TAU,vs:0.6,rate:1.1,
+     w:{xmin:-2.2,xmax:2.2,ymin:-2.2,ymax:2.2}},
+    {n:'ellipse',lab:'x = 3 cos t, y = 2 sin t',xf:u=>3*Math.cos(u),yf:u=>2*Math.sin(u),t0:0,t1:TAU,vs:0.5,rate:1.1,
+     w:{xmin:-4.5,xmax:4.5,ymin:-4.5,ymax:4.5}},
+    {n:'parabola',lab:'x = t² − 2t, y = t + 1',xf:u=>u*u-2*u,yf:u=>u+1,t0:-2,t1:4,vs:0.5,rate:1.1,
+     w:{xmin:-3,xmax:9,ymin:-4,ymax:8}},
+    {n:'loop',lab:'x = t³ − 3t, y = t²',xf:u=>u*u*u-3*u,yf:u=>u*u,t0:-2.2,t1:2.2,vs:0.25,rate:0.8,
+     w:{xmin:-4.5,xmax:4.5,ymin:-1.5,ymax:7.5}},
+    {n:'figure eight',lab:'x = cos t, y = sin 2t',xf:u=>Math.cos(u),yf:u=>Math.sin(2*u),t0:0,t1:TAU,vs:0.4,rate:1.1,
+     w:{xmin:-2.2,xmax:2.2,ymin:-2.2,ymax:2.2}},
+    {n:'Lissajous',lab:'x = sin 2t, y = sin 3t',xf:u=>Math.sin(2*u),yf:u=>Math.sin(3*u),t0:0,t1:TAU,vs:0.3,rate:1.0,
+     w:{xmin:-1.8,xmax:1.8,ymin:-1.8,ymax:1.8}},
+    {n:'cycloid',lab:'x = t − sin t, y = 1 − cos t',xf:u=>u-Math.sin(u),yf:u=>1-Math.cos(u),t0:0,t1:4*PI,vs:0.9,rate:2.2,
+     w:{xmin:-1,xmax:13,ymin:-4,ymax:10}},
+    {n:'hyperbola branch',lab:'x = 2 sec t, y = tan t',xf:u=>2/Math.cos(u),yf:u=>Math.tan(u),t0:-1.2,t1:1.2,vs:0.4,rate:0.5,
+     w:{xmin:-7,xmax:7,ymin:-7,ymax:7}}
+  ];
+  let cur=P[0],t=0,slider=null;
+  const plot=new Plot2D('#motionPlot',Object.assign({},P[0].w));
+  const anim=animator('curves',dt=>{t+=dt*cur.rate;if(t>cur.t1)t=cur.t0;if(slider)slider.set(t);draw();});
+  const pbox=$('#motionPresets');
+  P.forEach(p=>{const b=el('button',{class:'btn small'},p.n);
+    b.onclick=()=>{cur=p;$$('.btn',pbox).forEach(x=>x.classList.remove('on'));b.classList.add('on');build();draw();};
+    pbox.appendChild(b);});
+  $$('.btn',pbox)[0].classList.add('on');
+  function build(){
+    Object.assign(plot.o,cur.w);t=cur.t0;
+    const sb=$('#motionSliders');sb.innerHTML='';
+    slider=sliderRow(sb,{label:'t',min:cur.t0,max:cur.t1,step:(cur.t1-cur.t0)/400,value:cur.t0,onInput:v=>{t=v;draw();}});
+  }
+  function draw(){
+    plot.begin();
+    plot.param(u=>[cur.xf(u),cur.yf(u)],cur.t0,cur.t1,{color:'#d8d4cc',width:2,n:600});
+    if(t>cur.t0+1e-9)plot.param(u=>[cur.xf(u),cur.yf(u)],cur.t0,t,{color:'#7c3aed',width:3,n:600});
+    const x=cur.xf(t),y=cur.yf(t),vx=ddt(cur.xf,t),vy=ddt(cur.yf,t);
+    plot.point([cur.xf(cur.t0),cur.yf(cur.t0)],{color:'#8b877e',r:5,ring:true,label:'start'});
+    if(Number.isFinite(vx)&&Number.isFinite(vy))
+      plot.vector([x,y],[x+cur.vs*vx,y+cur.vs*vy],{color:'#2563eb',width:2.4,label:'velocity'});
+    plot.point([x,y],{color:'#d97706',r:6});
+    $('#motionOut').innerHTML=`${cur.lab}<br>t = ${fmtDec(t,3)}<br>`+
+      `(x, y) = (${fmtDec(x,3)}, ${fmtDec(y,3)})<br>`+
+      `(x′, y′) = (${fmtDec(vx,3)}, ${fmtDec(vy,3)})<br>`+
+      `speed = √(x′² + y′²) = <b>${fmtDec(Math.hypot(vx,vy),3)}</b>`;
+  }
+  $('#motionPlay').onclick=()=>{anim.toggle();$('#motionPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  $('#motionReset').onclick=()=>{t=cur.t0;if(slider)slider.set(t);draw();};
+  onShow('*',id=>{if(id!=='curves')$('#motionPlay').textContent='▶ Play';});
+  build();redrawOnShow('curves',draw);draw();
+
+  /* four motions on one circle */
+  const MINI=[
+    {lab:'⟨cos t, sin t⟩',cap:'once around, counterclockwise, from (1, 0)',xf:u=>Math.cos(u),yf:u=>Math.sin(u)},
+    {lab:'⟨cos 2t, sin 2t⟩',cap:'twice around, counterclockwise, double speed',xf:u=>Math.cos(2*u),yf:u=>Math.sin(2*u)},
+    {lab:'⟨cos t, −sin t⟩',cap:'once around, clockwise, from (1, 0)',xf:u=>Math.cos(u),yf:u=>-Math.sin(u)},
+    {lab:'⟨sin t, cos t⟩',cap:'once around, clockwise, from (0, 1)',xf:u=>Math.sin(u),yf:u=>Math.cos(u)}
+  ];
+  const mbox=$('#miniBox');
+  MINI.forEach((m,i)=>{const d=el('div');d.innerHTML=`<canvas class="scene" id="mini${i}"></canvas><p class="cap">${m.lab}<br>${m.cap}</p>`;mbox.appendChild(d);});
+  const mplots=MINI.map((m,i)=>new Plot2D('#mini'+i,{xmin:-1.5,xmax:1.5,ymin:-1.5,ymax:1.5,labels:false}));
+  let tm=0;
+  function drawMinis(){
+    MINI.forEach((m,i)=>{const p=mplots[i];p.begin();
+      p.param(u=>[Math.cos(u),Math.sin(u)],0,TAU,{color:'#e2ded6',width:2,n:240});
+      if(tm>1e-9)p.param(u=>[m.xf(u),m.yf(u)],0,tm,{color:'#7c3aed',width:3,n:300});
+      p.point([m.xf(0),m.yf(0)],{color:'#8b877e',r:5,ring:true});
+      p.point([m.xf(tm),m.yf(tm)],{color:'#d97706',r:6});});
+    $('#miniOut').innerHTML=`t = ${fmtDec(tm,2)} of 2π &nbsp; (${fmtDec(100*tm/TAU,0)}% of the interval)<br>`+
+      MINI.map(m=>`${m.lab} → (${fmtDec(m.xf(tm),2)}, ${fmtDec(m.yf(tm),2)})`).join('<br>');
+  }
+  const manim=animator('curves',dt=>{tm+=dt*1.1;if(tm>TAU)tm=0;drawMinis();});
+  $('#miniPlay').onclick=()=>{manim.toggle();$('#miniPlay').textContent=manim.running?'❚❚ Pause':'▶ Play';};
+  onShow('*',id=>{if(id!=='curves')$('#miniPlay').textContent='▶ Play';});
+  redrawOnShow('curves',drawMinis);drawMinis();
+
+  new Drill({mount:'#drill-curves',section:'curves',goal:7,
+    ...mixDrill([Q.eliminate,Q.eliminate,Q.pointAt,Q.circleAsDescribed,Q.circleAsDescribed,Q.segment,Q.collision])});
+})();
+
+/* ============================================================ chapter 2 widgets */
+(function(){
+  const P=[
+    {n:'loop',lab:'x = t³ − 3t, y = t²',xf:u=>u*u*u-3*u,yf:u=>u*u,t0:-2.2,t1:2.2,scan:[-2.2,2.2],
+     w:{xmin:-4.5,xmax:4.5,ymin:-1.5,ymax:7.5},L:2.4,rate:0.7},
+    {n:'figure eight',lab:'x = cos t, y = sin 2t',xf:u=>Math.cos(u),yf:u=>Math.sin(2*u),t0:0,t1:TAU,scan:[-0.3,TAU+0.3],
+     w:{xmin:-2.2,xmax:2.2,ymin:-2.2,ymax:2.2},L:1.3,rate:1.0},
+    {n:'parabola',lab:'x = t² − 2t, y = t + 1',xf:u=>u*u-2*u,yf:u=>u+1,t0:-2,t1:4,scan:[-2,4],
+     w:{xmin:-3,xmax:9,ymin:-4,ymax:8},L:3,rate:1.1},
+    {n:'ellipse',lab:'x = 3 cos t, y = 2 sin t',xf:u=>3*Math.cos(u),yf:u=>2*Math.sin(u),t0:0,t1:TAU,scan:[-0.3,TAU+0.3],
+     w:{xmin:-4.5,xmax:4.5,ymin:-4.5,ymax:4.5},L:2.6,rate:1.0},
+    {n:'cycloid arch',lab:'x = t − sin t, y = 1 − cos t',xf:u=>u-Math.sin(u),yf:u=>1-Math.cos(u),t0:0.02,t1:TAU-0.02,scan:[0.02,TAU-0.02],
+     w:{xmin:-1,xmax:8,ymin:-2,ymax:7},L:2.2,rate:1.4}
+  ];
+  let cur=P[0],t=cur.t0,slider=null,marks={hor:[],ver:[]};
+  const plot=new Plot2D('#tanPlot',Object.assign({},P[0].w));
+  const anim=animator('tangents',dt=>{t+=dt*cur.rate;if(t>cur.t1)t=cur.t0;if(slider)slider.set(t);draw();});
+  const pbox=$('#tanPresets');
+  P.forEach(p=>{const b=el('button',{class:'btn small'},p.n);
+    b.onclick=()=>{cur=p;$$('.btn',pbox).forEach(x=>x.classList.remove('on'));b.classList.add('on');build();draw();};
+    pbox.appendChild(b);});
+  $$('.btn',pbox)[0].classList.add('on');
+  function build(){
+    Object.assign(plot.o,cur.w);t=(cur.t0+cur.t1)/2;
+    marks=tangentScan(cur.xf,cur.yf,cur.scan[0],cur.scan[1],2500);
+    const sb=$('#tanSliders');sb.innerHTML='';
+    slider=sliderRow(sb,{label:'t',min:cur.t0,max:cur.t1,step:(cur.t1-cur.t0)/400,value:t,onInput:v=>{t=v;draw();}});
+  }
+  function draw(){
+    plot.begin();
+    plot.param(u=>[cur.xf(u),cur.yf(u)],cur.t0,cur.t1,{color:'#c9b8f0',width:2.4,n:600});
+    marks.hor.forEach(p=>plot.point(p,{color:'#2563eb',r:5}));
+    marks.ver.forEach(p=>plot.point(p,{color:'#d97706',r:5}));
+    const x=cur.xf(t),y=cur.yf(t),dx=ddt(cur.xf,t),dy=ddt(cur.yf,t),n=Math.hypot(dx,dy);
+    if(n>1e-6){const ux=dx/n,uy=dy/n;
+      plot.poly([[x-cur.L*ux,y-cur.L*uy],[x+cur.L*ux,y+cur.L*uy]],{fill:null,stroke:'#16a34a',width:2.4,close:false});}
+    plot.point([x,y],{color:'#7c3aed',r:6});
+    const g=u=>ddt(cur.yf,u)/ddt(cur.xf,u);
+    const d2=Math.abs(dx)>1e-3?ddt(g,t)/dx:NaN;
+    $('#tanOut').innerHTML=`${cur.lab}<br>t = ${fmtDec(t,3)} at (${fmtDec(x,3)}, ${fmtDec(y,3)})<br>`+
+      `dx/dt = ${fmtDec(dx,3)}, dy/dt = ${fmtDec(dy,3)}<br>`+
+      `dy/dx = <b>${Math.abs(dx)<1e-3?(Math.abs(dy)<1e-3?'0/0, look closer':'undefined (vertical)'):fmtDec(dy/dx,3)}</b><br>`+
+      `d²y/dx² = <b>${Number.isFinite(d2)?fmtDec(d2,3):'undefined'}</b> ${Number.isFinite(d2)?(d2>0?'(concave up)':'(concave down)'):''}<br>`+
+      `${marks.hor.length} horizontal, ${marks.ver.length} vertical tangent points`;
+  }
+  $('#tanPlay').onclick=()=>{anim.toggle();$('#tanPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  onShow('*',id=>{if(id!=='tangents')$('#tanPlay').textContent='▶ Play';});
+  build();redrawOnShow('tangents',draw);draw();
+
+  /* step-by-step: dy/dx then d2y/dx2 */
+  let W=null,step=0;
+  function newW(){
+    const A=pick([1,1,2,3]),b=rint(-3,3),c=rint(1,6);
+    W={A,b,c,
+      xT:texTerm(A,'t^2',true)+texTerm(b,''),yT:'t^3'+texTerm(-c,'t'),
+      dxT:texTerm(2*A,'t',true),dyT:'3t^2'+texTerm(-c,''),
+      slopeT:`\\dfrac{3t^2${texTerm(-c,'')}}{${2*A}t}`,
+      dslopeT:`\\dfrac{3t^2${texTerm(c,'')}}{${2*A}t^2}`,
+      d2T:`\\dfrac{3t^2${texTerm(c,'')}}{${4*A*A}t^3}`};
+    step=0;drawW();
+  }
+  function drawW(){
+    const lines=[
+      `${M(`x=${W.xT}`)}, ${M(`y=${W.yT}`)}`,
+      `${M(`\\dfrac{dx}{dt}=${W.dxT}`)} and ${M(`\\dfrac{dy}{dt}=${W.dyT}`)}`,
+      `${M(`\\dfrac{dy}{dx}=\\dfrac{dy/dt}{dx/dt}=${W.slopeT}`)}`,
+      `${M(`\\dfrac{d}{dt}\\left(\\dfrac{dy}{dx}\\right)=${W.dslopeT}`)}`,
+      `${M(`\\dfrac{d^2y}{dx^2}=\\dfrac{${W.dslopeT}}{${W.dxT}}=${W.d2T}`)}`,
+      `numerator ${M(`3t^2${texTerm(W.c,'')}>0`)} always, so the sign is the sign of ${M('t^3')}: concave up for ${M('t>0')}, concave down for ${M('t<0')}`
+    ];
+    $('#wtExpr').innerHTML=lines.map((s,i)=>`<div class="${i<=step?'':'faint'}"><span class="t ${i===step?'now':''} ${i===0?'':i<3?'a':i<5?'b':'c'}">${s}</span></div>`).join('');
+    const st=['The curve. Differentiate each coordinate with respect to t.',
+      'Two ordinary derivatives. Their ratio is the slope.',
+      'The slope, as a function of t. This is the thing to differentiate next.',
+      'Quotient rule in t. Not the answer yet.',
+      'Divide by dx/dt one more time. This is d²y/dx².',
+      'Read the sign off the fraction to get concavity.'];
+    $('#wtStatus').textContent=st[step];
+    $('#wtPrev').disabled=step===0;$('#wtNext').disabled=step===5;
+    typeset($('#wtExpr'));
+  }
+  $('#wtNext').onclick=()=>{step=Math.min(5,step+1);drawW();};
+  $('#wtPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#wtNew').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-tangents',section:'tangents',goal:7,
+    ...mixDrill([Q.slope,Q.slope,Q.tangentLine,Q.tangentLine,Q.secondDerivative,Q.horizVert,Q.horizVert])});
+})();
+
+/* ============================================================ chapter 3 widgets */
+(function(){
+  const P=[
+    {n:'x = 3t², y = 2t³',xf:u=>3*u*u,yf:u=>2*u*u*u,t0:0,t1:1,w:{xmin:-0.6,xmax:3.6,ymin:-0.6,ymax:3.6}},
+    {n:'cycloid arch',xf:u=>u-Math.sin(u),yf:u=>1-Math.cos(u),t0:0,t1:TAU,w:{xmin:-0.7,xmax:7.3,ymin:-1,ymax:7}},
+    {n:'x = t³+1, y = 2t − t²',xf:u=>u*u*u+1,yf:u=>2*u-u*u,t0:0,t1:2,w:{xmin:-0.8,xmax:9.2,ymin:-3,ymax:7}},
+    {n:'astroid quarter',xf:u=>Math.pow(Math.cos(u),3),yf:u=>Math.pow(Math.sin(u),3),t0:0,t1:PI/2,w:{xmin:-0.3,xmax:1.3,ymin:-0.3,ymax:1.3}}
+  ];
+  let cur=P[0],mode='length',n=4,b=P[0].t1,sl=null;
+  const plot=new Plot2D('#lenPlot',Object.assign({},P[0].w));
+  const pbox=$('#lenPresets'),mbox=$('#lenModes');
+  P.forEach(p=>{const btn=el('button',{class:'btn small'},p.n);
+    btn.onclick=()=>{cur=p;$$('.btn',pbox).forEach(x=>x.classList.remove('on'));btn.classList.add('on');build();draw();};
+    pbox.appendChild(btn);});
+  $$('.btn',pbox)[0].classList.add('on');
+  [['length','arc length'],['area','area under']].forEach(([k,lab])=>{
+    const btn=el('button',{class:'btn small'},lab);
+    btn.onclick=()=>{mode=k;$$('.btn',mbox).forEach(x=>x.classList.remove('on'));btn.classList.add('on');build();draw();};
+    mbox.appendChild(btn);});
+  $$('.btn',mbox)[0].classList.add('on');
+  function build(){
+    Object.assign(plot.o,cur.w);
+    const sb=$('#lenSliders');sb.innerHTML='';
+    if(mode==='length'){n=4;sl=sliderRow(sb,{label:'n',min:1,max:40,step:1,value:4,fmt:v=>S(v),onInput:v=>{n=v;draw();}});}
+    else{b=cur.t1;sl=sliderRow(sb,{label:'t',min:cur.t0,max:cur.t1,step:(cur.t1-cur.t0)/200,value:cur.t1,onInput:v=>{b=v;draw();}});}
+  }
+  function draw(){
+    plot.begin();
+    const exact=simpson(u=>spd(cur.xf,cur.yf)(u),cur.t0,cur.t1,600);
+    if(mode==='length'){
+      plot.param(u=>[cur.xf(u),cur.yf(u)],cur.t0,cur.t1,{color:'#d8d4cc',width:2.4,n:600});
+      const pts=[];for(let i=0;i<=n;i++){const u=cur.t0+(cur.t1-cur.t0)*i/n;pts.push([cur.xf(u),cur.yf(u)]);}
+      let poly=0;for(let i=1;i<pts.length;i++)poly+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
+      plot.poly(pts,{fill:null,stroke:'#16a34a',width:2.4,close:false});
+      pts.forEach(p=>plot.point(p,{color:'#d97706',r:3.5}));
+      $('#lenOut').innerHTML=`${cur.n}<br>n = ${n} chords<br>`+
+        `polygon length = <b>${fmtDec(poly,5)}</b><br>`+
+        `∫ √(x′² + y′²) dt = <b>${fmtDec(exact,5)}</b><br>`+
+        `missing = ${fmtDec(exact-poly,5)}`;
+    }else{
+      const N=200,pts=[];
+      for(let i=0;i<=N;i++){const u=cur.t0+(b-cur.t0)*i/N;pts.push([cur.xf(u),cur.yf(u)]);}
+      pts.push([cur.xf(b),0],[cur.xf(cur.t0),0]);
+      plot.poly(pts,{fill:'rgba(217,119,6,.22)',stroke:'#d97706',width:1.4});
+      plot.param(u=>[cur.xf(u),cur.yf(u)],cur.t0,cur.t1,{color:'#7c3aed',width:2.4,n:600});
+      plot.point([cur.xf(b),cur.yf(b)],{color:'#d97706',r:6});
+      const A=simpson(u=>cur.yf(u)*ddt(cur.xf,u),cur.t0,Math.max(cur.t0+1e-9,b),600);
+      $('#lenOut').innerHTML=`${cur.n}<br>t = ${fmtDec(b,3)}, x = ${fmtDec(cur.xf(b),3)}<br>`+
+        `∫ y dx = ∫ y(t) x′(t) dt = <b>${fmtDec(A,5)}</b>`+
+        (A<-1e-9?'<br>negative: this piece is traced right to left, so the area is |A|':'')+
+        `<br>full sweep = ${fmtDec(simpson(u=>cur.yf(u)*ddt(cur.xf,u),cur.t0,cur.t1,600),5)}`;
+    }
+  }
+  build();redrawOnShow('areas',draw);draw();
+
+  /* step-by-step: area under a parametric curve */
+  let W=null,step=0;
+  function newW(){
+    const a=rint(2,4),c=rint(0,3);
+    W={a,c,xT:'t^3'+texTerm(c,''),yT:texTerm(a,'t',true)+'-t^2',
+      An:3*Math.pow(a,5),Ad:20};
+    step=0;drawW();
+  }
+  function drawW(){
+    const a=W.a;
+    const lines=[
+      `${M(`x=${W.xT}`)}, ${M(`y=${W.yT}`)}`,
+      `${M(`y=0:\\quad t\\left(${a}-t\\right)=0\\ \\Rightarrow\\ t=0,\\ t=${a}`)}`,
+      `${M(R`A=\int y\,dx,\quad dx=x'(t)\,dt=3t^2\,dt`)}`,
+      `${M(`A=\\int_0^{${a}}\\left(${texTerm(a,'t',true)}-t^2\\right)3t^2\\,dt=\\int_0^{${a}}\\left(${texTerm(3*a,'t^3',true)}-3t^4\\right)dt`)}`,
+      `${M(`A=\\Big[\\,${texFrac(3*a,4,{tf:true})}t^4-${texFrac(3,5,{tf:true})}t^5\\,\\Big]_0^{${a}}=${texFrac(3*Math.pow(a,5),4)}-${texFrac(3*Math.pow(a,5),5)}=${texFrac(W.An,W.Ad)}`)}`
+    ];
+    $('#awExpr').innerHTML=lines.map((s,i)=>`<div class="${i<=step?'':'faint'}"><span class="t ${i===step?'now':''} ${i===0?'':i<3?'a':i<4?'b':'c'}">${s}</span></div>`).join('');
+    const st=['The curve. It leaves the x-axis and comes back to it.',
+      'Find the t-values where y = 0. Those are the limits of integration.',
+      'Rewrite dx in terms of dt. This is the whole substitution.',
+      'One ordinary polynomial integral in t.',
+      'Antidifferentiate and evaluate. Done.'];
+    $('#awStatus').textContent=st[step];
+    $('#awPrev').disabled=step===0;$('#awNext').disabled=step===4;
+    typeset($('#awExpr'));
+  }
+  $('#awNext').onclick=()=>{step=Math.min(4,step+1);drawW();};
+  $('#awPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#awNew').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-areas',section:'areas',goal:6,
+    ...mixDrill([Q.areaUnder,Q.areaBesideY,Q.ellipseArea,Q.arcLength,Q.arcLength,Q.surfaceArea])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.eliminate,Q.pointAt,Q.circleAsDescribed,Q.segment,Q.collision,
+  Q.slope,Q.tangentLine,Q.secondDerivative,Q.horizVert,
+  Q.areaUnder,Q.areaBesideY,Q.ellipseArea,Q.arcLength,Q.surfaceArea]});
+
+/* ============================================================ memory card + test hook */
+$('#memcard').replaceWith(memoryCard('c2-param',[
+  R`Circle of radius \(a\) about \((h,k)\): \(\langle h+a\cos t,\ k+a\sin t\rangle\) counterclockwise, \(\langle h+a\cos t,\ k-a\sin t\rangle\) clockwise; \(n\) trips on \([0,2\pi]\) means using \(nt\).`,
+  R`Segment from \(P\) to \(Q\) on \([0,1]\): \(P+t(Q-P)\).`,
+  R`\(\dfrac{dy}{dx}=\dfrac{dy/dt}{dx/dt}\) when \(dx/dt\neq0\).`,
+  R`\(\dfrac{d^2y}{dx^2}=\dfrac{\frac{d}{dt}\left(dy/dx\right)}{dx/dt}\), never \(\dfrac{d^2y/dt^2}{d^2x/dt^2}\).`,
+  R`Horizontal tangent: \(dy/dt=0,\ dx/dt\neq0\). Vertical tangent: \(dx/dt=0,\ dy/dt\neq0\).`,
+  R`Area: \(A=\displaystyle\int y\,dx=\int_\alpha^\beta g(t)f'(t)\,dt\), and \(\int x\,dy\) beside the \(y\)-axis.`,
+  R`Arc length: \(L=\displaystyle\int_\alpha^\beta\sqrt{(dx/dt)^2+(dy/dt)^2}\,dt\), curve traversed once.`,
+  R`Surface of revolution: \(S=\displaystyle\int 2\pi y\,ds\) about the \(x\)-axis, \(\int 2\pi x\,ds\) about the \(y\)-axis.`,
+  R`Cycloid: \(x=r(\theta-\sin\theta),\ y=r(1-\cos\theta)\); one arch has length \(8r\) and encloses \(3\pi r^2\).`,
+  R`Ellipse \(x=a\cos t,\ y=b\sin t\) encloses \(\pi ab\); astroid \(x=a\cos^3t,\ y=a\sin^3t\) encloses \(\tfrac38\pi a^2\).`
+]));
+
+window.__solvers={
+  'eliminate the parameter':q=>({eq:q.ans}),
+  'point at a parameter value':q=>({p:`(${q.pt[0]},${q.pt[1]})`}),
+  'parametrize a circle as described':q=>({r:`<${q.xs},${q.ys}>`}),
+  'parametrize a segment':q=>({r:`<${q.xs},${q.ys}>`}),
+  'do the particles collide?':q=>({p:q.hit?`(${q.pt[0]},${q.pt[1]})`:'DNE',t:q.hit?q.tS:'DNE'}),
+  'dy/dx at a parameter value':q=>({m:q.m==='DNE'?'DNE':S(q.m)}),
+  'equation of the tangent line':q=>({eq:q.ans}),
+  'second derivative and concavity':q=>({d2:q.d2Str,cond:'t>0'}),
+  'horizontal and vertical tangents':q=>({h:listS(q.hor),v:listS(q.ver)}),
+  'area between the curve and the x-axis':q=>({ts:q.tsStr,a:q.aStr}),
+  'area between the curve and the y-axis':q=>({ts:q.tsStr,a:q.aStr}),
+  'area enclosed by a closed curve':q=>({a:q.aStr}),
+  'arc length':q=>({sp:q.spStr,L:q.LStr}),
+  'surface area of revolution':q=>({s:q.SStr})
+};
+
+initModule({key:'c2-param',title:'Parametric Curves',sub:'Module 6 · Stewart 10.1 to 10.2'});
+</script>
+</body>
+</html>
