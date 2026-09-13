@@ -10,19 +10,51 @@
 <script src="../assets/m102-deck.js"></script>
 <script src="../assets/mathjax-tex-svg.js"></script>
 <style>
-.fc-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:14px;color:var(--muted);margin-bottom:10px}
-.fc-card{min-height:260px;display:flex;flex-direction:column}
-.fc-prompt{font-size:22px;line-height:1.6;margin:6px 0 18px}
-.fc-answer{border-top:1px solid var(--line);padding-top:16px;margin-top:auto}
-.fc-show{font-size:20px;line-height:1.6}
-.fc-why{font-size:15px;color:var(--muted);margin-top:8px;line-height:1.6}
-.fc-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px}
-.fc-bar .btn kbd{margin-left:8px;opacity:.7}
-.fc-bar .spacer{flex:1}
+main{max-width:1040px}
+.fc-wrap{max-width:820px;margin:0 auto}
+.fc-top{display:flex;align-items:center;justify-content:space-between;font-size:14px;color:var(--muted);margin:18px 0 12px}
+.fc-top .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-weight:600;font-size:13px}
+.fc-top .pill.miss{background:#fff4e5;color:#b45309}
+.fc-top .pill.know{background:var(--cell);color:#15803d}
+.fc-stage{perspective:1600px}
+.fc-flip{display:grid;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.1,.2,1);cursor:pointer;min-height:340px}
+.fc-flip.flipped{transform:rotateY(180deg)}
+.fc-flip.snap{transition:none}
+.fc-face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.06);padding:36px 44px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:340px}
+.fc-face.back{transform:rotateY(180deg)}
+.fc-face .tag{position:absolute;top:16px;left:20px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:none}
+.fc-face .flipcue{position:absolute;bottom:14px;left:0;right:0;font-size:12px;color:#a39f97}
+.fc-front .q{font-size:26px;line-height:1.5}
+.fc-back .a{font-size:26px;line-height:1.5}
+.fc-back .why{font-size:15px;color:var(--muted);line-height:1.6;margin-top:18px;max-width:600px}
+.fc-back .a mjx-container,.fc-front .q mjx-container{font-size:112%}
+/* slide-out and slide-in when a card is marked */
+.fc-flip.out-left{transform:translateX(-120%) rotate(-6deg);opacity:0;transition:transform .32s ease-in,opacity .32s}
+.fc-flip.out-right{transform:translateX(120%) rotate(6deg);opacity:0;transition:transform .32s ease-in,opacity .32s}
+.fc-flip.out-left.flipped{transform:translateX(-120%) rotate(-6deg) rotateY(180deg)}
+.fc-flip.out-right.flipped{transform:translateX(120%) rotate(6deg) rotateY(180deg)}
+.fc-flip.in{animation:fcIn .28s ease-out}
+@keyframes fcIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.fc-controls{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:22px}
+.fc-controls .arrow{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:18px;cursor:pointer;display:grid;place-items:center}
+.fc-controls .arrow:hover{background:#f3f1ec}
+.fc-controls .arrow[disabled]{opacity:.35;cursor:default}
+.fc-controls .count{font-family:ui-monospace,Menlo,monospace;font-size:14px;min-width:80px;text-align:center}
+.fc-mark{display:flex;justify-content:center;gap:12px;margin-top:14px;min-height:44px}
+.fc-mark .btn{padding:11px 18px}
+.fc-mark .btn.miss{border-color:#f5c48a;color:#b45309}
+.fc-mark .btn.know{border-color:#86efac;color:#15803d}
+.fc-mark .btn kbd{margin-left:8px;opacity:.7}
+.fc-foot{display:flex;justify-content:center;gap:16px;margin-top:22px;font-size:13px;color:var(--muted)}
+.fc-foot button{background:none;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;font:inherit;font-size:13px;padding:0}
 .fc-done .result{margin-top:4px}
 .fc-list{margin:10px 0 0;padding-left:20px}
 .fc-list li{margin:6px 0}
-.fc-nav a.pick .n{font-size:10px}
+.pickgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:16px}
+.pickgrid a{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);text-decoration:none;color:var(--ink)}
+.pickgrid a:hover{background:#f3f1ec}
+.pickgrid a .n{width:34px;height:34px;border-radius:50%;border:1.5px solid #cfcbc2;display:grid;place-items:center;font-size:12px;color:var(--muted);flex:none}
+@media (max-width:760px){.fc-face{padding:28px 22px}.fc-front .q,.fc-back .a{font-size:21px}}
 </style>
 </head>
 <body>
@@ -32,9 +64,8 @@
 <section data-id="deck" data-title="Flashcards" class="active">
   <p class="eyebrow" id="eyebrow">Flashcards</p>
   <h2 id="title">Pick a unit</h2>
-  <p class="lead">Read the card, write the answer in your notebook, then flip. Be honest when you mark it. Nothing is typed here.</p>
-  <div class="card" id="box"></div>
-  <p class="hint">Keys: <kbd>Space</kbd> or <kbd>Enter</kbd> flips, then <kbd>1</kbd> got it, <kbd>2</kbd> missed it. Missed cards are remembered in this browser so you can redo just those.</p>
+  <p class="lead" id="lead">Write the answer in your notebook first, then flip.</p>
+  <div class="fc-wrap" id="box"></div>
 </section>
 </main>
 </div>
@@ -44,52 +75,57 @@ const KEY='m102-flash-missed';
 let missed={};try{missed=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
 const saveMissed=()=>{try{localStorage.setItem(KEY,JSON.stringify(missed));}catch(e){}};
 const missedOf=mod=>CARDS.filter(c=>c.mod===mod&&missed[c.id]);
-let mod=null,queue=[],i=0,flipped=false,got=0,miss=[],mode='all';
+const short=t=>t.replace(/^Module \d+ · /,'');
+let mod=null,queue=[],i=0,flipped=false,known=[],miss=[],mode='all',busy=false;
 
 function buildNav(){
   const nav=$('#nav');
   nav.innerHTML=`<a class="hub" href="index.html">◀ MATH 102 modules</a><h1>Flashcards</h1><p class="sub">${CARDS.length} cards, by unit</p><div id="navlinks"></div>`;
   const box=$('#navlinks');
   MODS.forEach(m=>{const n=CARDS.filter(c=>c.mod===m.key).length;const k=missedOf(m.key).length;
-    const a=el('a',{href:'#mod='+m.key,class:'pick'+(m.key===mod?' active':'')});a.innerHTML=`<span class="n">${n}</span><span>${m.title.replace(/^Module \d+ · /,'')}${k?` <span class="muted">(${k} missed)</span>`:''}</span>`;box.appendChild(a);});
-}
-function start(key,which='all'){
-  mod=key;mode=which;const m=MODS.find(x=>x.key===key);if(!m)return home();
-  const src=which==='missed'?missedOf(key):CARDS.filter(c=>c.mod===key);
-  queue=shuffle(src);i=0;got=0;miss=[];flipped=false;
-  $('#eyebrow').textContent=m.title;$('#title').textContent=which==='missed'?'Redo the missed cards':'Flashcards';
-  buildNav();show();
+    const a=el('a',{href:'#mod='+m.key,class:m.key===mod?'active':''});a.innerHTML=`<span class="n">${n}</span><span>${short(m.title)}${k?` <span class="muted small">(${k} missed)</span>`:''}</span>`;box.appendChild(a);});
 }
 function home(){
-  mod=null;$('#eyebrow').textContent='Flashcards';$('#title').textContent='Pick a unit';buildNav();
-  $('#box').innerHTML=`<p>Choose a unit in the sidebar. Each unit's cards are the facts its module expects you to know cold: antiderivatives, identities, formulas, test statements.</p>
-    <div class="controls">${MODS.map(m=>`<a class="btn small" href="#mod=${m.key}">${m.title.replace(/^Module \d+ · /,'')}</a>`).join('')}</div>`;
+  mod=null;$('#eyebrow').textContent='Flashcards';$('#title').textContent='Pick a unit';$('#lead').textContent='Each unit is the set of facts its module expects you to know cold. Write the answer in your notebook, flip the card, and be honest when you mark it.';
+  buildNav();
+  $('#box').innerHTML=`<div class="pickgrid">${MODS.map(m=>{const n=CARDS.filter(c=>c.mod===m.key).length;return `<a href="#mod=${m.key}"><span class="n">${n}</span><span>${short(m.title)}</span></a>`;}).join('')}</div>`;
 }
-function show(){
+function start(key,which='all'){
+  const m=MODS.find(x=>x.key===key);if(!m)return home();
+  mod=key;mode=which;const src=which==='missed'?missedOf(key):CARDS.filter(c=>c.mod===key);
+  queue=shuffle(src);i=0;known=[];miss=[];flipped=false;
+  $('#eyebrow').textContent=m.title;$('#title').textContent=which==='missed'?'Redo the missed cards':short(m.title);
+  $('#lead').textContent='Write the answer in your notebook first, then flip.';
+  buildNav();render();
+}
+function render(){
   const box=$('#box');
   if(i>=queue.length)return finish();
-  const c=queue[i];flipped=false;
-  box.innerHTML=`<div class="fc-top"><span>${i+1} of ${queue.length}</span><span>${got} right · ${miss.length} missed</span></div>
-    <div class="fc-card"><div class="fc-prompt">${c.prompt}</div>
-      <div class="fc-answer" id="ans" hidden><div class="fc-show">${c.show}</div>${c.why?`<div class="fc-why">${c.why}</div>`:''}</div>
-      <div class="fc-bar" id="bar"><button class="btn primary" id="flip">Flip <kbd>Space</kbd></button><span class="spacer"></span><button class="btn small" id="skip">Skip</button></div>
-    </div>`;
-  $('#flip').onclick=flip;$('#skip').onclick=()=>{i++;show();};
+  const c=queue[i];flipped=false;busy=false;
+  box.innerHTML=`<div class="fc-top"><span class="pill miss">${miss.length} missed</span><span>${mode==='missed'?'redo':'all cards'} · ${queue.length}</span><span class="pill know">${known.length} got it</span></div>
+    <div class="fc-stage"><div class="fc-flip in" id="flip">
+      <div class="fc-face fc-front"><span class="tag">Question</span><div class="q">${c.prompt}</div><span class="flipcue">click or press space to flip</span></div>
+      <div class="fc-face back fc-back"><span class="tag">Answer</span><div class="a">${c.show}</div>${c.why?`<div class="why">${c.why}</div>`:''}</div>
+    </div></div>
+    <div class="fc-controls"><button class="arrow" id="prev" ${i===0?'disabled':''} title="previous">←</button><span class="count">${i+1} / ${queue.length}</span><button class="arrow" id="next" title="next (without marking)">→</button></div>
+    <div class="fc-mark"><button class="btn miss" id="no">Missed it <kbd>1</kbd></button><button class="btn know" id="yes">Got it <kbd>2</kbd></button></div>
+    <div class="fc-foot"><button id="restart">Restart</button><button id="other">Other units</button></div>`;
+  $('#flip').onclick=flip;$('#prev').onclick=()=>{if(i>0){i--;render();}};$('#next').onclick=()=>{i++;render();};
+  $('#no').onclick=()=>mark(false);$('#yes').onclick=()=>mark(true);
+  $('#restart').onclick=()=>start(mod,mode);$('#other').onclick=()=>{location.hash='';home();};
   typeset(box);
 }
-function flip(){
-  if(flipped)return;flipped=true;$('#ans').hidden=false;
-  $('#bar').innerHTML=`<button class="btn primary" id="yes">Got it <kbd>1</kbd></button><button class="btn" id="no">Missed it <kbd>2</kbd></button>`;
-  $('#yes').onclick=()=>mark(true);$('#no').onclick=()=>mark(false);
-}
+function flip(){flipped=!flipped;$('#flip').classList.toggle('flipped',flipped);}
 function mark(ok){
-  const c=queue[i];
-  if(ok){got++;delete missed[c.id];}else{miss.push(c);missed[c.id]=true;}
-  saveMissed();buildNav();i++;show();
+  if(busy)return;busy=true;const c=queue[i];const f=$('#flip');
+  if(ok){known.push(c);delete missed[c.id];}else{miss.push(c);missed[c.id]=true;}
+  saveMissed();buildNav();
+  f.classList.remove('in');f.classList.add(ok?'out-right':'out-left');
+  setTimeout(()=>{i++;render();},330);
 }
 function finish(){
   const box=$('#box');const k=missedOf(mod).length;
-  box.innerHTML=`<div class="fc-done"><div class="result">${got} of ${queue.length} right</div>
+  box.innerHTML=`<div class="card fc-done"><div class="result">${known.length} of ${queue.length} right</div>
     ${miss.length?`<p>Missed this round:</p><ul class="fc-list">${miss.map(c=>`<li>${c.prompt}</li>`).join('')}</ul>`:'<p>Clean sweep.</p>'}
     <div class="controls">${k?`<button class="btn primary" id="redo">Redo the ${k} missed</button>`:''}<button class="btn" id="again">All cards again</button><button class="btn" id="back">Other units</button></div></div>`;
   if(k)$('#redo').onclick=()=>start(mod,'missed');
@@ -97,10 +133,12 @@ function finish(){
   buildNav();typeset(box);
 }
 document.addEventListener('keydown',e=>{
-  if(!mod||i>=queue.length||e.metaKey||e.ctrlKey)return;
-  if(e.key===' '||e.key==='Enter'){e.preventDefault();if(!flipped)flip();}
-  else if(flipped&&e.key==='1'){e.preventDefault();mark(true);}
-  else if(flipped&&e.key==='2'){e.preventDefault();mark(false);}
+  if(!mod||i>=queue.length||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();flip();}
+  else if(e.key==='ArrowRight'){e.preventDefault();i++;render();}
+  else if(e.key==='ArrowLeft'){e.preventDefault();if(i>0){i--;render();}}
+  else if(e.key==='1'){e.preventDefault();mark(false);}
+  else if(e.key==='2'){e.preventDefault();mark(true);}
 });
 function route(){const m=/mod=([^&]+)/.exec(location.hash);if(m&&MODS.some(x=>x.key===m[1]))start(m[1]);else home();}
 window.addEventListener('hashchange',route);
