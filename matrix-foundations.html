@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matrix Foundations</title>
+<style>
+:root{
+  --bg:#f7f6f2; --panel:#ffffff; --ink:#1c1b1a; --muted:#6b6862; --line:#e4e1da;
+  --accent:#3b5bdb; --accent-soft:#e8edfb;
+  --row:#fde68a; --row-strong:#d97706;
+  --col:#bfdbfe; --col-strong:#2563eb;
+  --cell:#bbf7d0; --cell-strong:#16a34a;
+  --bad:#fecaca; --bad-strong:#dc2626;
+  --shape:#7c3aed;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+.app{display:flex;min-height:100vh}
+nav{width:256px;flex:none;border-right:1px solid var(--line);background:#fbfaf7;padding:22px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+nav h1{font-size:17px;margin:2px 10px 4px;letter-spacing:-.01em}
+nav .sub{font-size:12px;color:var(--muted);margin:0 10px 16px}
+nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:14px;line-height:1.25}
+nav a:hover{background:#f0eee8}
+nav a.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+nav a .n{width:22px;height:22px;border-radius:50%;border:1.5px solid #cfcbc2;display:grid;place-items:center;font-size:11px;flex:none;color:var(--muted)}
+nav a.done .n{background:var(--cell-strong);border-color:var(--cell-strong);color:#fff}
+nav .reset{margin:18px 10px 0;font-size:12px;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;padding:0}
+main{flex:1;padding:40px 52px 90px;max-width:1000px;min-width:0}
+section{display:none}
+section.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:700;margin:0 0 6px}
+h2{font-size:32px;margin:0 0 8px;letter-spacing:-.015em;line-height:1.15}
+.lead{color:var(--muted);font-size:17px;margin:0 0 22px}
+h3{font-size:19px;margin:36px 0 10px}
+h4{font-size:15px;margin:18px 0 6px}
+p{margin:8px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:14px 0}
+.card.tint{background:#fbfaf6}
+.note{background:var(--accent-soft);border-radius:10px;padding:12px 16px;margin:12px 0;font-size:15px}
+.note b{color:var(--accent)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;margin:8px 0}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.dot{width:14px;height:14px;border-radius:4px;display:inline-block}
+kbd{font:12px ui-monospace,Menlo,monospace;background:#eee;border:1px solid #d5d2ca;border-bottom-width:2px;border-radius:5px;padding:1px 6px}
+code{font:14px ui-monospace,SFMono-Regular,Menlo,monospace;background:#efede7;padding:1px 5px;border-radius:4px}
+
+/* matrices */
+.mat{display:inline-grid;gap:6px 12px;padding:8px 16px;position:relative;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:17px;vertical-align:middle}
+.mat::before,.mat::after{content:"";position:absolute;top:0;bottom:0;width:9px;border:2px solid var(--ink);pointer-events:none}
+.mat::before{left:0;border-right:0;border-radius:3px 0 0 3px}
+.mat::after{right:0;border-left:0;border-radius:0 3px 3px 0}
+.cell{min-width:36px;height:36px;display:grid;place-items:center;border-radius:6px;padding:0 5px;transition:background .18s,transform .18s;white-space:nowrap}
+input.cell{border:1px solid var(--line);background:#fff;text-align:center;font:inherit;width:54px;outline:none;padding:0 4px}
+input.cell:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.cell.hl-row{background:var(--row)}
+.cell.hl-col{background:var(--col)}
+.cell.hl-cell{background:var(--cell)}
+.cell.dim{opacity:.35}
+.cell.now{outline:2.5px solid var(--ink);transform:scale(1.08)}
+.cell.ok{background:var(--cell);border-color:var(--cell-strong)}
+.cell.bad{background:var(--bad);border-color:var(--bad-strong)}
+.cell.click{cursor:pointer}
+.cell.click:hover{background:#eee}
+.cell.picked{background:var(--accent-soft);outline:2px solid var(--accent)}
+.matwrap{display:inline-flex;flex-direction:column;align-items:center;gap:5px;margin:6px 10px;vertical-align:middle}
+.matlabel{font-size:13px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.row.center{justify-content:center}
+.op{font-size:22px;margin:0 8px;font-family:ui-monospace,Menlo,monospace}
+.sup{font-size:.7em;vertical-align:super}
+.sub{font-size:.7em;vertical-align:sub}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:#eee;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+
+/* buttons and inputs */
+.btn{font:600 14px/1 inherit;padding:10px 14px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;transition:background .12s,transform .05s}
+.btn:hover{background:#f3f1ec}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#3350c4}
+.btn.small{padding:7px 10px;font-size:13px}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+input.num{width:64px;font:inherit;padding:7px 8px;border:1px solid var(--line);border-radius:8px;text-align:center;outline:none}
+input.num:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+input.num.ok{background:var(--cell);border-color:var(--cell-strong)}
+input.num.bad{background:var(--bad);border-color:var(--bad-strong)}
+select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.stepper button{border:0;background:none;width:30px;height:32px;cursor:pointer;font-size:16px}
+.stepper button:hover{background:#f0eee8}
+.stepper span{min-width:26px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-weight:600}
+.pager{display:flex;justify-content:space-between;margin-top:44px;padding-top:20px;border-top:1px solid var(--line)}
+.choice{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.choice .btn.picked{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+/* drills */
+.drill .prompt{font-size:16px;margin:0 0 10px}
+.drill .ans{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.drill .fb{min-height:24px;margin:12px 0 4px;font-size:15px}
+.drill .fb.good{color:var(--cell-strong);font-weight:600}
+.drill .fb.bad{color:var(--bad-strong)}
+.drill .fb .sol{color:var(--ink);font-weight:400;margin-top:6px}
+.drill-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.score{margin-left:auto;font-size:13px;color:var(--muted);display:flex;gap:12px;align-items:center}
+.score b{color:var(--ink)}
+.goalbar{display:inline-block;vertical-align:middle;width:110px;height:8px;background:#e9e6df;border-radius:99px;overflow:hidden}
+.goalbar i{display:block;height:100%;background:var(--cell-strong);width:0;transition:width .3s}
+.hint{font-size:14px;color:var(--muted);margin-top:8px}
+
+/* walkthrough */
+.expr{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:17px;line-height:2;margin-top:14px}
+.expr .t{padding:2px 5px;border-radius:5px}
+.expr .t.a{background:var(--row)}
+.expr .t.b{background:var(--col)}
+.expr .t.c{background:var(--cell)}
+.expr .t.now{outline:2px solid var(--ink)}
+.expr .faint{opacity:.3}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.status{font-size:14px;color:var(--muted)}
+
+/* transformations */
+.xf{display:grid;grid-template-columns:minmax(300px,460px) 1fr;gap:24px;align-items:start}
+@media (max-width:900px){.xf{grid-template-columns:1fr}}
+canvas.scene{width:100%;aspect-ratio:1/1;background:#fff;border:1px solid var(--line);border-radius:12px;touch-action:none;display:block}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.sliders label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.sliders label b{font-family:ui-monospace,Menlo,monospace;color:var(--ink);font-size:15px}
+.sliders input[type=range]{width:100%;accent-color:var(--accent)}
+.readout{font-family:ui-monospace,Menlo,monospace;font-size:15px;margin-top:10px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.minis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.minis .cap{font-size:13px;color:var(--muted);text-align:center;margin-top:6px}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-right:4px}
+
+/* quiz */
+.quiz-head{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted)}
+.qbar{height:8px;background:#e9e6df;border-radius:99px;overflow:hidden;margin:10px 0 18px}
+.qbar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.result{font-size:26px;font-weight:700;margin:6px 0}
+.review li{margin:6px 0}
+table.dims{border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:15px;margin:6px 0}
+table.dims td{padding:6px 12px;border:1px solid var(--line)}
+.inner{color:var(--accent);font-weight:700}
+.outer{color:var(--cell-strong);font-weight:700}
+</style>
+</head>
+<body>
+<div class="app">
+<nav id="nav">
+  <h1>Matrix Foundations</h1>
+  <p class="sub">An interactive walkthrough</p>
+  <div id="navlinks"></div>
+  <button class="reset" id="resetProgress">Reset progress</button>
+</nav>
+
+<main id="main">
+
+<!-- ===================================================== 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Welcome</p>
+  <h2>Matrices, built from the ground up</h2>
+  <p class="lead">Ten short chapters. Each one teaches an idea, lets you poke at it, then drills it until it sticks.</p>
+  <div class="card">
+    <h4 style="margin-top:0">How to use this</h4>
+    <p>Work through the chapters in order using the sidebar or the Next button. Every practice box generates fresh random problems forever, so you can drill as long as you like. Hitting the goal for a chapter marks it complete. Progress is saved in this browser.</p>
+    <p>In practice boxes, press <kbd>Enter</kbd> to check an answer and <kbd>Enter</kbd> again for a new question. Fractions like <code>1/2</code> and negatives like <code>-3</code> are accepted anywhere.</p>
+    <h4>Color code used everywhere</h4>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--row)"></i> a row of the left matrix</span>
+      <span><i class="dot" style="background:var(--col)"></i> a column of the right matrix</span>
+      <span><i class="dot" style="background:var(--cell)"></i> the entry they produce</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4 style="margin-top:0">What you will be able to do at the end</h4>
+    <ul style="margin:0;padding-left:20px">
+      <li>Read any matrix: its size, its entries, and what a<sub>ij</sub> means.</li>
+      <li>Add, scale, and transpose matrices without hesitation.</li>
+      <li>Decide instantly whether two matrices can be multiplied and what size comes out.</li>
+      <li>Multiply matrices reliably by hand using the row-times-column rule.</li>
+      <li>Explain why AB is usually not BA, and what the identity matrix does.</li>
+      <li>See a 2×2 matrix as a transformation of the plane, and read its determinant as an area factor.</li>
+      <li>Compute 2×2 determinants and inverses.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================================================== 1 WHAT IS A MATRIX -->
+<section data-id="basics" data-title="What is a matrix?" data-goal="6">
+  <p class="eyebrow">Chapter 1</p>
+  <h2>What is a matrix?</h2>
+  <p class="lead">A rectangular grid of numbers, plus a precise way to name its size and each entry.</p>
+
+  <p>A <b>matrix</b> is just numbers arranged in rows and columns. Its <b>dimensions</b> (or size, or shape) are written <b>rows × columns</b>, in that order, always. A matrix with 2 rows and 3 columns is a "2 by 3" matrix.</p>
+  <div class="note"><b>Rows first, then columns.</b> Rows run left to right (like rows of seats). Columns run top to bottom (like the columns holding up a building). "R before C" applies to dimensions and to entry names.</div>
+
+  <p>Each number in the matrix is an <b>entry</b>. The entry in row <i>i</i>, column <i>j</i> of matrix A is written <b>a<sub>ij</sub></b>. So a<sub>23</sub> lives in row 2, column 3.</p>
+
+  <div class="card">
+    <h4 style="margin-top:0">Explore: hover over any entry</h4>
+    <div class="row" style="gap:16px;margin-bottom:10px">
+      <span>Rows <span class="stepper" id="exRows"></span></span>
+      <span>Columns <span class="stepper" id="exCols"></span></span>
+      <button class="btn small" id="exNew">New numbers</button>
+    </div>
+    <div class="row">
+      <div id="exMat"></div>
+      <div id="exInfo" class="readout" style="margin-left:20px;min-width:260px">Hover an entry to identify it.</div>
+    </div>
+  </div>
+
+  <h3>Vocabulary you will see constantly</h3>
+  <div class="card tint">
+    <div class="row" style="align-items:flex-start;gap:20px" id="vocabRow"></div>
+    <p style="margin-top:12px">A <b>square</b> matrix has the same number of rows as columns (2×2, 3×3, ...). A <b>row vector</b> is a 1×n matrix and a <b>column vector</b> is an n×1 matrix. The <b>main diagonal</b> of a square matrix is the entries a<sub>11</sub>, a<sub>22</sub>, a<sub>33</sub>, ... running from top left to bottom right.</p>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-basics"></div>
+</section>
+
+<!-- ===================================================== 2 SPECIAL MATRICES -->
+<section data-id="special" data-title="Transpose, identity, zero" data-goal="5">
+  <p class="eyebrow">Chapter 2</p>
+  <h2>Transpose, identity, and zero</h2>
+  <p class="lead">Three things you will meet in every chapter that follows.</p>
+
+  <h3>The transpose</h3>
+  <p>The <b>transpose</b> of A, written <b>A<sup>T</sup></b>, flips A over its main diagonal: row 1 becomes column 1, row 2 becomes column 2, and so on. Formally, <b>(A<sup>T</sup>)<sub>ij</sub> = a<sub>ji</sub></b>. A 2×3 matrix transposes to a 3×2 matrix.</p>
+  <div class="card">
+    <div class="row" style="gap:16px;margin-bottom:10px">
+      <span>Rows <span class="stepper" id="trRows"></span></span>
+      <span>Columns <span class="stepper" id="trCols"></span></span>
+      <button class="btn small" id="trNew">New numbers</button>
+      <span class="status">Hover an entry of either matrix to see where it goes.</span>
+    </div>
+    <div class="row" id="trRow"></div>
+  </div>
+
+  <h3>The identity matrix</h3>
+  <p>The <b>identity matrix</b> I<sub>n</sub> is the n×n square matrix with 1s on the main diagonal and 0s everywhere else. It is the matrix version of the number 1: multiplying by it changes nothing (Chapter 6 shows this).</p>
+  <div class="card">
+    <div class="row" id="idRow"></div>
+  </div>
+
+  <h3>The zero matrix</h3>
+  <p>The <b>zero matrix</b> has every entry equal to 0. It can be any size. Adding it changes nothing, and multiplying by it gives zero.</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-special"></div>
+</section>
+
+<!-- ===================================================== 3 ADD AND SCALE -->
+<section data-id="addscale" data-title="Adding and scaling" data-goal="5">
+  <p class="eyebrow">Chapter 3</p>
+  <h2>Adding and scaling matrices</h2>
+  <p class="lead">The easy operations. They work entry by entry.</p>
+
+  <p><b>Addition.</b> Two matrices can be added only if they have <b>exactly the same dimensions</b>. Then you add matching entries: (A + B)<sub>ij</sub> = a<sub>ij</sub> + b<sub>ij</sub>. Subtraction works the same way.</p>
+  <div class="card"><div class="row" id="addDemo"></div></div>
+
+  <p><b>Scalar multiplication.</b> A <b>scalar</b> is an ordinary number. Multiplying a matrix by a scalar k multiplies <b>every</b> entry by k: (kA)<sub>ij</sub> = k·a<sub>ij</sub>.</p>
+  <div class="card"><div class="row" id="scaleDemo"></div></div>
+
+  <div class="note"><b>Combine them freely.</b> Expressions like 2A − B are computed by scaling first, then adding entry by entry. This is called a linear combination of A and B.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-addscale"></div>
+</section>
+
+<!-- ===================================================== 4 DIMENSIONS -->
+<section data-id="dims" data-title="When can you multiply?" data-goal="8">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>When can you multiply two matrices?</h2>
+  <p class="lead">Before computing anything, check the shapes. This check takes two seconds and prevents most mistakes.</p>
+
+  <p>To compute the product <b>AB</b>, the number of <b>columns of A</b> must equal the number of <b>rows of B</b>. Write the dimensions side by side and look at the inner pair:</p>
+  <div class="card tint" style="text-align:center">
+    <div style="font-family:ui-monospace,Menlo,monospace;font-size:26px;letter-spacing:.02em">
+      (<span class="outer">m</span> × <span class="inner">n</span>) · (<span class="inner">n</span> × <span class="outer">p</span>) &nbsp;=&nbsp; <span class="outer">m</span> × <span class="outer">p</span>
+    </div>
+    <p style="margin-top:10px;color:var(--muted)">The <span class="inner">inner numbers</span> must match. The <span class="outer">outer numbers</span> give the size of the answer.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Explore: set the sizes</h4>
+    <div class="row" style="gap:22px">
+      <span>A is <span class="stepper" id="dA1"></span> × <span class="stepper" id="dA2"></span></span>
+      <span>B is <span class="stepper" id="dB1"></span> × <span class="stepper" id="dB2"></span></span>
+    </div>
+    <div id="dimsView" style="margin-top:14px"></div>
+  </div>
+
+  <div class="note"><b>Order matters.</b> AB being defined says nothing about BA. If A is 2×3 and B is 3×4, then AB is 2×4 but BA is not defined at all (4 ≠ 2).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-dims"></div>
+</section>
+
+<!-- ===================================================== 5 WALKTHROUGH -->
+<section data-id="walk" data-title="The row-column rule" data-goal="6">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>The row-column rule</h2>
+  <p class="lead">Every entry of a product is a row of the left matrix "dotted" with a column of the right matrix.</p>
+
+  <p>To find entry (i, j) of AB: take <b>row i of A</b> and <b>column j of B</b>. Multiply them pairwise (first with first, second with second, ...) and add the results. That is:</p>
+  <div class="card tint" style="text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:19px">
+    (AB)<sub>ij</sub> = a<sub>i1</sub>b<sub>1j</sub> + a<sub>i2</sub>b<sub>2j</sub> + ... + a<sub>in</sub>b<sub>nj</sub>
+  </div>
+  <p>A physical way to do it: put your left index finger on the start of the row, your right index finger on the top of the column. Multiply the two numbers under your fingers, then slide left finger right and right finger down together. Keep multiplying and adding until you run out. The "matching" pairs are why the inner dimensions had to agree.</p>
+
+  <div class="card">
+    <h4 style="margin-top:0">Step-by-step walkthrough</h4>
+    <div class="controls">
+      <select id="wkSize">
+        <option value="2,2,2">2×2 times 2×2</option>
+        <option value="2,3,2">2×3 times 3×2</option>
+        <option value="3,2,3">3×2 times 2×3</option>
+        <option value="3,3,3" selected>3×3 times 3×3</option>
+        <option value="2,3,1">2×3 times 3×1 (matrix times vector)</option>
+      </select>
+      <button class="btn small" id="wkNew">New matrices</button>
+      <span class="status" id="wkStatus"></span>
+    </div>
+    <div class="row" id="wkMats"></div>
+    <div class="expr" id="wkExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wkPrev">◀ Back</button>
+      <button class="btn primary" id="wkNext">Next step ▶</button>
+      <button class="btn" id="wkEntry">Finish this entry</button>
+      <button class="btn" id="wkPlay">Auto play</button>
+      <button class="btn" id="wkReset">Restart</button>
+      <span class="status">Arrow keys also step.</span>
+    </div>
+  </div>
+
+  <h3>Practice: one entry at a time</h3>
+  <p>Before doing full products, get fast at single entries. Each question asks for exactly one entry of AB.</p>
+  <div class="card" id="drill-walk"></div>
+</section>
+
+<!-- ===================================================== 6 PRACTICE -->
+<section data-id="mult" data-title="Multiplication drills" data-goal="6">
+  <p class="eyebrow">Chapter 6</p>
+  <h2>Multiplication drills</h2>
+  <p class="lead">Full products, with a hint for any cell you get stuck on.</p>
+
+  <div class="card">
+    <div class="controls">
+      <span>Sizes:</span>
+      <select id="mdSize">
+        <option value="2,2,2">2×2 times 2×2</option>
+        <option value="2,3,2">2×3 times 3×2</option>
+        <option value="3,2,2">3×2 times 2×2</option>
+        <option value="3,3,3">3×3 times 3×3</option>
+        <option value="2,2,1">2×2 times 2×1 (vector)</option>
+        <option value="3,3,1">3×3 times 3×1 (vector)</option>
+        <option value="mix" selected>Mixed (random)</option>
+      </select>
+      <label style="font-size:14px"><input type="checkbox" id="mdNonneg"> small non-negative numbers only</label>
+    </div>
+    <div id="drill-mult"></div>
+    <p class="hint">Click any answer cell and press <kbd>?</kbd> (or the Hint button) to highlight the row and column it comes from.</p>
+  </div>
+</section>
+
+<!-- ===================================================== 7 PROPERTIES -->
+<section data-id="props" data-title="Rules and surprises" data-goal="8">
+  <p class="eyebrow">Chapter 7</p>
+  <h2>Rules and surprises</h2>
+  <p class="lead">Matrix multiplication keeps some habits from ordinary numbers and breaks others.</p>
+
+  <h3>AB is usually not BA</h3>
+  <p>For numbers, 3 × 5 = 5 × 3. For matrices this fails almost always. Roll a few random pairs and compare. Cells that differ are marked.</p>
+  <div class="card">
+    <div class="row" id="commRow"></div>
+    <div class="controls"><button class="btn small" id="commNew">Roll new matrices</button><span class="status" id="commNote"></span></div>
+  </div>
+
+  <h3>The identity really is the identity</h3>
+  <div class="card"><div id="idDemo"></div>
+  <p class="hint">Try the row-column rule on any entry: only one term in the sum survives, the one that multiplies by the 1.</p></div>
+
+  <h3>The rules that do hold</h3>
+  <div class="card tint">
+    <ul style="margin:0;padding-left:20px;line-height:1.9">
+      <li><b>Associative:</b> (AB)C = A(BC). You can group however you like, as long as you keep the order.</li>
+      <li><b>Distributive:</b> A(B + C) = AB + AC and (A + B)C = AC + BC.</li>
+      <li><b>Scalars slide through:</b> k(AB) = (kA)B = A(kB).</li>
+      <li><b>Identity:</b> IA = A and AI = A whenever the sizes work.</li>
+      <li><b>Transpose reverses order:</b> (AB)<sup>T</sup> = B<sup>T</sup>A<sup>T</sup>. Not A<sup>T</sup>B<sup>T</sup>.</li>
+    </ul>
+  </div>
+  <h3>The rules that break</h3>
+  <div class="card tint">
+    <ul style="margin:0;padding-left:20px;line-height:1.9">
+      <li><b>Not commutative:</b> AB ≠ BA in general (and one side may not even be defined).</li>
+      <li><b>No cancellation:</b> AB = AC does not force B = C.</li>
+      <li><b>Zero products from non-zero factors:</b> AB can be the zero matrix while neither A nor B is. Example:</li>
+    </ul>
+    <div class="row" id="zeroDemo" style="margin-top:8px"></div>
+  </div>
+
+  <h3>Practice: true or false</h3>
+  <div class="card" id="drill-props"></div>
+</section>
+
+<!-- ===================================================== 8 TRANSFORMATIONS -->
+<section data-id="geom" data-title="Matrices as transformations" data-goal="1">
+  <p class="eyebrow">Chapter 8</p>
+  <h2>A matrix is a transformation of space</h2>
+  <p class="lead">This is the picture that makes everything else click. A 2×2 matrix moves every point in the plane.</p>
+
+  <p>Multiplying a column vector <b>v</b> = [x, y] by a 2×2 matrix M gives a new vector Mv. Do that to every point and the whole plane stretches, rotates, shears, or flips. The key fact:</p>
+  <div class="note"><b>The columns of M are where the basis vectors land.</b> The first column is the image of î = [1, 0]. The second column is the image of ĵ = [0, 1]. Everything else follows, because Mv = x·(column 1) + y·(column 2).</div>
+
+  <div class="card">
+    <div class="xf">
+      <div>
+        <canvas class="scene" id="xfCanvas"></canvas>
+        <p class="hint" style="margin-top:8px"><span class="swatch" style="background:#d97706"></span> î → column 1 &nbsp; <span class="swatch" style="background:#2563eb"></span> ĵ → column 2 &nbsp; <span class="swatch" style="background:var(--shape);opacity:.6"></span> a shape, so flips are visible. Faint grid = original, dark grid = transformed.</p>
+      </div>
+      <div>
+        <div class="row" style="gap:14px"><span style="font-weight:600">M =</span><div id="xfMat"></div><div class="readout" id="xfDet"></div></div>
+        <div class="sliders" style="margin-top:12px">
+          <label><b>a</b> (top left) <input type="range" id="sa" min="-3" max="3" step="0.1" value="1"></label>
+          <label><b>b</b> (top right) <input type="range" id="sb" min="-3" max="3" step="0.1" value="0"></label>
+          <label><b>c</b> (bottom left) <input type="range" id="sc" min="-3" max="3" step="0.1" value="0"></label>
+          <label><b>d</b> (bottom right) <input type="range" id="sd" min="-3" max="3" step="0.1" value="1"></label>
+        </div>
+        <h4>Presets</h4>
+        <div class="presets" id="xfPresets"></div>
+        <div class="controls">
+          <button class="btn primary" id="xfAnimate">Animate from identity</button>
+          <label style="font-size:14px"><input type="checkbox" id="xfVec"> vector mode (drag the point)</label>
+        </div>
+        <div class="readout" id="xfVecOut"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Things to try</h3>
+  <div class="card tint">
+    <ul style="margin:0;padding-left:20px;line-height:1.8">
+      <li>Pick <b>Rotate 90°</b> and check: column 1 is [0, 1], so î went straight up. Column 2 is [−1, 0], so ĵ went left.</li>
+      <li>Pick <b>Shear</b> and slide <b>b</b>. Only ĵ moves; î stays put because column 1 never changed.</li>
+      <li>Set <b>d</b> negative. The shape flips and the determinant turns negative. Negative determinant means orientation reversed.</li>
+      <li>Pick <b>Squash to a line</b>. The whole plane collapses onto one line, area goes to zero, and the determinant is 0. There is no way to undo this, which is exactly why such matrices have no inverse.</li>
+      <li>Turn on <b>vector mode</b> and drag the point. Watch the equation update: the output is always x copies of column 1 plus y copies of column 2.</li>
+    </ul>
+  </div>
+
+  <h3>Multiplying matrices = composing transformations</h3>
+  <p>Applying M<sub>1</sub> and then M<sub>2</sub> is the same as applying the single matrix <b>M<sub>2</sub>M<sub>1</sub></b>. Read right to left: the matrix nearest the vector acts first. This is the deep reason the row-column rule looks the way it does, and the geometric reason AB ≠ BA: rotating then shearing is a different picture than shearing then rotating.</p>
+  <div class="card">
+    <div class="row" style="gap:14px">
+      <span>First apply <select id="cmp1"></select></span>
+      <span>then apply <select id="cmp2"></select></span>
+      <button class="btn small" id="cmpSwap">Swap order</button>
+    </div>
+    <div class="minis">
+      <div><canvas class="scene" id="cmpC0"></canvas><div class="cap">Original</div></div>
+      <div><canvas class="scene" id="cmpC1"></canvas><div class="cap">After M<sub>1</sub></div></div>
+      <div><canvas class="scene" id="cmpC2"></canvas><div class="cap">After M<sub>2</sub>M<sub>1</sub></div></div>
+    </div>
+    <div class="row center" id="cmpMats" style="margin-top:12px"></div>
+  </div>
+  <p class="hint">This chapter is marked complete once you have animated a transformation and tried the composition tool.</p>
+</section>
+
+<!-- ===================================================== 9 DETERMINANT -->
+<section data-id="det" data-title="Determinant and inverse" data-goal="6">
+  <p class="eyebrow">Chapter 9</p>
+  <h2>Determinant and inverse (2×2)</h2>
+  <p class="lead">Two numbers-worth of information that tell you whether a matrix can be undone.</p>
+
+  <p>For a 2×2 matrix the <b>determinant</b> is</p>
+  <div class="card tint" style="text-align:center">
+    <div class="row center" id="detFormula"></div>
+    <p style="color:var(--muted);margin-top:8px">Down-right product minus up-right product. Geometrically, it is the factor by which M scales area, with a negative sign if M flips orientation.</p>
+  </div>
+
+  <p>The <b>inverse</b> A<sup>−1</sup> is the matrix that undoes A, meaning A·A<sup>−1</sup> = A<sup>−1</sup>·A = I. For 2×2 matrices there is a direct formula:</p>
+  <div class="card tint" style="text-align:center">
+    <div class="row center" id="invFormula"></div>
+    <p style="color:var(--muted);margin-top:8px">Swap a and d, negate b and c, divide everything by the determinant. If det = 0 you would divide by zero, so no inverse exists. Such a matrix is called <b>singular</b>.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Check it: A times its inverse</h4>
+    <div class="row" id="invDemo"></div>
+    <div class="controls"><button class="btn small" id="invNew">New matrix</button></div>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-det"></div>
+</section>
+
+<!-- ===================================================== 10 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz" data-goal="1">
+  <p class="eyebrow">Chapter 10</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Ten mixed questions drawn from every chapter. Score 8 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ utilities */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const rint=(lo,hi)=>Math.floor(Math.random()*(hi-lo+1))+lo;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const randMat=(r,c,lo=-5,hi=5)=>Array.from({length:r},()=>Array.from({length:c},()=>rint(lo,hi)));
+const zeros=(r,c)=>Array.from({length:r},()=>Array(c).fill(0));
+const ident=n=>Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>i===j?1:0));
+const matT=A=>A[0].map((_,j)=>A.map(r=>r[j]));
+const matAdd=(A,B)=>A.map((r,i)=>r.map((v,j)=>v+B[i][j]));
+const matScale=(k,A)=>A.map(r=>r.map(v=>k*v));
+function matMul(A,B){const m=A.length,n=B.length,p=B[0].length;const C=zeros(m,p);for(let i=0;i<m;i++)for(let j=0;j<p;j++){let s=0;for(let k=0;k<n;k++)s+=A[i][k]*B[k][j];C[i][j]=s;}return C;}
+const det2=M=>M[0][0]*M[1][1]-M[0][1]*M[1][0];
+const inv2=M=>{const d=det2(M);return [[M[1][1]/d,-M[0][1]/d],[-M[1][0]/d,M[0][0]/d]];};
+const near=(a,b)=>Math.abs(a-b)<1e-6;
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
+function fmt(x){
+  if(typeof x==='string')return x;
+  if(Number.isInteger(x))return String(x);
+  for(let d=2;d<=24;d++){const n=x*d;if(Math.abs(n-Math.round(n))<1e-9){const nn=Math.round(n);const g=gcd(nn,d);return (nn/g)+'/'+(d/g);}}
+  return String(Math.round(x*100)/100);
+}
+const fmtDec=x=>String(Math.round(x*100)/100).replace('-0','-0');
+function parseNum(s){
+  if(s==null)return null;s=String(s).trim().replace(/[−–]/g,'-');if(!s)return null;
+  let m=s.match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(-?\d+(?:\.\d+)?)$/);
+  if(m){const b=Number(m[2]);if(b===0)return null;return Number(m[1])/b;}
+  const v=Number(s);return Number.isFinite(v)?v:null;
+}
+const sub=(name,i,j)=>`${name}<sub>${i}${j}</sub>`;
+const paren=v=>v<0?`(${fmt(v)})`:fmt(v);
+const mul=(x,y)=>`${paren(x)}·${paren(y)}`;
+
+/* matrix rendering */
+function renderMat(M,o={}){
+  const rows=M.length,cols=M[0].length;
+  const el=document.createElement('div');el.className='mat'+(o.cls?' '+o.cls:'');
+  el.style.gridTemplateColumns=`repeat(${cols},auto)`;
+  M.forEach((row,i)=>row.forEach((v,j)=>{
+    const c=document.createElement(o.editable?'input':'div');c.className='cell';
+    c.dataset.i=i;c.dataset.j=j;
+    if(o.editable){c.type='text';c.autocomplete='off';c.spellcheck=false;c.value=(v==null?'':v);}
+    else c.innerHTML=(o.fmt||fmt)(v,i,j);
+    if(o.hlRow===i)c.classList.add('hl-row');
+    if(o.hlCol===j)c.classList.add('hl-col');
+    if(o.hlCell&&o.hlCell[0]===i&&o.hlCell[1]===j)c.classList.add('hl-cell');
+    if(o.cellClass){const k=o.cellClass(i,j);if(k)c.classList.add(...k.split(' '));}
+    el.appendChild(c);
+  }));
+  if(o.editable)wireMatrixInputs(el);
+  if(o.label!==undefined||o.dims){
+    const w=document.createElement('div');w.className='matwrap';w.appendChild(el);
+    const l=document.createElement('div');l.className='matlabel';
+    l.innerHTML=(o.label||'')+(o.dims?` <span class="tag">${rows}×${cols}</span>`:'');
+    w.appendChild(l);return w;
+  }
+  return el;
+}
+function wireMatrixInputs(el){
+  const inputs=$$('input',el);
+  inputs.forEach((inp,idx)=>{
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter')return;
+      const cols=parseInt(el.style.gridTemplateColumns.match(/\d+/)[0]);
+      let t=null;
+      if(e.key==='ArrowRight'&&inp.selectionStart===inp.value.length)t=inputs[idx+1];
+      if(e.key==='ArrowLeft'&&inp.selectionStart===0)t=inputs[idx-1];
+      if(e.key==='ArrowDown')t=inputs[idx+cols];
+      if(e.key==='ArrowUp')t=inputs[idx-cols];
+      if(t){e.preventDefault();t.focus();t.select();}
+    });
+  });
+}
+function readMat(el){
+  const inputs=$$('input.cell',el);if(!inputs.length)return null;
+  const cols=parseInt(inputs[0].closest('.mat').style.gridTemplateColumns.match(/\d+/)[0]);
+  const rows=inputs.length/cols;const M=zeros(rows,cols);
+  inputs.forEach((inp,k)=>{M[Math.floor(k/cols)][k%cols]=parseNum(inp.value);});
+  return M;
+}
+function gradeMat(el,expected){
+  const inputs=$$('input.cell',el);
+  const cols=parseInt(inputs[0].closest('.mat').style.gridTemplateColumns.match(/\d+/)[0]);
+  let all=true,empty=0;
+  inputs.forEach((inp,k)=>{
+    const i=Math.floor(k/cols),j=k%cols;const v=parseNum(inp.value);
+    inp.classList.remove('ok','bad');
+    if(v===null){empty++;all=false;inp.classList.add('bad');return;}
+    if(near(v,expected[i][j]))inp.classList.add('ok');else{inp.classList.add('bad');all=false;}
+  });
+  return {all,empty};
+}
+function gradeNum(inp,expected){
+  const v=parseNum(inp.value);inp.classList.remove('ok','bad');
+  const ok=v!==null&&near(v,expected);inp.classList.add(ok?'ok':'bad');return ok;
+}
+function stepper(mount,val,lo,hi,onChange){
+  const el=typeof mount==='string'?$(mount):mount;el.innerHTML='';
+  const dec=document.createElement('button');dec.textContent='−';
+  const span=document.createElement('span');span.textContent=val;
+  const inc=document.createElement('button');inc.textContent='+';
+  el.append(dec,span,inc);
+  const api={get value(){return val;},set(v){val=Math.max(lo,Math.min(hi,v));span.textContent=val;onChange(val);}};
+  dec.onclick=()=>api.set(val-1);inc.onclick=()=>api.set(val+1);
+  return api;
+}
+function choiceButtons(mount,options,onPick){
+  const wrap=document.createElement('div');wrap.className='choice';let picked=null;
+  options.forEach(o=>{const b=document.createElement('button');b.className='btn';b.type='button';b.innerHTML=o.label;
+    b.onclick=()=>{picked=o.value;$$('.btn',wrap).forEach(x=>x.classList.remove('picked'));b.classList.add('picked');if(onPick)onPick(o.value);};
+    wrap.appendChild(b);});
+  mount.appendChild(wrap);return ()=>picked;
+}
+function opRow(parts){const r=document.createElement('div');r.className='row';parts.forEach(p=>{if(typeof p==='string'){const s=document.createElement('span');s.className='op';s.innerHTML=p;r.appendChild(s);}else r.appendChild(p);});return r;}
+
+/* ============================================================ progress + navigation */
+const sections=$$('section');
+let progress={};try{progress=JSON.parse(localStorage.getItem('mf-progress')||'{}');}catch(e){progress={};}
+function saveProgress(){try{localStorage.setItem('mf-progress',JSON.stringify(progress));}catch(e){}}
+function markDone(id){if(progress[id])return;progress[id]=true;saveProgress();renderNav();}
+function renderNav(){
+  const box=$('#navlinks');box.innerHTML='';
+  sections.forEach((s,i)=>{
+    const a=document.createElement('a');a.href='#'+s.dataset.id;
+    a.className=(s.classList.contains('active')?'active':'')+(progress[s.dataset.id]?' done':'');
+    a.innerHTML=`<span class="n">${progress[s.dataset.id]?'✓':i}</span><span>${s.dataset.title}</span>`;
+    box.appendChild(a);
+  });
+}
+function show(id){
+  let s=sections.find(x=>x.dataset.id===id)||sections[0];
+  sections.forEach(x=>x.classList.toggle('active',x===s));
+  renderNav();window.scrollTo({top:0});
+  if(s.dataset.id==='geom')setTimeout(()=>{drawMain();drawComp();},0);
+}
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+sections.forEach((s,i)=>{
+  const pg=document.createElement('div');pg.className='pager';
+  const prev=sections[i-1],next=sections[i+1];
+  pg.innerHTML=`<span>${prev?`<a class="btn" href="#${prev.dataset.id}">◀ ${prev.dataset.title}</a>`:''}</span><span>${next?`<a class="btn primary" href="#${next.dataset.id}">${next.dataset.title} ▶</a>`:''}</span>`;
+  s.appendChild(pg);
+});
+$('#resetProgress').onclick=()=>{progress={};saveProgress();renderNav();};
+
+/* ============================================================ drill framework */
+class Drill{
+  constructor(o){
+    this.o=o;this.mount=typeof o.mount==='string'?$(o.mount):o.mount;this.goal=o.goal||5;
+    this.correct=0;this.streak=0;this.build();this.next();
+  }
+  build(){
+    this.mount.innerHTML=`<div class="drill"><div class="q"></div><div class="fb"></div>
+      <div class="drill-bar"><button class="btn primary check">Check</button>
+      ${this.o.hint?'<button class="btn hintbtn">Hint</button>':''}
+      <button class="btn show">Show answer</button><button class="btn next">New question</button>
+      <span class="score"><span>Correct <b class="c">0</b></span><span>Streak <b class="s">0</b></span><span class="goalwrap">Goal <span class="goalbar"><i></i></span></span></span></div></div>`;
+    this.qEl=$('.q',this.mount);this.fb=$('.fb',this.mount);
+    $('.check',this.mount).onclick=()=>this.check();
+    $('.show',this.mount).onclick=()=>this.show();
+    $('.next',this.mount).onclick=()=>this.next();
+    if(this.o.hint)$('.hintbtn',this.mount).onclick=()=>this.o.hint(this.q,this.qEl,this);
+    this.mount.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){e.preventDefault();if(this.done)this.next();else this.check();}
+      if(e.key==='?'&&this.o.hint){e.preventDefault();this.o.hint(this.q,this.qEl,this);}
+    });
+    this.updateScore();
+  }
+  next(){
+    this.q=this.o.gen();this.q.tried=false;this.done=false;this.qEl.innerHTML='';
+    this.o.render(this.q,this.qEl,this);this.fb.className='fb';this.fb.innerHTML='';
+    const f=$('input',this.qEl);if(f&&this.mount.closest('section').classList.contains('active'))f.focus();
+  }
+  check(){
+    if(this.done)return;
+    const r=this.o.check(this.q,this.qEl);
+    if(r.ok){
+      if(!this.q.tried){this.correct++;this.streak++;}
+      this.done=true;this.fb.className='fb good';this.fb.innerHTML=pick(['Correct.','Yes.','Right.','Nice.','Exactly.'])+(r.msg?' '+r.msg:'');
+      if(this.correct>=this.goal&&this.o.section)markDone(this.o.section);
+    }else{
+      if(!this.q.tried)this.streak=0;
+      this.fb.className='fb bad';this.fb.innerHTML=(r.msg||'Not quite. Fix the marked cells and check again.');
+    }
+    this.q.tried=true;this.updateScore();
+  }
+  show(){
+    if(!this.q.tried)this.streak=0;this.q.tried=true;this.done=true;
+    this.fb.className='fb';this.fb.innerHTML='<div class="sol">'+this.o.solution(this.q,this.qEl)+'</div>';
+    this.updateScore();
+  }
+  updateScore(){
+    $('.c',this.mount).textContent=this.correct;$('.s',this.mount).textContent=this.streak;
+    $('.goalbar i',this.mount).style.width=Math.min(100,100*this.correct/this.goal)+'%';
+    $('.goalwrap',this.mount).title=`${Math.min(this.correct,this.goal)} of ${this.goal} needed to complete this chapter`;
+  }
+}
+function mixDrill(types){const o={gen(){const t=pick(types);const q=t.gen();q.type=t;return q;},render(q,el,d){q.type.render(q,el,d);},check(q,el){return q.type.check(q,el);},solution(q,el){return q.type.solution(q,el);}};if(types.some(t=>t.hint))o.hint=(q,el,d)=>{if(q.type.hint)q.type.hint(q,el,d);};return o;}
+
+/* ============================================================ question types */
+const Q={};
+
+Q.dimsOf={
+  gen(){const r=rint(1,4),c=rint(1,4);return{M:randMat(r,c,-9,9)};},
+  render(q,el){el.innerHTML='<p class="prompt">What are the dimensions of this matrix?</p>';el.appendChild(renderMat(q.M));
+    el.insertAdjacentHTML('beforeend','<div class="ans">Rows <input class="num" data-k="r"> &nbsp;×&nbsp; Columns <input class="num" data-k="c"></div>');},
+  check(q,el){const r=gradeNum($('[data-k=r]',el),q.M.length),c=gradeNum($('[data-k=c]',el),q.M[0].length);
+    return{ok:r&&c,msg:r&&c?'':'Rows first (count top to bottom), then columns (count left to right).'};},
+  solution(q){return `It has <b>${q.M.length}</b> row${q.M.length>1?'s':''} and <b>${q.M[0].length}</b> column${q.M[0].length>1?'s':''}, so it is <b>${q.M.length}×${q.M[0].length}</b>.`;}
+};
+Q.entry={
+  gen(){const r=rint(2,4),c=rint(2,4);return{M:randMat(r,c,-9,9),i:rint(1,r),j:rint(1,c)};},
+  render(q,el){el.innerHTML=`<p class="prompt">What is ${sub('a',q.i,q.j)} in this matrix A?</p>`;el.appendChild(renderMat(q.M,{label:'A'}));
+    el.insertAdjacentHTML('beforeend',`<div class="ans"><span>${sub('a',q.i,q.j)} =</span> <input class="num" data-k="v"></div>`);},
+  check(q,el){const ok=gradeNum($('[data-k=v]',el),q.M[q.i-1][q.j-1]);return{ok,msg:ok?'':`${sub('a',q.i,q.j)} means row ${q.i}, column ${q.j}.`};},
+  solution(q){return `Row ${q.i}, column ${q.j} holds <b>${q.M[q.i-1][q.j-1]}</b>.`;}
+};
+Q.locate={
+  gen(){const r=rint(2,4),c=rint(2,4);return{M:randMat(r,c,-9,9),i:rint(1,r),j:rint(1,c),picked:null};},
+  render(q,el){el.innerHTML=`<p class="prompt">Click the entry ${sub('a',q.i,q.j)}.</p>`;
+    const m=renderMat(q.M,{label:'A',cellClass:()=>'click'});el.appendChild(m);
+    $$('.cell',m).forEach(c=>c.onclick=()=>{$$('.cell',m).forEach(x=>x.classList.remove('picked'));c.classList.add('picked');q.picked=[+c.dataset.i+1,+c.dataset.j+1];});},
+  check(q){if(!q.picked)return{ok:false,msg:'Click an entry first.'};const ok=q.picked[0]===q.i&&q.picked[1]===q.j;return{ok,msg:ok?'':`You picked row ${q.picked[0]}, column ${q.picked[1]}. The first index is the row.`};},
+  solution(q){return `${sub('a',q.i,q.j)} is in row ${q.i} (counting down) and column ${q.j} (counting across). Its value is ${q.M[q.i-1][q.j-1]}.`;}
+};
+Q.transpose={
+  gen(){const r=rint(2,3),c=rint(2,3);const A=randMat(r,c,-9,9);return{A,T:matT(A)};},
+  render(q,el){el.innerHTML='<p class="prompt">Fill in the transpose A<sup>T</sup>.</p>';
+    el.appendChild(opRow([renderMat(q.A,{label:'A',dims:true}),'→',renderMat(zeros(q.T.length,q.T[0].length).map(r=>r.map(()=>null)),{editable:true,label:'A<sup>T</sup>',dims:true})]));},
+  check(q,el){const g=gradeMat(el,q.T);return{ok:g.all,msg:g.all?'':'Row 1 of A becomes column 1 of A<sup>T</sup>, row 2 becomes column 2, and so on.'};},
+  solution(q){const w=document.createElement('div');w.appendChild(renderMat(q.T,{label:'A<sup>T</sup>'}));return 'Each row of A written as a column: '+w.innerHTML;}
+};
+Q.identityQ={
+  gen(){const n=rint(2,3);const M=ident(n);const flip=Math.random()<0.5;if(flip){const i=rint(0,n-1),j=rint(0,n-1);M[i][j]=i===j?pick([0,2,-1]):pick([1,-1,2]);}return{M,isI:!flip,n};},
+  render(q,el){el.innerHTML='<p class="prompt">Is this the identity matrix?</p>';el.appendChild(renderMat(q.M));
+    q.get=choiceButtons(el,[{label:'Yes',value:true},{label:'No',value:false}]);},
+  check(q){const v=q.get();if(v===null)return{ok:false,msg:'Pick one.'};return{ok:v===q.isI,msg:v===q.isI?'':'Identity means 1s on the main diagonal and 0s everywhere else.'};},
+  solution(q){return q.isI?`Yes, this is I<sub>${q.n}</sub>.`:'No. The identity has exactly 1s on the diagonal and 0s off it. One entry breaks that.';}
+};
+Q.add={
+  gen(){const r=rint(2,3),c=rint(2,3);const A=randMat(r,c,-9,9),B=randMat(r,c,-9,9);const sign=pick([1,-1]);return{A,B,sign,S:matAdd(A,matScale(sign,B))};},
+  render(q,el){el.innerHTML=`<p class="prompt">Compute A ${q.sign>0?'+':'−'} B.</p>`;
+    el.appendChild(opRow([renderMat(q.A,{label:'A'}),q.sign>0?'+':'−',renderMat(q.B,{label:'B'}),'=',renderMat(zeros(q.S.length,q.S[0].length).map(r=>r.map(()=>null)),{editable:true,label:q.sign>0?'A + B':'A − B'})]));},
+  check(q,el){const g=gradeMat(el,q.S);return{ok:g.all,msg:g.all?'':'Combine entries that sit in the same position.'};},
+  solution(q){const w=document.createElement('div');w.appendChild(renderMat(q.S));return 'Entry by entry: '+w.innerHTML;}
+};
+Q.scale={
+  gen(){const r=rint(2,3),c=rint(2,3);const A=randMat(r,c,-6,6);const k=pick([-3,-2,-1,2,3,4,0.5]);return{A,k,S:matScale(k,A)};},
+  render(q,el){const kl=q.k<0?`(${fmt(q.k)})`:fmt(q.k);el.innerHTML=`<p class="prompt">Compute ${kl}A.</p>`;
+    el.appendChild(opRow([`${kl} ·`,renderMat(q.A,{label:'A'}),'=',renderMat(zeros(q.S.length,q.S[0].length).map(r=>r.map(()=>null)),{editable:true,label:kl+'A'})]));},
+  check(q,el){const g=gradeMat(el,q.S);return{ok:g.all,msg:g.all?'':'Every entry gets multiplied by the scalar, signs included.'};},
+  solution(q){const w=document.createElement('div');w.appendChild(renderMat(q.S));return `Multiply every entry by ${fmt(q.k)}: `+w.innerHTML;}
+};
+Q.combo={
+  gen(){const r=2,c=rint(2,3);const A=randMat(r,c,-5,5),B=randMat(r,c,-5,5);const k=pick([2,3,-2]),l=pick([1,-1,2]);return{A,B,k,l,S:matAdd(matScale(k,A),matScale(l,B))};},
+  render(q,el){const lab=`${q.k}A ${q.l<0?'−':'+'} ${Math.abs(q.l)===1?'':Math.abs(q.l)}B`;el.innerHTML=`<p class="prompt">Compute ${lab}.</p>`;
+    el.appendChild(opRow([renderMat(q.A,{label:'A'}),renderMat(q.B,{label:'B'}),'→',renderMat(zeros(q.S.length,q.S[0].length).map(r=>r.map(()=>null)),{editable:true,label:lab})]));},
+  check(q,el){const g=gradeMat(el,q.S);return{ok:g.all,msg:g.all?'':'Scale each matrix first, then combine matching entries.'};},
+  solution(q){const w=document.createElement('div');w.appendChild(renderMat(q.S));return 'Scale, then add entry by entry: '+w.innerHTML;}
+};
+Q.prodDefined={
+  gen(){const m=rint(1,4),n=rint(1,4),p=rint(1,4);const match=Math.random()<0.55;const n2=match?n:pick([1,2,3,4].filter(x=>x!==n));return{m,n,n2,p,defined:n===n2};},
+  render(q,el){el.innerHTML=`<p class="prompt">A is <b>${q.m}×${q.n}</b> and B is <b>${q.n2}×${q.p}</b>. Is AB defined? If so, what size is it?</p>`;
+    q.get=choiceButtons(el,[{label:'Defined',value:true},{label:'Not defined',value:false}],v=>{$('.ans',el).style.visibility=v?'visible':'hidden';});
+    el.insertAdjacentHTML('beforeend','<div class="ans" style="visibility:hidden">AB is <input class="num" data-k="r"> × <input class="num" data-k="c"></div>');},
+  check(q,el){const v=q.get();if(v===null)return{ok:false,msg:'Choose whether AB is defined.'};
+    if(v!==q.defined)return{ok:false,msg:q.defined?'It is defined: the columns of A match the rows of B.':`Not defined: A has ${q.n} columns but B has ${q.n2} rows.`};
+    if(!q.defined)return{ok:true};
+    const r=gradeNum($('[data-k=r]',el),q.m),c=gradeNum($('[data-k=c]',el),q.p);return{ok:r&&c,msg:r&&c?'':'The outer numbers give the size: rows of A by columns of B.'};},
+  solution(q){return q.defined?`(${q.m}×<span class="inner">${q.n}</span>)(<span class="inner">${q.n2}</span>×${q.p}): inner numbers match, so AB is <b>${q.m}×${q.p}</b>.`:`(${q.m}×<span class="inner">${q.n}</span>)(<span class="inner">${q.n2}</span>×${q.p}): ${q.n} ≠ ${q.n2}, so AB is <b>not defined</b>.`;}
+};
+Q.dot={
+  gen(){const n=rint(2,4);const a=randMat(1,n,-5,5)[0],b=randMat(1,n,-5,5)[0];return{a,b,n,v:a.reduce((s,x,k)=>s+x*b[k],0)};},
+  render(q,el){el.innerHTML='<p class="prompt">Multiply this row by this column: pair up the entries, multiply each pair, add.</p>';
+    el.appendChild(opRow([renderMat([q.a],{cellClass:()=>'hl-row'}),'·',renderMat(q.b.map(x=>[x]),{cellClass:()=>'hl-col'}),'=',(()=>{const i=document.createElement('input');i.className='num';i.dataset.k='v';return i;})()]));},
+  check(q,el){const ok=gradeNum($('[data-k=v]',el),q.v);return{ok,msg:ok?'':'Watch the signs on each product.'};},
+  solution(q){return q.a.map((x,k)=>mul(x,q.b[k])).join(' + ')+' = '+q.a.map((x,k)=>paren(x*q.b[k])).join(' + ')+` = <b>${q.v}</b>`;}
+};
+Q.prodCell={
+  gen(){const [m,n,p]=pick([[2,2,2],[2,3,2],[3,2,3],[3,3,3],[2,3,3]]);const A=randMat(m,n,-5,5),B=randMat(n,p,-5,5);const i=rint(0,m-1),j=rint(0,p-1);return{A,B,i,j,C:matMul(A,B)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find entry (${q.i+1}, ${q.j+1}) of the product AB, that is, row ${q.i+1} and column ${q.j+1} of AB.</p>`;
+    el.appendChild(opRow([renderMat(q.A,{label:'A',hlRow:q.i}),'·',renderMat(q.B,{label:'B',hlCol:q.j}),'→',`(AB)<sub>${q.i+1}${q.j+1}</sub> =`,(()=>{const i=document.createElement('input');i.className='num';i.dataset.k='v';return i;})()]));},
+  check(q,el){const ok=gradeNum($('[data-k=v]',el),q.C[q.i][q.j]);return{ok,msg:ok?'':`Use row ${q.i+1} of A (highlighted) and column ${q.j+1} of B (highlighted).`};},
+  solution(q){const a=q.A[q.i],b=q.B.map(r=>r[q.j]);return `Row ${q.i+1} of A times column ${q.j+1} of B: `+a.map((x,k)=>mul(x,b[k])).join(' + ')+' = '+a.map((x,k)=>paren(x*b[k])).join(' + ')+` = <b>${q.C[q.i][q.j]}</b>`;}
+};
+Q.prodFull={
+  gen(sizeOpt,nonneg){
+    let m,n,p;const sizes=[[2,2,2],[2,3,2],[3,2,2],[3,3,3],[2,2,1],[3,3,1]];
+    if(!sizeOpt||sizeOpt==='mix')[m,n,p]=pick(sizes);else [m,n,p]=sizeOpt.split(',').map(Number);
+    const lo=nonneg?0:-5,hi=nonneg?4:5;const A=randMat(m,n,lo,hi),B=randMat(n,p,lo,hi);return{A,B,C:matMul(A,B)};},
+  render(q,el){el.innerHTML='<p class="prompt">Compute the product AB.</p>';
+    const ans=renderMat(zeros(q.C.length,q.C[0].length).map(r=>r.map(()=>null)),{editable:true,label:'AB',dims:true});
+    q.aEl=renderMat(q.A,{label:'A',dims:true});q.bEl=renderMat(q.B,{label:'B',dims:true});
+    el.appendChild(opRow([q.aEl,'·',q.bEl,'=',ans]));
+    const hintBox=document.createElement('div');hintBox.className='expr';hintBox.style.display='none';el.appendChild(hintBox);q.hintBox=hintBox;
+    $$('input',ans).forEach(inp=>inp.addEventListener('focus',()=>{if(q.hintOn)Q.prodFull.hint(q,el);}));},
+  check(q,el){const g=gradeMat(el,q.C);return{ok:g.all,msg:g.all?'':(g.empty?`${g.empty} cell${g.empty>1?'s are':' is'} still empty. `:'')+'Marked cells are wrong. Use Hint on one to see its row and column.'};},
+  hint(q,el){
+    const f=document.activeElement;let i=0,j=0;
+    if(f&&f.classList.contains('cell')&&f.tagName==='INPUT'){i=+f.dataset.i;j=+f.dataset.j;}
+    q.hintOn=true;
+    $$('.cell',q.aEl).forEach(c=>c.classList.toggle('hl-row',+c.dataset.i===i));
+    $$('.cell',q.bEl).forEach(c=>c.classList.toggle('hl-col',+c.dataset.j===j));
+    const a=q.A[i],b=q.B.map(r=>r[j]);
+    q.hintBox.style.display='block';
+    q.hintBox.innerHTML=`<span class="t c">(AB)<sub>${i+1}${j+1}</sub></span> = `+a.map((x,k)=>`<span class="t a">${paren(x)}</span>·<span class="t b">${paren(b[k])}</span>`).join(' + ')+' = ?';
+  },
+  solution(q){const w=document.createElement('div');w.appendChild(renderMat(q.C));
+    const lines=[];q.C.forEach((row,i)=>row.forEach((v,j)=>{const a=q.A[i],b=q.B.map(r=>r[j]);lines.push(`(AB)<sub>${i+1}${j+1}</sub> = `+a.map((x,k)=>mul(x,b[k])).join(' + ')+` = ${v}`);}));
+    return w.innerHTML+'<div class="expr" style="line-height:1.7;font-size:14px">'+lines.join('<br>')+'</div>';}
+};
+Q.tf={
+  pool:[
+    ['For square matrices A and B of the same size, AB = BA.',false,'Matrix multiplication is not commutative. Chapter 7 has random counterexamples.'],
+    ['If I is the identity matrix and the sizes fit, then AI = A.',true,'The identity leaves any matrix unchanged from either side.'],
+    ['(AB)<sup>T</sup> = A<sup>T</sup>B<sup>T</sup>.',false,'The transpose of a product reverses the order: (AB)<sup>T</sup> = B<sup>T</sup>A<sup>T</sup>.'],
+    ['(AB)C = A(BC) whenever the products are defined.',true,'Matrix multiplication is associative.'],
+    ['If A is 2×3 and B is 3×4, then AB is 2×4.',true,'(2×3)(3×4): the inner 3s match, the outer numbers give 2×4.'],
+    ['If A is 2×3 and B is 2×3, then AB is defined.',false,'A has 3 columns but B has 2 rows. AB is not defined (though A<sup>T</sup>B would be).'],
+    ['If AB is the zero matrix, then A or B must be the zero matrix.',false,'Two non-zero matrices can multiply to zero. Chapter 7 shows an example.'],
+    ['A(B + C) = AB + AC.',true,'Multiplication distributes over addition.'],
+    ['The transpose of a 3×2 matrix is a 2×3 matrix.',true,'Transposing swaps the dimensions.'],
+    ['Every square matrix has an inverse.',false,'Only matrices with non-zero determinant have inverses.'],
+    ['A 2×2 matrix with determinant 0 has no inverse.',true,'The inverse formula divides by the determinant, and geometrically the matrix squashes the plane onto a line.'],
+    ['The determinant of the 2×2 identity matrix is 1.',true,'det I = 1·1 − 0·0 = 1. The identity scales area by 1.'],
+    ['If A is 2×3 then AA<sup>T</sup> is 3×3.',false,'A is 2×3 and A<sup>T</sup> is 3×2, so AA<sup>T</sup> is 2×2. It is A<sup>T</sup>A that is 3×3.'],
+    ['Multiplying a matrix by a scalar multiplies every entry by that scalar.',true,'That is the definition of scalar multiplication.'],
+    ['You can add a 2×3 matrix to a 3×2 matrix.',false,'Addition requires identical dimensions.'],
+    ['For a 2×2 matrix A, det(2A) = 2·det(A).',false,'Every entry doubles, so det(2A) = 4·det(A). Area scales by 2 in each direction.'],
+    ['The columns of a 2×2 matrix M are where M sends the basis vectors [1,0] and [0,1].',true,'M·[1,0] picks out column 1 and M·[0,1] picks out column 2.'],
+    ['If AB = AC then B = C.',false,'There is no cancellation law for matrices unless A is invertible.'],
+    ['Entry (i, j) of AB uses row i of A and column j of B.',true,'That is the row-column rule.'],
+    ['A 3×1 matrix is a column vector.',true,'One column, three rows: a column vector.'],
+    ['If A is square, then A<sup>2</sup> = A·A is always defined.',true,'(n×n)(n×n) always works.'],
+    ['Entry (i, j) of A<sup>T</sup> equals entry (j, i) of A.',true,'Transposing swaps the two indices.'],
+  ],
+  gen(){const s=pick(Q.tf.pool);return{s,text:s[0],ans:s[1],why:s[2]};},
+  render(q,el){el.innerHTML=`<p class="prompt">True or false: ${q.text}</p>`;q.get=choiceButtons(el,[{label:'True',value:true},{label:'False',value:false}]);},
+  check(q){const v=q.get();if(v===null)return{ok:false,msg:'Pick one.'};const ok=v===q.ans;return{ok,msg:ok?q.why:'Not quite. Think about it once more, or press Show answer.'};},
+  solution(q){return `<b>${q.ans?'True':'False'}.</b> ${q.why}`;}
+};
+Q.det={
+  gen(){const M=randMat(2,2,-6,6);return{M,d:det2(M)};},
+  render(q,el){el.innerHTML='<p class="prompt">Compute the determinant of this matrix.</p>';el.appendChild(opRow([renderMat(q.M,{label:'A'}),'→','det A =',(()=>{const i=document.createElement('input');i.className='num';i.dataset.k='v';return i;})()]));},
+  check(q,el){const ok=gradeNum($('[data-k=v]',el),q.d);return{ok,msg:ok?'':'det = ad − bc. Mind the signs when b or c is negative.'};},
+  solution(q){const [[a,b],[c,d]]=q.M;return `ad − bc = ${paren(a)}${paren(d)} − ${paren(b)}${paren(c)} = ${a*d} − ${paren(b*c)} = <b>${q.d}</b>`;}
+};
+Q.invertible={
+  gen(){let M;if(Math.random()<0.5){const a=rint(-4,4),b=rint(-4,4),k=pick([-2,-1,2,3]);M=[[a,b],[k*a,k*b]];if(a===0&&b===0)M=[[1,2],[2,4]];}else{M=randMat(2,2,-5,5);if(det2(M)===0)M[0][0]+=1;}return{M,d:det2(M)};},
+  render(q,el){el.innerHTML='<p class="prompt">Does this matrix have an inverse?</p>';el.appendChild(renderMat(q.M));q.get=choiceButtons(el,[{label:'Yes, invertible',value:true},{label:'No, singular',value:false}]);},
+  check(q){const v=q.get();if(v===null)return{ok:false,msg:'Pick one.'};const ok=v===(q.d!==0);return{ok,msg:ok?`det = ${q.d}.`:'Compute ad − bc. Zero means no inverse.'};},
+  solution(q){return `det = ${q.d}, so the matrix is <b>${q.d!==0?'invertible':'singular (no inverse)'}</b>.`;}
+};
+Q.inverse={
+  gen(){let M;do{M=randMat(2,2,-4,4);}while(![1,-1,2,-2].includes(det2(M)));return{M,d:det2(M),Inv:inv2(M)};},
+  render(q,el){el.innerHTML='<p class="prompt">Find the inverse. Fractions like <code>-3/2</code> are fine.</p>';
+    el.appendChild(opRow([renderMat(q.M,{label:'A'}),'→',renderMat([[null,null],[null,null]],{editable:true,label:'A<sup>−1</sup>'})]));},
+  check(q,el){const g=gradeMat(el,q.Inv);return{ok:g.all,msg:g.all?'':`Swap a and d, negate b and c, then divide everything by det = ${q.d}.`};},
+  solution(q){const [[a,b],[c,d]]=q.M;const w=document.createElement('div');w.appendChild(renderMat(q.Inv));return `det = ${q.d}. Swap a and d, negate b and c: [[${d}, ${-b}], [${-c}, ${a}]], then divide by ${q.d}: `+w.innerHTML;}
+};
+
+/* ============================================================ chapter 1: explorer + vocab */
+(function(){
+  let r=3,c=4,M=randMat(r,c,-9,9);
+  const rs=stepper('#exRows',r,1,4,v=>{r=v;M=randMat(r,c,-9,9);draw();});
+  const cs=stepper('#exCols',c,1,4,v=>{c=v;M=randMat(r,c,-9,9);draw();});
+  $('#exNew').onclick=()=>{M=randMat(r,c,-9,9);draw();};
+  function draw(){
+    const box=$('#exMat');box.innerHTML='';const m=renderMat(M,{label:'A',dims:true});box.appendChild(m);
+    $('#exInfo').innerHTML=`This is a <b>${r}×${c}</b> matrix (${r} row${r>1?'s':''}, ${c} column${c>1?'s':''}). Hover an entry.`;
+    $$('.cell',m).forEach(cell=>{
+      cell.onmouseenter=()=>{const i=+cell.dataset.i,j=+cell.dataset.j;
+        $$('.cell',m).forEach(x=>{x.classList.toggle('hl-row',+x.dataset.i===i);x.classList.toggle('hl-col',+x.dataset.j===j);x.classList.toggle('hl-cell',x===cell);});
+        $('#exInfo').innerHTML=`${sub('a',i+1,j+1)} = <b>${M[i][j]}</b><br><span style="color:var(--muted)">row ${i+1} <i class="dot" style="background:var(--row);vertical-align:middle"></i>, column ${j+1} <i class="dot" style="background:var(--col);vertical-align:middle"></i></span>`;};
+    });
+    m.onmouseleave=()=>{$$('.cell',m).forEach(x=>x.classList.remove('hl-row','hl-col','hl-cell'));};
+  }
+  draw();
+  const v=$('#vocabRow');
+  v.appendChild(renderMat([[2,-1,4]],{label:'row vector',dims:true}));
+  v.appendChild(renderMat([[3],[0],[-2]],{label:'column vector',dims:true}));
+  v.appendChild(renderMat([[1,5],[-2,7]],{label:'square (2×2)',dims:true}));
+  v.appendChild(renderMat([[4,1,0],[2,-3,6],[9,8,5]],{label:'main diagonal shaded',cellClass:(i,j)=>i===j?'hl-cell':''}));
+  new Drill({mount:'#drill-basics',section:'basics',goal:6,...mixDrill([Q.dimsOf,Q.entry,Q.locate])});
+})();
+
+/* ============================================================ chapter 2: transpose, identity */
+(function(){
+  let r=2,c=3,A=randMat(r,c,-9,9);
+  stepper('#trRows',r,1,4,v=>{r=v;A=randMat(r,c,-9,9);draw();});
+  stepper('#trCols',c,1,4,v=>{c=v;A=randMat(r,c,-9,9);draw();});
+  $('#trNew').onclick=()=>{A=randMat(r,c,-9,9);draw();};
+  function draw(){
+    const box=$('#trRow');box.innerHTML='';const T=matT(A);
+    const ma=renderMat(A,{label:'A',dims:true}),mt=renderMat(T,{label:'A<sup>T</sup>',dims:true});
+    box.appendChild(opRow([ma,'→',mt]));
+    const link=(src,dst,swap)=>$$('.cell',src).forEach(cell=>{
+      cell.onmouseenter=()=>{const i=+cell.dataset.i,j=+cell.dataset.j;
+        $$('.cell',src).forEach(x=>x.classList.toggle('hl-cell',x===cell));
+        $$('.cell',dst).forEach(x=>x.classList.toggle('hl-cell',+x.dataset.i===j&&+x.dataset.j===i));
+        $$('.cell',src).forEach(x=>x.classList.toggle('hl-row',+x.dataset.i===i&&x!==cell));
+        $$('.cell',dst).forEach(x=>x.classList.toggle('hl-col',+x.dataset.j===i&&!(+x.dataset.i===j)));};
+      });
+    link(ma,mt);link(mt,ma);
+    box.onmouseleave=()=>$$('.cell',box).forEach(x=>x.classList.remove('hl-cell','hl-row','hl-col'));
+  }
+  draw();
+  const idr=$('#idRow');[2,3,4].forEach(n=>idr.appendChild(renderMat(ident(n),{label:`I<sub>${n}</sub>`,cellClass:(i,j)=>i===j?'hl-cell':''})));
+  new Drill({mount:'#drill-special',section:'special',goal:5,...mixDrill([Q.transpose,Q.transpose,Q.identityQ])});
+})();
+
+/* ============================================================ chapter 3: add and scale */
+(function(){
+  const A=[[1,-2,3],[0,4,-1]],B=[[5,2,-3],[2,-4,6]];
+  $('#addDemo').appendChild(opRow([renderMat(A,{label:'A'}),'+',renderMat(B,{label:'B'}),'=',renderMat(matAdd(A,B),{label:'A + B',fmt:(v,i,j)=>`<span style="font-size:12px;color:var(--muted)">${A[i][j]}+${paren(B[i][j])}=</span>${v}`})]));
+  const C=[[2,-1],[0,3]];
+  $('#scaleDemo').appendChild(opRow(['3 ·',renderMat(C,{label:'A'}),'=',renderMat(matScale(3,C),{label:'3A',fmt:(v,i,j)=>`<span style="font-size:12px;color:var(--muted)">3·${paren(C[i][j])}=</span>${v}`})]));
+  new Drill({mount:'#drill-addscale',section:'addscale',goal:5,...mixDrill([Q.add,Q.scale,Q.combo])});
+})();
+
+/* ============================================================ chapter 4: dimensions */
+(function(){
+  let a1=2,a2=3,b1=3,b2=4;
+  const draw=()=>{
+    const ok=a2===b1;const v=$('#dimsView');
+    v.innerHTML=`<div style="font-family:ui-monospace,Menlo,monospace;font-size:24px">(${a1} × <span class="inner">${a2}</span>) · (<span class="inner" style="${ok?'':'color:var(--bad-strong)'}">${b1}</span> × ${b2})
+      &nbsp;=&nbsp; ${ok?`<span class="outer">${a1} × ${b2}</span>`:'<span style="color:var(--bad-strong)">not defined</span>'}</div>
+      <p style="margin-top:8px;color:var(--muted)">${ok?`A has ${a2} columns and B has ${b1} rows. They match, so each entry of AB is a sum of ${a2} products. The result has ${a1} rows (from A) and ${b2} columns (from B).`:`A has ${a2} columns but B has ${b1} rows. Rows of A have ${a2} entries and columns of B have ${b1}, so they cannot be paired up.`}</p>
+      <div class="row" style="margin-top:6px"></div>`;
+    const row=$('.row',v);
+    row.appendChild(renderMat(zeros(a1,a2),{label:'A',dims:true,fmt:()=>'·',cellClass:(i,j)=>i===0?'hl-row':''}));
+    row.appendChild(document.createTextNode(' '));
+    row.appendChild(renderMat(zeros(b1,b2),{label:'B',dims:true,fmt:()=>'·',cellClass:(i,j)=>j===0?'hl-col':''}));
+    if(ok){const s=document.createElement('span');s.className='op';s.textContent='=';row.appendChild(s);row.appendChild(renderMat(zeros(a1,b2),{label:'AB',dims:true,fmt:()=>'·',cellClass:(i,j)=>i===0&&j===0?'hl-cell':''}));}
+  };
+  stepper('#dA1',a1,1,5,v=>{a1=v;draw();});stepper('#dA2',a2,1,5,v=>{a2=v;draw();});
+  stepper('#dB1',b1,1,5,v=>{b1=v;draw();});stepper('#dB2',b2,1,5,v=>{b2=v;draw();});
+  draw();
+  new Drill({mount:'#drill-dims',section:'dims',goal:8,...mixDrill([Q.prodDefined])});
+})();
+
+/* ============================================================ chapter 5: walkthrough */
+const walk=(function(){
+  let A,B,C,m,n,p,step=0,timer=null;
+  const total=()=>m*p*(n+1);
+  function newMats(){const [mm,nn,pp]=$('#wkSize').value.split(',').map(Number);m=mm;n=nn;p=pp;A=randMat(m,n,-4,5);B=randMat(n,p,-4,5);C=matMul(A,B);step=0;stop();draw();}
+  function draw(){
+    const e=Math.floor(step/(n+1)),k=step%(n+1),i=Math.floor(e/p),j=e%p;
+    const box=$('#wkMats');box.innerHTML='';
+    const ma=renderMat(A,{label:'A',dims:true,hlRow:i,cellClass:(ii,jj)=>ii===i?(jj===k&&k<n?'now':(jj<k?'':'dim')):''});
+    const mb=renderMat(B,{label:'B',dims:true,hlCol:j,cellClass:(ii,jj)=>jj===j?(ii===k&&k<n?'now':(ii<k?'':'dim')):''});
+    const partial=C.map((row,ii)=>row.map((v,jj)=>{const ee=ii*p+jj;return ee<e||(ee===e&&k===n)?v:'?';}));
+    const mc=renderMat(partial,{label:'AB',dims:true,cellClass:(ii,jj)=>ii===i&&jj===j?'hl-cell now':(ii*p+jj<e?'':'dim')});
+    box.appendChild(opRow([ma,'·',mb,'=',mc]));
+    const a=A[i],b=B.map(r=>r[j]);
+    const sym=a.map((_,kk)=>`<span class="${kk<=k-1||k===n?'':'faint'}"><span class="t a">${sub('a',i+1,kk+1)}</span><span class="t b">${sub('b',kk+1,j+1)}</span></span>`).join(' + ');
+    const vals=a.map((x,kk)=>`<span class="${kk<k?'':'faint'}"><span class="t a ${kk===k-1?'now':''}">${paren(x)}</span>·<span class="t b ${kk===k-1?'now':''}">${paren(b[kk])}</span></span>`).join(' + ');
+    const prods=a.map((x,kk)=>`<span class="${kk<k?'':'faint'}">${paren(x*b[kk])}</span>`).join(' + ');
+    $('#wkExpr').innerHTML=`<span class="t c">(AB)<sub>${i+1}${j+1}</sub></span> = ${sym}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${vals}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${prods}${k===n?` = <span class="t c now"><b>${C[i][j]}</b></span>`:''}`;
+    const status=k===0?`Entry (${i+1}, ${j+1}): take row ${i+1} of A and column ${j+1} of B.`:k<n?`Term ${k} of ${n}: multiply the ${k}${['st','nd','rd'][k-1]||'th'} entry of the row by the ${k}${['st','nd','rd'][k-1]||'th'} entry of the column.`:`Add the ${n} products. Entry (${i+1}, ${j+1}) of AB is ${C[i][j]}.`;
+    $('#wkStatus').textContent=(step===total()-1?'Done. Every entry is filled. ':'')+status;
+    $('#wkPrev').disabled=step===0;$('#wkNext').disabled=step===total()-1;
+  }
+  function go(s){step=Math.max(0,Math.min(total()-1,s));draw();}
+  function stop(){if(timer){clearInterval(timer);timer=null;$('#wkPlay').textContent='Auto play';$('#wkPlay').classList.remove('on');}}
+  $('#wkNext').onclick=()=>{stop();go(step+1);};
+  $('#wkPrev').onclick=()=>{stop();go(step-1);};
+  $('#wkEntry').onclick=()=>{stop();const e=Math.floor(step/(n+1));go(e*(n+1)+n);};
+  $('#wkReset').onclick=()=>{stop();go(0);};
+  $('#wkNew').onclick=newMats;$('#wkSize').onchange=newMats;
+  $('#wkPlay').onclick=()=>{if(timer)return stop();if(step>=total()-1)step=0;$('#wkPlay').textContent='Pause';$('#wkPlay').classList.add('on');timer=setInterval(()=>{if(step>=total()-1)return stop();go(step+1);},850);};
+  document.addEventListener('keydown',e=>{
+    if(!$('section[data-id=walk]').classList.contains('active'))return;
+    if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName))return;
+    if(e.key==='ArrowRight'){e.preventDefault();stop();go(step+1);}
+    if(e.key==='ArrowLeft'){e.preventDefault();stop();go(step-1);}
+  });
+  newMats();
+  new Drill({mount:'#drill-walk',section:'walk',goal:6,...mixDrill([Q.dot,Q.prodCell,Q.prodCell])});
+  return{};
+})();
+
+/* ============================================================ chapter 6: drills */
+(function(){
+  new Drill({mount:'#drill-mult',section:'mult',goal:6,
+    gen(){return Q.prodFull.gen($('#mdSize').value,$('#mdNonneg').checked);},
+    render:Q.prodFull.render,check:Q.prodFull.check,solution:Q.prodFull.solution,hint:Q.prodFull.hint});
+})();
+
+/* ============================================================ chapter 7: properties */
+(function(){
+  function comm(){
+    const A=randMat(2,2,-3,3),B=randMat(2,2,-3,3);const AB=matMul(A,B),BA=matMul(B,A);
+    const box=$('#commRow');box.innerHTML='';
+    let diff=0;const cc=(i,j)=>AB[i][j]!==BA[i][j]?'bad':'';
+    AB.forEach((r,i)=>r.forEach((v,j)=>{if(v!==BA[i][j])diff++;}));
+    box.appendChild(opRow([renderMat(A,{label:'A'}),renderMat(B,{label:'B'}),'&nbsp;',renderMat(AB,{label:'AB',cellClass:cc}),'vs',renderMat(BA,{label:'BA',cellClass:cc})]));
+    $('#commNote').textContent=diff?`${diff} of 4 entries differ. AB ≠ BA.`:'They happen to agree this time. That is rare. Roll again.';
+  }
+  $('#commNew').onclick=comm;comm();
+  const A=randMat(2,3,-5,5);
+  $('#idDemo').appendChild(opRow([renderMat(ident(2),{label:'I<sub>2</sub>'}),'·',renderMat(A,{label:'A'}),'=',renderMat(matMul(ident(2),A),{label:'A again'})]));
+  $('#idDemo').appendChild(opRow([renderMat(A,{label:'A'}),'·',renderMat(ident(3),{label:'I<sub>3</sub>'}),'=',renderMat(matMul(A,ident(3)),{label:'A again'})]));
+  const Z1=[[1,1],[1,1]],Z2=[[1,-1],[-1,1]];
+  $('#zeroDemo').appendChild(opRow([renderMat(Z1),'·',renderMat(Z2),'=',renderMat(matMul(Z1,Z2))]));
+  new Drill({mount:'#drill-props',section:'props',goal:8,...mixDrill([Q.tf])});
+})();
+
+/* ============================================================ chapter 8: transformations */
+const PRESETS=[
+  ['Identity',[[1,0],[0,1]]],
+  ['Rotate 90°',[[0,-1],[1,0]]],
+  ['Rotate 45°',[[0.7,-0.7],[0.7,0.7]]],
+  ['Scale ×2',[[2,0],[0,2]]],
+  ['Stretch x',[[2,0],[0,1]]],
+  ['Shear',[[1,1],[0,1]]],
+  ['Flip vertically',[[1,0],[0,-1]]],
+  ['Flip horizontally',[[-1,0],[0,1]]],
+  ['Swap axes',[[0,1],[1,0]]],
+  ['Squash to a line',[[1,2],[0.5,1]]],
+  ['Project onto x-axis',[[1,0],[0,0]]],
+];
+const SHAPE=[[0,0],[0,2],[1.2,2],[1.2,1.6],[0.4,1.6],[0.4,1.2],[1,1.2],[1,0.8],[0.4,0.8],[0.4,0]].map(([x,y])=>[x*0.9,y*0.9]);
+function arrow(ctx,x0,y0,x1,y1,color,w=2.5){
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
+  const ang=Math.atan2(y1-y0,x1-x0),L=10;if(Math.hypot(x1-x0,y1-y0)<2)return;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x1-L*Math.cos(ang-.45),y1-L*Math.sin(ang-.45));ctx.lineTo(x1-L*Math.cos(ang+.45),y1-L*Math.sin(ang+.45));ctx.closePath();ctx.fill();
+}
+function drawScene(canvas,M,o={}){
+  const ctx=canvas.getContext('2d');const dpr=window.devicePixelRatio||1;
+  const W=canvas.clientWidth||300,H=canvas.clientHeight||W;
+  if(canvas.width!==Math.round(W*dpr)||canvas.height!==Math.round(H*dpr)){canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);}
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  const R=o.range||3.5,s=W/(2*R);
+  const px=(x,y)=>[W/2+x*s,H/2-y*s];
+  const ap=(x,y)=>[M[0][0]*x+M[0][1]*y,M[1][0]*x+M[1][1]*y];
+  const line=(a,b,color,w)=>{ctx.strokeStyle=color;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(...px(...a));ctx.lineTo(...px(...b));ctx.stroke();};
+  const G=8;
+  for(let k=-G;k<=G;k++){line([k,-G],[k,G],'#eeece6',1);line([-G,k],[G,k],'#eeece6',1);}
+  line([-G,0],[G,0],'#d9d6ce',1.2);line([0,-G],[0,G],'#d9d6ce',1.2);
+  for(let k=-G;k<=G;k++){const c=k===0?'#8b877e':'#b9b5ab';line(ap(k,-G),ap(k,G),c,k===0?1.5:1);line(ap(-G,k),ap(G,k),c,k===0?1.5:1);}
+  // unit square
+  ctx.fillStyle='rgba(59,91,219,.10)';ctx.beginPath();[[0,0],[1,0],[1,1],[0,1]].forEach((pt,i)=>{const q=px(...ap(...pt));i?ctx.lineTo(...q):ctx.moveTo(...q);});ctx.closePath();ctx.fill();
+  // shape
+  if(o.shape!==false){ctx.fillStyle='rgba(124,58,237,.35)';ctx.strokeStyle='rgba(124,58,237,.8)';ctx.lineWidth=1.5;ctx.beginPath();SHAPE.forEach((pt,i)=>{const q=px(...ap(...pt));i?ctx.lineTo(...q):ctx.moveTo(...q);});ctx.closePath();ctx.fill();ctx.stroke();}
+  // basis
+  const o0=px(0,0);
+  arrow(ctx,...o0,...px(...ap(1,0)),'#d97706',3);arrow(ctx,...o0,...px(...ap(0,1)),'#2563eb',3);
+  ctx.font='600 13px -apple-system,Segoe UI,sans-serif';
+  const l1=px(...ap(1,0)),l2=px(...ap(0,1));ctx.fillStyle='#d97706';ctx.fillText('î',l1[0]+6,l1[1]-6);ctx.fillStyle='#2563eb';ctx.fillText('ĵ',l2[0]+6,l2[1]-6);
+  if(o.v){
+    const v=o.v,mv=ap(...v);
+    arrow(ctx,...o0,...px(...v),'#8b877e',2.5);arrow(ctx,...o0,...px(...mv),'#16a34a',3.5);
+    const pv=px(...v);ctx.fillStyle='#8b877e';ctx.beginPath();ctx.arc(pv[0],pv[1],7,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(pv[0],pv[1],3,0,7);ctx.fill();
+    ctx.fillStyle='#57534e';ctx.fillText('v',pv[0]+9,pv[1]+4);const pm=px(...mv);ctx.fillStyle='#16a34a';ctx.fillText('Mv',pm[0]+9,pm[1]+4);
+  }
+}
+let xfM=[[1,0],[0,1]],xfVec=[1.5,1],xfAnimated=false,xfComposed=false;
+const xfCanvas=$('#xfCanvas');
+function drawMain(){
+  drawScene(xfCanvas,xfM,{v:$('#xfVec').checked?xfVec:null});
+  const box=$('#xfMat');box.innerHTML='';box.appendChild(renderMat(xfM,{fmt:fmtDec,cellClass:(i,j)=>j===0?'hl-row':'hl-col'}));
+  const d=det2(xfM);
+  $('#xfDet').innerHTML=`det M = ${fmtDec(d)}<br><span style="color:var(--muted);font-size:13px">area × ${fmtDec(Math.abs(d))}${d<0?', orientation flipped':d===0?', collapsed to a line':''}</span>`;
+  if($('#xfVec').checked){const [x,y]=xfVec,[a,b]=xfM[0],[c,dd]=xfM[1];
+    $('#xfVecOut').innerHTML=`Mv = ${fmtDec(x)}·[${fmtDec(a)}, ${fmtDec(c)}] + ${fmtDec(y)}·[${fmtDec(b)}, ${fmtDec(dd)}] = <b>[${fmtDec(a*x+b*y)}, ${fmtDec(c*x+dd*y)}]</b><br><span style="color:var(--muted);font-size:13px">x copies of column 1 plus y copies of column 2</span>`;}
+  else $('#xfVecOut').innerHTML='';
+}
+function syncSliders(){$('#sa').value=xfM[0][0];$('#sb').value=xfM[0][1];$('#sc').value=xfM[1][0];$('#sd').value=xfM[1][1];}
+['sa','sb','sc','sd'].forEach(id=>$('#'+id).addEventListener('input',()=>{xfM=[[+$('#sa').value,+$('#sb').value],[+$('#sc').value,+$('#sd').value]];drawMain();}));
+$('#xfVec').onchange=drawMain;
+PRESETS.forEach(([name,M])=>{const b=document.createElement('button');b.className='btn small';b.textContent=name;b.onclick=()=>{xfM=M.map(r=>r.slice());syncSliders();animateTo();};$('#xfPresets').appendChild(b);});
+let animRaf=null;
+function animateTo(){
+  const target=xfM.map(r=>r.slice());const I=ident(2);const t0=performance.now();if(animRaf)cancelAnimationFrame(animRaf);
+  const f=now=>{let t=Math.min(1,(now-t0)/900);const e=t<.5?2*t*t:-1+(4-2*t)*t;
+    xfM=I.map((r,i)=>r.map((v,j)=>v+(target[i][j]-v)*e));drawMain();if(t<1)animRaf=requestAnimationFrame(f);else{xfM=target;drawMain();}};
+  animRaf=requestAnimationFrame(f);
+  xfAnimated=true;if(xfComposed)markDone('geom');
+}
+$('#xfAnimate').onclick=animateTo;
+(function(){
+  let drag=false;
+  const toWorld=e=>{const r=xfCanvas.getBoundingClientRect();const R=3.5,s=r.width/(2*R);return[Math.round(((e.clientX-r.left)-r.width/2)/s*2)/2,Math.round((r.height/2-(e.clientY-r.top))/s*2)/2];};
+  xfCanvas.addEventListener('pointerdown',e=>{if(!$('#xfVec').checked){$('#xfVec').checked=true;}drag=true;xfCanvas.setPointerCapture(e.pointerId);xfVec=toWorld(e);drawMain();});
+  xfCanvas.addEventListener('pointermove',e=>{if(!drag)return;xfVec=toWorld(e);drawMain();});
+  xfCanvas.addEventListener('pointerup',()=>drag=false);
+})();
+// composition
+(function(){
+  const s1=$('#cmp1'),s2=$('#cmp2');
+  PRESETS.forEach(([name],i)=>{s1.add(new Option(name,i));s2.add(new Option(name,i));});
+  s1.value=5;s2.value=1;
+  window.drawComp=function(){
+    const M1=PRESETS[+s1.value][1],M2=PRESETS[+s2.value][1],P=matMul(M2,M1);
+    drawScene($('#cmpC0'),ident(2),{range:3});drawScene($('#cmpC1'),M1,{range:3});drawScene($('#cmpC2'),P,{range:3});
+    const box=$('#cmpMats');box.innerHTML='';
+    box.appendChild(opRow([renderMat(M2,{label:'M<sub>2</sub> (second)',fmt:fmtDec}),'·',renderMat(M1,{label:'M<sub>1</sub> (first)',fmt:fmtDec}),'=',renderMat(P,{label:'M<sub>2</sub>M<sub>1</sub>',fmt:fmtDec})]));
+  };
+  const changed=()=>{drawComp();xfComposed=true;if(xfAnimated)markDone('geom');};
+  s1.onchange=changed;s2.onchange=changed;
+  $('#cmpSwap').onclick=()=>{const t=s1.value;s1.value=s2.value;s2.value=t;changed();};
+  drawComp();
+})();
+window.addEventListener('resize',()=>{if($('section[data-id=geom]').classList.contains('active')){drawMain();drawComp();}});
+drawMain();
+
+/* ============================================================ chapter 9: determinant */
+(function(){
+  $('#detFormula').appendChild(opRow(['det',renderMat([['a','b'],['c','d']]),'= ad − bc']));
+  $('#invFormula').appendChild(opRow([renderMat([['a','b'],['c','d']]),'<sup>−1</sup> = <span style="font-size:18px">1/(ad − bc)</span> ·',renderMat([['d','−b'],['−c','a']])]));
+  function demo(){
+    let M;do{M=randMat(2,2,-4,4);}while(![1,-1,2,-2,3,-3].includes(det2(M)));
+    const Inv=inv2(M);const box=$('#invDemo');box.innerHTML='';
+    box.appendChild(opRow([renderMat(M,{label:`A (det = ${det2(M)})`}),'·',renderMat(Inv,{label:'A<sup>−1</sup>'}),'=',renderMat(matMul(M,Inv).map(r=>r.map(v=>Math.round(v*1e9)/1e9)),{label:'I',cellClass:(i,j)=>i===j?'hl-cell':''})]));
+  }
+  $('#invNew').onclick=demo;demo();
+  new Drill({mount:'#drill-det',section:'det',goal:6,...mixDrill([Q.det,Q.det,Q.invertible,Q.inverse])});
+})();
+
+/* ============================================================ chapter 10: quiz */
+(function(){
+  const box=$('#quizBox');const N=10;
+  const types=[Q.dimsOf,Q.entry,Q.prodDefined,Q.prodDefined,Q.prodCell,Q.prodCell,{...Q.prodFull,gen:()=>Q.prodFull.gen('2,2,2')},Q.det,Q.tf,Q.transpose,Q.add,Q.inverse];
+  let qs,idx,score,log;
+  function start(){
+    qs=[];const pool=types.slice();while(qs.length<N){const t=pool.length?pool.splice(Math.floor(Math.random()*pool.length),1)[0]:pick(types);const q=t.gen();q.type=t;qs.push(q);}
+    idx=0;score=0;log=[];ask();
+  }
+  function ask(){
+    const q=qs[idx];
+    box.innerHTML=`<div class="quiz-head"><span>Question ${idx+1} of ${N}</span><span>Score ${score}</span></div><div class="qbar"><i style="width:${100*idx/N}%"></i></div>
+      <div class="drill"><div class="q"></div><div class="fb"></div><div class="drill-bar"><button class="btn primary check">Check</button><button class="btn next" style="display:none">Next ▶</button></div></div>`;
+    const qEl=$('.q',box),fb=$('.fb',box);q.type.render(q,qEl);
+    let answered=false;
+    const check=()=>{
+      if(answered)return;const r=q.type.check(q,qEl);
+      if(!r.ok&&r.msg&&/pick|click|choose/i.test(r.msg)&&!q.tried){fb.className='fb bad';fb.textContent=r.msg;return;}
+      answered=true;if(r.ok)score++;log.push({q,ok:r.ok});
+      fb.className='fb '+(r.ok?'good':'bad');fb.innerHTML=(r.ok?'Correct. ':'Incorrect. ')+'<div class="sol">'+q.type.solution(q,qEl)+'</div>';
+      $('.check',box).style.display='none';$('.next',box).style.display='';$('.next',box).focus();$('.quiz-head span:last-child',box).textContent='Score '+score;
+    };
+    $('.check',box).onclick=check;
+    $('.next',box).onclick=()=>{idx++;if(idx<N)ask();else finish();};
+    box.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();if(answered)$('.next',box).click();else check();}};
+    const f=$('input',qEl);if(f)f.focus();
+  }
+  function finish(){
+    const pass=score>=8;if(pass)markDone('quiz');
+    box.innerHTML=`<div class="result">${score} / ${N}</div><p>${pass?'You have the foundations. Nicely done.':score>=6?'Close. Review the chapters for the questions you missed, then try again.':'Keep drilling. The practice boxes never run out of problems.'}</p>
+      <ul class="review">${log.map((l,i)=>`<li>${l.ok?'✅':'❌'} Q${i+1}: ${l.q.type===Q.tf?'true/false':l.q.type===Q.prodFull?'full product':l.q.type===Q.prodCell?'one entry of a product':l.q.type===Q.prodDefined?'is the product defined':l.q.type===Q.dimsOf?'dimensions':l.q.type===Q.entry?'entry lookup':l.q.type===Q.det?'determinant':l.q.type===Q.transpose?'transpose':l.q.type===Q.add?'addition':l.q.type===Q.inverse?'inverse':'question'}</li>`).join('')}</ul>
+      <button class="btn primary" id="quizAgain">Take it again</button>`;
+    $('#quizAgain').onclick=start;box.onkeydown=null;
+  }
+  start();
+})();
+
+/* boot */
+show(location.hash.slice(1)||'welcome');
+</script>
+</body>
+</html>

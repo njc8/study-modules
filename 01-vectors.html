@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vectors in Space</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 1 · Stewart 12.1 to 12.4</p>
+  <h2>Vectors in space</h2>
+  <p class="lead">Everything in multivariable calculus is built on vectors. This module makes the four core operations automatic: components, arithmetic, the dot product, and the cross product.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag around, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats are flexible: vectors can be typed as <code>&lt;1, -2, 3&gt;</code>, <code>(1,-2,3)</code>, or <code>i - 2j + 3k</code>. Numbers can be exact, like <code>3/4</code>, <code>sqrt(2)/2</code>, <code>6sqrt(10)</code>, or <code>pi/3</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>Answer boxes work like WebAssign's calcPad: type <code>sqrt</code> and a radical appears, <code>/</code> makes a fraction, <code>^</code> an exponent, <code>pi</code> the symbol, <code>&lt;</code> and <code>&gt;</code> the vector brackets. Type <code>|</code> for absolute value and <code>theta</code> for θ. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it, and press <kbd>Enter</kbd> to check.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> vector <b>a</b> (or the first thing)</span>
+      <span><i class="dot" style="background:var(--b)"></i> vector <b>b</b> (or the second)</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result</span>
+      <span><i class="dot" style="background:var(--d)"></i> points and curves</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Read off the vector between two points, its length, and the unit vector in its direction.</li>
+      <li>Add, subtract, and scale vectors in components and in the \(\mathbf{i},\mathbf{j},\mathbf{k}\) notation.</li>
+      <li>Compute dot products and use them for angles, orthogonality tests, projections, and work.</li>
+      <li>Compute cross products from the determinant, and use them for normals, areas, and volumes.</li>
+      <li>Say instantly which product gives a number and which gives a vector, and what each one measures.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 COORDINATES -->
+<section data-id="coords" data-title="Points and vectors in space" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 12.1 to 12.2</p>
+  <h2>Points and vectors in space</h2>
+  <p class="lead">Three coordinates locate a point. Two points define a vector. One formula gives every length.</p>
+
+  <p>A point in space is an ordered triple \(P(x,y,z)\). The axes are drawn so that \(x\) comes toward you, \(y\) goes to the right, and \(z\) goes up (the <b>right-handed</b> convention: curl the fingers of your right hand from \(x\) to \(y\) and your thumb points along \(z\)).</p>
+  <div class="card">
+    <h4>Explore: locate a point</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="ptScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. Dashed lines drop the point to the \(xy\)-plane and then to the axes.</p></div>
+      <div>
+        <div class="sliders three" id="ptSliders"></div>
+        <div class="readout" id="ptOut"></div>
+        <p class="hint">The distance from the origin uses the Pythagorean theorem twice: once in the \(xy\)-plane, once up the \(z\) direction. That is why the formula has three squares.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula">\(|P_1P_2| = \sqrt{(x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2}\)<span class="cap">Distance between two points. The same expression is the length of the vector from one point to the other.</span></div>
+
+  <h3>Vectors: displacement, not location</h3>
+  <p>A <b>vector</b> has a magnitude and a direction but no fixed position. The vector from \(P(x_1,y_1,z_1)\) to \(Q(x_2,y_2,z_2)\) is found by subtracting <b>terminal minus initial</b>:</p>
+  <div class="formula">\(\overrightarrow{PQ}=\langle x_2-x_1,\; y_2-y_1,\; z_2-z_1\rangle\)<span class="cap">Angle brackets mean components. The <b>position vector</b> of a point is the vector from the origin to it, so its components equal the coordinates.</span></div>
+  <p>The <b>magnitude</b> (length) of \(\mathbf{a}=\langle a_1,a_2,a_3\rangle\) is \(|\mathbf{a}|=\sqrt{a_1^2+a_2^2+a_3^2}\). A vector of length 1 is a <b>unit vector</b>.</p>
+
+  <div class="card">
+    <h4>Explore: the vector between two points</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="pqScene"></canvas></div>
+      <div>
+        <div class="row" style="gap:4px;margin-bottom:8px"><span style="width:26px;font-weight:600">P</span> ( <span id="p1"></span>, <span id="p2"></span>, <span id="p3"></span> )</div>
+        <div class="row" style="gap:4px"><span style="width:26px;font-weight:600">Q</span> ( <span id="q1"></span>, <span id="q2"></span>, <span id="q3"></span> )</div>
+        <div class="readout" id="pqOut"></div>
+        <p class="hint">Move Q and watch the components: each component of \(\overrightarrow{PQ}\) is how far you travel along that axis to get from P to Q. Move P and Q together and the vector does not change at all.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Sign check.</b> \(\overrightarrow{QP}=-\overrightarrow{PQ}\). If your vector points the wrong way, you subtracted in the wrong order.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-coords"></div>
+</section>
+
+<!-- ============================================================ 2 ARITHMETIC -->
+<section data-id="arith" data-title="Vector arithmetic" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 12.2</p>
+  <h2>Vector arithmetic</h2>
+  <p class="lead">Addition is tip to tail. Scaling stretches. Everything happens one component at a time.</p>
+
+  <p>For \(\mathbf{a}=\langle a_1,a_2,a_3\rangle\), \(\mathbf{b}=\langle b_1,b_2,b_3\rangle\), and a scalar \(c\):</p>
+  <div class="formula">\(\mathbf{a}+\mathbf{b}=\langle a_1+b_1,\,a_2+b_2,\,a_3+b_3\rangle \qquad c\,\mathbf{a}=\langle ca_1,\,ca_2,\,ca_3\rangle \qquad |c\,\mathbf{a}| = |c|\,|\mathbf{a}|\)</div>
+  <p>Geometrically, \(\mathbf{a}+\mathbf{b}\) is found by placing the tail of \(\mathbf{b}\) at the tip of \(\mathbf{a}\) (the <b>triangle law</b>), or equivalently as the diagonal of the parallelogram spanned by both. The difference \(\mathbf{a}-\mathbf{b}\) is the vector that goes <b>from the tip of \(\mathbf{b}\) to the tip of \(\mathbf{a}\)</b>, because \(\mathbf{b}+(\mathbf{a}-\mathbf{b})=\mathbf{a}\).</p>
+
+  <div class="card">
+    <h4>Explore: drag the tips of a and b</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="addPlot"></canvas></div>
+      <div>
+        <div class="controls">
+          <label class="chk"><input type="checkbox" id="showSum" checked> show a + b</label>
+          <label class="chk"><input type="checkbox" id="showDiff"> show a − b</label>
+          <label class="chk"><input type="checkbox" id="showPara" checked> parallelogram</label>
+        </div>
+        <div class="readout" id="addOut"></div>
+        <p class="hint">Notice that a + b and a − b are the two diagonals of the same parallelogram. Drag b onto the same line as a to see what happens to the parallelogram's area (Chapter 4 explains why).</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Standard basis vectors</h3>
+  <p>\(\mathbf{i}=\langle 1,0,0\rangle\), \(\mathbf{j}=\langle 0,1,0\rangle\), \(\mathbf{k}=\langle 0,0,1\rangle\). Any vector is a combination of them: \(\langle a_1,a_2,a_3\rangle = a_1\mathbf{i}+a_2\mathbf{j}+a_3\mathbf{k}\). A missing letter means that component is 0: \(\mathbf{i}-7\mathbf{k}=\langle 1,0,-7\rangle\).</p>
+
+  <h3>Unit vectors</h3>
+  <p>To get a unit vector in the direction of \(\mathbf{a}\), divide by the length: \(\mathbf{u}=\dfrac{\mathbf{a}}{|\mathbf{a}|}\). This is used constantly: directional derivatives, projections, and the tangent vector all need a direction with the length stripped out.</p>
+  <div class="note"><b>Two-step habit.</b> First compute the length. Then divide every component by it. Leave the answer as fractions or with a square root, for example \(\langle \tfrac{2}{3}, -\tfrac{1}{3}, \tfrac{2}{3}\rangle\) or \(\langle \tfrac{1}{\sqrt{5}}, \tfrac{2}{\sqrt{5}}\rangle\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-arith"></div>
+</section>
+
+<!-- ============================================================ 3 DOT PRODUCT -->
+<section data-id="dotp" data-title="The dot product" data-goal="8">
+  <p class="eyebrow">Chapter 3 · Stewart 12.3</p>
+  <h2>The dot product</h2>
+  <p class="lead">A product of two vectors that gives a <b>number</b>. It measures how much the two vectors point the same way.</p>
+
+  <div class="formula">\(\mathbf{a}\cdot\mathbf{b}=a_1b_1+a_2b_2+a_3b_3 \qquad\text{and also}\qquad \mathbf{a}\cdot\mathbf{b}=|\mathbf{a}|\,|\mathbf{b}|\cos\theta\)<span class="cap">Multiply matching components and add. The second form connects that number to the angle \(\theta\) between the vectors (\(0\le\theta\le\pi\)).</span></div>
+  <p>Because the two formulas agree, you can solve for the angle:</p>
+  <div class="formula">\(\cos\theta=\dfrac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}|\,|\mathbf{b}|}\)</div>
+  <ul>
+    <li>\(\mathbf{a}\cdot\mathbf{b}>0\): the angle is acute, the vectors lean the same way.</li>
+    <li>\(\mathbf{a}\cdot\mathbf{b}=0\): the vectors are <b>orthogonal</b> (perpendicular). This is the single most used test in the course.</li>
+    <li>\(\mathbf{a}\cdot\mathbf{b}<0\): the angle is obtuse.</li>
+    <li>\(\mathbf{a}\cdot\mathbf{a}=|\mathbf{a}|^2\). A dot product of a vector with itself is its length squared.</li>
+  </ul>
+  <p><b>Parallel</b> vectors are a different test: \(\mathbf{b}\) is parallel to \(\mathbf{a}\) when \(\mathbf{b}=c\,\mathbf{a}\) for some scalar \(c\), which means every component ratio \(b_i/a_i\) is the same number.</p>
+
+  <div class="card">
+    <h4>Explore: angle and projection</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="dotPlot"></canvas><p class="plotcap">Drag the tips. The green vector is the projection of b onto a: the shadow b casts on the line through a.</p></div>
+      <div>
+        <div class="readout" id="dotOut"></div>
+        <p class="hint">Drag b around a full circle and watch the dot product swing from positive, through zero at 90°, to negative. Then make b longer without changing its direction: the dot product scales but the angle does not.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Projections</h3>
+  <p>The <b>scalar projection</b> of \(\mathbf{b}\) onto \(\mathbf{a}\) is the signed length of the shadow. The <b>vector projection</b> is that shadow as a vector along \(\mathbf{a}\):</p>
+  <div class="formula">\(\operatorname{comp}_{\mathbf{a}}\mathbf{b}=\dfrac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}|}\qquad\qquad \operatorname{proj}_{\mathbf{a}}\mathbf{b}=\left(\dfrac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}|^2}\right)\mathbf{a}=\left(\dfrac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}|}\right)\dfrac{\mathbf{a}}{|\mathbf{a}|}\)<span class="cap">Scalar projection: dot product divided by the length of the thing you project onto. Vector projection: that scalar times the unit vector of \(\mathbf{a}\).</span></div>
+  <p><b>Work.</b> A constant force \(\mathbf{F}\) moving an object along displacement \(\mathbf{D}\) does work \(W=\mathbf{F}\cdot\mathbf{D}\). Only the part of the force along the motion counts, which is exactly what the dot product extracts.</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-dot"></div>
+</section>
+
+<!-- ============================================================ 4 CROSS PRODUCT -->
+<section data-id="crossp" data-title="The cross product" data-goal="8">
+  <p class="eyebrow">Chapter 4 · Stewart 12.4</p>
+  <h2>The cross product</h2>
+  <p class="lead">A product of two 3D vectors that gives a <b>vector</b>: perpendicular to both, with length equal to the area of the parallelogram they span.</p>
+
+  <div class="formula">\(\mathbf{a}\times\mathbf{b}=\begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\ a_1&a_2&a_3\\ b_1&b_2&b_3\end{vmatrix}=\langle a_2b_3-a_3b_2,\; a_3b_1-a_1b_3,\; a_1b_2-a_2b_1\rangle\)<span class="cap">Expand the determinant along the top row. The middle component has a minus sign built in: it is \(-(a_1b_3-a_3b_1)\), which is the same as \(a_3b_1-a_1b_3\).</span></div>
+
+  <div class="card">
+    <h4>Step-by-step: expanding the determinant</h4>
+    <div class="row" id="detMats"></div>
+    <div class="expr" id="detExpr"></div>
+    <div class="controls">
+      <button class="btn" id="detPrev">◀ Back</button>
+      <button class="btn primary" id="detNext">Next step ▶</button>
+      <button class="btn" id="detNew">New vectors</button>
+      <span class="status" id="detStatus"></span>
+    </div>
+    <p class="hint">Cover the column of the basis vector you are working on. What is left is a 2×2 determinant: down-right product minus up-right product. The signs across the top row go +, −, +.</p>
+  </div>
+
+  <h3>What the cross product means</h3>
+  <ul>
+    <li><b>Direction:</b> \(\mathbf{a}\times\mathbf{b}\) is orthogonal to both \(\mathbf{a}\) and \(\mathbf{b}\). Which of the two perpendicular directions? The <b>right-hand rule</b>: curl your fingers from \(\mathbf{a}\) toward \(\mathbf{b}\); your thumb gives \(\mathbf{a}\times\mathbf{b}\).</li>
+    <li><b>Length:</b> \(|\mathbf{a}\times\mathbf{b}|=|\mathbf{a}|\,|\mathbf{b}|\sin\theta\), the area of the parallelogram with sides \(\mathbf{a}\) and \(\mathbf{b}\). Half of it is the area of the triangle.</li>
+    <li><b>Parallel test:</b> \(\mathbf{a}\times\mathbf{b}=\mathbf{0}\) exactly when the vectors are parallel (\(\sin\theta=0\)).</li>
+    <li><b>Order matters:</b> \(\mathbf{b}\times\mathbf{a}=-(\mathbf{a}\times\mathbf{b})\). Also \(\mathbf{i}\times\mathbf{j}=\mathbf{k}\), \(\mathbf{j}\times\mathbf{k}=\mathbf{i}\), \(\mathbf{k}\times\mathbf{i}=\mathbf{j}\) (cyclic), and \(\mathbf{a}\times\mathbf{a}=\mathbf{0}\).</li>
+  </ul>
+
+  <div class="card">
+    <h4>Explore: a, b, and a × b</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="crossScene"></canvas><p class="plotcap">Drag to rotate. The shaded parallelogram has area \(|\mathbf{a}\times\mathbf{b}|\). The green vector is \(\mathbf{a}\times\mathbf{b}\).</p></div>
+      <div>
+        <div class="sliders three" id="crossSliders"></div>
+        <div class="presets" id="crossPresets"></div>
+        <div class="readout" id="crossOut"></div>
+        <p class="hint">Slide b until it lines up with a: the parallelogram flattens and the cross product shrinks to zero. Swap a and b with the preset and watch the green arrow flip.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Three standard uses</h3>
+  <div class="card tint">
+    <ol>
+      <li><b>A normal vector to a plane through three points \(P,Q,R\):</b> compute \(\overrightarrow{PQ}\times\overrightarrow{PR}\). Any nonzero multiple works equally well. (Module 2 uses this to write plane equations.)</li>
+      <li><b>Area of triangle \(PQR\):</b> \(\tfrac12\,|\overrightarrow{PQ}\times\overrightarrow{PR}|\).</li>
+      <li><b>Volume of the parallelepiped</b> with edges \(\mathbf{a},\mathbf{b},\mathbf{c}\): the <b>scalar triple product</b> \(|\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})|\), which is the absolute value of the 3×3 determinant with rows \(\mathbf{a},\mathbf{b},\mathbf{c}\). If it is 0, the three vectors are <b>coplanar</b>.</li>
+    </ol>
+  </div>
+  <div class="warn"><b>Dot vs cross.</b> Dot: any dimension, output is a number, zero means perpendicular, measures cos. Cross: 3D only, output is a vector, zero means parallel, length measures sin. When a problem says "orthogonal to both", reach for the cross product. When it says "angle" or "perpendicular to one", reach for the dot product.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-cross"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const NICE3=[[2,-1,2],[1,2,2],[3,4,0],[6,2,3],[2,3,6],[1,4,8],[4,4,7],[2,6,9],[3,4,12],[0,3,4],[4,0,3],[2,2,1]];
+const NICE2=[[3,4],[4,3],[5,12],[12,5],[8,15],[6,8],[0,5],[5,0],[8,6]];
+const niceVec=dim=>shuffle(pick(dim===2?NICE2:NICE3)).map(x=>x*pick([1,-1]));
+const rvec=(dim,lo=-6,hi=6)=>Array.from({length:dim},()=>rint(lo,hi));
+const rvecNZ=(dim,lo=-6,hi=6)=>{let v;do{v=rvec(dim,lo,hi);}while(vzero(v)||v.filter(x=>x===0).length>=dim-1);return v;};
+const V=v=>M(texVec(v)),PT=p=>M(texPt(p));
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const vecIn=(el,k,label,ph='⟨a, b, c⟩')=>el.appendChild(ansLine(label,k,{wide:true,placeholder:ph}));
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const sumSq=v=>v.reduce((s,x)=>s+x*x,0);
+const texSumSq=v=>v.map(x=>`(${texNum(x)})^2`).join('+');
+const texDot=(a,b)=>a.map((x,i)=>`(${texNum(x)})(${texNum(b[i])})`).join('+');
+const sqrtTex=n=>`\\sqrt{${n}}`;
+const showVec=(v,ijk)=>ijk?M(texIJK(v)):M(texVec(v));
+
+/* ============================================================ question types */
+const Q={};
+Q.compPQ={name:'vector from P to Q',
+  gen(){const P=rvec(3),Qp=rvec(3);return {P,Q:Qp,v:vsub(Qp,P)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the vector ${M(R`\overrightarrow{PQ}`)} from ${M('P'+texPt(q.P))} to ${M('Q'+texPt(q.Q))}.</p>`;vecIn(el,'v',M(R`\overrightarrow{PQ}=`));},
+  check(q,el){return G(el,'v',checkVector($('[data-k=v]',el).value,q.v));},
+  solution(q){return `Terminal minus initial: ${M(texVec(q.Q)+'-'+texVec(q.P)+'='+texVec(q.v))}.`;}
+};
+Q.magnitude={name:'magnitude',
+  gen(){const v=rvecNZ(3,-7,7);return {v,n:norm(v)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the magnitude of ${M(R`\mathbf{a}=`+texVec(q.v))}. Exact answers like <code>sqrt(14)</code> or <code>3sqrt(2)</code> are expected.</p>`;numIn(el,'n',M(R`|\mathbf{a}|=`));},
+  check(q,el){return G(el,'n',checkNumber($('[data-k=n]',el).value,q.n));},
+  solution(q){return M(R`|\mathbf{a}|=\sqrt{${texSumSq(q.v)}}=\sqrt{${sumSq(q.v)}}=${texSqrt(sumSq(q.v))}`);}
+};
+Q.distance={name:'distance between points',
+  gen(){const P=rvec(3),Qp=rvec(3);const d=vsub(Qp,P);return {P,Q:Qp,d,n:norm(d)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the distance between ${M('P'+texPt(q.P))} and ${M('Q'+texPt(q.Q))}.</p>`;numIn(el,'n',M('|PQ|='));},
+  check(q,el){return G(el,'n',checkNumber($('[data-k=n]',el).value,q.n));},
+  solution(q){return M(R`|PQ|=\sqrt{${texSumSq(q.d)}}=\sqrt{${sumSq(q.d)}}=${texSqrt(sumSq(q.d))}`);}
+};
+Q.midpoint={name:'midpoint',
+  gen(){const P=rvec(3),Qp=rvec(3);return {P,Q:Qp,m:vscale(0.5,vadd(P,Qp))};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the midpoint of the segment from ${M('P'+texPt(q.P))} to ${M('Q'+texPt(q.Q))}.</p>`;vecIn(el,'m','Midpoint =','(x, y, z)');},
+  check(q,el){return G(el,'m',checkVector($('[data-k=m]',el).value,q.m));},
+  solution(q){return `Average each coordinate: ${M(texPt(q.m))}.`;}
+};
+Q.combo={name:'linear combination',
+  gen(){const a=rvec(3,-5,5),b=rvec(3,-5,5);const k1=pick([2,3,-1,-2,4]),k2=pick([1,-1,2,-3,-2]);return {a,b,k1,k2,v:vadd(vscale(k1,a),vscale(k2,b)),ijk:Math.random()<0.4};},
+  render(q,el){const lab=`${q.k1===-1?'-':q.k1}\\mathbf{a}${q.k2<0?'-':'+'}${Math.abs(q.k2)===1?'':Math.abs(q.k2)}\\mathbf{b}`;q.lab=lab;
+    el.innerHTML=`<p class="prompt">Given ${M(R`\mathbf{a}=`+(q.ijk?texIJK(q.a):texVec(q.a)))} and ${M(R`\mathbf{b}=`+(q.ijk?texIJK(q.b):texVec(q.b)))}, compute ${M(lab)}.</p>`;vecIn(el,'v',M(lab+'='));},
+  check(q,el){return G(el,'v',checkVector($('[data-k=v]',el).value,q.v));},
+  solution(q){return `Scale each vector, then add matching components: ${M(`${q.k1}${texVec(q.a)}${q.k2<0?'':'+'}${q.k2}${texVec(q.b)}=${texVec(q.v)}`)}.`;}
+};
+Q.unitVec={name:'unit vector',
+  gen(){const v=niceVec(pick([2,3,3]));return {v,n:norm(v),u:unit(v),ijk:Math.random()<0.4};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the unit vector that has the same direction as ${showVec(q.v,q.ijk)}.</p>`;vecIn(el,'u',M(R`\mathbf{u}=`),q.v.length===2?'⟨a, b⟩':'⟨a, b, c⟩');},
+  check(q,el){return G(el,'u',checkVector($('[data-k=u]',el).value,q.u));},
+  solution(q){return `Length first: ${M(R`|\mathbf{v}|=\sqrt{${sumSq(q.v)}}=${q.n}`)}. Then divide every component: ${M(R`\mathbf{u}=\tfrac{1}{${q.n}}${texVec(q.v)}=${texVec(q.u)}`)}.`;}
+};
+Q.magDiff={name:'length of a combination',
+  gen(){const a=rvec(3,-6,6),b=rvec(3,-6,6);const d=vsub(a,b);if(vzero(d))d[0]=1;return {a,b,d,n:norm(d)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Given ${M(R`\mathbf{a}=`+texIJK(q.a))} and ${M(R`\mathbf{b}=`+texIJK(q.b))}, find ${M(R`|\mathbf{a}-\mathbf{b}|`)}.</p>`;numIn(el,'n',M(R`|\mathbf{a}-\mathbf{b}|=`));},
+  check(q,el){return G(el,'n',checkNumber($('[data-k=n]',el).value,q.n));},
+  solution(q){return `First ${M(R`\mathbf{a}-\mathbf{b}=`+texVec(q.d))}, then ${M(R`|\mathbf{a}-\mathbf{b}|=\sqrt{${sumSq(q.d)}}=${texSqrt(sumSq(q.d))}`)}.`;}
+};
+Q.dotCompute={name:'dot product',
+  gen(){const dim=pick([2,3,3]);const a=rvec(dim,-7,7),b=rvec(dim,-7,7);return {a,b,d:dot(a,b),ijk:dim===3&&Math.random()<0.4};},
+  render(q,el){el.innerHTML=`<p class="prompt">Compute ${M(R`\mathbf{a}\cdot\mathbf{b}`)} for ${M(R`\mathbf{a}=`+(q.ijk?texIJK(q.a):texVec(q.a)))} and ${M(R`\mathbf{b}=`+(q.ijk?texIJK(q.b):texVec(q.b)))}.</p>`;numIn(el,'d',M(R`\mathbf{a}\cdot\mathbf{b}=`));},
+  check(q,el){return G(el,'d',checkNumber($('[data-k=d]',el).value,q.d));},
+  solution(q){return M(R`\mathbf{a}\cdot\mathbf{b}=${texDot(q.a,q.b)}=${q.d}`);}
+};
+Q.dotAngleForm={name:'dot product from lengths and angle',
+  gen(){const la=rint(2,9),lb=rint(2,9);const th=pick([30,45,60,120,135,150,90,180]);const c={30:[R`\tfrac{\sqrt3}{2}`,Math.sqrt(3)/2],45:[R`\tfrac{\sqrt2}{2}`,Math.SQRT2/2],60:[R`\tfrac12`,0.5],90:['0',0],120:[R`-\tfrac12`,-0.5],135:[R`-\tfrac{\sqrt2}{2}`,-Math.SQRT2/2],150:[R`-\tfrac{\sqrt3}{2}`,-Math.sqrt(3)/2],180:['-1',-1]}[th];return {la,lb,th,cosTex:c[0],cos:c[1],d:la*lb*c[1]};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find ${M(R`\mathbf{a}\cdot\mathbf{b}`)} if ${M(R`|\mathbf{a}|=${q.la}`)}, ${M(R`|\mathbf{b}|=${q.lb}`)}, and the angle between them is ${q.th}°. Give an exact value (like <code>12sqrt(3)</code>) or a decimal.</p>`;numIn(el,'d',M(R`\mathbf{a}\cdot\mathbf{b}=`));},
+  check(q,el){return G(el,'d',checkNumber($('[data-k=d]',el).value,q.d,{tol:0.02}));},
+  solution(q){return M(R`\mathbf{a}\cdot\mathbf{b}=|\mathbf{a}||\mathbf{b}|\cos\theta=(${q.la})(${q.lb})\left(${q.cosTex}\right)=${fmtDec(q.d,3)}`);}
+};
+Q.angle={name:'angle between vectors',
+  gen(){let a,b,d,na,nb;do{a=rvecNZ(3,-4,4);b=rvecNZ(3,-4,4);d=dot(a,b);na=sumSq(a);nb=sumSq(b);}while(vparallel(a,b));const cos=d/Math.sqrt(na*nb);const rad=Math.acos(cos);return {a,b,d,na,nb,cos,rad,deg:rad*180/Math.PI};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the angle between ${M(R`\mathbf{a}=`+texVec(q.a))} and ${M(R`\mathbf{b}=`+texVec(q.b))}. Give an exact expression (radians, using <code>arccos(...)</code>) and then a decimal approximation in degrees.</p>`;
+    el.appendChild(ansLine('exact:','ex',{xwide:true,placeholder:'arccos( ... )'}));el.appendChild(ansLine('approximate:','deg',{after:'degrees'}));},
+  check(q,el){return Gall(el,[['ex',checkNumber($('[data-k=ex]',el).value,q.rad,{tol:1e-4})],['deg',checkNumber($('[data-k=deg]',el).value,q.deg,{tol:0.6})]]);},
+  solution(q){return M(R`\cos\theta=\frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}||\mathbf{b}|}=\frac{${q.d}}{\sqrt{${q.na}}\sqrt{${q.nb}}}`)+`, so ${M(R`\theta=\arccos\left(\frac{${q.d}}{\sqrt{${q.na*q.nb}}}\right)\approx ${fmtDec(q.deg,1)}^\circ`)}.`;}
+};
+Q.classify={name:'orthogonal, parallel, or neither',
+  gen(){const dim=pick([2,3,3]);const kind=pick(['orth','par','nei','orth','nei']);let a=rvecNZ(dim,-5,5),b;
+    if(kind==='par'){b=vscale(pick([2,-2,3,-3,-1]),a);}
+    else if(kind==='orth'){if(dim===2)b=vscale(pick([1,-1,2]),[-a[1],a[0]]);else{let c;do{c=rvecNZ(3,-3,3);b=cross(a,c);}while(vzero(b));const g=b.reduce((s,x)=>gcd(s,x),0);b=b.map(x=>x/g);}}
+    else{do{b=rvecNZ(dim,-5,5);}while(dot(a,b)===0||vparallel(a,b));}
+    return {a,b,kind,d:dot(a,b),ijk:dim===3&&Math.random()<0.4};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\mathbf{a}=`+(q.ijk?texIJK(q.a):texVec(q.a)))} and ${M(R`\mathbf{b}=`+(q.ijk?texIJK(q.b):texVec(q.b)))}, find ${M(R`\mathbf{a}\cdot\mathbf{b}`)} and classify the pair.</p>`;numIn(el,'d',M(R`\mathbf{a}\cdot\mathbf{b}=`));
+    q.get=choiceButtons(el,[{label:'orthogonal',value:'orth'},{label:'parallel',value:'par'},{label:'neither',value:'nei'}]);},
+  check(q,el){const r=G(el,'d',checkNumber($('[data-k=d]',el).value,q.d));const v=q.get();if(v===null)return {ok:false,msg:'Pick a classification.'};if(!r.ok)return r;if(v!==q.kind)return {ok:false,msg:q.kind==='orth'?'A zero dot product means orthogonal.':q.kind==='par'?'Check the component ratios: b is a scalar multiple of a.':'Nonzero dot product rules out orthogonal, and the components are not proportional, so not parallel.'};return {ok:true};},
+  solution(q){return M(R`\mathbf{a}\cdot\mathbf{b}=${q.d}`)+'. '+(q.kind==='orth'?'Zero dot product: <b>orthogonal</b>.':q.kind==='par'?`Every component of <b>b</b> is ${M(texNum(q.b[0]/q.a[0]||q.b[1]/q.a[1]))} times the one in <b>a</b>: <b>parallel</b>.`:'Not zero, and the components are not proportional: <b>neither</b>.');}
+};
+Q.proj={name:'projections',
+  gen(){const dim=pick([2,3]);const a=niceVec(dim);let b;do{b=rvec(dim,-5,5);}while(dot(a,b)===0);const na=norm(a),d=dot(a,b);return {a,b,d,na,comp:d/na,proj:vscale(d/(na*na),a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the scalar projection and the vector projection of ${M(R`\mathbf{b}=`+texVec(q.b))} onto ${M(R`\mathbf{a}=`+texVec(q.a))}.</p>`;numIn(el,'c',M(R`\operatorname{comp}_{\mathbf{a}}\mathbf{b}=`));vecIn(el,'p',M(R`\operatorname{proj}_{\mathbf{a}}\mathbf{b}=`),q.a.length===2?'⟨a, b⟩':'⟨a, b, c⟩');},
+  check(q,el){return Gall(el,[['c',checkNumber($('[data-k=c]',el).value,q.comp)],['p',checkVector($('[data-k=p]',el).value,q.proj)]]);},
+  solution(q){return `${M(R`\mathbf{a}\cdot\mathbf{b}=${q.d}`)} and ${M(R`|\mathbf{a}|=${q.na}`)}. Scalar projection ${M(R`\frac{${q.d}}{${q.na}}=${texNum(q.comp)}`)}. Vector projection ${M(R`\frac{${q.d}}{${q.na*q.na}}${texVec(q.a)}=${texVec(q.proj)}`)}.`;}
+};
+Q.orthoX={name:'unknown component for orthogonality',
+  gen(){const a2=rint(-5,5),a3=rint(-5,5);const b=[rnz(-4,4),rint(-5,5),rint(-5,5)];const x=-(a2*b[1]+a3*b[2])/b[0];return {a2,a3,b,x};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the value of ${M('x')} such that ${M(R`\langle x,\,${q.a2},\,${q.a3}\rangle`)} is orthogonal to ${M(texVec(q.b))}.</p>`;numIn(el,'x',M('x='));},
+  check(q,el){return G(el,'x',checkNumber($('[data-k=x]',el).value,q.x));},
+  solution(q){return `Set the dot product to zero: ${M(R`${q.b[0]}x+(${q.a2})(${q.b[1]})+(${q.a3})(${q.b[2]})=0`)}, so ${M(R`x=${texNum(q.x)}`)}.`;}
+};
+Q.work={name:'work',
+  gen(){const F=rvec(3,-5,8),P=rvec(3,-4,4),Qp=rvec(3,-4,6);const D=vsub(Qp,P);return {F,P,Q:Qp,D,W:dot(F,D)};},
+  render(q,el){el.innerHTML=`<p class="prompt">A constant force ${M(R`\mathbf{F}=`+texIJK(q.F))} (newtons) moves an object from ${M('P'+texPt(q.P))} to ${M('Q'+texPt(q.Q))} (meters). Find the work done.</p>`;numIn(el,'w',M('W='),'joules');},
+  check(q,el){return G(el,'w',checkNumber($('[data-k=w]',el).value,q.W));},
+  solution(q){return `Displacement ${M(R`\mathbf{D}=\overrightarrow{PQ}=`+texVec(q.D))}, so ${M(R`W=\mathbf{F}\cdot\mathbf{D}=${texDot(q.F,q.D)}=${q.W}`)}.`;}
+};
+Q.crossCompute={name:'cross product',
+  gen(){const a=rvecNZ(3,-5,5),b=rvecNZ(3,-5,5);return {a,b,c:cross(a,b),ijk:Math.random()<0.5};},
+  render(q,el){el.innerHTML=`<p class="prompt">Compute ${M(R`\mathbf{a}\times\mathbf{b}`)} for ${M(R`\mathbf{a}=`+(q.ijk?texIJK(q.a):texVec(q.a)))} and ${M(R`\mathbf{b}=`+(q.ijk?texIJK(q.b):texVec(q.b)))}.</p>`;vecIn(el,'c',M(R`\mathbf{a}\times\mathbf{b}=`));},
+  check(q,el){return G(el,'c',checkVector($('[data-k=c]',el).value,q.c));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}const [a1,a2,a3]=q.a,[b1,b2,b3]=q.b;h.innerHTML=M(R`\begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\ ${a1}&${a2}&${a3}\\ ${b1}&${b2}&${b3}\end{vmatrix}=\big((${a2})(${b3})-(${a3})(${b2})\big)\mathbf{i}-\big((${a1})(${b3})-(${a3})(${b1})\big)\mathbf{j}+\big((${a1})(${b2})-(${a2})(${b1})\big)\mathbf{k}`);},
+  solution(q){const [a1,a2,a3]=q.a,[b1,b2,b3]=q.b;return M(R`\mathbf{a}\times\mathbf{b}=\langle (${a2})(${b3})-(${a3})(${b2}),\; (${a3})(${b1})-(${a1})(${b3}),\; (${a1})(${b2})-(${a2})(${b1})\rangle=${texVec(q.c)}`);}
+};
+Q.crossMag={name:'magnitude of a cross product',
+  gen(){const la=rint(2,9),lb=rint(2,9);const th=pick([30,45,60,120,135,150,90]);const s={30:[R`\tfrac12`,0.5],45:[R`\tfrac{\sqrt2}{2}`,Math.SQRT2/2],60:[R`\tfrac{\sqrt3}{2}`,Math.sqrt(3)/2],90:['1',1],120:[R`\tfrac{\sqrt3}{2}`,Math.sqrt(3)/2],135:[R`\tfrac{\sqrt2}{2}`,Math.SQRT2/2],150:[R`\tfrac12`,0.5]}[th];return {la,lb,th,sinTex:s[0],sin:s[1],v:la*lb*s[1]};},
+  render(q,el){el.innerHTML=`<p class="prompt">If ${M(R`|\mathbf{u}|=${q.la}`)}, ${M(R`|\mathbf{v}|=${q.lb}`)}, and the angle between them is ${q.th}°, find ${M(R`|\mathbf{u}\times\mathbf{v}|`)}. Exact (like <code>10sqrt(3)</code>) or decimal.</p>`;numIn(el,'v',M(R`|\mathbf{u}\times\mathbf{v}|=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v,{tol:0.02}));},
+  solution(q){return M(R`|\mathbf{u}\times\mathbf{v}|=|\mathbf{u}||\mathbf{v}|\sin\theta=(${q.la})(${q.lb})\left(${q.sinTex}\right)=${fmtDec(q.v,3)}`);}
+};
+Q.areaTri={name:'area of a triangle',
+  gen(){let P,Qp,Rr,c;do{P=rvec(3,-4,6);Qp=rvec(3,-4,6);Rr=rvec(3,-4,6);c=cross(vsub(Qp,P),vsub(Rr,P));}while(vzero(c));return {P,Q:Qp,R:Rr,PQ:vsub(Qp,P),PR:vsub(Rr,P),c,area:norm(c)/2};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the area of the triangle with vertices ${M('P'+texPt(q.P))}, ${M('Q'+texPt(q.Q))}, ${M('R'+texPt(q.R))}.</p>`;numIn(el,'a','Area =');},
+  check(q,el){return G(el,'a',checkNumber($('[data-k=a]',el).value,q.area,{tol:0.01}));},
+  solution(q){return `${M(R`\overrightarrow{PQ}=`+texVec(q.PQ))}, ${M(R`\overrightarrow{PR}=`+texVec(q.PR))}, cross product ${M(texVec(q.c))}. Area ${M(R`=\tfrac12\sqrt{${sumSq(q.c)}}=\tfrac12\cdot${texSqrt(sumSq(q.c))}\approx ${fmtDec(q.area,3)}`)}.`;}
+};
+Q.normal3={name:'normal vector to a plane through three points',
+  gen(){const q=Q.areaTri.gen();return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find a nonzero vector orthogonal to the plane through ${M('P'+texPt(q.P))}, ${M('Q'+texPt(q.Q))}, and ${M('R'+texPt(q.R))}. Any correct normal vector is accepted.</p>`;vecIn(el,'n',M(R`\mathbf{n}=`));},
+  check(q,el){return G(el,'n',checkVector($('[data-k=n]',el).value,q.c,{parallel:true}));},
+  solution(q){return `Two vectors in the plane: ${M(R`\overrightarrow{PQ}=`+texVec(q.PQ))} and ${M(R`\overrightarrow{PR}=`+texVec(q.PR))}. Their cross product ${M(texVec(q.c))} is perpendicular to both, so to the plane. Any nonzero multiple also works.`;}
+};
+Q.volume={name:'volume of a parallelepiped',
+  gen(){const a=rvecNZ(3,-4,4),b=rvecNZ(3,-4,4),c=rvecNZ(3,-4,4);const bc=cross(b,c);const t=dot(a,bc);return {a,b,c,bc,t,vol:Math.abs(t)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the volume of the parallelepiped with adjacent edges ${M(R`\mathbf{a}=`+texVec(q.a))}, ${M(R`\mathbf{b}=`+texVec(q.b))}, ${M(R`\mathbf{c}=`+texVec(q.c))}.</p>`;numIn(el,'v','Volume =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.vol));},
+  solution(q){return `${M(R`\mathbf{b}\times\mathbf{c}=`+texVec(q.bc))}, then ${M(R`\mathbf{a}\cdot(\mathbf{b}\times\mathbf{c})=${texDot(q.a,q.bc)}=${q.t}`)}. Volume is the absolute value: <b>${q.vol}</b>.${q.vol===0?' A volume of zero means the three vectors are coplanar.':''}`;}
+};
+Q.orient={name:'direction of a cross product',
+  gen(){let a,b,s;do{a=rvecNZ(2,-4,4);b=rvecNZ(2,-4,4);s=a[0]*b[1]-a[1]*b[0];}while(s===0);return {a,b,s,out:s>0};},
+  render(q,el){el.innerHTML=`<p class="prompt">Two vectors lie in the plane of the screen. Is ${M(R`\mathbf{a}\times\mathbf{b}`)} directed <b>out of</b> the screen (toward you) or <b>into</b> the screen?</p><canvas class="scene short" style="max-width:360px" id="orientPlot"></canvas>`;
+    q.get=choiceButtons(el,[{label:'out of the screen',value:true},{label:'into the screen',value:false}]);
+    const cv=$('#orientPlot',el);const p=new Plot2D(cv,{xmin:-5,xmax:5,ymin:-5,ymax:5,labels:false});const drawIt=()=>{if(!cv.isConnected)return;p.begin().vector([0,0],q.a,{color:'#d97706',label:'a'}).vector([0,0],q.b,{color:'#2563eb',label:'b'});};drawIt();setTimeout(drawIt,50);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};return {ok:v===q.out,msg:v===q.out?'':'Curl your fingers from a toward b. Thumb toward you means out of the screen.'};},
+  solution(q){return `Right-hand rule: curl from <b>a</b> toward <b>b</b>. Here the ${M('z')}-component of the cross product is ${M(R`a_1b_2-a_2b_1=${q.s}`)}, which is ${q.s>0?'positive, so the vector points <b>out of the screen</b>':'negative, so the vector points <b>into the screen</b>'}.`;}
+};
+Q.tf={name:'true or false',
+  pool:[
+    ['\\(\\mathbf{a}\\cdot\\mathbf{b}\\) is a vector.',false,'The dot product is a scalar (a number). The cross product is the one that gives a vector.'],
+    ['If \\(\\mathbf{a}\\cdot\\mathbf{b}=0\\) and both vectors are nonzero, then \\(\\mathbf{a}\\) and \\(\\mathbf{b}\\) are orthogonal.',true,'A zero dot product means \\(\\cos\\theta=0\\), so \\(\\theta=90^\\circ\\).'],
+    ['\\(\\mathbf{a}\\times\\mathbf{b}=\\mathbf{b}\\times\\mathbf{a}\\).',false,'Swapping the order flips the sign: \\(\\mathbf{b}\\times\\mathbf{a}=-(\\mathbf{a}\\times\\mathbf{b})\\).'],
+    ['\\(\\mathbf{a}\\cdot\\mathbf{b}=\\mathbf{b}\\cdot\\mathbf{a}\\).',true,'The dot product is commutative.'],
+    ['\\(|\\mathbf{a}\\times\\mathbf{b}|\\) is the area of the parallelogram with sides \\(\\mathbf{a}\\) and \\(\\mathbf{b}\\).',true,'\\(|\\mathbf{a}\\times\\mathbf{b}|=|\\mathbf{a}||\\mathbf{b}|\\sin\\theta\\) is base times height.'],
+    ['If \\(\\mathbf{a}\\times\\mathbf{b}=\\mathbf{0}\\) and both are nonzero, the vectors are parallel.',true,'A zero cross product means \\(\\sin\\theta=0\\), so the angle is 0 or \\(\\pi\\).'],
+    ['\\(\\mathbf{a}\\cdot\\mathbf{a}=|\\mathbf{a}|^2\\).',true,'Dotting a vector with itself adds up the squares of its components.'],
+    ['The cross product is defined for vectors in the plane (two components).',false,'The cross product needs three components. In the plane you can pad with a zero third component.'],
+    ['\\(\\mathbf{a}\\times\\mathbf{b}\\) is orthogonal to \\(\\mathbf{a}\\).',true,'The cross product is perpendicular to both of its factors: \\(\\mathbf{a}\\cdot(\\mathbf{a}\\times\\mathbf{b})=0\\).'],
+    ['\\(\\mathbf{i}\\times\\mathbf{j}=\\mathbf{k}\\).',true,'The basis vectors multiply cyclically: \\(\\mathbf{i}\\times\\mathbf{j}=\\mathbf{k}\\), \\(\\mathbf{j}\\times\\mathbf{k}=\\mathbf{i}\\), \\(\\mathbf{k}\\times\\mathbf{i}=\\mathbf{j}\\).'],
+    ['\\(\\mathbf{j}\\times\\mathbf{i}=\\mathbf{k}\\).',false,'Reversed order gives \\(-\\mathbf{k}\\).'],
+    ['If \\(\\mathbf{a}\\cdot\\mathbf{b}<0\\) then the angle between \\(\\mathbf{a}\\) and \\(\\mathbf{b}\\) is obtuse.',true,'Negative cosine means an angle between \\(90^\\circ\\) and \\(180^\\circ\\).'],
+    ['\\(\\operatorname{comp}_{\\mathbf{a}}\\mathbf{b}\\) is a vector.',false,'The scalar projection is a number. The vector projection \\(\\operatorname{proj}_{\\mathbf{a}}\\mathbf{b}\\) is the vector.'],
+    ['The scalar triple product \\(\\mathbf{a}\\cdot(\\mathbf{b}\\times\\mathbf{c})\\) equals zero exactly when the three vectors are coplanar.',true,'Zero volume for the parallelepiped means the vectors lie in a common plane.'],
+    ['\\(|\\mathbf{a}+\\mathbf{b}|=|\\mathbf{a}|+|\\mathbf{b}|\\) for all vectors.',false,'Only when they point the same way. In general \\(|\\mathbf{a}+\\mathbf{b}|\\le|\\mathbf{a}|+|\\mathbf{b}|\\) (triangle inequality).'],
+    ['\\(\\mathbf{a}\\times\\mathbf{a}=\\mathbf{0}\\).',true,'A vector is parallel to itself, and \\(\\sin 0=0\\).'],
+    ['The unit vector in the direction of \\(\\mathbf{a}\\) is \\(\\mathbf{a}/|\\mathbf{a}|\\).',true,'Dividing by the length rescales to length 1 without changing direction.'],
+    ['\\(\\mathbf{a}\\cdot(\\mathbf{b}\\times\\mathbf{c})\\) can be computed as a \\(3\\times 3\\) determinant with rows \\(\\mathbf{a},\\mathbf{b},\\mathbf{c}\\).',true,'That determinant is exactly the scalar triple product.'],
+  ],
+  gen(){const s=pick(Q.tf.pool);return {text:s[0],ans:s[1],why:s[2]};},
+  render(q,el){el.innerHTML=`<p class="prompt">True or false: ${q.text}</p>`;q.get=choiceButtons(el,[{label:'True',value:true},{label:'False',value:false}]);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};return {ok:v===q.ans,msg:v===q.ans?q.why:'Think again, or press Show answer.'};},
+  solution(q){return `<b>${q.ans?'True':'False'}.</b> ${q.why}`;}
+};
+
+/* ============================================================ chapter 1: point + PQ scenes */
+(function(){
+  const ptScene=new Scene3D('#ptScene',{range:3.5});let pt=[2,1.5,2];
+  const sl=$('#ptSliders');const sx=sliderRow(sl,{label:'x',min:-3,max:3,step:0.5,value:pt[0],onInput:v=>{pt[0]=v;draw();}});
+  const sy=sliderRow(sl,{label:'y',min:-3,max:3,step:0.5,value:pt[1],onInput:v=>{pt[1]=v;draw();}});
+  const sz=sliderRow(sl,{label:'z',min:-3,max:3,step:0.5,value:pt[2],onInput:v=>{pt[2]=v;draw();}});
+  function draw(){ptScene.clear();ptScene.vector([0,0,0],pt,{color:'#d97706'});ptScene.point(pt,{color:'#7c3aed',drop:true,label:'P'});ptScene.render();
+    $('#ptOut').innerHTML=`P = (${pt.map(fmtDec).join(', ')})<br>|OP| = √(${pt.map(v=>fmtDec(v)+'²').join(' + ')}) = √${fmtDec(sumSq(pt))} ≈ ${fmtDec(norm(pt),3)}`;}
+  redrawOnShow('coords',draw);draw();
+  const pqScene=new Scene3D('#pqScene',{range:4});let P=[1,-2,1],Qq=[3,2,3];
+  const mk=(id,arr,i)=>stepper('#'+id,arr[i],-3,3,v=>{arr[i]=v;drawPQ();});
+  mk('p1',P,0);mk('p2',P,1);mk('p3',P,2);mk('q1',Qq,0);mk('q2',Qq,1);mk('q3',Qq,2);
+  function drawPQ(){const d=vsub(Qq,P);pqScene.clear();pqScene.point(P,{color:'#7c3aed',label:'P',drop:true});pqScene.point(Qq,{color:'#7c3aed',label:'Q',drop:true});pqScene.vector(P,Qq,{color:'#16a34a',label:'PQ'});pqScene.render();
+    $('#pqOut').innerHTML=`PQ = Q − P = ⟨${Qq.join(', ')}⟩ − ⟨${P.join(', ')}⟩ = <b>⟨${d.join(', ')}⟩</b><br>|PQ| = √(${d.map(v=>v+'²').join(' + ')}) = √${sumSq(d)} ≈ ${fmtDec(norm(d),3)}`;}
+  redrawOnShow('coords',drawPQ);drawPQ();
+  new Drill({mount:'#drill-coords',section:'coords',goal:6,...mixDrill([Q.compPQ,Q.compPQ,Q.magnitude,Q.distance,Q.midpoint])});
+})();
+
+/* ============================================================ chapter 2: addition plot */
+(function(){
+  const plot=new Plot2D('#addPlot',{xmin:-7,xmax:7,ymin:-7,ymax:7});let a=[3,1],b=[1,3],drag=null;
+  const snap=v=>v.map(x=>Math.round(x*2)/2);
+  plot.on('down',w=>{drag=norm(vsub(w,a))<norm(vsub(w,b))?'a':'b';if(drag==='a')a=snap(w);else b=snap(w);draw();}).on('drag',w=>{if(!drag)return;if(drag==='a')a=snap(w);else b=snap(w);draw();}).on('up',()=>drag=null);
+  function draw(){plot.begin();const s=vadd(a,b),d=vsub(a,b);
+    if($('#showPara').checked)plot.poly([[0,0],a,s,b],{fill:'rgba(22,163,74,.08)',stroke:'#c9c5bb',width:1});
+    if($('#showSum').checked){plot.vector(a,s,{color:'#2563eb',dash:[5,4],width:1.8});plot.vector([0,0],s,{color:'#16a34a',label:'a + b'});}
+    if($('#showDiff').checked)plot.vector(b,a,{color:'#7c3aed',label:'a − b'});
+    plot.vector([0,0],a,{color:'#d97706',label:'a'}).vector([0,0],b,{color:'#2563eb',label:'b'});
+    $('#addOut').innerHTML=`a = ⟨${a.map(fmt).join(', ')}⟩ &nbsp; b = ⟨${b.map(fmt).join(', ')}⟩<br>a + b = ⟨${s.map(fmt).join(', ')}⟩<br>a − b = ⟨${d.map(fmt).join(', ')}⟩<br>|a| = ${fmtDec(norm(a),3)}, |b| = ${fmtDec(norm(b),3)}, |a + b| = ${fmtDec(norm(s),3)}`;}
+  ['showSum','showDiff','showPara'].forEach(id=>$('#'+id).onchange=draw);
+  redrawOnShow('arith',draw);draw();
+  new Drill({mount:'#drill-arith',section:'arith',goal:6,...mixDrill([Q.combo,Q.combo,Q.unitVec,Q.unitVec,Q.magDiff])});
+})();
+
+/* ============================================================ chapter 3: dot plot */
+(function(){
+  const plot=new Plot2D('#dotPlot',{xmin:-6,xmax:6,ymin:-6,ymax:6});let a=[4,1],b=[2,3.5],drag=null;
+  const snap=v=>v.map(x=>Math.round(x*2)/2);
+  plot.on('down',w=>{drag=norm(vsub(w,a))<norm(vsub(w,b))?'a':'b';if(drag==='a')a=snap(w);else b=snap(w);draw();}).on('drag',w=>{if(!drag)return;if(drag==='a')a=snap(w);else b=snap(w);draw();}).on('up',()=>drag=null);
+  function draw(){plot.begin();const d=dot(a,b),na=norm(a),nb=norm(b);const cos=na&&nb?d/(na*nb):0;const th=Math.acos(clamp(cos,-1,1));
+    const proj=na?vscale(d/(na*na),a):[0,0];
+    /* line through a */
+    if(na){const u=unit(a);plot.param(t=>vscale(t,u),-9,9,{color:'#e4e1da',width:1,dash:[3,4]});}
+    /* angle arc */
+    if(na&&nb){const ctx=plot.ctx;const [ox,oy]=plot.px(0,0);const a0=-Math.atan2(a[1],a[0]),b0=-Math.atan2(b[1],b[0]);ctx.strokeStyle='#8b877e';ctx.lineWidth=1.5;ctx.beginPath();let s=a0,e=b0;let diff=e-s;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;ctx.arc(ox,oy,26,s,s+diff,diff<0);ctx.stroke();}
+    plot.vector(b,proj,{color:'#b9b5ab',width:1.2,dash:[4,3]});
+    plot.vector([0,0],proj,{color:'#16a34a',width:5,label:'proj'});
+    plot.vector([0,0],a,{color:'#d97706',label:'a'}).vector([0,0],b,{color:'#2563eb',label:'b'});
+    $('#dotOut').innerHTML=`a = ⟨${a.map(fmt).join(', ')}⟩, b = ⟨${b.map(fmt).join(', ')}⟩<br>a · b = (${fmt(a[0])})(${fmt(b[0])}) + (${fmt(a[1])})(${fmt(b[1])}) = <b>${fmt(d)}</b><br>|a| = ${fmtDec(na,3)}, |b| = ${fmtDec(nb,3)}<br>cos θ = ${fmt(d)} / (${fmtDec(na,3)} · ${fmtDec(nb,3)}) = ${fmtDec(cos,3)}<br>θ ≈ <b>${fmtDec(th*180/Math.PI,1)}°</b> ${Math.abs(d)<1e-9?'(orthogonal)':d>0?'(acute)':'(obtuse)'}<br>comp<sub>a</sub> b = ${fmtDec(na?d/na:0,3)}, proj<sub>a</sub> b = ⟨${proj.map(v=>fmtDec(v,2)).join(', ')}⟩`;}
+  redrawOnShow('dotp',draw);draw();
+  new Drill({mount:'#drill-dot',section:'dotp',goal:8,...mixDrill([Q.dotCompute,Q.dotAngleForm,Q.angle,Q.classify,Q.classify,Q.proj,Q.orthoX,Q.work])});
+})();
+
+/* ============================================================ chapter 4: determinant walkthrough + cross scene */
+(function(){
+  let a,b,step=0;
+  function newVecs(){a=rvecNZ(3,-4,5);b=rvecNZ(3,-4,5);step=0;draw();}
+  function draw(){
+    const [a1,a2,a3]=a,[b1,b2,b3]=b;const c=cross(a,b);
+    const box=$('#detMats');box.innerHTML='';
+    const col=step>=1&&step<=3?step-1:-1;
+    const mat=renderMat([['i','j','k'],a,b],{cls:'det',fmt:v=>typeof v==='string'?`<b>${v}</b>`:fmt(v),cellClass:(i,j)=>{if(col<0)return '';if(j===col)return i===0?'hl-cell':'dim';return i===0?'':(i===1?'hl-row':'hl-col');}});
+    box.appendChild(opRow([M(R`\mathbf{a}\times\mathbf{b}=`),mat]));
+    const terms=[[`\\mathbf{i}`,a2,b3,a3,b2,c[0],'+'],[`\\mathbf{j}`,a1,b3,a3,b1,-c[1],'-'],[`\\mathbf{k}`,a1,b2,a2,b1,c[2],'+']];
+    const lines=terms.map((t,i)=>{const on=step>=i+1;const sign=t[6]==='-'?'-':(i===0?'':'+');return `<span class="${on?'':'faint'}">${sign} <span class="t ${i===step-1?'now':''} ${i===0?'a':i===1?'b':'c'}">${M(`\\big((${t[1]})(${t[2]})-(${t[3]})(${t[4]})\\big)${t[0]}`)}</span>${on?` = ${M(`(${t[5]})${t[0]}`)}`:''}</span>`;});
+    $('#detExpr').innerHTML=lines.join('<br>')+(step>=4?`<br><span class="t c now">${M(R`\mathbf{a}\times\mathbf{b}=`+texVec(c))}</span>`:'');
+    const st=['Cover each basis vector\u2019s column in turn. Start with i.','i-component: cover the i column, take the 2×2 determinant of what remains.','j-component: cover the j column. This middle term carries a minus sign.','k-component: cover the k column. Plus sign again.','Add the three terms and read off the components.'];
+    $('#detStatus').textContent=st[step];$('#detPrev').disabled=step===0;$('#detNext').disabled=step===4;
+    typeset($('#detExpr'));typeset(box);
+  }
+  $('#detNext').onclick=()=>{step=Math.min(4,step+1);draw();};$('#detPrev').onclick=()=>{step=Math.max(0,step-1);draw();};$('#detNew').onclick=newVecs;
+  newVecs();
+
+  const scene=new Scene3D('#crossScene',{range:3.2});let av=[2,0,0.5],bv=[0.5,2,0];
+  const sl=$('#crossSliders');const S=[];
+  ['a₁','a₂','a₃'].forEach((l,i)=>S.push(sliderRow(sl,{label:l,min:-3,max:3,step:0.5,value:av[i],onInput:v=>{av[i]=v;drawScene();}})));
+  ['b₁','b₂','b₃'].forEach((l,i)=>S.push(sliderRow(sl,{label:l,min:-3,max:3,step:0.5,value:bv[i],onInput:v=>{bv[i]=v;drawScene();}})));
+  const presets=[['a = i, b = j',[1,0,0],[0,1,0]],['a = j, b = i',[0,1,0],[1,0,0]],['parallel',[2,1,0],[1,0.5,0]],['tilted',[2,0,0.5],[0.5,2,0]],['swap a and b',null,null]];
+  presets.forEach(([n,A,B])=>{const btn=el('button',{class:'btn small'},n);btn.onclick=()=>{if(A){av=A.slice();bv=B.slice();}else{[av,bv]=[bv.slice(),av.slice()];}S.forEach((s,i)=>s.set(i<3?av[i]:bv[i-3]));drawScene();};$('#crossPresets').appendChild(btn);});
+  function drawScene(){const c=cross(av,bv);scene.clear();scene.polygon([[0,0,0],av,vadd(av,bv),bv],{fill:'rgba(217,119,6,.15)',stroke:'#d97706'});
+    scene.vector([0,0,0],av,{color:'#d97706',label:'a'});scene.vector([0,0,0],bv,{color:'#2563eb',label:'b'});scene.vector([0,0,0],c,{color:'#16a34a',label:'a × b',width:3});scene.render();
+    $('#crossOut').innerHTML=`a × b = ⟨${c.map(v=>fmtDec(v)).join(', ')}⟩<br>|a × b| = ${fmtDec(norm(c),3)} = area of the parallelogram<br>(a × b) · a = ${fmtDec(dot(c,av),3)}, (a × b) · b = ${fmtDec(dot(c,bv),3)}`;}
+  redrawOnShow('crossp',drawScene);drawScene();
+  new Drill({mount:'#drill-cross',section:'crossp',goal:8,...mixDrill([Q.crossCompute,Q.crossCompute,Q.crossMag,Q.areaTri,Q.normal3,Q.volume,Q.orient,Q.tf])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[Q.compPQ,Q.magnitude,Q.unitVec,Q.combo,Q.dotCompute,Q.angle,Q.classify,Q.proj,Q.crossCompute,Q.areaTri,Q.normal3,Q.volume,Q.tf,Q.work,Q.orient]});
+
+/* test hook: correct inputs for every question type (used by the orchestrator's harness) */
+window.__solvers=(()=>{const j=v=>'<'+v.join(',')+'>';const S=String;return {
+  'vector from P to Q':q=>({v:j(q.v)}),'magnitude':q=>({n:S(q.n)}),'distance between points':q=>({n:S(q.n)}),'midpoint':q=>({m:j(q.m)}),
+  'linear combination':q=>({v:j(q.v)}),'unit vector':q=>({u:j(q.u)}),'length of a combination':q=>({n:S(q.n)}),
+  'dot product':q=>({d:S(q.d)}),'dot product from lengths and angle':q=>({d:S(q.d)}),'angle between vectors':q=>({ex:S(q.rad),deg:S(q.deg)}),
+  'orthogonal, parallel, or neither':q=>({d:S(q.d),_btn:['orth','par','nei'].indexOf(q.kind)}),'projections':q=>({c:S(q.comp),p:j(q.proj)}),
+  'unknown component for orthogonality':q=>({x:S(q.x)}),'work':q=>({w:S(q.W)}),'cross product':q=>({c:j(q.c)}),'magnitude of a cross product':q=>({v:S(q.v)}),
+  'area of a triangle':q=>({a:S(q.area)}),'normal vector to a plane through three points':q=>({n:j(q.c)}),'volume of a parallelepiped':q=>({v:S(q.vol)}),
+  'direction of a cross product':q=>({_btn:q.out?0:1}),'true or false':q=>({_btn:q.ans?0:1}),
+};})();
+
+initModule({key:'vectors',title:'Vectors in Space',sub:'Module 1 · Stewart 12.1 to 12.4'});
+</script>
+</body>
+</html>

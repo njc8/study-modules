@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Functions of Several Variables</title>
+<link rel="stylesheet" href="assets/study.css">
+<style>
+select.sel{font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+.selrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:14px;color:var(--muted)}
+.minis canvas.scene{border-radius:8px}
+</style>
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 4 · Stewart 14.1 to 14.4</p>
+  <h2>Functions of several variables</h2>
+  <p class="lead">One input is a point in the plane, one output is a number, and the graph is a surface. This module teaches you to read that surface from a contour map, to test limits along paths, to differentiate one variable at a time, and to flatten the surface into a tangent plane.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag, and then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answers are typed as plain text. <b>Expressions</b> look like <code>2xy + 3x^2</code>, <code>y*e^(xy)</code>, <code>cos(x+5z)</code>, <code>1/(2sqrt(x+y))</code>; implicit multiplication (<code>2xy</code>, <code>x^2y</code>) works, and <code>e^(xy)</code> and <code>exp(xy)</code> are the same thing. <b>Equations</b> look like <code>z = 2x + 3y - 4</code>, and any equivalent form is accepted. <b>Numbers</b> can be exact: <code>3/5</code>, <code>2e^2</code>, <code>sqrt(13)</code>, <code>pi/2</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the highlighted level curve, the \(x\)-trace, \(f_x\)</span>
+      <span><i class="dot" style="background:var(--b)"></i> the contour map, the \(y\)-trace, \(f_y\)</span>
+      <span><i class="dot" style="background:var(--c)"></i> the value you are computing</span>
+      <span><i class="dot" style="background:var(--d)"></i> the point \((x_0,y_0)\)</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Evaluate \(f(x,y)\), and describe its domain as a region of the plane.</li>
+      <li>Sketch and read level curves and contour maps, and match a contour map to its surface.</li>
+      <li>Show a limit does not exist with two paths, and evaluate the limits that do exist.</li>
+      <li>Compute \(f_x\), \(f_y\), \(f_z\), and the second partials, and use Clairaut's theorem.</li>
+      <li>Write the tangent plane and the linearization at a point, and use them to approximate.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 FUNCTIONS -->
+<section data-id="functions" data-title="Functions of two variables" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 14.1</p>
+  <h2>Functions of two variables</h2>
+  <p class="lead">Feed in a point of the plane, get out a number. The picture is a surface floating over the \(xy\)-plane, and a contour map is its topographic map.</p>
+
+  <p>A <b>function of two variables</b> \(f\) assigns to each ordered pair \((x,y)\) in a set \(D\) a single number \(f(x,y)\). The set \(D\) is the <b>domain</b>, a region of the \(xy\)-plane, and the set of output values is the <b>range</b>. We often write \(z=f(x,y)\) and call \(x\) and \(y\) the <b>independent</b> variables and \(z\) the <b>dependent</b> variable.</p>
+
+  <h3>Domain: a region, not an interval</h3>
+  <p>Unless a domain is stated, it is every \((x,y)\) for which the formula makes sense. Three rules cover almost every problem:</p>
+  <div class="formula">\(\sqrt{\;\cdot\;}\) needs its argument \(\ge 0\) &nbsp;·&nbsp; \(\ln(\;\cdot\;)\) needs its argument \(>0\) &nbsp;·&nbsp; a denominator must be \(\ne 0\)<span class="cap">Translate each condition into an inequality in \(x\) and \(y\), then describe the region: a half-plane, a disk, the outside of a circle, the plane minus a line.</span></div>
+  <p>For example \(f(x,y)=\sqrt{9-x^2-y^2}\) needs \(9-x^2-y^2\ge 0\), so the domain is the closed disk \(x^2+y^2\le 9\). And \(g(x,y)=\ln(y-x)\) needs \(y-x>0\), the open half-plane above the line \(y=x\).</p>
+
+  <h3>Graph and level curves</h3>
+  <p>The <b>graph</b> of \(f\) is the surface \(z=f(x,y)\) in space: the point \((x,y)\) in the plane is lifted to height \(f(x,y)\). Surfaces are hard to draw, so we slice them. Cut the surface with the horizontal plane \(z=k\) and drop the slice straight down into the \(xy\)-plane. What you get is a <b>level curve</b>:</p>
+  <div class="formula">\(f(x,y)=k\)<span class="cap">The level curve of value \(k\): the set of points in the <b>plane</b> where \(f\) equals \(k\). Several of them together make a <b>contour map</b>.</span></div>
+  <p>A contour map tells you everything about the shape of the surface. Where the level curves crowd together the surface is <b>steep</b>, because a small step in the plane changes \(f\) a lot. Where they spread apart the surface is nearly flat. Closed loops shrinking toward a point mark a peak or a pit; curves that cross themselves in an X mark a saddle.</p>
+
+  <div class="card">
+    <h4>Explore: surface, contour map, and one level curve</h4>
+    <div class="selrow"><label>Function <select class="sel" id="fnPreset"></select></label></div>
+    <div class="two">
+      <div><canvas class="scene" id="fnMap"></canvas><p class="plotcap">Contour map in the \(xy\)-plane. Blue curves are evenly spaced levels, the orange curve is the level you chose. Move the pointer over the map to read \(f\).</p></div>
+      <div><canvas class="scene" id="fnSurf"></canvas><p class="plotcap">The surface \(z=f(x,y)\). The orange plane is \(z=k\); the orange curve on the surface is where it cuts. Drag to rotate, scroll to zoom.</p></div>
+    </div>
+    <div class="sliders" id="fnSliders"></div>
+    <div class="readout" id="fnOut"></div>
+    <p class="hint">Slide \(k\) up through the paraboloid and watch the orange circle grow, then look at the map: equal steps in \(k\) give rings that get closer together, which says the bowl gets steeper as you climb. Switch to \(x^2-y^2\) and pass \(k\) through 0 to see the hyperbolas flip from one pair to the other. Then try \(\sqrt{x+y}\): half the map is blank because the domain is only the half-plane \(x+y\ge 0\).</p>
+  </div>
+
+  <div class="note"><b>Spacing is slope.</b> Level curves drawn for equally spaced values of \(k\) are close together where the surface is steep and far apart where it is flat. Evenly spaced parallel lines mean the graph is a plane.</div>
+  <div class="warn"><b>A level curve lives in the plane.</b> The level curve of \(f(x,y)=x^2+y^2\) at \(k=9\) is the circle \(x^2+y^2=9\), an equation in \(x\) and \(y\) only. Writing \(z=9\) describes the horizontal plane you cut with, not the curve. Keep the two apart.</div>
+
+  <h3>Three variables: level surfaces</h3>
+  <p>A function \(f(x,y,z)\) of three variables cannot be graphed (you would need four dimensions), so instead we look at its <b>level surfaces</b> \(f(x,y,z)=k\). For \(f(x,y,z)=x^2+y^2+z^2\) the level surfaces are concentric spheres of radius \(\sqrt{k}\); for \(f(x,y,z)=x+2y+3z\) they are parallel planes. Same idea, one dimension up.</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-functions"></div>
+</section>
+
+<!-- ============================================================ 2 LIMITS -->
+<section data-id="limits" data-title="Limits and continuity" data-goal="4">
+  <p class="eyebrow">Chapter 2 · Stewart 14.2</p>
+  <h2>Limits and continuity</h2>
+  <p class="lead">In one variable a point has two sides. In two variables it has infinitely many directions, and the limit must come out the same along every one of them.</p>
+
+  <p>Saying \(\lim_{(x,y)\to(a,b)}f(x,y)=L\) means \(f(x,y)\) gets arbitrarily close to \(L\) for every point \((x,y)\) close enough to \((a,b)\) - no matter how the point approaches. That "no matter how" is the whole difficulty, and it gives a test that is easy to use:</p>
+  <div class="formula">If \(f\to L_1\) along one path to \((a,b)\) and \(f\to L_2\ne L_1\) along another, then \(\displaystyle\lim_{(x,y)\to(a,b)}f(x,y)\) <b>does not exist</b>.<span class="cap">The <b>two-path test</b>. It can only ever prove a limit fails. It can never prove one exists.</span></div>
+  <p>The standard paths to try, in this order: \(y=0\) (along the \(x\)-axis), \(x=0\) (along the \(y\)-axis), \(y=mx\) (any line through the origin), and \(y=x^2\) or \(x=y^2\) (a parabola). Substitute the path into \(f\), simplify to a function of one variable, and take the one-variable limit. If the answer along \(y=mx\) still contains \(m\), different lines give different values and the limit does not exist.</p>
+
+  <div class="card">
+    <h4>Explore: approach the origin along a path</h4>
+    <div class="two">
+      <div><canvas class="scene" id="limMap"></canvas><p class="plotcap">Heat map of \(f\) near the origin: orange is positive, blue is negative, white is near zero. Thin gray curves are level curves. The orange line is \(y=mx\); the dashed purple curve, when there is one, is the path that breaks the limit.</p></div>
+      <div>
+        <div class="selrow"><label>Function <select class="sel" id="limPreset"></select></label></div>
+        <div class="sliders" id="limSliders"></div>
+        <div class="readout" id="limOut"></div>
+        <p class="hint">Turn the slope \(m\) and watch the value of \(f\) along that line. For the first two functions the value changes with \(m\), so those limits fail on lines alone. For \(x^2y/(x^4+y^2)\) every line gives 0, but the purple parabola gives \(\tfrac12\): lines are not enough. For \(x^2y/(x^2+y^2)\) every path gives 0, and the squeeze below proves it.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>When the limit does exist</h3>
+  <p>Two tools. First, <b>continuity</b>: polynomials are continuous everywhere, and a rational function is continuous wherever its denominator is not zero. Sums, products, quotients, and compositions of continuous functions are continuous. So if the point is in the domain, the limit is just the value:</p>
+  <div class="formula">\(\displaystyle\lim_{(x,y)\to(a,b)}f(x,y)=f(a,b)\) whenever \(f\) is continuous at \((a,b)\)<span class="cap">Plug in. Most limit problems on an exam are this, disguised.</span></div>
+  <p>Second, a <b>squeeze</b>. To show \(\dfrac{x^2y}{x^2+y^2}\to 0\), note \(0\le\dfrac{x^2}{x^2+y^2}\le 1\), so \(\left|\dfrac{x^2y}{x^2+y^2}\right|\le |y|\to 0\). Polar coordinates do the same job mechanically: put \(x=r\cos\theta\), \(y=r\sin\theta\), so that \(x^2+y^2=r^2\) and \((x,y)\to(0,0)\) becomes \(r\to 0^+\). If every \(\theta\) disappears or is trapped by a factor of \(r\), the limit exists.</p>
+  <div class="formula">\(\dfrac{x^3}{x^2+y^2}=\dfrac{r^3\cos^3\theta}{r^2}=r\cos^3\theta,\qquad |r\cos^3\theta|\le r\to 0\)<span class="cap">Polar substitution: the bound no longer depends on \(\theta\), so the limit is 0 along every path.</span></div>
+
+  <div class="note"><b>Polar trick.</b> Any time you see \(x^2+y^2\) in a denominator, switch to polar. The limit exists and equals \(L\) exactly when the polar expression tends to \(L\) with a bound that depends only on \(r\).</div>
+  <div class="warn"><b>Two paths that agree prove nothing.</b> Getting 0 along \(y=0\) and 0 along \(x=0\) does not make the limit 0; \(xy/(x^2+y^2)\) does exactly that and still has no limit (try \(y=x\)). Matching values along a few paths is evidence to keep going, not a proof.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-limits"></div>
+</section>
+
+<!-- ============================================================ 3 PARTIALS -->
+<section data-id="partials" data-title="Partial derivatives" data-goal="8">
+  <p class="eyebrow">Chapter 3 · Stewart 14.3</p>
+  <h2>Partial derivatives</h2>
+  <p class="lead">Freeze one variable, differentiate the other. Every rule from Calculus I still applies, word for word.</p>
+
+  <p>Fix \(y=b\). Then \(g(x)=f(x,b)\) is an ordinary function of one variable, and its derivative at \(x=a\) is the <b>partial derivative of \(f\) with respect to \(x\)</b>:</p>
+  <div class="formula">\(f_x(a,b)=\displaystyle\lim_{h\to 0}\frac{f(a+h,b)-f(a,b)}{h}\qquad\qquad f_y(a,b)=\lim_{h\to 0}\frac{f(a,b+h)-f(a,b)}{h}\)<span class="cap">Only one slot moves. The other stays exactly where it was.</span></div>
+  <p>In practice you never use the limit. <b>To find \(f_x\), treat \(y\) as a constant and differentiate normally. To find \(f_y\), treat \(x\) as a constant.</b> All the usual notations mean the same thing:</p>
+  <div class="formula">\(f_x=f_x(x,y)=\dfrac{\partial f}{\partial x}=\dfrac{\partial}{\partial x}f(x,y)=\dfrac{\partial z}{\partial x}=D_xf\)<span class="cap">The curly \(\partial\) is there only to remind you that other variables are present and being held fixed.</span></div>
+
+  <h3>What it means on the surface</h3>
+  <p>The plane \(y=b\) cuts the surface \(z=f(x,y)\) in a curve, the <b>trace</b> \(C_1\). The number \(f_x(a,b)\) is the slope of the tangent line to that trace at the point \((a,b,f(a,b))\), measured in the \(x\) direction. Likewise \(f_y(a,b)\) is the slope of the trace \(C_2\) cut by the plane \(x=a\). Two numbers, two slopes, two directions.</p>
+
+  <div class="card">
+    <h4>Explore: the two traces and their slopes</h4>
+    <div class="selrow"><label>Surface <select class="sel" id="pdPreset"></select></label></div>
+    <div class="xf">
+      <div><canvas class="scene" id="pdScene"></canvas><p class="plotcap">Orange: the trace \(y=y_0\) and the tangent vector \(\langle 1,0,f_x\rangle\). Blue: the trace \(x=x_0\) and \(\langle 0,1,f_y\rangle\). Drag to rotate.</p></div>
+      <div>
+        <div class="sliders" id="pdSliders"></div>
+        <div class="readout" id="pdOut"></div>
+        <p class="hint">On \(x^2+y^2\), park the point at \(x_0=0\): the orange tangent goes flat, because the trace is at the bottom of its parabola and \(f_x=0\). On \(xy\), slide \(y_0\) and watch \(f_x\) follow it exactly - that is \(f_x=y\). Look for the points where both slopes are zero at once.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>The other variable is a constant, not a variable.</b> Differentiating with respect to \(x\), \(\dfrac{\partial}{\partial x}(xy^2)=y^2\), not \(2xy\); \(y^2\) is just a number multiplying \(x\). And \(\dfrac{\partial}{\partial x}(y^3)=0\), the same way \(\dfrac{d}{dx}(8)=0\).</div>
+
+  <div class="card">
+    <h4>Step-by-step: a product and a chain in the same function</h4>
+    <div class="expr" id="wkExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wkPrev">◀ Back</button>
+      <button class="btn primary" id="wkNext">Next step ▶</button>
+      <button class="btn" id="wkNew">New exponent</button>
+      <span class="status" id="wkStatus"></span>
+    </div>
+    <p class="hint">Ask yourself at every step which letter is the variable right now. In \(g_x\) the leading \(y\) is a constant factor that just comes along for the ride; in \(g_y\) that same \(y\) is a factor being differentiated, which is why the product rule appears there and not in \(g_x\).</p>
+  </div>
+
+  <h3>Higher derivatives</h3>
+  <p>\(f_x\) and \(f_y\) are themselves functions of \(x\) and \(y\), so you can differentiate again. There are four second partials:</p>
+  <div class="formula">\((f_x)_x=f_{xx}=\dfrac{\partial^2f}{\partial x^2}\qquad (f_x)_y=f_{xy}=\dfrac{\partial^2 f}{\partial y\,\partial x}\qquad (f_y)_x=f_{yx}\qquad (f_y)_y=f_{yy}=\dfrac{\partial^2f}{\partial y^2}\)<span class="cap">In the subscript notation you read left to right: \(f_{xy}\) means differentiate by \(x\) first, then by \(y\). In the \(\partial\) notation you read right to left. They mean the same thing.</span></div>
+  <p><b>Clairaut's theorem.</b> If \(f_{xy}\) and \(f_{yx}\) are both continuous near \((a,b)\), then \(f_{xy}(a,b)=f_{yx}(a,b)\). For every function in this course the mixed partials are equal, so compute whichever order is easier - and use the other order as a free check on your algebra.</p>
+
+  <div class="note"><b>Mixed partials are a checksum.</b> Compute \(f_{xy}\) from \(f_x\), then \(f_{yx}\) from \(f_y\). If the two disagree, one of your first partials is wrong. This catches more errors than re-reading your work.</div>
+
+  <h3>Three or more variables</h3>
+  <p>Nothing changes. For \(f(x,y,z)\), \(f_z\) means differentiate with respect to \(z\) while \(x\) and \(y\) are constants. For \(u=5xy/z\): \(u_x=5y/z\), \(u_y=5x/z\), and \(u_z=-5xy/z^2\), since \(1/z=z^{-1}\) has derivative \(-z^{-2}\).</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-partials"></div>
+</section>
+
+<!-- ============================================================ 4 TANGENT PLANES -->
+<section data-id="tangent" data-title="Tangent planes and linear approximation" data-goal="6">
+  <p class="eyebrow">Chapter 4 · Stewart 14.4</p>
+  <h2>Tangent planes and linear approximation</h2>
+  <p class="lead">Zoom in far enough on a smooth surface and it looks flat. That flat thing is the tangent plane, and using it instead of \(f\) is linear approximation.</p>
+
+  <p>At the point \(P(x_0,y_0,z_0)\) on \(z=f(x,y)\), the two traces have tangent lines with direction vectors \(\langle 1,0,f_x(x_0,y_0)\rangle\) and \(\langle 0,1,f_y(x_0,y_0)\rangle\). The plane containing both of those lines is the <b>tangent plane</b>:</p>
+  <div class="formula">\(z-z_0=f_x(x_0,y_0)\,(x-x_0)+f_y(x_0,y_0)\,(y-y_0)\)<span class="cap">Here \(z_0=f(x_0,y_0)\), and \(f_x(x_0,y_0)\), \(f_y(x_0,y_0)\) are <b>numbers</b>: evaluate the partials at the point before you write the plane.</span></div>
+  <p>Rearranged, the plane is \(f_x(x-x_0)+f_y(y-y_0)-(z-z_0)=0\), so a normal vector is \(\langle f_x,\,f_y,\,-1\rangle\) (or \(\langle -f_x,\,-f_y,\,1\rangle\), which points up).</p>
+
+  <div class="card">
+    <h4>Explore: the plane that hugs the surface</h4>
+    <div class="selrow"><label>Surface <select class="sel" id="tpPreset"></select></label></div>
+    <div class="xf">
+      <div><canvas class="scene" id="tpScene"></canvas><p class="plotcap">The green plane touches the surface at the purple point. Drag to rotate, scroll to zoom.</p></div>
+      <div>
+        <div class="sliders" id="tpSliders"></div>
+        <div class="readout" id="tpEq"></div>
+        <div class="readout" id="tpOut"></div>
+        <p class="hint">Look at how good the approximation is half a unit away, then pick a point where the surface is nearly flat and watch the error collapse. On \(x^2-y^2\) at the origin the plane is \(z=0\) and it cuts straight through the surface - a tangent plane is allowed to do that at a saddle.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Linearization</h3>
+  <p>Write the tangent plane as a function instead of an equation and you get the <b>linearization</b> of \(f\) at \((x_0,y_0)\):</p>
+  <div class="formula">\(L(x,y)=f(x_0,y_0)+f_x(x_0,y_0)(x-x_0)+f_y(x_0,y_0)(y-y_0)\)<span class="cap">Then \(f(x,y)\approx L(x,y)\) for \((x,y)\) near \((x_0,y_0)\). This is the <b>linear approximation</b>.</span></div>
+  <p>This is the exact analogue of \(f(x)\approx f(a)+f'(a)(x-a)\) from one variable: a constant plus a slope times a displacement, once for each variable. A function whose linearization really is a good approximation near the point is called <b>differentiable</b> there, and having \(f_x\) and \(f_y\) continuous near the point is enough to guarantee it.</p>
+
+  <h3>Differentials</h3>
+  <p>For small changes \(dx=\Delta x\) and \(dy=\Delta y\), the change in height along the tangent plane is the <b>total differential</b>:</p>
+  <div class="formula">\(dz=f_x(x,y)\,dx+f_y(x,y)\,dy=\dfrac{\partial z}{\partial x}\,dx+\dfrac{\partial z}{\partial y}\,dy\)<span class="cap">\(dz\) estimates the true change \(\Delta z=f(x+\Delta x,y+\Delta y)-f(x,y)\). Each partial says how much that variable contributes per unit of change.</span></div>
+
+  <div class="note"><b>Same object, three costumes.</b> The tangent plane, the linearization, and the differential are one idea written three ways: an equation in \(x,y,z\), a function \(L(x,y)\), and a rule for small changes. If you can write one you can write all three, so learn \(f_x\) and \(f_y\) at the point and the rest is bookkeeping.</div>
+  <div class="warn"><b>Evaluate before you build.</b> The most common error is leaving \(x\) and \(y\) inside the partials: writing \(z-z_0=2x(x-x_0)+2y(y-y_0)\) instead of \(z-z_0=2x_0(x-x_0)+2y_0(y-y_0)\). A plane has constant coefficients. If a variable is still stuck to your coefficient, you have not plugged in the point.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-tangent"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const exprIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph||'expression in x and y'}));
+const V=(el,k)=>$(`[data-k=${k}]`,el).value;
+/* coefficient in front of a body, for expression strings and for TeX */
+const cS=(c,body)=>c===1?body:c===-1?`-(${body})`:`(${fmt(c)})*(${body})`;
+const cT=(c,body)=>c===1?body:c===-1?'-'+body:texNum(c)+body;
+/* signed number for reading inside parentheses: (x - 2) / (x + 2) */
+const shift=(v,vr)=>v===0?vr:(v>0?`${vr} - ${texNum(v)}`:`${vr} + ${texNum(-v)}`);
+/* append a signed term to a TeX sum: addT('x^2+y^2',-2,'x') -> 'x^2+y^2 - 2x' */
+const addT=(base,c,body)=>c===0?base:(base===''?cT(c,body):(c<0?base+' - '+cT(-c,body):base+' + '+cT(c,body)));
+/* exact TeX for a rational value, with a wider denominator range than texNum */
+function exTex(v){
+  if(!Number.isFinite(v))return String(v);
+  if(Math.abs(v-Math.round(v))<1e-9)return String(Math.round(v));
+  for(let d=2;d<=400;d++){const n=v*d;if(Math.abs(n-Math.round(n))<1e-9){const nn=Math.round(n);const g=gcd(Math.abs(nn),d);return (nn<0?'-':'')+`\\tfrac{${Math.abs(nn)/g}}{${d/g}}`;}}
+  return fmtDec(v,4);
+}
+const dec=(v,p=2)=>fmtDec(v,p);
+/* plain-decimal string for the test hook: never exponential notation, which the parser would read as "e" */
+const solNum=v=>Number.isInteger(v)?String(v):v.toFixed(12);
+
+/* ---------- polynomials in x and y: lists of [coef, i, j] meaning coef x^i y^j ---------- */
+const PX=t=>t.map(([c,i,j])=>[c*i,i-1,j]).filter(m=>m[0]!==0);
+const PY=t=>t.map(([c,i,j])=>[c*j,i,j-1]).filter(m=>m[0]!==0);
+const pAt=(t,x,y)=>t.reduce((s,[c,i,j])=>s+c*Math.pow(x,i)*Math.pow(y,j),0);
+function monoBody(i,j,tex){let s='';
+  if(i===1)s+='x';else if(i>1)s+=tex?`x^{${i}}`:`x^${i}`;
+  if(j===1)s+='y';else if(j>1)s+=tex?`y^{${j}}`:`y^${j}`;
+  return s;}
+function pStr(t,tex){if(!t.length)return '0';let out='';
+  t.forEach(([c,i,j])=>{const body=monoBody(i,j,tex);const a=Math.abs(c);const piece=(a===1&&body!=='')?body:(String(a)+body);
+    out+=out===''?((c<0?'-':'')+piece):((c<0?' - ':' + ')+piece);});
+  return out;}
+/* random polynomial in x and y with both variables present */
+function rpoly(maxDeg=3,nTerms){
+  const pool=[[2,0],[0,2],[1,1],[2,1],[1,2],[3,0],[0,3],[1,0],[0,1],[2,2],[3,1]].filter(([i,j])=>i+j<=maxDeg);
+  for(let tries=0;tries<40;tries++){
+    const n=nTerms||pick([2,3,3]);const ex=shuffle(pool).slice(0,n);
+    const t=ex.map(([i,j])=>[rnz(-4,4),i,j]);
+    if(PX(t).length&&PY(t).length)return t;
+  }
+  return [[2,2,1],[-3,1,2],[1,1,0]];
+}
+
+/* ---------- marching squares: segments of f = lv over a window ---------- */
+function levelSegments(f,[x0,x1],[y0,y1],lv,n){
+  const xs=[],ys=[];for(let i=0;i<=n;i++){xs.push(x0+(x1-x0)*i/n);ys.push(y0+(y1-y0)*i/n);}
+  const g=ys.map(y=>xs.map(x=>f(x,y)));const out=[];
+  for(let j=0;j<n;j++)for(let i=0;i<n;i++){
+    const v=[g[j][i],g[j][i+1],g[j+1][i+1],g[j+1][i]];
+    if(!v.every(Number.isFinite))continue;
+    const c=[[xs[i],ys[j]],[xs[i+1],ys[j]],[xs[i+1],ys[j+1]],[xs[i],ys[j+1]]];const pts=[];
+    for(let k=0;k<4;k++){const a=v[k],b=v[(k+1)%4];if((a<lv)!==(b<lv)){const t=(lv-a)/(b-a);const p=c[k],q=c[(k+1)%4];pts.push([p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t]);}}
+    if(pts.length>=2){out.push([pts[0],pts[1]]);if(pts.length===4)out.push([pts[2],pts[3]]);}
+  }
+  return out;
+}
+/* evenly spaced levels inside the middle of the range of f on a window */
+function autoLevels(f,[x0,x1],[y0,y1],count=8){
+  const vals=[];
+  for(let i=0;i<=26;i++)for(let j=0;j<=26;j++){const v=f(x0+(x1-x0)*i/26,y0+(y1-y0)*j/26);if(Number.isFinite(v))vals.push(v);}
+  if(vals.length<4)return [];
+  vals.sort((a,b)=>a-b);
+  const lo=vals[Math.floor(vals.length*0.04)],hi=vals[Math.floor(vals.length*0.96)];
+  if(!(hi>lo))return [];
+  const out=[];for(let i=1;i<=count;i++){const v=lo+(hi-lo)*i/(count+1);out.push(Math.round(v*100)/100);}
+  return [...new Set(out)];
+}
+/* numeric partials */
+const dfx=(f,x,y,h=1e-4)=>(f(x+h,y)-f(x-h,y))/(2*h);
+const dfy=(f,x,y,h=1e-4)=>(f(x,y+h)-f(x,y-h))/(2*h);
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------------- 1.a evaluate ---------------- */
+Q.evalF={name:'evaluate a function of two variables',
+  gen(){
+    const kind=pick(['poly','poly','pyth','exp','trig','rat']);
+    let fTex,fStr,pt,ptTex,xTex,yTex,valTex,note='';
+    if(kind==='poly'){const t=rpoly(3);fTex=pStr(t,true);fStr=pStr(t);pt=[rint(-3,3),rint(-3,3)];}
+    else if(kind==='pyth'){const b=shuffle(pick([[3,4],[6,8],[5,12],[8,15],[9,12]])).map(v=>v*pick([1,-1]));
+      fTex=R`\sqrt{x^2+y^2}`;fStr='sqrt(x^2+y^2)';pt=b;}
+    else if(kind==='exp'){let a,b;do{a=pick([1,2,3,-1,-2]);b=pick([0,1,-1]);}while(Math.abs(a*b)>2);
+      fTex=R`xe^{xy}`;fStr='x*e^(x*y)';pt=[a,b];note=' Give an exact value such as <code>2e^2</code> or <code>3e^(-1)</code>.';
+      valTex=b===0?String(a):cT(a,`e^{${a*b}}`);}
+    else if(kind==='trig'){const a=rnz(-3,3),m=rnz(-3,3);
+      fTex=cT(a,'x^2')+R`\sin y`;fStr=`(${a})*x^2*sin(y)`;pt=[m,Math.PI/2];
+      ptTex=R`\left(${m},\tfrac{\pi}{2}\right)`;yTex=R`\tfrac{\pi}{2}`;valTex=String(a*m*m);}
+    else{const t=rpoly(2,2);let p,q;do{p=rint(-3,3);q=rint(-3,3);}while(p+q===0);
+      fTex=`\\dfrac{${pStr(t,true)}}{x+y}`;fStr=`(${pStr(t)})/(x+y)`;pt=[p,q];note=' Fractions like <code>7/3</code> are fine.';}
+    ptTex=ptTex||texPt(pt);xTex=texNum(pt[0]);yTex=yTex||texNum(pt[1]);
+    const val=Expr.compile(fStr)({x:pt[0],y:pt[1]});
+    return {fTex,fStr,pt,ptTex,xTex,yTex,val,valTex:valTex||exTex(val),note};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M('f(x,y)='+q.fTex)}. Find ${M('f'+q.ptTex)}.${q.note}</p>`;
+    numIn(el,'v',M('f'+q.ptTex+'='));},
+  check(q,el){return G(el,'v',checkNumber(V(el,'v'),q.val));},
+  solution(q){return `Substitute ${M('x='+q.xTex)} and ${M('y='+q.yTex)} into ${M(q.fTex)} and evaluate: ${M('f'+q.ptTex+'='+q.valTex)}${Math.abs(q.val-Math.round(q.val))>1e-9?` (about ${fmtDec(q.val,4)})`:''}. A function of two variables is evaluated one slot at a time; there is nothing more to it.`;}
+};
+
+/* ---------------- 1.b domain ---------------- */
+const DOM=[
+  ()=>{const a=rint(1,3),b=rint(1,4);const L=texLin([a,b],['x','y']);
+    return {fTex:R`\sqrt{${L}}`,right:`all \\((x,y)\\) with \\(${L}\\ge 0\\)`,
+      wrong:[`all \\((x,y)\\) with \\(${L}>0\\)`,`all \\((x,y)\\) with \\(x\\ge 0\\) and \\(y\\ge 0\\)`,`all of \\(\\mathbb{R}^2\\)`],
+      why:`A square root needs its argument to be \\(\\ge 0\\), and \\(=0\\) is allowed because \\(\\sqrt{0}=0\\). So the domain is the closed half-plane \\(${L}\\ge 0\\).`};},
+  ()=>{const r=pick([2,3,4,5]);
+    return {fTex:R`\sqrt{${r*r}-x^2-y^2}`,right:`the closed disk \\(x^2+y^2\\le ${r*r}\\)`,
+      wrong:[`the open disk \\(x^2+y^2<${r*r}\\)`,`all \\((x,y)\\) with \\(x^2+y^2\\ge ${r*r}\\)`,`the closed disk \\(x^2+y^2\\le ${r}\\)`],
+      why:`Need \\(${r*r}-x^2-y^2\\ge 0\\), that is \\(x^2+y^2\\le ${r*r}\\): the disk of radius \\(${r}\\) including its boundary circle.`};},
+  ()=>({fTex:R`\ln(x^2+y^2-1)`,right:`all \\((x,y)\\) with \\(x^2+y^2>1\\), the outside of the unit circle`,
+    wrong:[`all \\((x,y)\\) with \\(x^2+y^2\\ge 1\\)`,`all \\((x,y)\\) with \\(x^2+y^2<1\\)`,`all of \\(\\mathbb{R}^2\\) except the origin`],
+    why:`A logarithm needs a <b>strictly positive</b> argument: \\(x^2+y^2-1>0\\), so \\(x^2+y^2>1\\). The unit circle itself is excluded.`}),
+  ()=>{const a=rnz(-3,3);return {fTex:`\\dfrac{${cT(a,'x')}}{x-y}`,right:`all \\((x,y)\\) with \\(y\\ne x\\)`,
+    wrong:[`all \\((x,y)\\) with \\(y>x\\)`,`all \\((x,y)\\) with \\(x\\ne 0\\) and \\(y\\ne 0\\)`,`all of \\(\\mathbb{R}^2\\)`],
+    why:`Only the denominator can fail. \\(x-y=0\\) exactly on the line \\(y=x\\), so the domain is the whole plane with that line removed.`};},
+  ()=>({fTex:R`\ln(y-x)`,right:`all \\((x,y)\\) with \\(y>x\\)`,
+    wrong:[`all \\((x,y)\\) with \\(y\\ge x\\)`,`all \\((x,y)\\) with \\(y<x\\)`,`all \\((x,y)\\) with \\(y\\ne x\\)`],
+    why:`\\(\\ln\\) needs \\(y-x>0\\), so \\(y>x\\): the open half-plane strictly above the line \\(y=x\\).`}),
+  ()=>{const t=rpoly(3);return {fTex:pStr(t,true),right:`all of \\(\\mathbb{R}^2\\)`,
+    wrong:[`all \\((x,y)\\) with \\(x\\ne 0\\)`,`all \\((x,y)\\) with \\(x\\ge 0\\) and \\(y\\ge 0\\)`,`all \\((x,y)\\) with \\(x^2+y^2>0\\)`],
+    why:`A polynomial has no roots, no logs, and no denominators, so every pair \\((x,y)\\) is allowed.`};},
+  ()=>({fTex:R`\sqrt{x^2+y^2-1}`,right:`all \\((x,y)\\) with \\(x^2+y^2\\ge 1\\)`,
+    wrong:[`all \\((x,y)\\) with \\(x^2+y^2>1\\)`,`the closed disk \\(x^2+y^2\\le 1\\)`,`all of \\(\\mathbb{R}^2\\)`],
+    why:`Need \\(x^2+y^2-1\\ge 0\\). The unit circle is included because the square root of 0 is defined.`}),
+  ()=>({fTex:R`\sqrt{x}+\sqrt{y}`,right:`all \\((x,y)\\) with \\(x\\ge 0\\) and \\(y\\ge 0\\), the first quadrant with its edges`,
+    wrong:[`all \\((x,y)\\) with \\(x+y\\ge 0\\)`,`all \\((x,y)\\) with \\(x>0\\) and \\(y>0\\)`,`all of \\(\\mathbb{R}^2\\)`],
+    why:`Both roots must be defined at once, so you intersect the two conditions \\(x\\ge 0\\) and \\(y\\ge 0\\).`}),
+  ()=>({fTex:R`\sqrt{y-x^2}`,right:`all \\((x,y)\\) with \\(y\\ge x^2\\), the region on or above the parabola`,
+    wrong:[`all \\((x,y)\\) with \\(y\\le x^2\\)`,`all \\((x,y)\\) with \\(y>x^2\\)`,`all \\((x,y)\\) with \\(y\\ge x\\)`],
+    why:`Need \\(y-x^2\\ge 0\\), that is \\(y\\ge x^2\\): everything on or above the parabola \\(y=x^2\\).`}),
+];
+Q.domain={name:'domain of a function',
+  gen(){const it=pick(DOM)();const opts=shuffle([it.right,...it.wrong]);
+    return {fTex:it.fTex,opts,ansIdx:opts.indexOf(it.right),right:it.right,why:it.why};},
+  render(q,el){el.innerHTML=`<p class="prompt">Describe the domain of ${M('f(x,y)='+q.fTex)}.</p>`;
+    q.get=choiceButtons(el,q.opts.map((o,i)=>({label:o,value:i})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ansIdx,msg:v===q.ansIdx?'':'Not quite. Check whether the boundary belongs to the domain.'};},
+  solution(q){return `${q.why} The domain is <b>${q.right}</b>.`;}
+};
+
+/* ---------------- 1.c level curve equation ---------------- */
+Q.levelCurve={name:'equation of a level curve',
+  gen(){
+    const kind=pick(['circle','lin','par','hyp','ell','xy']);
+    let fTex,f,k,extra;
+    if(kind==='circle'){const a=pick([1,2,3]),m=pick([3,4,5]);const r=Math.max(m,a+1);k=r*r-a*a;
+      fTex=addT('x^2+y^2',-2*a,'x');f=(x,y)=>x*x+y*y-2*a*x;
+      extra=`Completing the square, ${M(`(x-${a})^2+y^2=${k+a*a}`)}: the circle of radius ${M(String(r))} centered at ${M(`(${a},0)`)}.`;}
+    else if(kind==='lin'){const a=rnz(-4,4),b=rnz(-4,4);k=rint(-6,6);
+      fTex=texLin([a,b],['x','y']);f=(x,y)=>a*x+b*y;extra='The level curves of a linear function are parallel straight lines, one for each value of \\(k\\).';}
+    else if(kind==='par'){const a=pick([1,2,3,-1,-2]);k=rint(-4,4);
+      fTex=addT('y',-a,'x^2');f=(x,y)=>y-a*x*x;
+      extra=`Solved for ${M('y')} this is ${M('y='+cT(a,'x^2')+(k===0?'':k<0?' - '+(-k):' + '+k))}, a parabola.`;}
+    else if(kind==='hyp'){const a=pick([1,2,4]),b=pick([1,2,3]);k=pick([-6,-4,-2,2,4,6]);
+      fTex=addT(cT(a,'x^2'),-b,'y^2');f=(x,y)=>a*x*x-b*y*y;extra='A difference of squares set equal to a nonzero constant is a hyperbola.';}
+    else if(kind==='ell'){const a=pick([1,2,4]),b=pick([3,5,9]);k=pick([4,9,12,16,36]);
+      fTex=addT(cT(a,'x^2'),b,'y^2');f=(x,y)=>a*x*x+b*y*y;extra='A sum of squares set equal to a positive constant is an ellipse centered at the origin.';}
+    else{k=pick([-6,-4,-2,2,3,4,6]);fTex='xy';f=(x,y)=>x*y;extra=`Solved for ${M('y')} this is ${M(`y=${k}/x`)}, a hyperbola with the axes as asymptotes.`;}
+    return {fTex,f,k,extra};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation, in ${M('x')} and ${M('y')} only, for the level curve of ${M('f(x,y)='+q.fTex)} at ${M('k='+q.k)}. Any equivalent equation is accepted.</p>`;
+    el.appendChild(ansLine('level curve:','eq',{xwide:true,placeholder:'for example  x^2 + y^2 = 9'}));},
+  check(q,el){return G(el,'eq',checkEquation(V(el,'eq'),e=>q.f(e.x,e.y)-q.k,['x','y']));},
+  solution(q){return `Set ${M('f(x,y)=k')}: ${M(q.fTex+'='+q.k)}. ${q.extra}`;}
+};
+/* the raw "f = k" string a solver can type: every level-curve fTex is plain enough to parse */
+Q.levelCurve.answerOf=q=>`${q.fTex} = ${q.k}`;
+
+/* ---------------- 1.d match the contour map ---------------- */
+const MCAND=[
+  {fam:'circ',tex:'x^2+y^2',f:(x,y)=>x*x+y*y},
+  {fam:'ell',tex:'x^2+4y^2',f:(x,y)=>x*x+4*y*y},
+  {fam:'hyp',tex:'x^2-y^2',f:(x,y)=>x*x-y*y},
+  {fam:'hyp',tex:'xy',f:(x,y)=>x*y},
+  {fam:'par',tex:'y-x^2',f:(x,y)=>y-x*x},
+  {fam:'par',tex:'x-y^2',f:(x,y)=>x-y*y},
+  {fam:'lin',tex:'2x+y',f:(x,y)=>2*x+y},
+  {fam:'lin',tex:'x-y',f:(x,y)=>x-y},
+  {fam:'off',tex:'x^2+y^2-4x',f:(x,y)=>x*x+y*y-4*x},
+];
+let MCID=0;
+Q.matchContour={name:'match the contour map',
+  gen(){
+    const fams=shuffle([...new Set(MCAND.map(c=>c.fam))]).slice(0,3);
+    const opts=shuffle(fams.map(fm=>pick(MCAND.filter(c=>c.fam===fm))));
+    const ansIdx=rint(0,2);const id=MCID++;
+    return {opts,ansIdx,ids:[0,1,2].map(i=>`mc${id}_${i}`)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Which of these three contour maps belongs to ${M('f(x,y)='+q.opts[q.ansIdx].tex)}? Each map shows evenly spaced level curves over \u22124.5 \u2264 x \u2264 4.5, \u22123 \u2264 y \u2264 3.</p>
+      <div class="minis">${q.ids.map((id,i)=>`<div><canvas class="scene short" id="${id}"></canvas><div class="cap">${'ABC'[i]}</div></div>`).join('')}</div>`;
+    q.get=choiceButtons(el,[{label:'A',value:0},{label:'B',value:1},{label:'C',value:2}]);
+    const drawAll=()=>{q.opts.forEach((o,i)=>{const cv=$('#'+q.ids[i],el);if(!cv||!cv.isConnected)return;
+      const p=new Plot2D(cv,{xmin:-4.5,xmax:4.5,ymin:-3,ymax:3,labels:false});
+      p.begin();p.contour(o.f,autoLevels(o.f,[-4.5,4.5],[-3,3],8),{color:'#2563eb',width:1.4,n:64,labels:false});});};
+    drawAll();setTimeout(drawAll,60);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ansIdx,msg:v===q.ansIdx?'':'Not that one. Ask what shape each family of curves has, and which way the values grow.'};},
+  solution(q){return `The answer is <b>${'ABC'[q.ansIdx]}</b>. The three maps are ${q.opts.map((o,i)=>`${'ABC'[i]}: ${M('f='+o.tex)}`).join(', ')}. Sort them by shape first (circles, ellipses, hyperbolas, parabolas, straight lines), then check the center or the direction of increase.`;}
+};
+
+/* ---------------- 1.e describe the level curves ---------------- */
+const SHAPES=['concentric circles','ellipses centered at the origin','hyperbolas','parallel straight lines','parabolas'];
+const LEVPOOL=[
+  {tex:'x^2+y^2',ans:0,why:'\\(x^2+y^2=k\\) is a circle of radius \\(\\sqrt{k}\\) about the origin for each \\(k>0\\).'},
+  {tex:R`\sqrt{x^2+y^2}`,ans:0,why:'\\(\\sqrt{x^2+y^2}=k\\) means \\(x^2+y^2=k^2\\): again circles about the origin, this time evenly spaced.'},
+  {tex:'x^2+y^2-2x',ans:0,why:'Completing the square gives \\((x-1)^2+y^2=k+1\\): circles, all centered at \\((1,0)\\).'},
+  {tex:'x^2+4y^2',ans:1,why:'\\(x^2+4y^2=k\\) is an ellipse: the same shape stretched twice as far in \\(x\\) as in \\(y\\).'},
+  {tex:'9x^2+y^2',ans:1,why:'\\(9x^2+y^2=k\\) is an ellipse, short in the \\(x\\) direction and tall in the \\(y\\) direction.'},
+  {tex:'x^2-y^2',ans:2,why:'\\(x^2-y^2=k\\) is a hyperbola for every \\(k\\ne 0\\), opening along \\(x\\) when \\(k>0\\) and along \\(y\\) when \\(k<0\\).'},
+  {tex:'xy',ans:2,why:'\\(xy=k\\) is \\(y=k/x\\), a hyperbola with the coordinate axes as asymptotes.'},
+  {tex:'2x-3y',ans:3,why:'\\(2x-3y=k\\) is a straight line of slope \\(\\tfrac23\\) for every \\(k\\); different \\(k\\) shifts the line without turning it.'},
+  {tex:'x+y',ans:3,why:'\\(x+y=k\\) is a line of slope \\(-1\\); the level curves are parallel lines.'},
+  {tex:'y-x^2',ans:4,why:'\\(y-x^2=k\\) is \\(y=x^2+k\\): the same parabola slid up or down.'},
+  {tex:'x-y^2',ans:4,why:'\\(x-y^2=k\\) is \\(x=y^2+k\\): a parabola opening in the \\(x\\) direction.'},
+];
+Q.describeLevels={name:'describe the level curves',
+  gen(){const it=pick(LEVPOOL);const order=shuffle([0,1,2,3,4]);
+    return {tex:it.tex,why:it.why,order,ansIdx:order.indexOf(it.ans),ansName:SHAPES[it.ans]};},
+  render(q,el){el.innerHTML=`<p class="prompt">What do the level curves of ${M('f(x,y)='+q.tex)} look like?</p>`;
+    q.get=choiceButtons(el,q.order.map((s,i)=>({label:SHAPES[s],value:i})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ansIdx,msg:v===q.ansIdx?'':'Not quite. Set the formula equal to \\(k\\) and recognize the conic.'};},
+  solution(q){return `${q.why} They are <b>${q.ansName}</b>.`;}
+};
+
+/* ---------------- 2.a limit along a line ---------------- */
+Q.limLine={name:'limit along a line',
+  gen(){
+    const m=rnz(-3,3);const kind=pick(['ab','xy','mix']);const mx=cT(m,'x'),P=`\\left(${mx}\\right)`;
+    const den=1+m*m;let numTex,val,sub,top;
+    if(kind==='ab'){let a,b;do{a=rnz(-5,5);b=rnz(-5,5);}while(a===b);
+      numTex=addT(cT(a,'x^2'),b,'y^2');top=a+b*m*m;val=top/den;
+      sub=`\\frac{${addT(cT(a,'x^2'),b,P+'^2')}}{x^2+${P}^2}=\\frac{\\left(${a}+(${b})(${m*m})\\right)x^2}{\\left(1+${m*m}\\right)x^2}`;}
+    else if(kind==='xy'){const a=rnz(-6,6);numTex=cT(a,'xy');top=a*m;val=top/den;
+      sub=`\\frac{${cT(a,`x${P}`)}}{x^2+${P}^2}=\\frac{\\left(${a}\\right)\\left(${m}\\right)x^2}{\\left(1+${m*m}\\right)x^2}`;}
+    else{const a=rnz(-4,4),b=rnz(-4,4);numTex=addT(cT(a,'x^2'),b,'xy');top=a+b*m;val=top/den;
+      sub=`\\frac{${addT(cT(a,'x^2'),b,`x${P}`)}}{x^2+${P}^2}=\\frac{\\left(${a}+(${b})(${m})\\right)x^2}{\\left(1+${m*m}\\right)x^2}`;}
+    /* only show the reducing step when the fraction actually reduces */
+    const tail=(gcd(Math.abs(top),den)===1&&!Number.isInteger(val))?'':'='+exTex(val);
+    return {fTex:`\\dfrac{${numTex}}{x^2+y^2}`,m,mx,val,sub:`${sub}=\\frac{${top}}{${den}}${tail}`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M('f(x,y)='+q.fTex)}. Find the limit of ${M('f')} as ${M(R`(x,y)\to(0,0)`)} <b>along the line</b> ${M('y='+q.mx)}. Fractions like <code>3/5</code> are fine.</p>`;
+    numIn(el,'v',M(R`\lim_{x\to 0}f(x,${q.mx})=`));},
+  check(q,el){return G(el,'v',checkNumber(V(el,'v'),q.val));},
+  solution(q){return `Put ${M('y='+q.mx)} into ${M('f')} and simplify: ${M(q.sub)} for every ${M(R`x\ne 0`)}. The expression is constant on that line, so the limit along it is ${M(exTex(q.val))}. Since this value depends on the slope, comparing two different slopes is how you prove the full limit does not exist.`;}
+};
+
+/* ---------------- 2.b does the limit exist ---------------- */
+const LIMPOOL=[
+  {tex:R`\dfrac{x^2-y^2}{x^2+y^2}`,ans:false,why:'Along \\(y=0\\): \\(x^2/x^2=1\\). Along \\(x=0\\): \\(-y^2/y^2=-1\\). Two paths, two values, so the limit does not exist.'},
+  {tex:R`\dfrac{xy}{x^2+y^2}`,ans:false,why:'Along \\(y=0\\) the function is 0. Along \\(y=x\\) it is \\(x^2/(2x^2)=\\tfrac12\\). Different values, so no limit.'},
+  {tex:R`\dfrac{xy^2}{x^2+y^4}`,ans:false,why:'Along \\(y=0\\) it is 0, and along every line \\(y=mx\\) it still goes to 0. But along the parabola \\(x=y^2\\) it is \\(y^4/(2y^4)=\\tfrac12\\), so the limit does not exist.'},
+  {tex:R`\dfrac{x^2y}{x^4+y^2}`,ans:false,why:'Every line through the origin gives 0, but along \\(y=x^2\\) the value is \\(x^4/(2x^4)=\\tfrac12\\). Lines are not enough; the limit does not exist.'},
+  {tex:R`\dfrac{x+y}{x-y}`,ans:false,why:'Along \\(y=0\\): \\(x/x=1\\). Along \\(x=0\\): \\(y/(-y)=-1\\). The limit does not exist.'},
+  {tex:R`\dfrac{x^2y}{x^2+y^2}`,ans:true,why:'Since \\(0\\le x^2/(x^2+y^2)\\le 1\\), we get \\(|f|\\le|y|\\to 0\\). Squeezed to 0, so the limit exists and equals 0.'},
+  {tex:R`\dfrac{x^3}{x^2+y^2}`,ans:true,why:'In polar form \\(f=r\\cos^3\\theta\\), and \\(|f|\\le r\\to 0\\). The bound is free of \\(\\theta\\), so the limit exists and equals 0.'},
+  {tex:R`\dfrac{\sin(x^2+y^2)}{x^2+y^2}`,ans:true,why:'With \\(r^2=x^2+y^2\\) this is \\(\\sin(r^2)/r^2\\to 1\\) as \\(r\\to 0\\), the one-variable limit \\(\\sin u/u\\to1\\). The limit exists and equals 1.'},
+  {tex:R`\dfrac{xy^3}{x^2+y^2}`,ans:true,why:'\\(|xy^3|/(x^2+y^2)\\le |y|^3\\cdot\\frac{|x|}{x^2+y^2}\\cdot|x|\\); in polar form it is \\(r^2\\cos\\theta\\sin^3\\theta\\), bounded by \\(r^2\\to0\\). The limit exists and equals 0.'},
+  {tex:R`\dfrac{x^3+y^3}{x^2+y^2}`,ans:true,why:'In polar form \\(f=r(\\cos^3\\theta+\\sin^3\\theta)\\), so \\(|f|\\le 2r\\to 0\\). The limit exists and equals 0.'},
+];
+Q.limExists={name:'does the limit exist',
+  gen(){const it=pick(LIMPOOL);return {tex:it.tex,ans:it.ans,why:it.why};},
+  render(q,el){el.innerHTML=`<p class="prompt">Does ${M(R`\displaystyle\lim_{(x,y)\to(0,0)}`+q.tex)} exist?</p>`;
+    q.get=choiceButtons(el,[{label:'yes, it exists',value:true},{label:'no, it does not exist',value:false}]);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ans,msg:v===q.ans?'':(q.ans?'Look for a bound that squeezes the function to a single value.':'Look for two paths that give different values.')};},
+  solution(q){return `<b>${q.ans?'Yes, the limit exists.':'No, the limit does not exist.'}</b> ${q.why}`;}
+};
+
+/* ---------------- 2.c limit by continuity ---------------- */
+Q.limCont={name:'limit by continuity',
+  gen(){
+    const kind=pick(['rat','rat','exp']);
+    if(kind==='rat'){
+      const t=rpoly(3);const c=rnz(-4,4),d=rnz(-4,4),e=rint(-4,4);
+      let p,q2,den;do{p=rint(-3,3);q2=rint(-3,3);den=c*p+d*q2+e;}while(den===0||pAt(t,p,q2)===0);
+      const numTex=pStr(t,true),denTex=texLin([c,d],['x','y'],{constant:e});
+      const val=pAt(t,p,q2)/den;
+      return {fTex:`\\dfrac{${numTex}}{${denTex}}`,pt:[p,q2],val,
+        why:`The denominator at ${M(texPt([p,q2]))} is ${M(denTex+'='+den)}, which is not 0, so this rational function is continuous there and the limit is just the value. The numerator is ${M(String(pAt(t,p,q2)))}, so the limit is ${M(`\\dfrac{${pAt(t,p,q2)}}{${den}}=${exTex(val)}`)}.`};}
+    const a=rnz(-2,2),b=rnz(-2,2);const s=pick([1,2,-1,-2]);const p=b*s,q2=-a*s;
+    let t,val;do{t=rpoly(2,2);val=pAt(t,p,q2);}while(val===0);
+    return {fTex:`e^{${texLin([a,b],['x','y'])}}\\left(${pStr(t,true)}\\right)`,pt:[p,q2],val,
+      why:`Both factors are continuous everywhere, so substitute. The exponent is ${M(`${texLin([a,b],['x','y'])}=${a*p+b*q2}`)}, so ${M('e^{0}=1')}, and the polynomial factor is ${M(String(val))}. The limit is ${M(String(val))}.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\lim_{(x,y)\to`+texPt(q.pt)+'}'+q.fTex)}. The function is continuous at that point, so substitute. Fractions like <code>7/3</code> are fine.</p>`;
+    numIn(el,'v','limit =');},
+  check(q,el){return G(el,'v',checkNumber(V(el,'v'),q.val));},
+  solution(q){return q.why;}
+};
+
+/* ---------------- 3.a first partials ---------------- */
+function partFamily(){
+  const kind=pick(['poly','poly','exp','xexy','sin','ycos','ln','sqrt','quot','chain']);
+  if(kind==='poly'){const t=rpoly(4);
+    return {fTex:pStr(t,true),fStr:pStr(t),fxStr:pStr(PX(t)),fyStr:pStr(PY(t)),fxTex:pStr(PX(t),true),fyTex:pStr(PY(t),true),
+      rule:'Differentiate term by term. In \\(f_x\\) every \\(y\\) is a constant multiplier; in \\(f_y\\) every \\(x\\) is.'};}
+  if(kind==='exp'){const a=rnz(-3,3),b=rnz(-3,3);const L=texLin([a,b],['x','y']),Ls=`((${a})*x+(${b})*y)`;
+    return {fTex:`e^{${L}}`,fStr:`e^${Ls}`,fxStr:`(${a})*e^${Ls}`,fyStr:`(${b})*e^${Ls}`,fxTex:cT(a,`e^{${L}}`),fyTex:cT(b,`e^{${L}}`),
+      rule:'Chain rule: \\(\\frac{\\partial}{\\partial x}e^{u}=e^{u}u_x\\), and here \\(u_x='+a+'\\), \\(u_y='+b+'\\).'};}
+  if(kind==='xexy')return {fTex:R`xe^{xy}`,fStr:'x*e^(x*y)',fxStr:'(1+x*y)*e^(x*y)',fyStr:'x^2*e^(x*y)',
+    fxTex:R`e^{xy}+xye^{xy}=(1+xy)e^{xy}`,fyTex:R`x^2e^{xy}`,
+    rule:'For \\(f_x\\) use the product rule on \\(x\\) and \\(e^{xy}\\) (the inside derivative is \\(y\\)). For \\(f_y\\) the factor \\(x\\) is a constant and the inside derivative is \\(x\\).'};
+  if(kind==='sin'){const a=rnz(-3,3),b=rnz(-3,3);const L=texLin([a,b],['x','y']),Ls=`((${a})*x+(${b})*y)`;
+    return {fTex:`\\sin\\left(${L}\\right)`,fStr:`sin${Ls}`,fxStr:`(${a})*cos${Ls}`,fyStr:`(${b})*cos${Ls}`,
+      fxTex:cT(a,`\\cos\\left(${L}\\right)`),fyTex:cT(b,`\\cos\\left(${L}\\right)`),
+      rule:'Chain rule: the derivative of \\(\\sin u\\) is \\(\\cos u\\) times the derivative of the inside.'};}
+  if(kind==='ycos'){const a=pick([1,2,3]);
+    return {fTex:`y\\cos\\left(${cT(a,'x^2')}\\right)`,fStr:`y*cos((${a})*x^2)`,
+      fxStr:`(${-2*a})*x*y*sin((${a})*x^2)`,fyStr:`cos((${a})*x^2)`,
+      fxTex:cT(-2*a,`xy\\sin\\left(${cT(a,'x^2')}\\right)`),fyTex:`\\cos\\left(${cT(a,'x^2')}\\right)`,
+      rule:`For \\(f_x\\), \\(y\\) is a constant and the chain rule on \\(\\cos(${cT(a,'x^2')})\\) brings down \\(-\\sin\\) times \\(${cT(2*a,'x')}\\). For \\(f_y\\) the cosine is a constant.`};}
+  if(kind==='ln')return {fTex:R`\ln(x^2+y^2)`,fStr:'ln(x^2+y^2)',fxStr:'2*x/(x^2+y^2)',fyStr:'2*y/(x^2+y^2)',
+    fxTex:R`\dfrac{2x}{x^2+y^2}`,fyTex:R`\dfrac{2y}{x^2+y^2}`,domain:{x:[1,3],y:[1,3]},note:' (take \\(x>0,\\ y>0\\))',
+    rule:'Chain rule: \\(\\frac{\\partial}{\\partial x}\\ln u=u_x/u\\), with \\(u=x^2+y^2\\), so \\(u_x=2x\\) and \\(u_y=2y\\).'};
+  if(kind==='sqrt'){const a=rint(1,4),b=rint(1,4);const L=texLin([a,b],['x','y']),Ls=`((${a})*x+(${b})*y)`;
+    return {fTex:`\\sqrt{${L}}`,fStr:`sqrt${Ls}`,fxStr:`(${a})/(2*sqrt${Ls})`,fyStr:`(${b})/(2*sqrt${Ls})`,
+      fxTex:`\\dfrac{${a}}{2\\sqrt{${L}}}`,fyTex:`\\dfrac{${b}}{2\\sqrt{${L}}}`,domain:{x:[1,3],y:[1,3]},note:' (take \\(x>0,\\ y>0\\))',
+      rule:`Write \\(f=u^{1/2}\\). Then \\(f_x=\\tfrac12u^{-1/2}u_x\\) with \\(u_x=${a}\\) and \\(u_y=${b}\\).`};}
+  if(kind==='quot'){const swap=Math.random()<0.5;
+    return swap?{fTex:R`\dfrac{y}{x+y}`,fStr:'y/(x+y)',fxStr:'-y/(x+y)^2',fyStr:'x/(x+y)^2',
+      fxTex:R`-\dfrac{y}{(x+y)^2}`,fyTex:R`\dfrac{x}{(x+y)^2}`,domain:{x:[1,3],y:[1,3]},note:' (take \\(x>0,\\ y>0\\))',
+      rule:'Quotient rule. For \\(f_x\\) the numerator \\(y\\) is constant, so \\(f_x=\\frac{0\\cdot(x+y)-y\\cdot 1}{(x+y)^2}\\). For \\(f_y\\), \\(f_y=\\frac{1\\cdot(x+y)-y\\cdot1}{(x+y)^2}\\).'}
+      :{fTex:R`\dfrac{x-y}{x+y}`,fStr:'(x-y)/(x+y)',fxStr:'2*y/(x+y)^2',fyStr:'-2*x/(x+y)^2',
+      fxTex:R`\dfrac{2y}{(x+y)^2}`,fyTex:R`-\dfrac{2x}{(x+y)^2}`,domain:{x:[1,3],y:[1,3]},note:' (take \\(x>0,\\ y>0\\))',
+      rule:'Quotient rule: \\(f_x=\\frac{1\\cdot(x+y)-(x-y)\\cdot1}{(x+y)^2}=\\frac{2y}{(x+y)^2}\\), and similarly for \\(f_y\\).'};}
+  const n=pick([3,4,5]);
+  return {fTex:`y\\left(x+x^2y\\right)^{${n}}`,fStr:`y*(x+x^2*y)^${n}`,
+    fxStr:`(${n})*y*(1+2*x*y)*(x+x^2*y)^${n-1}`,fyStr:`(x+x^2*y)^${n-1}*(x+(${n+1})*x^2*y)`,
+    fxTex:`${n}y(1+2xy)\\left(x+x^2y\\right)^{${n-1}}`,fyTex:`\\left(x+x^2y\\right)^{${n-1}}\\left(x+${n+1}x^2y\\right)`,
+    rule:`For \\(f_x\\), \\(y\\) is a constant factor and the chain rule gives \\(${n}(x+x^2y)^{${n-1}}\\) times the inside derivative \\(1+2xy\\). For \\(f_y\\) use the product rule, then factor out \\((x+x^2y)^{${n-1}}\\).`};
+}
+Q.firstPartials={name:'first partial derivatives',
+  gen(){return partFamily();},
+  render(q,el){el.innerHTML=`<p class="prompt">Find both first partial derivatives of ${M('f(x,y)='+q.fTex)}.${q.note||''}</p>`;
+    exprIn(el,'fx',M('f_x='));exprIn(el,'fy',M('f_y='));},
+  check(q,el){const o={domain:q.domain};
+    return Gall(el,[['fx',checkExpr(V(el,'fx'),q.fxStr,['x','y'],o)],['fy',checkExpr(V(el,'fy'),q.fyStr,['x','y'],o)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el.ownerDocument.createElement('div'));h.className='hintbox hint';}
+    h.innerHTML=q.rule;},
+  solution(q){return `${q.rule} That gives ${M('f_x='+q.fxTex)} and ${M('f_y='+q.fyTex)}.`;}
+};
+
+/* ---------------- 3.b partials of three variables ---------------- */
+function part3Family(){
+  const kind=pick(['tan','quot','exp','mono']);
+  if(kind==='tan'){const c=pick([2,3,4,5]);
+    return {fTex:`y\\tan(x+${c}z)`,name:'w',fStr:`y*tan(x+(${c})*z)`,
+      fx:`y*(sec(x+(${c})*z))^2`,fy:`tan(x+(${c})*z)`,fz:`(${c})*y*(sec(x+(${c})*z))^2`,
+      fxT:`y\\sec^2(x+${c}z)`,fyT:`\\tan(x+${c}z)`,fzT:`${c}y\\sec^2(x+${c}z)`,
+      domain:{x:[-0.5,0.5],y:[-2,2],z:[-0.12,0.12]},
+      rule:`\\(\\frac{d}{du}\\tan u=\\sec^2u\\). In \\(w_x\\) and \\(w_z\\) the factor \\(y\\) is a constant and the chain rule supplies the inside derivatives 1 and ${c}. In \\(w_y\\) the tangent is a constant.`};}
+  if(kind==='quot'){const a=pick([2,3,5,7]);
+    return {fTex:`\\dfrac{${a}xy}{z}`,name:'u',fStr:`(${a})*x*y/z`,
+      fx:`(${a})*y/z`,fy:`(${a})*x/z`,fz:`-(${a})*x*y/z^2`,
+      fxT:`\\dfrac{${a}y}{z}`,fyT:`\\dfrac{${a}x}{z}`,fzT:`-\\dfrac{${a}xy}{z^2}`,
+      domain:{x:[-2,2],y:[-2,2],z:[1,3]},
+      rule:`Write \\(u=${a}xy\\,z^{-1}\\). For \\(u_x\\) and \\(u_y\\) the factor \\(1/z\\) is a constant; for \\(u_z\\) use \\(\\frac{d}{dz}z^{-1}=-z^{-2}\\).`};}
+  if(kind==='exp')return {fTex:R`xe^{yz}`,name:'f',fStr:'x*e^(y*z)',
+    fx:'e^(y*z)',fy:'x*z*e^(y*z)',fz:'x*y*e^(y*z)',
+    fxT:R`e^{yz}`,fyT:R`xze^{yz}`,fzT:R`xye^{yz}`,
+    rule:'For \\(f_x\\) the exponential is a constant. For \\(f_y\\) and \\(f_z\\) the chain rule gives \\(e^{yz}\\) times the inside derivatives \\(z\\) and \\(y\\), with \\(x\\) riding along.'};
+  const a=pick([2,3]),b=pick([2,3]),c=pick([1,2]);
+  const t=`x^{${a}}y^{${b}}${c===1?'z':'z^{'+c+'}'}`;
+  return {fTex:t,name:'f',fStr:`x^${a}*y^${b}*z^${c}`,
+    fx:`(${a})*x^${a-1}*y^${b}*z^${c}`,fy:`(${b})*x^${a}*y^${b-1}*z^${c}`,fz:`(${c})*x^${a}*y^${b}*z^${c-1}`,
+    fxT:`${a}x^{${a-1}}y^{${b}}${c===1?'z':'z^{'+c+'}'}`,fyT:`${b}x^{${a}}y^{${b-1}}${c===1?'z':'z^{'+c+'}'}`,
+    fzT:`${c===1?'':c}x^{${a}}y^{${b}}${c-1===0?'':c-1===1?'z':'z^{'+(c-1)+'}'}`,
+    rule:'Power rule one variable at a time: the other two letters are constant multipliers.'};
+}
+Q.partials3={name:'partials of a function of three variables',
+  gen(){return part3Family();},
+  render(q,el){el.innerHTML=`<p class="prompt">Find all three first partial derivatives of ${M(q.name+'(x,y,z)='+q.fTex)}.</p>`;
+    exprIn(el,'fx',M(q.name+'_x='),'expression in x, y, z');
+    exprIn(el,'fy',M(q.name+'_y='),'expression in x, y, z');
+    exprIn(el,'fz',M(q.name+'_z='),'expression in x, y, z');},
+  check(q,el){const o={domain:q.domain};const vs=['x','y','z'];
+    return Gall(el,[['fx',checkExpr(V(el,'fx'),q.fx,vs,o)],['fy',checkExpr(V(el,'fy'),q.fy,vs,o)],['fz',checkExpr(V(el,'fz'),q.fz,vs,o)]]);},
+  solution(q){return `${q.rule} So ${M(q.name+'_x='+q.fxT)}, ${M(q.name+'_y='+q.fyT)}, and ${M(q.name+'_z='+q.fzT)}.`;}
+};
+
+/* ---------------- 3.c partial at a point ---------------- */
+Q.partialAtPoint={name:'partial derivative at a point',
+  gen(){
+    const kind=pick(['poly','poly','sqrt','xexy','ln','quot']);
+    const wantX=Math.random()<0.5;let fTex,fStr,fxTex,fyTex,fx,fy,pt,extra='';
+    if(kind==='poly'){const t=rpoly(3);pt=[rint(-3,3),rint(-3,3)];
+      fTex=pStr(t,true);fStr=pStr(t);fxTex=pStr(PX(t),true)||'0';fyTex=pStr(PY(t),true)||'0';
+      fx=pAt(PX(t),pt[0],pt[1]);fy=pAt(PY(t),pt[0],pt[1]);}
+    else if(kind==='sqrt'){const a=rint(1,4),b=rint(1,4);const L=texLin([a,b],['x','y']);
+      let p,q2,S;do{p=rint(1,6);q2=rint(1,6);S=a*p+b*q2;}while(!Number.isInteger(Math.sqrt(S)));
+      pt=[p,q2];fTex=`\\sqrt{${L}}`;fStr=`sqrt((${a})*x+(${b})*y)`;
+      fxTex=`\\dfrac{${a}}{2\\sqrt{${L}}}`;fyTex=`\\dfrac{${b}}{2\\sqrt{${L}}}`;
+      fx=a/(2*Math.sqrt(S));fy=b/(2*Math.sqrt(S));extra=`Here ${M(L+'='+S)}, so ${M(`\\sqrt{${S}}=${Math.sqrt(S)}`)}.`;}
+    else if(kind==='xexy'){const a=rnz(-4,4);pt=[a,0];
+      fTex=R`xe^{xy}`;fStr='x*e^(x*y)';fxTex=R`(1+xy)e^{xy}`;fyTex=R`x^2e^{xy}`;
+      fx=1;fy=a*a;extra=`At ${M(texPt(pt))} the exponent ${M('xy')} is 0, so ${M('e^{xy}=1')}.`;}
+    else if(kind==='ln'){let p,q2;do{p=rint(-3,3);q2=rint(-3,3);}while(p*p+q2*q2===0);pt=[p,q2];
+      fTex=R`\ln(x^2+y^2)`;fStr='ln(x^2+y^2)';fxTex=R`\dfrac{2x}{x^2+y^2}`;fyTex=R`\dfrac{2y}{x^2+y^2}`;
+      fx=2*p/(p*p+q2*q2);fy=2*q2/(p*p+q2*q2);}
+    else{let p,q2;do{p=rint(-4,4);q2=rint(-4,4);}while(Math.abs(p+q2)<1||Math.abs(p+q2)>4);pt=[p,q2];
+      fTex=R`\dfrac{y}{x+y}`;fStr='y/(x+y)';fxTex=R`-\dfrac{y}{(x+y)^2}`;fyTex=R`\dfrac{x}{(x+y)^2}`;
+      fx=-q2/Math.pow(p+q2,2);fy=p/Math.pow(p+q2,2);}
+    return {fTex,fStr,fxTex,fyTex,wantX,pt,val:wantX?fx:fy,extra};},
+  render(q,el){const lab=(q.wantX?'f_x':'f_y')+texPt(q.pt);
+    el.innerHTML=`<p class="prompt">Find ${M(lab)} for ${M('f(x,y)='+q.fTex)}. Fractions like <code>3/8</code> are fine.</p>`;
+    numIn(el,'v',M(lab+'='));},
+  check(q,el){return G(el,'v',checkNumber(V(el,'v'),q.val));},
+  solution(q){const d=q.wantX?q.fxTex:q.fyTex;
+    return `Differentiate first, evaluate second. ${M((q.wantX?'f_x':'f_y')+'='+d)}. ${q.extra} Plugging in ${M(texPt(q.pt))} gives ${M((q.wantX?'f_x':'f_y')+texPt(q.pt)+'='+exTex(q.val))}.`;}
+};
+
+/* ---------------- 3.d second partials ---------------- */
+Q.secondPartials={name:'second partial derivatives',
+  gen(){
+    const kind=pick(['poly','poly','exp','sin','exy']);
+    if(kind==='poly'){const t=rpoly(4);const xx=PX(PX(t)),xy=PY(PX(t)),yy=PY(PY(t));
+      return {fTex:pStr(t,true),fStr:pStr(t),fxTex:pStr(PX(t),true)||'0',fyTex:pStr(PY(t),true)||'0',
+        xxStr:pStr(xx),xyStr:pStr(xy),yyStr:pStr(yy),
+        xxTex:pStr(xx,true),xyTex:pStr(xy,true),yyTex:pStr(yy,true),
+        rule:'Differentiate term by term twice, holding the other variable constant each time.'};}
+    if(kind==='exp'){const a=rnz(-3,3),b=rnz(-3,3);const L=texLin([a,b],['x','y']),Ls=`((${a})*x+(${b})*y)`;
+      return {fTex:`e^{${L}}`,fStr:`e^${Ls}`,fxTex:cT(a,`e^{${L}}`),fyTex:cT(b,`e^{${L}}`),
+        xxStr:`(${a*a})*e^${Ls}`,xyStr:`(${a*b})*e^${Ls}`,yyStr:`(${b*b})*e^${Ls}`,
+        xxTex:cT(a*a,`e^{${L}}`),xyTex:cT(a*b,`e^{${L}}`),yyTex:cT(b*b,`e^{${L}}`),
+        rule:`Every \\(x\\) derivative multiplies by ${a} and every \\(y\\) derivative multiplies by ${b}.`};}
+    if(kind==='sin'){const a=rnz(-3,3),b=rnz(-3,3);const L=texLin([a,b],['x','y']),Ls=`((${a})*x+(${b})*y)`;
+      return {fTex:`\\sin\\left(${L}\\right)`,fStr:`sin${Ls}`,fxTex:cT(a,`\\cos\\left(${L}\\right)`),fyTex:cT(b,`\\cos\\left(${L}\\right)`),
+        xxStr:`(${-a*a})*sin${Ls}`,xyStr:`(${-a*b})*sin${Ls}`,yyStr:`(${-b*b})*sin${Ls}`,
+        xxTex:cT(-a*a,`\\sin\\left(${L}\\right)`),xyTex:cT(-a*b,`\\sin\\left(${L}\\right)`),yyTex:cT(-b*b,`\\sin\\left(${L}\\right)`),
+        rule:'One derivative turns \\(\\sin\\) into \\(\\cos\\); the second turns \\(\\cos\\) into \\(-\\sin\\). The inside derivatives multiply.'};}
+    return {fTex:R`e^{xy}`,fStr:'e^(x*y)',fxTex:R`ye^{xy}`,fyTex:R`xe^{xy}`,
+      xxStr:'y^2*e^(x*y)',xyStr:'(1+x*y)*e^(x*y)',yyStr:'x^2*e^(x*y)',
+      xxTex:R`y^2e^{xy}`,xyTex:R`(1+xy)e^{xy}`,yyTex:R`x^2e^{xy}`,
+      rule:'From \\(f_x=ye^{xy}\\): differentiating again in \\(x\\) gives \\(y\\cdot ye^{xy}\\); differentiating in \\(y\\) needs the product rule on \\(y\\) and \\(e^{xy}\\).'};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M('f(x,y)='+q.fTex)}, find the second partial derivatives ${M('f_{xx}')}, ${M('f_{xy}')}, and ${M('f_{yy}')}.</p>`;
+    exprIn(el,'fxx',M('f_{xx}='));exprIn(el,'fxy',M('f_{xy}='));exprIn(el,'fyy',M('f_{yy}='));},
+  check(q,el){return Gall(el,[['fxx',checkExpr(V(el,'fxx'),q.xxStr,['x','y'])],
+    ['fxy',checkExpr(V(el,'fxy'),q.xyStr,['x','y'])],['fyy',checkExpr(V(el,'fyy'),q.yyStr,['x','y'])]]);},
+  solution(q){return `First partials: ${M('f_x='+q.fxTex)} and ${M('f_y='+q.fyTex)}. ${q.rule} Then ${M('f_{xx}='+q.xxTex)}, ${M('f_{xy}='+q.xyTex)}, ${M('f_{yy}='+q.yyTex)}. Clairaut: differentiating ${M('f_y')} with respect to ${M('x')} gives the same ${M('f_{yx}='+q.xyTex)}.`;}
+};
+
+/* ---------------- 3.e estimate from a table ---------------- */
+Q.tableEstimate={name:'estimate a partial from a table',
+  gen(){
+    const half=Math.random()<0.4;
+    const A=half?pick([4,-4,8]):rnz(-3,3), B=half?pick([4,-4]):rnz(-3,3), C=half?pick([0,4,-4]):rint(-3,3),
+      D=half?pick([-4,-2,0,2,4]):rint(-5,5), E=half?pick([-2,0,2]):rint(-5,5), F=rint(-9,9);
+    const h=half?0.5:1;const x0=rint(-2,2),y0=rint(-2,2);
+    const f=(x,y)=>A*x*x+B*x*y+C*y*y+D*x+E*y+F;
+    const xs=[x0-h,x0,x0+h],ys=[y0+h,y0,y0-h];
+    return {A,B,C,D,E,F,h,x0,y0,f,xs,ys,val:2*A*x0+B*y0+D,
+      lo:f(x0-h,y0),hi:f(x0+h,y0)};},
+  render(q,el){
+    let t=`<table class="simple mono"><tr><th>&nbsp;</th>${q.xs.map(x=>`<th>x = ${dec(x)}</th>`).join('')}</tr>`;
+    q.ys.forEach(y=>{t+=`<tr><th>y = ${dec(y)}</th>${q.xs.map(x=>`<td>${fmt(q.f(x,y))}</td>`).join('')}</tr>`;});
+    t+='</table>';
+    el.innerHTML=`<p class="prompt">The table gives measured values of ${M('f(x,y)')}. Use the <b>symmetric difference quotient</b> ${M(R`f_x(x_0,y_0)\approx\dfrac{f(x_0+h,\,y_0)-f(x_0-h,\,y_0)}{2h}`)} with ${M('h='+dec(q.h))} to estimate ${M(`f_x(${dec(q.x0)},${dec(q.y0)})`)}.</p>${t}`;
+    numIn(el,'v',M(`f_x(${dec(q.x0)},${dec(q.y0)})\\approx`));},
+  check(q,el){return G(el,'v',checkNumber(V(el,'v'),q.val));},
+  solution(q){return `Stay in the row ${M('y='+dec(q.y0))} and use the two entries on either side of ${M('x='+dec(q.x0))}: ${M(`f(${dec(q.x0+q.h)},${dec(q.y0)})=${fmt(q.hi)}`)} and ${M(`f(${dec(q.x0-q.h)},${dec(q.y0)})=${fmt(q.lo)}`)}. Then ${M(R`f_x\approx\dfrac{${fmt(q.hi)}-(${fmt(q.lo)})}{2(${dec(q.h)})}=${exTex(q.val)}`)}. The symmetric quotient is used instead of a one-sided difference because its errors cancel to first order, and it is exact when the data comes from a quadratic.`;}
+};
+
+/* ---------------- 4 tangent plane families ---------------- */
+function tanFamily(){
+  const kind=pick(['poly','poly','xey','rad','ln','x2y3']);
+  if(kind==='poly'){const t=rpoly(3);const p=rint(-2,2),q2=rint(-2,2);
+    return {fTex:pStr(t,true),fStr:pStr(t),pt:[p,q2],z0:pAt(t,p,q2),fx:pAt(PX(t),p,q2),fy:pAt(PY(t),p,q2),
+      fxTex:pStr(PX(t),true)||'0',fyTex:pStr(PY(t),true)||'0'};}
+  if(kind==='xey'){const a=rnz(-4,4);
+    return {fTex:R`xe^{y}`,fStr:'x*e^y',pt:[a,0],z0:a,fx:1,fy:a,fxTex:R`e^{y}`,fyTex:R`xe^{y}`,
+      note:`At ${M(texPt([a,0]))}, ${M('e^{y}=e^{0}=1')}.`};}
+  if(kind==='rad'){const b=shuffle(pick([[3,4],[6,8],[5,12],[8,15]])).map(v=>v*pick([1,-1]));
+    const r=Math.hypot(b[0],b[1]);
+    return {fTex:R`\sqrt{x^2+y^2}`,fStr:'sqrt(x^2+y^2)',pt:b,z0:r,fx:b[0]/r,fy:b[1]/r,
+      fxTex:R`\dfrac{x}{\sqrt{x^2+y^2}}`,fyTex:R`\dfrac{y}{\sqrt{x^2+y^2}}`,
+      note:`At ${M(texPt(b))}, ${M(R`\sqrt{x^2+y^2}=`+r)}.`};}
+  if(kind==='ln'){const q2=rint(-3,3);const p=1+2*q2;
+    return {fTex:R`\ln(x-2y)`,fStr:'ln(x-2*y)',pt:[p,q2],z0:0,fx:1,fy:-2,
+      fxTex:R`\dfrac{1}{x-2y}`,fyTex:R`\dfrac{-2}{x-2y}`,
+      note:`At ${M(texPt([p,q2]))}, ${M('x-2y=1')}, so ${M(R`\ln 1=0`)} and both partials are easy.`};}
+  const p=rnz(-2,2),q2=rnz(-2,2);
+  return {fTex:'x^2y^3',fStr:'x^2*y^3',pt:[p,q2],z0:p*p*Math.pow(q2,3),fx:2*p*Math.pow(q2,3),fy:3*p*p*q2*q2,
+    fxTex:'2xy^3',fyTex:'3x^2y^2'};
+}
+const planeStr=q=>`z = (${fmt(q.z0)}) + (${fmt(q.fx)})*(x-(${fmt(q.pt[0])})) + (${fmt(q.fy)})*(y-(${fmt(q.pt[1])}))`;
+const linStr=q=>`(${fmt(q.z0)}) + (${fmt(q.fx)})*(x-(${fmt(q.pt[0])})) + (${fmt(q.fy)})*(y-(${fmt(q.pt[1])}))`;
+const wrapV=v=>v==='x'||v==='y'?v:`\\left(${v}\\right)`;
+const linTex=q=>{let s=exTex(q.z0);
+  [[q.fx,shift(q.pt[0],'x')],[q.fy,shift(q.pt[1],'y')]].forEach(([c,v])=>{if(c===0)return;
+    s+=(c<0?' - ':' + ')+cT(Math.abs(c),wrapV(v));});
+  return s;};
+const partsAt=q=>`${M('f_x='+q.fxTex)} and ${M('f_y='+q.fyTex)}, so at ${M(texPt(q.pt))} we get ${M('f_x'+texPt(q.pt)+'='+texNum(q.fx))} and ${M('f_y'+texPt(q.pt)+'='+texNum(q.fy))}, with ${M('z_0=f'+texPt(q.pt)+'='+texNum(q.z0))}.`;
+
+Q.tangentPlane={name:'tangent plane',
+  gen(){const q=tanFamily();q.eqStr=planeStr(q);return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the tangent plane to the surface ${M('z='+q.fTex)} at the point ${M(texPt([q.pt[0],q.pt[1],q.z0]))}. Any equivalent equation is accepted.</p>`;
+    el.appendChild(ansLine('plane:','eq',{xwide:true,placeholder:'z = ...'}));},
+  check(q,el){return G(el,'eq',checkEquation(V(el,'eq'),
+    e=>e.z-(q.z0+q.fx*(e.x-q.pt[0])+q.fy*(e.y-q.pt[1])),['x','y','z']));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el.ownerDocument.createElement('div'));h.className='hintbox hint';}
+    h.innerHTML=`${M('f_x'+texPt(q.pt)+'='+texNum(q.fx))}, ${M('f_y'+texPt(q.pt)+'='+texNum(q.fy))}. Now use ${M(R`z-z_0=f_x(x-x_0)+f_y(y-y_0)`)}.`;},
+  solution(q){return `${partsAt(q)} ${q.note||''} Put those into ${M(R`z-z_0=f_x(x_0,y_0)(x-x_0)+f_y(x_0,y_0)(y-y_0)`)}: ${M(`z=${linTex(q)}`)}, which simplifies to ${M(`z=${texLin([q.fx,q.fy],['x','y'],{constant:q.z0-q.fx*q.pt[0]-q.fy*q.pt[1]})}`)}.`;}
+};
+Q.linearization={name:'linearization',
+  gen(){const q=tanFamily();q.LStr=linStr(q);return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the linearization ${M('L(x,y)')} of ${M('f(x,y)='+q.fTex)} at ${M(texPt(q.pt))}.</p>`;
+    exprIn(el,'L',M('L(x,y)='));},
+  check(q,el){return G(el,'L',checkExpr(V(el,'L'),q.LStr,['x','y']));},
+  solution(q){return `${partsAt(q)} ${q.note||''} Then ${M(R`L(x,y)=f(x_0,y_0)+f_x(x_0,y_0)(x-x_0)+f_y(x_0,y_0)(y-y_0)=`+linTex(q))}, or expanded, ${M('L(x,y)='+texLin([q.fx,q.fy],['x','y'],{constant:q.z0-q.fx*q.pt[0]-q.fy*q.pt[1]}))}.`;}
+};
+Q.linApprox={name:'linear approximation',
+  gen(){const q=tanFamily();
+    const dx=pick([0.1,0.2,-0.1,0.05,-0.2]),dy=pick([0.1,-0.1,0.2,-0.05]);
+    q.near=[q.pt[0]+dx,q.pt[1]+dy];q.dx=dx;q.dy=dy;q.val=q.z0+q.fx*dx+q.fy*dy;
+    q.nearTex=`\\left(${dec(q.near[0])},\\,${dec(q.near[1])}\\right)`;return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Use the linearization of ${M('f(x,y)='+q.fTex)} at ${M(texPt(q.pt))} to approximate ${M('f'+q.nearTex)}. Give a decimal, to at least four places.</p>`;
+    numIn(el,'v',M('f'+q.nearTex+R`\approx`));},
+  check(q,el){return G(el,'v',checkNumber(V(el,'v'),q.val,{tol:1e-4}));},
+  solution(q){return `${partsAt(q)} ${q.note||''} The displacements are ${M(R`\Delta x=`+dec(q.dx))} and ${M(R`\Delta y=`+dec(q.dy))}, so ${M(`L=${exTex(q.z0)}+(${exTex(q.fx)})(${dec(q.dx)})+(${exTex(q.fy)})(${dec(q.dy)})=${fmtDec(q.val,4)}`)}. That is the height of the tangent plane above the nearby point, which is the linear approximation of ${M('f')} there.`;}
+};
+Q.differential={name:'differential',
+  gen(){const q=tanFamily();
+    q.dx=pick([0.1,0.2,-0.1,0.05,-0.02]);q.dy=pick([0.1,-0.1,0.02,-0.05]);
+    q.dz=q.fx*q.dx+q.fy*q.dy;return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M('z='+q.fTex)}. Find the differential ${M('dz')} at ${M(texPt(q.pt))} when ${M('dx='+dec(q.dx))} and ${M('dy='+dec(q.dy))}. Give a decimal.</p>`;
+    numIn(el,'v',M('dz='));},
+  check(q,el){return G(el,'v',checkNumber(V(el,'v'),q.dz,{tol:1e-6}));},
+  solution(q){return `${partsAt(q)} ${q.note||''} Then ${M(R`dz=f_x\,dx+f_y\,dy=(${exTex(q.fx)})(${dec(q.dx)})+(${exTex(q.fy)})(${dec(q.dy)})=${fmtDec(q.dz,5)}`)}. This estimates the true change in ${M('z')} caused by those small changes in ${M('x')} and ${M('y')}.`;}
+};
+
+/* ============================================================ chapter 1 widget */
+(function(){
+  const FP=[
+    {label:'x² + y²  (paraboloid)',plain:'f(x, y) = x² + y²',f:(x,y)=>x*x+y*y,
+      xr:[-3,3],yr:[-3,3],sxr:[-2.4,2.4],syr:[-2.4,2.4],zc:5,range:3.4,kmin:0.25,kmax:5,kstep:0.25,k0:2},
+    {label:'x² − y²  (saddle)',plain:'f(x, y) = x² − y²',f:(x,y)=>x*x-y*y,
+      xr:[-3,3],yr:[-3,3],sxr:[-2.2,2.2],syr:[-2.2,2.2],zc:4.4,range:3.4,kmin:-4,kmax:4,kstep:0.25,k0:1},
+    {label:'xy',plain:'f(x, y) = xy',f:(x,y)=>x*y,
+      xr:[-3,3],yr:[-3,3],sxr:[-2.2,2.2],syr:[-2.2,2.2],zc:4.4,range:3.4,kmin:-4,kmax:4,kstep:0.25,k0:1},
+    {label:'√(x + y)  (domain x + y ≥ 0)',plain:'f(x, y) = √(x + y)',f:(x,y)=>x+y>=0?Math.sqrt(x+y):NaN,
+      xr:[-3,3],yr:[-3,3],sxr:[-3,3],syr:[-3,3],zc:3,range:3.2,kmin:0.1,kmax:2.4,kstep:0.1,k0:1.2},
+    {label:'y·eˣ  (clipped)',plain:'f(x, y) = y·eˣ',f:(x,y)=>y*Math.exp(x),
+      xr:[-3,1.2],yr:[-3,3],sxr:[-3,1.2],syr:[-3,3],zc:4,range:3.4,kmin:-4,kmax:4,kstep:0.25,k0:1},
+    {label:'sin x + sin y',plain:'f(x, y) = sin x + sin y',f:(x,y)=>Math.sin(x)+Math.sin(y),
+      xr:[-3.6,3.6],yr:[-3.6,3.6],sxr:[-3.6,3.6],syr:[-3.6,3.6],zc:2.2,range:3.4,kmin:-1.9,kmax:1.9,kstep:0.1,k0:0.6},
+    {label:'x² + 7y²',plain:'f(x, y) = x² + 7y²',f:(x,y)=>x*x+7*y*y,
+      xr:[-3,3],yr:[-1.6,1.6],sxr:[-2.4,2.4],syr:[-1,1],zc:6,range:3.4,kmin:0.25,kmax:6,kstep:0.25,k0:3},
+  ];
+  const sel=$('#fnPreset');FP.forEach((p,i)=>sel.appendChild(el('option',{value:String(i)},p.label)));
+  const map=new Plot2D('#fnMap',{xmin:-3,xmax:3,ymin:-3,ymax:3});
+  const surf=new Scene3D('#fnSurf',{range:3.4,azim:-58,elev:22});
+  let idx=0,k=FP[0].k0,levels=autoLevels(FP[0].f,FP[0].xr,FP[0].yr,9),hover=null,pending=false;
+  const ks=sliderRow($('#fnSliders'),{label:'level k',min:FP[0].kmin,max:FP[0].kmax,step:FP[0].kstep,value:k,onInput:v=>{k=v;draw();}});
+  function schedule(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;drawMap();});}
+  function drawMap(){
+    const P=FP[idx];
+    map.o.xmin=P.xr[0];map.o.xmax=P.xr[1];map.o.ymin=P.yr[0];map.o.ymax=P.yr[1];
+    map.begin();
+    map.contour(P.f,levels,{color:'#93a9e8',width:1.3,n:70,labels:true});
+    map.contour(P.f,[k],{color:'#d97706',width:2.8,n:70,labels:false});
+    if(hover&&Number.isFinite(P.f(hover[0],hover[1])))map.point(hover,{color:'#7c3aed',r:4});
+    const hv=hover?P.f(hover[0],hover[1]):null;
+    $('#fnOut').innerHTML=`${P.plain}<br>level curve drawn in orange: f(x, y) = ${fmtDec(k,2)}<br>`+
+      `pointer: ${hover?`(x, y) = (${fmtDec(hover[0],2)}, ${fmtDec(hover[1],2)}) &nbsp; f = ${Number.isFinite(hv)?`<b>${fmtDec(hv,3)}</b>`:'undefined (outside the domain)'}`:'move the pointer over the contour map'}`;
+  }
+  function drawSurf(){
+    const P=FP[idx];surf.o.range=P.range;surf.clear();
+    surf.surface((x,y)=>{const v=P.f(x,y);return Number.isFinite(v)&&Math.abs(v)<=P.zc?v:NaN;},P.sxr,P.syr,{n:32,base:SURF.blue,alpha:0.5});
+    surf.plane([0,0,k],[0,0,1],{size:P.range*0.85,fill:'rgba(217,119,6,.10)',stroke:'rgba(217,119,6,.45)'});
+    levelSegments(P.f,P.sxr,P.syr,k,52).forEach(([a,b])=>surf.polyline([[a[0],a[1],k],[b[0],b[1],k]],{color:'#d97706',width:3.2}));
+    surf.render();
+  }
+  function draw(){drawMap();drawSurf();}
+  map.on('move',w=>{hover=w;schedule();}).on('leave',()=>{hover=null;schedule();});
+  sel.onchange=()=>{idx=+sel.value;const P=FP[idx];levels=autoLevels(P.f,P.xr,P.yr,9);
+    ks.input.min=P.kmin;ks.input.max=P.kmax;ks.input.step=P.kstep;ks.set(P.k0);k=P.k0;draw();};
+  redrawOnShow('functions',draw);draw();
+  new Drill({mount:'#drill-functions',section:'functions',goal:6,
+    ...mixDrill([Q.evalF,Q.evalF,Q.domain,Q.domain,Q.levelCurve,Q.levelCurve,Q.describeLevels,Q.matchContour])});
+})();
+
+/* ============================================================ chapter 2 widget */
+(function(){
+  const LP=[
+    {label:'(x² − y²)/(x² + y²)',plain:'f = (x² − y²)/(x² + y²)',f:(x,y)=>(x*x-y*y)/(x*x+y*y),vmax:1,
+      line:m=>`(1 − ${fmtDec(m*m,2)})/(1 + ${fmtDec(m*m,2)}) = ${fmtDec((1-m*m)/(1+m*m),3)}`,
+      verdict:'the value changes with m, so the limit does not exist'},
+    {label:'xy/(x² + y²)',plain:'f = xy/(x² + y²)',f:(x,y)=>x*y/(x*x+y*y),vmax:0.5,
+      line:m=>`${fmtDec(m,2)}/(1 + ${fmtDec(m*m,2)}) = ${fmtDec(m/(1+m*m),3)}`,
+      verdict:'the value changes with m, so the limit does not exist'},
+    {label:'x²y/(x² + y²)',plain:'f = x²y/(x² + y²)',f:(x,y)=>x*x*y/(x*x+y*y),vmax:0.6,
+      line:m=>`${fmtDec(m,2)}x/(1 + ${fmtDec(m*m,2)}) → 0`,
+      verdict:'every path gives 0 and |f| ≤ |y|, so the limit exists and is 0'},
+    {label:'xy²/(x² + y⁴)',plain:'f = xy²/(x² + y⁴)',f:(x,y)=>x*y*y/(x*x+y*y*y*y),vmax:0.5,
+      line:m=>`${fmtDec(m*m,2)}x/(1 + ${fmtDec(Math.pow(m,4),2)}x²) → 0`,
+      path:t=>[t*t,t],pathTex:'x = y²',pathVal:'1/2',
+      verdict:'every line gives 0 but the purple path gives 1/2, so the limit does not exist'},
+    {label:'x²y/(x⁴ + y²)',plain:'f = x²y/(x⁴ + y²)',f:(x,y)=>x*x*y/(Math.pow(x,4)+y*y),vmax:0.5,
+      line:m=>`${fmtDec(m,2)}x/(x² + ${fmtDec(m*m,2)}) → 0`,
+      path:t=>[t,t*t],pathTex:'y = x²',pathVal:'1/2',
+      verdict:'every line gives 0 but the purple path gives 1/2, so the limit does not exist'},
+  ];
+  const sel=$('#limPreset');LP.forEach((p,i)=>sel.appendChild(el('option',{value:String(i)},p.label)));
+  const plot=new Plot2D('#limMap',{xmin:-1,xmax:1,ymin:-1,ymax:1,grid:false});
+  let idx=0,m=1;
+  const ms=sliderRow($('#limSliders'),{label:'slope m',min:-4,max:4,step:0.25,value:1,onInput:v=>{m=v;draw();}});
+  function draw(){
+    const P=LP[idx];
+    plot.begin();
+    plot.heat((x,y)=>P.f(x,y),{n:70,colorFn:v=>{const t=clamp(v/P.vmax,-1,1);
+      return t>=0?`rgba(217,119,6,${(0.06+0.6*t).toFixed(3)})`:`rgba(37,99,235,${(0.06+0.6*(-t)).toFixed(3)})`;}});
+    plot.grid(0.5,'rgba(0,0,0,.05)');plot.axes();
+    plot.contour(P.f,autoLevels(P.f,[-1,1],[-1,1],7),{color:'rgba(60,58,54,.45)',width:1,n:80,labels:false});
+    if(P.path)plot.param(t=>P.path(t),-1.2,1.2,{color:'#7c3aed',width:2.4,dash:[6,4],n:200});
+    plot.fn(x=>m*x,{color:'#d97706',width:2.4});
+    plot.point([0,0],{color:'#1c1b1a',r:4});
+    const near=[0.5,0.1,0.01].map(x=>{const v=P.f(x,m*x);return Number.isFinite(v)?fmtDec(v,4):'undefined';});
+    $('#limOut').innerHTML=`${P.plain}<br>along y = ${fmtDec(m,2)}x: f = ${P.line(m)}<br>`+
+      `&nbsp;&nbsp;x = 0.5 → ${near[0]}, &nbsp;x = 0.1 → ${near[1]}, &nbsp;x = 0.01 → ${near[2]}<br>`+
+      (P.path?`along ${P.pathTex} (purple): f = ${P.pathVal} at every point of the path<br>`:'')+
+      `<b>${P.verdict}</b>`;
+  }
+  sel.onchange=()=>{idx=+sel.value;draw();};
+  redrawOnShow('limits',draw);draw();
+  new Drill({mount:'#drill-limits',section:'limits',goal:4,
+    ...mixDrill([Q.limLine,Q.limLine,Q.limExists,Q.limExists,Q.limCont])});
+})();
+
+/* ============================================================ chapter 3 walkthrough + widget */
+(function(){
+  let n=8,step=0;
+  function lines(){
+    const P=`\\left(x+x^2y\\right)`;
+    return [
+      [`g(x,y)=y${P}^{${n}}`,'Two variables, one function. We will do \\(g_x\\) first, then \\(g_y\\).'],
+      [`g_x=y\\cdot ${n}${P}^{${n-1}}\\cdot\\frac{\\partial}{\\partial x}\\left(x+x^2y\\right)`,'\\(g_x\\): \\(y\\) is a constant factor. The outside is a power, so the chain rule gives the exponent times the inside to one lower power, times the derivative of the inside.'],
+      [`\\frac{\\partial}{\\partial x}\\left(x+x^2y\\right)=1+2xy\\ \\Rightarrow\\ g_x=${n}y(1+2xy)${P}^{${n-1}}`,'Inside derivative in \\(x\\), with \\(y\\) constant: \\(x\\) gives 1 and \\(x^2y\\) gives \\(2xy\\). Done with \\(g_x\\).'],
+      [`g_y=\\underbrace{1}_{\\partial y/\\partial y}\\cdot ${P}^{${n}}+y\\cdot\\frac{\\partial}{\\partial y}${P}^{${n}}`,`\\(g_y\\): now \\(x\\) is constant, and \\(y\\) appears in <b>two</b> places, so this is a product \\(u\\cdot v\\) with \\(u=y\\) and \\(v=${P}^{${n}}\\).`],
+      [`\\frac{\\partial}{\\partial y}${P}^{${n}}=${n}${P}^{${n-1}}\\cdot x^2\\ \\Rightarrow\\ g_y=${P}^{${n}}+${n}x^2y${P}^{${n-1}}`,'Chain rule again. The inside derivative in \\(y\\) is \\(x^2\\), because \\(x\\) contributes nothing.'],
+      [`g_y=${P}^{${n-1}}\\left(x+x^2y+${n}x^2y\\right)=${P}^{${n-1}}\\left(x+${n+1}x^2y\\right)`,'Factor out the lower power. Always factor: it is how the answer in the back of the book is written.'],
+    ];
+  }
+  function draw(){
+    const L=lines();
+    $('#wkExpr').innerHTML=L.map((l,i)=>`<div class="${i<=step?'':'faint'}"><span class="t ${i===step?'now ':''}${i<3?'a':'b'}">${M(l[0])}</span></div>`).join('');
+    $('#wkStatus').innerHTML=L[step][1];
+    $('#wkPrev').disabled=step===0;$('#wkNext').disabled=step===L.length-1;
+    typeset($('#wkExpr'));typeset($('#wkStatus'));
+  }
+  $('#wkNext').onclick=()=>{step=Math.min(5,step+1);draw();};
+  $('#wkPrev').onclick=()=>{step=Math.max(0,step-1);draw();};
+  $('#wkNew').onclick=()=>{n=pick([5,6,7,8,9].filter(v=>v!==n));step=0;draw();};
+  draw();
+
+  const PP=[
+    {label:'x² + y²',plain:'f(x, y) = x² + y²',f:(x,y)=>x*x+y*y,fxT:'f_x = 2x',fyT:'f_y = 2y',xr:[-2,2],zc:4,range:3.6},
+    {label:'x² − y²',plain:'f(x, y) = x² − y²',f:(x,y)=>x*x-y*y,fxT:'f_x = 2x',fyT:'f_y = −2y',xr:[-2,2],zc:4,range:3.6},
+    {label:'sin x · cos y',plain:'f(x, y) = sin x · cos y',f:(x,y)=>Math.sin(x)*Math.cos(y),fxT:'f_x = cos x · cos y',fyT:'f_y = −sin x · sin y',xr:[-3,3],zc:2,range:3},
+    {label:'xy',plain:'f(x, y) = xy',f:(x,y)=>x*y,fxT:'f_x = y',fyT:'f_y = x',xr:[-2,2],zc:4,range:3.6},
+  ];
+  const sel=$('#pdPreset');PP.forEach((p,i)=>sel.appendChild(el('option',{value:String(i)},p.label)));
+  const sc=new Scene3D('#pdScene',{range:3.2,azim:-58,elev:22});
+  let idx=0,x0=0.8,y0=-0.6;
+  const sl=$('#pdSliders');
+  sliderRow(sl,{label:'x₀',min:-1.2,max:1.2,step:0.1,value:x0,onInput:v=>{x0=v;drawPD();}});
+  sliderRow(sl,{label:'y₀',min:-1.2,max:1.2,step:0.1,value:y0,onInput:v=>{y0=v;drawPD();}});
+  function drawPD(){
+    const P=PP[idx];const f=P.f;const z0=f(x0,y0);const fx=dfx(f,x0,y0),fy=dfy(f,x0,y0);
+    const cut=(x,y)=>{const v=f(x,y);return Math.abs(v)<=P.zc?v:NaN;};
+    sc.o.range=P.range;sc.clear();
+    sc.surface(cut,P.xr,P.xr,{n:30,base:SURF.gray,alpha:0.42});
+    sc.curve(t=>[t,y0,cut(t,y0)],P.xr[0],P.xr[1],{color:'#d97706',width:3,n:120});
+    sc.curve(t=>[x0,t,cut(x0,t)],P.xr[0],P.xr[1],{color:'#2563eb',width:3,n:120});
+    sc.vector([x0,y0,z0],[x0+1,y0,z0+fx],{color:'#d97706',width:3.2,label:'⟨1, 0, fx⟩'});
+    sc.vector([x0,y0,z0],[x0,y0+1,z0+fy],{color:'#2563eb',width:3.2,label:'⟨0, 1, fy⟩'});
+    sc.point([x0,y0,z0],{color:'#7c3aed',r:5,drop:true});
+    sc.render();
+    $('#pdOut').innerHTML=`${P.plain}<br>point: (x₀, y₀) = (${fmtDec(x0,2)}, ${fmtDec(y0,2)}), f = ${fmtDec(z0,3)}<br>`+
+      `${P.fxT} &nbsp;→&nbsp; <b>f<sub>x</sub>(x₀, y₀) = ${fmtDec(fx,3)}</b> (slope of the orange trace)<br>`+
+      `${P.fyT} &nbsp;→&nbsp; <b>f<sub>y</sub>(x₀, y₀) = ${fmtDec(fy,3)}</b> (slope of the blue trace)`;
+  }
+  sel.onchange=()=>{idx=+sel.value;drawPD();};
+  redrawOnShow('partials',drawPD);drawPD();
+  new Drill({mount:'#drill-partials',section:'partials',goal:8,
+    ...mixDrill([Q.firstPartials,Q.firstPartials,Q.firstPartials,Q.partials3,Q.partialAtPoint,Q.partialAtPoint,Q.secondPartials,Q.tableEstimate])});
+})();
+
+/* ============================================================ chapter 4 widget */
+(function(){
+  const TP=[
+    {label:'x² + y²',plain:'f(x, y) = x² + y²',f:(x,y)=>x*x+y*y,xr:[-2,2],zc:4,range:3.6},
+    {label:'x² − y²',plain:'f(x, y) = x² − y²',f:(x,y)=>x*x-y*y,xr:[-2,2],zc:4,range:3.6},
+    {label:'sin x · cos y',plain:'f(x, y) = sin x · cos y',f:(x,y)=>Math.sin(x)*Math.cos(y),xr:[-3,3],zc:2,range:3},
+    {label:'x²y/4',plain:'f(x, y) = x²y/4',f:(x,y)=>x*x*y/4,xr:[-2,2],zc:4,range:3.6},
+  ];
+  const sel=$('#tpPreset');TP.forEach((p,i)=>sel.appendChild(el('option',{value:String(i)},p.label)));
+  const sc=new Scene3D('#tpScene',{range:3.2,azim:-58,elev:20});
+  let idx=0,x0=0.8,y0=-0.6,lastEq='';
+  const sl=$('#tpSliders');
+  sliderRow(sl,{label:'x₀',min:-1.2,max:1.2,step:0.1,value:x0,onInput:v=>{x0=v;drawTP();}});
+  sliderRow(sl,{label:'y₀',min:-1.2,max:1.2,step:0.1,value:y0,onInput:v=>{y0=v;drawTP();}});
+  function drawTP(){
+    const P=TP[idx];const f=P.f;const z0=f(x0,y0);const fx=dfx(f,x0,y0),fy=dfy(f,x0,y0);
+    sc.o.range=P.range;sc.clear();
+    sc.surface((x,y)=>{const v=f(x,y);return Math.abs(v)<=P.zc?v:NaN;},P.xr,P.xr,{n:30,base:SURF.blue,alpha:0.45});
+    sc.plane([x0,y0,z0],[-fx,-fy,1],{size:1.3,fill:'rgba(22,163,74,.22)',stroke:'#16a34a'});
+    sc.point([x0,y0,z0],{color:'#7c3aed',r:5,drop:true});
+    sc.render();
+    const eq=R`z=${fmtDec(z0,3)}${fx<0?'-':'+'}${fmtDec(Math.abs(fx),3)}\,(x${x0<0?'+':'-'}${fmtDec(Math.abs(x0),2)})${fy<0?'-':'+'}${fmtDec(Math.abs(fy),3)}\,(y${y0<0?'+':'-'}${fmtDec(Math.abs(y0),2)})`;
+    if(eq!==lastEq){lastEq=eq;$('#tpEq').innerHTML=M(eq);typeset($('#tpEq'));}
+    const nx=x0+0.5,ny=y0+0.3;const fv=f(nx,ny),L=z0+fx*0.5+fy*0.3;
+    $('#tpOut').innerHTML=`${P.plain}<br>fx = ${fmtDec(fx,3)}, fy = ${fmtDec(fy,3)}, f(x₀, y₀) = ${fmtDec(z0,3)}<br>`+
+      `at the nearby point (${fmtDec(nx,2)}, ${fmtDec(ny,2)}):<br>`+
+      `&nbsp;&nbsp;true f = ${fmtDec(fv,4)}, &nbsp;L = ${fmtDec(L,4)}, &nbsp;error = <b>${fmtDec(Math.abs(fv-L),4)}</b>`;
+  }
+  sel.onchange=()=>{idx=+sel.value;drawTP();};
+  redrawOnShow('tangent',drawTP);drawTP();
+  new Drill({mount:'#drill-tangent',section:'tangent',goal:6,
+    ...mixDrill([Q.tangentPlane,Q.tangentPlane,Q.linearization,Q.linearization,Q.linApprox,Q.differential])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.evalF,Q.domain,Q.levelCurve,Q.describeLevels,Q.matchContour,
+  Q.limLine,Q.limExists,Q.limCont,
+  Q.firstPartials,Q.partials3,Q.partialAtPoint,Q.secondPartials,Q.tableEstimate,
+  Q.tangentPlane,Q.linearization,Q.linApprox,Q.differential]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'evaluate a function of two variables':q=>({v:solNum(q.val)}),
+  'domain of a function':q=>({_btn:q.ansIdx}),
+  'equation of a level curve':q=>({eq:Q.levelCurve.answerOf(q)}),
+  'match the contour map':q=>({_btn:q.ansIdx}),
+  'describe the level curves':q=>({_btn:q.ansIdx}),
+  'limit along a line':q=>({v:solNum(q.val)}),
+  'does the limit exist':q=>({_btn:q.ans?0:1}),
+  'limit by continuity':q=>({v:solNum(q.val)}),
+  'first partial derivatives':q=>({fx:q.fxStr,fy:q.fyStr}),
+  'partials of a function of three variables':q=>({fx:q.fx,fy:q.fy,fz:q.fz}),
+  'partial derivative at a point':q=>({v:solNum(q.val)}),
+  'second partial derivatives':q=>({fxx:q.xxStr,fxy:q.xyStr,fyy:q.yyStr}),
+  'estimate a partial from a table':q=>({v:solNum(q.val)}),
+  'tangent plane':q=>({eq:q.eqStr}),
+  'linearization':q=>({L:q.LStr}),
+  'linear approximation':q=>({v:solNum(q.val)}),
+  'differential':q=>({v:solNum(q.dz)}),
+};
+
+initModule({key:'partials',title:'Functions of Several Variables',sub:'Module 4 · Stewart 14.1 to 14.4'});
+</script>
+</body>
+</html>

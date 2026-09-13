@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lines, Planes, and Surfaces</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 2 · Stewart 12.5 to 12.6</p>
+  <h2>Lines, planes, and surfaces</h2>
+  <p class="lead">Module 1 gave you the two products. This module spends them: a direction vector builds a line, a normal vector builds a plane, and a squared variable builds a surface.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or slide, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats are flexible. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <ul>
+      <li><b>Lines:</b> type <code>&lt;1+2t, 3-t, 4t&gt;</code> or <code>x=1+2t, y=3-t, z=4t</code>. Any parametrization of the same line is accepted, so a different starting point or a rescaled direction is fine.</li>
+      <li><b>Planes:</b> type <code>3x-y+2z=5</code>, or <code>z=(5-3x+y)/2</code>, or <code>6x-2y+4z-10=0</code>. Any equivalent form is accepted.</li>
+      <li><b>Points and vectors:</b> type <code>(1,2,3)</code> or <code>&lt;1,2,3&gt;</code> or <code>i+2j+3k</code>.</li>
+      <li><b>Numbers:</b> exact is welcome, like <code>7/sqrt(14)</code> or <code>3/2</code>. Distances also accept a decimal.</li>
+    </ul>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the first object (line 1, plane 1, normal)</span>
+      <span><i class="dot" style="background:var(--b)"></i> the second object</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result (intersection, cross product)</span>
+      <span><i class="dot" style="background:var(--d)"></i> points, traces, moving markers</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Write vector, parametric, and symmetric equations for a line, from a point and a direction or from two points, and parametrize a segment.</li>
+      <li>Decide whether a point lies on a given line, and read a point and a direction straight off symmetric equations.</li>
+      <li>Write the equation of a plane from a point and a normal, from three points, from a line and a point, or parallel to another plane.</li>
+      <li>Tell whether two planes are parallel or perpendicular, and find the angle between them.</li>
+      <li>Intersect a line with a plane, intersect two planes, and classify two lines as parallel, intersecting, or skew.</li>
+      <li>Compute distances: point to plane, plane to parallel plane, point to line.</li>
+      <li>Recognize a cylinder or any of the six quadric surfaces from its equation, name its axis, and describe its traces.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 LINES -->
+<section data-id="lines" data-title="Lines in space" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 12.5</p>
+  <h2>Lines in space</h2>
+  <p class="lead">A line needs one point to pin it down and one vector to tell it which way to go. Everything else is bookkeeping.</p>
+
+  <p>In the plane you describe a line with a slope. In space that fails: there is no single number that says "which way" in three dimensions. You need a <b>direction vector</b> \(\mathbf{v}\). Start at a known point \(P_0(x_0,y_0,z_0)\) with position vector \(\mathbf{r}_0\), then walk along \(\mathbf{v}\) for any amount of time \(t\):</p>
+  <div class="formula">\(\mathbf{r}(t)=\mathbf{r}_0+t\,\mathbf{v}\)<span class="cap">The <b>vector equation</b> of a line. As \(t\) runs over all real numbers, the tip of \(\mathbf{r}(t)\) traces the whole line. Negative \(t\) walks backward.</span></div>
+  <p>Write \(\mathbf{v}=\langle a,b,c\rangle\) and read off one coordinate at a time. The numbers \(a,b,c\) are called the <b>direction numbers</b> of the line:</p>
+  <div class="formula">\(x=x_0+at,\qquad y=y_0+bt,\qquad z=z_0+ct\)<span class="cap"><b>Parametric equations.</b> One equation per coordinate, all sharing the same parameter \(t\).</span></div>
+  <p>If no component of \(\mathbf{v}\) is zero, solve each equation for \(t\) and set the results equal. The parameter disappears:</p>
+  <div class="formula">\(\dfrac{x-x_0}{a}=\dfrac{y-y_0}{b}=\dfrac{z-z_0}{c}\)<span class="cap"><b>Symmetric equations.</b> The denominators are the direction numbers. The numbers subtracted in the numerators are the coordinates of a point on the line.</span></div>
+  <p>If one direction number is zero, that coordinate never changes, so you cannot divide by it. Say \(b=0\). Then drop that fraction and carry the coordinate as its own equation:</p>
+  <div class="formula">\(\dfrac{x-x_0}{a}=\dfrac{z-z_0}{c},\qquad y=y_0\)<span class="cap">A line with \(b=0\) lives inside the horizontal plane \(y=y_0\). Never write a zero in a denominator.</span></div>
+
+  <div class="card">
+    <h4>Explore: a point, a direction, and a parameter</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="lineScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. Orange is the base point \(P_0\), blue is the direction \(\mathbf{v}\) drawn from it, purple is \(\mathbf{r}(t)\).</p></div>
+      <div>
+        <div class="row" style="gap:4px;margin-bottom:10px"><span style="width:34px;font-weight:600">P₀</span> ( <span id="lpx"></span>, <span id="lpy"></span>, <span id="lpz"></span> )</div>
+        <div class="sliders three" id="lineSliders"></div>
+        <div class="sliders" id="lineT" style="margin-top:10px"></div>
+        <div class="readout" id="lineOut"></div>
+        <p class="hint">Try this. Set \(t=0\) and notice the purple point sits exactly on \(P_0\). Then slide \(t\) and watch every coordinate change at its own steady rate: that rate is the direction number. Now double all three sliders of \(\mathbf{v}\): the line does not move at all, only the speed changes. Finally set one slider to 0 and watch that coordinate freeze, which is exactly when the symmetric equations change shape.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>A line through two points</h3>
+  <p>Given \(P\) and \(Q\), you already have a point. For the direction, use the vector that joins them: \(\mathbf{v}=\overrightarrow{PQ}=Q-P\). Either point works as the base, and \(\overrightarrow{QP}\) works just as well as \(\overrightarrow{PQ}\), so the same line has infinitely many correct parametrizations.</p>
+  <div class="note"><b>Why any answer that checks out is right.</b> Changing the base point shifts which \(t\) hits which point. Scaling \(\mathbf{v}\) changes how fast you travel. Neither changes the set of points, and the set of points is the line. The drills accept any parametrization of the correct line.</div>
+
+  <h3>Is a point on the line?</h3>
+  <p>Substitute the coordinates and solve for \(t\) in <b>every</b> equation. The point is on the line only if you get the <b>same</b> \(t\) from all three. One disagreement is enough to rule it out. If a direction number is zero, that equation has no \(t\) in it, so instead check that the coordinate matches exactly.</p>
+  <div class="warn"><b>The classic mistake.</b> Getting \(t=2\) from the \(x\)-equation and stopping there. Two of the three equations agreeing is the usual near miss on an exam. Check all three, every time.</div>
+
+  <h3>Line segments</h3>
+  <p>The full line uses all real \(t\). Restrict the parameter and you get a piece of it. The segment from \(P\) to \(Q\) is the tidy version:</p>
+  <div class="formula">\(\mathbf{r}(t)=(1-t)\,\mathbf{r}_0+t\,\mathbf{r}_1,\qquad 0\le t\le 1\)<span class="cap">At \(t=0\) you are at \(P\), at \(t=1\) you are at \(Q\), and in between you slide along at constant speed. \(t=\tfrac12\) is the midpoint.</span></div>
+  <p>It is the same line as \(\mathbf{r}_0+t(\mathbf{r}_1-\mathbf{r}_0)\), just regrouped. Expand it and you will see: \((1-t)\mathbf{r}_0+t\mathbf{r}_1=\mathbf{r}_0+t(\mathbf{r}_1-\mathbf{r}_0)\).</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-lines"></div>
+</section>
+
+<!-- ============================================================ 2 PLANES -->
+<section data-id="planes" data-title="Planes" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 12.5</p>
+  <h2>Planes</h2>
+  <p class="lead">A plane is not described by a direction. It is described by the one direction it refuses: its normal vector.</p>
+
+  <p>Giving a direction vector would not pin a plane down, since a plane holds vectors pointing every which way inside it. Instead give a vector <b>perpendicular</b> to all of them. A plane is fixed by a point \(P_0\) on it and a <b>normal vector</b> \(\mathbf{n}=\langle a,b,c\rangle\) orthogonal to it. A point \(P\) lies on the plane exactly when the vector from \(P_0\) to \(P\) lies in the plane, which means it is orthogonal to \(\mathbf{n}\):</p>
+  <div class="formula">\(\mathbf{n}\cdot(\mathbf{r}-\mathbf{r}_0)=0\)<span class="cap">The <b>vector equation</b> of a plane. It says: the displacement from the known point to the unknown point has no component along the normal.</span></div>
+  <p>Write out the dot product in components and you get the two forms you will actually use:</p>
+  <div class="formula">\(a(x-x_0)+b(y-y_0)+c(z-z_0)=0 \qquad\Longleftrightarrow\qquad ax+by+cz=d\)<span class="cap"><b>Scalar</b> and <b>linear</b> form, where \(d=ax_0+by_0+cz_0=\mathbf{n}\cdot\mathbf{r}_0\). Read the normal vector straight off the coefficients.</span></div>
+  <div class="note"><b>The one thing to remember.</b> In \(ax+by+cz=d\), the coefficients <i>are</i> the normal vector: \(\mathbf{n}=\langle a,b,c\rangle\). Every plane question becomes "find a normal, find a point, assemble".</div>
+
+  <div class="card">
+    <h4>Explore: coefficients, normal, intercepts</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="planeScene"></canvas><p class="plotcap">The blue square is a patch of the plane. The orange arrow is \(\mathbf{n}\), drawn from the point of the plane closest to the origin.</p></div>
+      <div>
+        <div class="sliders three" id="planeSliders"></div>
+        <div class="sliders" id="planeD" style="margin-top:10px"></div>
+        <div class="presets" id="planePresets"></div>
+        <div class="readout" id="planeOut"></div>
+        <p class="hint">Try this. Change \(d\) alone: the plane slides without turning, because the normal never changed. Set \(c=0\) and the plane becomes vertical, parallel to the \(z\)-axis, and the \(z\)-intercept disappears. Set \(a=b=0\) and you get the horizontal plane \(z=d/c\). Watch the orange arrow stay perpendicular to the patch the whole time.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Three points determine a plane</h3>
+  <p>Given \(P\), \(Q\), \(R\) (not all on one line), build two vectors that lie in the plane and cross them. The cross product is orthogonal to both, so it is orthogonal to the plane:</p>
+  <div class="formula">\(\mathbf{n}=\overrightarrow{PQ}\times\overrightarrow{PR}\)<span class="cap">Then use any one of the three points with \(\mathbf{n}\cdot(\mathbf{r}-\mathbf{r}_0)=0\). Using \(Q\) or \(R\) instead of \(P\) gives the same equation.</span></div>
+
+  <div class="card">
+    <h4>Step-by-step: the plane through three points</h4>
+    <div class="expr" id="p3Expr"></div>
+    <div class="controls">
+      <button class="btn" id="p3Prev">◀ Back</button>
+      <button class="btn primary" id="p3Next">Next step ▶</button>
+      <button class="btn" id="p3New">New points</button>
+      <span class="status" id="p3Status"></span>
+    </div>
+    <p class="hint">Check your own normal the same way the last step does: dot it with \(\overrightarrow{PQ}\) and with \(\overrightarrow{PR}\). Two zeros means your cross product is right.</p>
+  </div>
+
+  <h3>Three more standard setups</h3>
+  <ul>
+    <li><b>Through a point, parallel to a given plane.</b> Parallel planes share a normal. Copy the coefficients, then recompute \(d\) from the new point.</li>
+    <li><b>Containing a line and a point not on it.</b> The line's direction \(\mathbf{v}\) lies in the plane, and so does the vector from a point of the line to the extra point. Cross those two for \(\mathbf{n}\).</li>
+    <li><b>Containing two intersecting or parallel lines.</b> Same idea: get two non-parallel vectors that lie in the plane, then cross them.</li>
+    <li><b>Through two points, perpendicular to a given plane.</b> The trick is to see that the given plane's normal \(\mathbf{n}_0\) is a direction <i>inside</i> the plane you want: perpendicular planes have perpendicular normals, and "the new normal is orthogonal to \(\mathbf{n}_0\)" is the same statement as "\(\mathbf{n}_0\) lies along the new plane". So cross \(\overrightarrow{PQ}\) with \(\mathbf{n}_0\).</li>
+  </ul>
+  <div class="formula">\(\mathbf{n}=\overrightarrow{PQ}\times\mathbf{n}_0\)<span class="cap">Plane through \(P\) and \(Q\) perpendicular to the plane with normal \(\mathbf{n}_0\). Example: through \((1,0,2)\) and \((3,1,1)\), perpendicular to \(x-y+2z=4\). Here \(\overrightarrow{PQ}=\langle 2,1,-1\rangle\), \(\mathbf{n}_0=\langle 1,-1,2\rangle\), so \(\mathbf{n}=\langle 1,-5,-3\rangle\) and the plane is \(x-5y-3z=-5\). Check: both points satisfy it, and \(\mathbf{n}\cdot\mathbf{n}_0=1+5-6=0\).</span></div>
+  <div class="warn"><b>Two points are not enough on their own.</b> Infinitely many planes contain a given pair of points (they pivot around the line \(PQ\)). The perpendicularity condition is what picks one out, by handing you the second in-plane direction.</div>
+
+  <h3>Two planes: parallel, perpendicular, or at an angle</h3>
+  <p>Compare the normals, never the constants:</p>
+  <ul>
+    <li><b>Parallel</b> planes have <b>parallel normals</b>: \(\mathbf{n}_2=k\,\mathbf{n}_1\). If the constants also match after scaling, they are the same plane.</li>
+    <li><b>Perpendicular</b> planes have <b>orthogonal normals</b>: \(\mathbf{n}_1\cdot\mathbf{n}_2=0\).</li>
+    <li>Otherwise the <b>angle between the planes</b> is the angle between the normals, taken acute:</li>
+  </ul>
+  <div class="formula">\(\cos\theta=\dfrac{|\mathbf{n}_1\cdot\mathbf{n}_2|}{|\mathbf{n}_1|\,|\mathbf{n}_2|}\)<span class="cap">The absolute value is what makes \(\theta\) acute. Without it, flipping a normal would change the answer to its supplement.</span></div>
+  <div class="warn"><b>Do not test the constants.</b> \(x+y+z=1\) and \(x+y+z=97\) are parallel, not unrelated. And \(2x-4y+6z=3\) is parallel to \(x-2y+3z=8\), because \(\langle 2,-4,6\rangle=2\langle 1,-2,3\rangle\). Scale before you judge.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-planes"></div>
+</section>
+
+<!-- ============================================================ 3 INTERSECTIONS AND DISTANCES -->
+<section data-id="relations" data-title="Intersections and distances" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 12.5</p>
+  <h2>Intersections and distances</h2>
+  <p class="lead">Now put lines and planes in the same room. Two objects either meet, or they miss, and if they miss you can measure by how much.</p>
+
+  <h3>Where a line meets a plane</h3>
+  <p>The line gives you \(x\), \(y\), \(z\) as functions of \(t\). The plane gives you one equation those three must satisfy. Substitute and you get a single equation in \(t\):</p>
+  <div class="formula">\(a(x_0+at')+b(y_0+bt')+c(z_0+ct')=d \;\Longrightarrow\; \mathbf{n}\cdot\mathbf{r}_0+t\,(\mathbf{n}\cdot\mathbf{v})=d \;\Longrightarrow\; t=\dfrac{d-\mathbf{n}\cdot\mathbf{r}_0}{\mathbf{n}\cdot\mathbf{v}}\)<span class="cap">Solve for \(t\), then put that \(t\) back into the parametric equations to get the point. Substituting into the plane equation gives you \(t\), not the answer.</span></div>
+  <p>If \(\mathbf{n}\cdot\mathbf{v}=0\) the line is parallel to the plane: either it misses entirely, or it lies inside the plane (which happens when the base point satisfies the plane equation).</p>
+
+  <h3>Where two planes meet</h3>
+  <p>Two non-parallel planes meet in a line. The line lies in both planes, so its direction is perpendicular to both normals, and there is exactly one vector that does that:</p>
+  <div class="formula">\(\mathbf{v}=\mathbf{n}_1\times\mathbf{n}_2\)<span class="cap">The direction of the line of intersection. Now you only need one point on both planes.</span></div>
+  <p>To find a point, set one variable to a convenient value, usually \(z=0\), and solve the remaining \(2\times2\) system. If that system has no solution or is degenerate, the line never crosses \(z=0\), so set \(x=0\) instead and try again.</p>
+
+  <h3>Two lines: parallel, intersecting, or skew</h3>
+  <p>In space, two lines that do not meet need not be parallel. Lines that are neither parallel nor intersecting are called <b>skew</b>. They live on different levels, like a highway overpass. The test is a short procedure. Use a <b>different letter</b> for the second parameter, say \(s\), because the two lines need not reach the meeting point at the same time.</p>
+  <ol class="steps">
+    <li>Are the directions parallel, \(\mathbf{v}_2=k\mathbf{v}_1\)? If yes the lines are <b>parallel</b> (the same line if a point of one satisfies the other).</li>
+    <li>If not, set the two parametrizations equal and solve <b>two</b> of the three coordinate equations for \(t\) and \(s\).</li>
+    <li>Put that \(t\) and \(s\) into the <b>third</b> equation. If it holds, the lines <b>intersect</b>, and the intersection point comes from plugging \(t\) into line 1. If it fails, the lines are <b>skew</b>.</li>
+  </ol>
+
+  <div class="card">
+    <h4>Explore: run the test on two lines</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="relScene"></canvas><p class="plotcap">Orange is \(L_1\), blue is \(L_2\), with each direction vector drawn at its base point. Green marks an intersection when there is one.</p></div>
+      <div>
+        <div class="presets" id="relPresets"></div>
+        <div class="readout" id="relOut"></div>
+        <p class="hint">Try this. Rotate the skew pair until the two lines look like they cross on screen, then rotate again and watch the crossing come apart. On screen, two skew lines always appear to intersect from some viewpoint, which is exactly why you check the third equation instead of trusting a picture.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Distances</h3>
+  <p>Every distance formula below is one idea in disguise: project the vector that joins the two objects onto the direction that measures the gap.</p>
+  <div class="formula">\(D=\dfrac{|ax_1+by_1+cz_1-d|}{\sqrt{a^2+b^2+c^2}}\)<span class="cap"><b>Point \((x_1,y_1,z_1)\) to the plane \(ax+by+cz=d\).</b> Plug the point into the plane equation, subtract the constant, take the absolute value, divide by \(|\mathbf{n}|\). It is the scalar projection of \(\overrightarrow{P_0P_1}\) onto \(\mathbf{n}\).</span></div>
+  <p><b>Between two parallel planes:</b> first rescale one equation so the two normals are identical, then pick any point on one plane and use the formula above. With matched normals it collapses to \(D=|d_1-d_2|/|\mathbf{n}|\).</p>
+  <div class="formula">\(D=\dfrac{|\overrightarrow{PQ}\times\mathbf{v}|}{|\mathbf{v}|}\)<span class="cap"><b>Point \(Q\) to the line through \(P\) with direction \(\mathbf{v}\).</b> The cross product's length is the area of the parallelogram with sides \(\overrightarrow{PQ}\) and \(\mathbf{v}\); dividing by the base \(|\mathbf{v}|\) leaves the height, which is the distance.</span></div>
+  <div class="formula">\(D=\dfrac{|\overrightarrow{P_1P_2}\cdot(\mathbf{v}_1\times\mathbf{v}_2)|}{|\mathbf{v}_1\times\mathbf{v}_2|}\)<span class="cap"><b>Between two skew lines</b> through \(P_1\), \(P_2\) with directions \(\mathbf{v}_1\), \(\mathbf{v}_2\). Skew lines sit in two parallel planes whose shared normal is \(\mathbf{n}=\mathbf{v}_1\times\mathbf{v}_2\); the distance between the lines is the gap between those planes, which is the scalar projection of \(\overrightarrow{P_1P_2}\) onto \(\mathbf{n}\). For <b>parallel</b> lines this cross product is \(\mathbf{0}\), so use the point-to-line formula instead with a point of one line and the other line.</span></div>
+  <div class="note"><b>Which distance formula.</b> Point to plane: divide by \(|\mathbf{n}|\). Point to line: cross with \(\mathbf{v}\), divide by \(|\mathbf{v}|\). Two parallel planes: match the normals, then the constants. Two skew lines: cross the directions to get \(\mathbf{n}\), then it is a point-to-plane problem. Two parallel lines: point-to-line. Every one of them is "project the connecting vector onto the direction that measures the gap".</div>
+  <div class="note"><b>Sanity checks that cost nothing.</b> A distance is never negative, so if you forgot the absolute value you will see it. And the distance from a point to a plane is zero exactly when the point satisfies the plane equation, so a zero answer is a claim you can verify in one line.</div>
+  <div class="warn"><b>Matching normals comes first.</b> For the parallel planes \(2x-y+2z=4\) and \(4x-2y+4z=6\), the difference of the constants is not \(6-4\). Divide the second by 2 to get \(2x-y+2z=3\), so the gap is \(|4-3|/3=\tfrac13\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-rel"></div>
+</section>
+
+<!-- ============================================================ 4 SURFACES -->
+<section data-id="surfaces" data-title="Cylinders and quadric surfaces" data-goal="6">
+  <p class="eyebrow">Chapter 4 · Stewart 12.6</p>
+  <h2>Cylinders and quadric surfaces</h2>
+  <p class="lead">Linear equations give planes. Let the variables be squared and you get the whole zoo: bowls, saddles, cones, and shells. You identify them by slicing.</p>
+
+  <h3>Cylinders: a missing variable</h3>
+  <p>A <b>cylinder</b> is a surface made of parallel lines (the <b>rulings</b>) passing through a fixed plane curve. The tell is simple: <b>a variable is missing from the equation</b>. If \(z\) never appears, then \(z\) is free, so whenever \((x,y,z)\) is on the surface so is \((x,y,z+7)\). The curve in the \(xy\)-plane is dragged straight along the \(z\)-axis.</p>
+  <ul>
+    <li>\(x^2+y^2=9\): a circular cylinder of radius 3, rulings parallel to the \(z\)-axis.</li>
+    <li>\(z=x^2\): a parabolic cylinder, rulings parallel to the \(y\)-axis.</li>
+    <li>\(y^2-z^2=1\): a hyperbolic cylinder, rulings parallel to the \(x\)-axis.</li>
+  </ul>
+  <div class="warn"><b>Context decides.</b> In two dimensions \(x^2+y^2=9\) is a circle. In three dimensions the same equation is a cylinder, because the absent \(z\) is unrestricted. Always ask how many variables the problem lives in.</div>
+
+  <h3>Traces: the way to see a surface</h3>
+  <p>A <b>trace</b> is the curve you get by intersecting the surface with a plane parallel to a coordinate plane. Set \(z=k\) and you get the horizontal trace at height \(k\); set \(x=k\) or \(y=k\) for the vertical traces. Stack the traces mentally and the surface appears. Only three questions matter for each family: what shape is it, how does it change as \(k\) grows, and for which \(k\) does it vanish.</p>
+
+  <h3>The six quadric surfaces</h3>
+  <p>A <b>quadric surface</b> is the graph of a second-degree equation in \(x,y,z\). After shifting and rotating, every one of them is in this list. Read the signs and count the squares:</p>
+  <table class="simple">
+    <tr><th>Surface</th><th>Standard equation</th><th>Horizontal traces \(z=k\)</th><th>Vertical traces \(x=k\) or \(y=k\)</th></tr>
+    <tr><td><b>Ellipsoid</b></td><td>\(\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}+\dfrac{z^2}{c^2}=1\)</td><td>ellipses; a point at \(|k|=c\); empty for \(|k|>c\)</td><td>ellipses</td></tr>
+    <tr><td><b>Elliptic paraboloid</b></td><td>\(\dfrac{z}{c}=\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}\)</td><td>ellipses (one for each \(k\) on the open side, a point at the vertex, empty on the other side)</td><td>parabolas</td></tr>
+    <tr><td><b>Hyperbolic paraboloid</b></td><td>\(\dfrac{z}{c}=\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}\)</td><td>hyperbolas; a pair of lines at \(k=0\)</td><td>parabolas (opening opposite ways for \(x=k\) and \(y=k\))</td></tr>
+    <tr><td><b>Cone</b></td><td>\(\dfrac{z^2}{c^2}=\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}\)</td><td>ellipses; a single point at \(k=0\)</td><td>hyperbolas; a pair of lines through the vertex when \(k=0\)</td></tr>
+    <tr><td><b>Hyperboloid of one sheet</b></td><td>\(\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}-\dfrac{z^2}{c^2}=1\)</td><td>ellipses for every \(k\), smallest at \(k=0\)</td><td>hyperbolas</td></tr>
+    <tr><td><b>Hyperboloid of two sheets</b></td><td>\(-\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}+\dfrac{z^2}{c^2}=1\)</td><td>empty for \(|k|<c\); a point at \(|k|=c\); ellipses beyond</td><td>hyperbolas</td></tr>
+  </table>
+  <p>Three signs and one right-hand side sort the whole table:</p>
+  <ul>
+    <li><b>One variable appears to the first power</b> (the others squared): a <b>paraboloid</b>. Squares with the same sign make it elliptic (a bowl), opposite signs make it hyperbolic (a saddle).</li>
+    <li><b>Three squares, all the same sign, equal to 1</b>: an <b>ellipsoid</b>. All three coefficients equal gives a <b>sphere</b>.</li>
+    <li><b>Three squares, one sign different, equal to 0</b>: a <b>cone</b>.</li>
+    <li><b>Three squares, one sign different, equal to 1</b>: a hyperboloid of <b>one sheet</b> (one minus sign).</li>
+    <li><b>Three squares, two signs different, equal to 1</b>: a hyperboloid of <b>two sheets</b> (two minus signs).</li>
+  </ul>
+  <div class="note"><b>The odd one out names the axis.</b> For a paraboloid it is the variable that is not squared. For a cone or a hyperboloid it is the variable whose sign differs from the other two. \(x^2-y^2+z^2=1\) has its axis along the \(y\)-axis, and it is a hyperboloid of one sheet.</div>
+  <div class="warn"><b>One sheet or two? Count minus signs, not sheets.</b> With \(=1\) on the right, one minus sign gives one connected piece and two minus signs give two. Checking the trace at \(z=0\) settles it instantly: if that trace is empty, the surface has to be in two pieces.</div>
+
+  <div class="card">
+    <h4>Explore: the quadric gallery</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="surfScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The purple curve is the trace in the plane \(z=k\).</p></div>
+      <div>
+        <div class="controls">
+          <select id="surfPick" class="btn"></select>
+          <label class="chk"><input type="checkbox" id="surfTrace"> show the trace at z = k</label>
+        </div>
+        <div class="sliders three" id="surfSliders"></div>
+        <div class="sliders" id="surfKrow" style="margin-top:10px"></div>
+        <div class="readout" id="surfOut"></div>
+        <p class="hint">Try this. Turn on the trace and sweep \(k\) through the whole range for each surface. On the ellipsoid the trace shrinks to a point and then disappears. On the hyperboloid of one sheet it never disappears. On the saddle it flips from one pair of branches to the other as \(k\) passes 0. That sweep is the whole chapter in one motion.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Shifted surfaces: complete the square</h3>
+  <p>Real problems rarely sit at the origin. Linear terms mean the surface has been translated. Group by variable, complete the square, and read off the center. The classic case is the sphere:</p>
+  <div class="formula">\(x^2+y^2+z^2-6x+4z=3\;\Longrightarrow\;(x-3)^2+(y)^2+(z+2)^2=3+9+4=16\)<span class="cap">Center \((3,0,-2)\), radius 4. Half the coefficient, squared, added to both sides, once per variable.</span></div>
+  <p>If the squared terms carry a common factor, divide it out first. \(2x^2+2y^2+2z^2-8x=0\) is the same surface as \(x^2+y^2+z^2-4x=0\), which is the sphere centered at \((2,0,0)\) with radius 2. The same completion works on any quadric: it tells you the center, and the surface type is unchanged by the shift.</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-surf"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const rvec=(n=3,lo=-5,hi=5)=>Array.from({length:n},()=>rint(lo,hi));
+/* random integer vector with at least minNZ nonzero components */
+const rdir=(lo=-3,hi=3,minNZ=2)=>{let v;do{v=rvec(3,lo,hi);}while(v.filter(x=>x!==0).length<minNZ);return v;};
+const sumSq=v=>v.reduce((s,x)=>s+x*x,0);
+const V=v=>M(texVec(v)),PT=p=>M(texPt(p));
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const val=(el,k)=>$(`[data-k=${k}]`,el).value;
+const vecIn=(el,k,label,ph='⟨a, b, c⟩')=>el.appendChild(ansLine(label,k,{wide:true,placeholder:ph}));
+const ptIn=(el,k,label)=>el.appendChild(ansLine(label,k,{wide:true,placeholder:'(x, y, z)'}));
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const lineIn=(el,k,label)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:'<1+2t, 3-t, 4t>'}));
+const eqIn=(el,k,label)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:'3x - y + 2z = 5'}));
+
+/* plain answer strings the checkers accept (used by the solutions and by window.__solvers) */
+const compStr=(p,c,tv='t')=>{if(c===0)return String(p);const b=(Math.abs(c)===1?'':String(Math.abs(c)))+tv;return p===0?(c<0?'-'+b:b):(String(p)+(c<0?' - ':' + ')+b);};
+const lineStr=(P,v,tv='t')=>'<'+P.map((p,i)=>compStr(p,v[i],tv)).join(', ')+'>';
+const ptStr=p=>'('+p.map(x=>fmt(x)).join(', ')+')';
+const vecStr=v=>'<'+v.map(x=>fmt(x)).join(', ')+'>';
+const linStr=(cs,vs)=>{let s='';cs.forEach((c,i)=>{if(!c)return;const a=Math.abs(c);const b=(a===1?'':String(a))+vs[i];s+=s===''?(c<0?'-'+b:b):(c<0?' - '+b:' + '+b);});return s||'0';};
+const planeStr=(n,d)=>linStr(n,['x','y','z'])+' = '+d;
+
+/* TeX builders */
+const compTex=(p,c,tv='t')=>{if(c===0)return texNum(p);const b=(Math.abs(c)===1?'':texNum(Math.abs(c)))+tv;return p===0?(c<0?'-'+b:b):(texNum(p)+(c<0?' - ':' + ')+b);};
+const texParam=(P,v,tv='t')=>['x','y','z'].map((nm,i)=>`${nm} = ${compTex(P[i],v[i],tv)}`).join(R`,\quad `);
+const texPlaneEq=(n,d)=>texLin(n,['x','y','z'])+' = '+texNum(d);
+const texShift=(nm,x0)=>x0===0?nm:(x0>0?`${nm} - ${texNum(x0)}`:`${nm} + ${texNum(-x0)}`);
+const texSym=(P,v)=>{const nm=['x','y','z'];const fr=[],fx=[];
+  nm.forEach((s,i)=>{if(v[i]===0)fx.push(`${s} = ${texNum(P[i])}`);else fr.push(R`\frac{${texShift(s,P[i])}}{${texNum(v[i])}}`);});
+  return fr.join(' = ')+(fx.length?R`,\quad `+fx.join(R`,\quad `):'');};
+const texDet=(a,b)=>R`\begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\ ${a[0]}&${a[1]}&${a[2]}\\ ${b[0]}&${b[1]}&${b[2]}\end{vmatrix}`;
+/* join signed terms so a negative coefficient becomes " - 3(...)" and never "+-3(...)" */
+const joinSigned=parts=>parts.reduce((s,[c,body])=>s+(s===''?(c<0?'-':''):(c<0?' - ':' + '))+body,'');
+/* divide a vector by the gcd of its components, so normals and directions come out in lowest terms */
+const reduceVec=v=>{const g=v.reduce((s,x)=>gcd(s,Math.abs(x)),0);return g>1?v.map(x=>x/g):v;};
+const commonFactor=v=>v.reduce((s,x)=>gcd(s,Math.abs(x)),0);
+const texScalarPlane=(n,P)=>joinSigned(n.map((c,i)=>[c,`${texNum(Math.abs(c))}(${texShift(['x','y','z'][i],P[i])})`]))+' = 0';
+const texSubstLine=(n,P,v)=>joinSigned(n.map((c,i)=>[c,`${texNum(Math.abs(c))}(${compTex(P[i],v[i])})`]));
+const texDotNum=(a,b)=>a.map((x,i)=>`(${texNum(x)})(${texNum(b[i])})`).join('+');
+const deg1=x=>fmtDec(x,1);
+
+/* solve A1 + t d1 = A2 + s d2 using the two coordinate equations i,j; returns null if every pair is degenerate */
+function solveTS(A1,d1,A2,d2){
+  const pairs=[[0,1],[0,2],[1,2]];
+  for(const [i,j] of pairs){
+    const det=d1[i]*(-d2[j])-(-d2[i])*d1[j];
+    if(Math.abs(det)<1e-9)continue;
+    const r1=A2[i]-A1[i],r2=A2[j]-A1[j];
+    const t=(r1*(-d2[j])-(-d2[i])*r2)/det;
+    const s=(d1[i]*r2-d1[j]*r1)/det;
+    const k=[0,1,2].find(x=>x!==i&&x!==j);
+    const lhs=A1[k]+t*d1[k],rhs=A2[k]+s*d2[k];
+    return {i,j,k,t,s,lhs,rhs,agree:near(lhs,rhs,1e-9)||Math.abs(lhs-rhs)<1e-9};
+  }
+  return null;
+}
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1: lines ---------- */
+Q.lineDir={name:'line through a point with a given direction',
+  gen(){const P=rvec(3,-5,5),v=rdir(-4,4,2);return {P,v};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find parametric equations for the line through ${M('P_0'+texPt(q.P))} that is parallel to ${M(R`\mathbf{v}=`+texVec(q.v))}. Write <code>&lt;x(t), y(t), z(t)&gt;</code> or <code>x=..., y=..., z=...</code>.</p>`;lineIn(el,'L',M(R`\mathbf{r}(t)=`));},
+  check(q,el){return G(el,'L',checkLine(val(el,'L'),q.P,q.v));},
+  solution(q){return `Use ${M(R`\mathbf{r}(t)=\mathbf{r}_0+t\mathbf{v}`)} with ${M(R`\mathbf{r}_0=`+texVec(q.P))} and ${M(R`\mathbf{v}=`+texVec(q.v))}: `+D(texParam(q.P,q.v))+`Any rescaling of ${M(R`\mathbf{v}`)} or any other base point on the line is equally correct.`;}
+};
+Q.lineTwoPts={name:'line through two points',
+  gen(){let P,Qp,v;do{P=rvec(3,-5,5);Qp=rvec(3,-5,5);v=vsub(Qp,P);}while(v.filter(x=>x!==0).length<2);return {P,Q:Qp,v};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find parametric equations for the line through ${M('P'+texPt(q.P))} and ${M('Q'+texPt(q.Q))}.</p>`;lineIn(el,'L',M(R`\mathbf{r}(t)=`));},
+  check(q,el){return G(el,'L',checkLine(val(el,'L'),q.P,q.v));},
+  solution(q){return `The direction is ${M(R`\mathbf{v}=\overrightarrow{PQ}=Q-P=`+texVec(q.Q)+'-'+texVec(q.P)+'='+texVec(q.v))}. Starting from ${M('P')}: `+D(texParam(q.P,q.v))+`Starting from ${M('Q')} instead, or using ${M(R`\overrightarrow{QP}`)}, gives the same line.`;}
+};
+Q.symRead={name:'read a point and a direction from symmetric equations',
+  gen(){const P=rvec(3,-5,5);let v;
+    if(Math.random()<0.35){v=rdir(-4,4,2);v[rint(0,2)]=0;if(v.filter(x=>x!==0).length<2)v=[2,-3,1];}
+    else{do{v=rvec(3,-4,4);}while(v.some(x=>x===0));}
+    return {P,v};},
+  render(q,el){el.innerHTML=`<p class="prompt">A line is described by the symmetric equations</p>`+D(texSym(q.P,q.v))+`<p class="prompt">Give a direction vector for the line, and any one point on it.</p>`;
+    vecIn(el,'v',M(R`\mathbf{v}=`));ptIn(el,'p','point:');},
+  check(q,el){const rv=checkVector(val(el,'v'),q.v,{parallel:true});
+    const pr=parseVector(val(el,'p'),3);
+    let rp;
+    if(pr.err)rp={ok:false,err:pr.err};
+    else{const diff=vsub(pr.v,q.P);rp={ok:vzero(diff)||vparallel(diff,q.v)};}
+    return Gall(el,[['v',rv],['p',rp]]);},
+  solution(q){const z=q.v.filter(x=>x===0).length;
+    return `The denominators are the direction numbers, so ${M(R`\mathbf{v}=`+texVec(q.v))}`+(z?` (the coordinate written as a plain equation has direction number 0)`:'')+`. The numbers subtracted from ${M('x')}, ${M('y')}, ${M('z')} are the coordinates of a point, so ${M(texPt(q.P))} is on the line. Any nonzero multiple of ${M(R`\mathbf{v}`)} and any other point of the line, such as ${M(texPt(vadd(q.P,q.v)))}, are also correct.`;}
+};
+Q.onLine={name:'is the point on the line',
+  gen(){const P=rvec(3,-4,4);let v;
+    if(Math.random()<0.4){v=rdir(-3,3,2);v[rint(0,2)]=0;if(v.filter(x=>x!==0).length<2)v=[2,1,0];}
+    else{do{v=rvec(3,-3,3);}while(v.some(x=>x===0));}
+    const t0=rnz(-3,3);const X=vadd(P,vscale(t0,v));const yes=Math.random()<0.5;
+    const A=X.slice();if(!yes)A[rint(0,2)]+=pick([1,-1,2,-2]);
+    return {P,v,t0,A,yes};},
+  render(q,el){el.innerHTML=`<p class="prompt">Does the point ${M(texPt(q.A))} lie on the line</p>`+D(texParam(q.P,q.v));
+    q.get=choiceButtons(el,[{label:'Yes, it is on the line',value:true},{label:'No, it is not',value:false}]);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.yes,msg:v===q.yes?'':'Solve each equation for '+M('t')+' separately and compare the three values.'};},
+  solution(q){const nm=['x','y','z'];
+    const rows=nm.map((s,i)=>{
+      if(q.v[i]===0)return `${M(s)}: the equation is ${M(`${s} = ${texNum(q.P[i])}`)} with no ${M('t')} in it, and the point has ${M(`${s} = ${texNum(q.A[i])}`)}, which ${q.A[i]===q.P[i]?'matches':'does <b>not</b> match'}.`;
+      const t=(q.A[i]-q.P[i])/q.v[i];
+      return `${M(s)}: ${M(`${texNum(q.A[i])} = ${compTex(q.P[i],q.v[i])}`)} gives ${M(`t = ${texNum(t)}`)}.`;});
+    return rows.join('<br>')+`<br>`+(q.yes?`All three agree at ${M(`t = ${q.t0}`)}, so the point <b>is</b> on the line.`:`They do not all agree, so the point is <b>not</b> on the line. One disagreement is enough.`);}
+};
+Q.segment={name:'parametrize a line segment',
+  gen(){let P,Qp;do{P=rvec(3,-5,5);Qp=rvec(3,-5,5);}while(vzero(vsub(Qp,P)));
+    const d=vsub(Qp,P);const fns=[0,1,2].map(i=>e=>P[i]+d[i]*e.t);return {P,Q:Qp,d,fns};},
+  render(q,el){el.innerHTML=`<p class="prompt">Parametrize the line segment from ${M('P'+texPt(q.P))} to ${M('Q'+texPt(q.Q))} using ${M(R`\mathbf{r}(t)=(1-t)\mathbf{r}_0+t\mathbf{r}_1`)} with ${M(R`0\le t\le 1`)}. Give the three components in terms of ${M('t')}.</p>`;
+    lineIn(el,'r',M(R`\mathbf{r}(t)=`));},
+  check(q,el){return G(el,'r',checkExprVector(val(el,'r'),q.fns,['t']));},
+  solution(q){return `${M(R`\mathbf{r}(t)=(1-t)`+texVec(q.P)+'+t'+texVec(q.Q))}. Combine each coordinate: `+D(texParam(q.P,q.d))+`Check the ends: ${M('t=0')} gives ${M(texPt(q.P))} and ${M('t=1')} gives ${M(texPt(q.Q))}.`;}
+};
+/* ---------- chapter 2: planes ---------- */
+const planeRef=(n,d)=>e=>n[0]*e.x+n[1]*e.y+n[2]*e.z-d;
+Q.planeNormal={name:'plane through a point with a given normal',
+  gen(){const P=rvec(3,-4,4),n=rdir(-4,4,2);return {P,n,d:dot(n,P)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the plane through ${M('P_0'+texPt(q.P))} with normal vector ${M(R`\mathbf{n}=`+texVec(q.n))}. Any equivalent form is accepted.</p>`;eqIn(el,'E','equation:');},
+  check(q,el){return G(el,'E',checkEquation(val(el,'E'),planeRef(q.n,q.d),['x','y','z']));},
+  solution(q){return `${M(R`\mathbf{n}\cdot(\mathbf{r}-\mathbf{r}_0)=0`)} in components is ${M(texScalarPlane(q.n,q.P))}. Expanding, the constant is ${M(R`d=\mathbf{n}\cdot\mathbf{r}_0=${texDotNum(q.n,q.P)}=${q.d}`)}, so `+D(texPlaneEq(q.n,q.d));}
+};
+Q.plane3pts={name:'plane through three points',
+  gen(){let P,Qp,Rr,nRaw;do{P=rvec(3,-4,5);Qp=rvec(3,-4,5);Rr=rvec(3,-4,5);nRaw=cross(vsub(Qp,P),vsub(Rr,P));}while(vzero(nRaw));
+    const n=reduceVec(nRaw);
+    return {P,Q:Qp,R:Rr,PQ:vsub(Qp,P),PR:vsub(Rr,P),nRaw,g:commonFactor(nRaw),n,d:dot(n,P)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the plane through ${M('P'+texPt(q.P))}, ${M('Q'+texPt(q.Q))}, and ${M('R'+texPt(q.R))}.</p>`;eqIn(el,'E','equation:');},
+  check(q,el){return G(el,'E',checkEquation(val(el,'E'),planeRef(q.n,q.d),['x','y','z']));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`\overrightarrow{PQ}=`+texVec(q.PQ))+' and '+M(R`\overrightarrow{PR}=`+texVec(q.PR))+'. Now cross them.';},
+  solution(q){return `Two vectors in the plane: ${M(R`\overrightarrow{PQ}=`+texVec(q.PQ))} and ${M(R`\overrightarrow{PR}=`+texVec(q.PR))}. Their cross product is the normal: `+D(R`\mathbf{n}=`+texDet(q.PQ,q.PR)+'='+texVec(q.nRaw))+
+    (q.g>1?`Every component is divisible by ${M(String(q.g))}, so the simpler normal ${M(texVec(q.n))} does the same job. `:'')+
+    `Now use ${M('P')}: ${M(R`d=\mathbf{n}\cdot\overrightarrow{OP}=${texDotNum(q.n,q.P)}=${q.d}`)}, so `+D(texPlaneEq(q.n,q.d))+`Using ${M('Q')} or ${M('R')} for the point gives the same equation.`;}
+};
+Q.planeParallel={name:'plane through a point parallel to a given plane',
+  gen(){const n=rdir(-4,4,2);const d0=rint(-6,6);let P;do{P=rvec(3,-4,4);}while(dot(n,P)===d0);return {n,d0,P,d:dot(n,P)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the plane through ${M('P'+texPt(q.P))} that is parallel to the plane ${M(texPlaneEq(q.n,q.d0))}.</p>`;eqIn(el,'E','equation:');},
+  check(q,el){return G(el,'E',checkEquation(val(el,'E'),planeRef(q.n,q.d),['x','y','z']));},
+  solution(q){return `Parallel planes have the same normal, and the coefficients are the normal: ${M(R`\mathbf{n}=`+texVec(q.n))}. Only the constant changes. Recompute it from the new point: ${M(R`d=${texDotNum(q.n,q.P)}=${q.d}`)}, so `+D(texPlaneEq(q.n,q.d))+`Any nonzero multiple of this equation is the same plane.`;}
+};
+Q.planePair={name:'two planes: parallel, perpendicular, or the angle',
+  gen(){const kind=pick(['par','perp','nei']);const n1=rdir(-4,4,2);let n2,d1=rint(-6,6),d2=rint(-6,6);
+    if(kind==='par'){const k=pick([2,-2,3,-3,-1,2,-2]);n2=vscale(k,n1);d2=k*d1+pick([1,-1,2,-2,3,-3]);}
+    else if(kind==='perp'){let c;do{c=rdir(-3,3,2);n2=cross(n1,c);}while(vzero(n2));const g=n2.reduce((s,x)=>gcd(s,x),0);if(g>1)n2=n2.map(x=>x/g);}
+    else{do{n2=rdir(-4,4,2);}while(dot(n1,n2)===0||vparallel(n1,n2));}
+    const cosv=Math.abs(dot(n1,n2))/(norm(n1)*norm(n2));const deg=Math.acos(clamp(cosv,-1,1))*180/Math.PI;
+    return {kind,n1,n2,d1,d2,deg,dp:dot(n1,n2)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Classify the pair of planes ${M(texPlaneEq(q.n1,q.d1))} and ${M(texPlaneEq(q.n2,q.d2))}. If they are neither parallel nor perpendicular, also give the acute angle between them in degrees, to one decimal place (otherwise leave the angle blank).</p>`;
+    q.get=choiceButtons(el,[{label:'parallel',value:'par'},{label:'perpendicular',value:'perp'},{label:'neither',value:'nei'}]);
+    numIn(el,'ang',M(R`\theta=`),'degrees');},
+  check(q,el){const v=q.get();if(v===null)return {ok:false,msg:'Pick a classification.'};
+    if(v!==q.kind)return {ok:false,msg:q.kind==='par'?'Compare the normals after scaling: one is a multiple of the other.':q.kind==='perp'?'Dot the two normals together and look at the result.':'The normals are neither proportional nor orthogonal.'};
+    if(q.kind!=='nei')return {ok:true};
+    return G(el,'ang',checkNumber(val(el,'ang'),q.deg,{tol:0.1}));},
+  solution(q){const s=`The normals are ${M(R`\mathbf{n}_1=`+texVec(q.n1))} and ${M(R`\mathbf{n}_2=`+texVec(q.n2))}, with ${M(R`\mathbf{n}_1\cdot\mathbf{n}_2=${texDotNum(q.n1,q.n2)}=${q.dp}`)}. `;
+    if(q.kind==='par')return s+`The normals are proportional (${M(R`\mathbf{n}_2=${texNum(q.n2.find((x,i)=>q.n1[i]!==0)/q.n1.find(x=>x!==0))}\,\mathbf{n}_1`)}), so the planes are <b>parallel</b>. The different constants say they are two distinct planes, not the same one.`;
+    if(q.kind==='perp')return s+`The dot product is 0, so the normals are orthogonal and the planes are <b>perpendicular</b>.`;
+    return s+`Neither proportional nor orthogonal, so <b>neither</b>. The angle comes from ${M(R`\cos\theta=\frac{|\mathbf{n}_1\cdot\mathbf{n}_2|}{|\mathbf{n}_1||\mathbf{n}_2|}=\frac{${Math.abs(q.dp)}}{\sqrt{${sumSq(q.n1)}}\sqrt{${sumSq(q.n2)}}}\approx ${fmtDec(Math.abs(q.dp)/(norm(q.n1)*norm(q.n2)),4)}`)}, so ${M(R`\theta\approx ${deg1(q.deg)}^\circ`)}.`;}
+};
+Q.planeLinePt={name:'plane containing a line and a point',
+  gen(){const P0=rvec(3,-4,4);const v=rdir(-3,3,2);let A,nRaw,w;
+    do{A=rvec(3,-4,4);w=vsub(A,P0);nRaw=cross(v,w);}while(vzero(nRaw));
+    const n=reduceVec(nRaw);
+    return {P0,v,A,w,nRaw,g:commonFactor(nRaw),n,d:dot(n,P0)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the plane that contains the line</p>`+D(texParam(q.P0,q.v))+`<p class="prompt">and the point ${M('A'+texPt(q.A))}, which is not on that line.</p>`;eqIn(el,'E','equation:');},
+  check(q,el){return G(el,'E',checkEquation(val(el,'E'),planeRef(q.n,q.d),['x','y','z']));},
+  solution(q){return `Two directions inside the plane: the line's direction ${M(R`\mathbf{v}=`+texVec(q.v))}, and ${M(R`\overrightarrow{P_0A}=`+texVec(q.A)+'-'+texVec(q.P0)+'='+texVec(q.w))}, where ${M('P_0'+texPt(q.P0))} is the point of the line at ${M('t=0')}. Cross them: `+D(R`\mathbf{n}=\mathbf{v}\times\overrightarrow{P_0A}=`+texDet(q.v,q.w)+'='+texVec(q.nRaw))+
+    (q.g>1?`Divide out the common factor ${M(String(q.g))} to get the simpler normal ${M(texVec(q.n))}. `:'')+
+    `Using ${M('P_0')}: ${M(R`d=${texDotNum(q.n,q.P0)}=${q.d}`)}, so `+D(texPlaneEq(q.n,q.d));}
+};
+Q.planePerpPlane={name:'plane through two points perpendicular to a plane',
+  gen(){let P,Qp,n0,w,nRaw;do{P=rvec(3,-4,4);Qp=rvec(3,-4,4);n0=rdir(-3,3,2);w=vsub(Qp,P);nRaw=cross(w,n0);}while(vzero(w)||vzero(nRaw));
+    const n=reduceVec(nRaw);return {P,Q:Qp,n0,d0:rint(-4,4),w,nRaw,g:commonFactor(nRaw),n,d:dot(n,P)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the plane that contains the points ${M('P'+texPt(q.P))} and ${M('Q'+texPt(q.Q))} and is perpendicular to the plane ${M(texPlaneEq(q.n0,q.d0))}.</p>`;eqIn(el,'E','equation:');},
+  check(q,el){return G(el,'E',checkEquation(val(el,'E'),planeRef(q.n,q.d),['x','y','z']));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Two directions inside the plane you want: ${M(R`\overrightarrow{PQ}=`+texVec(q.w))} and the given plane's normal ${M(R`\mathbf{n}_0=`+texVec(q.n0))}. Cross them.`;},
+  solution(q){return `Perpendicular planes have perpendicular normals, so the given normal ${M(R`\mathbf{n}_0=`+texVec(q.n0))} is a direction that lies <i>inside</i> the plane you want. The other in-plane direction is ${M(R`\overrightarrow{PQ}=`+texVec(q.w))}. Cross them: `+D(R`\mathbf{n}=\overrightarrow{PQ}\times\mathbf{n}_0=`+texDet(q.w,q.n0)+'='+texVec(q.nRaw))+
+    (q.g>1?`Divide out the common factor ${M(String(q.g))} to get ${M(texVec(q.n))}. `:'')+
+    `Then ${M(R`d=\mathbf{n}\cdot\overrightarrow{OP}=${texDotNum(q.n,q.P)}=${q.d}`)}, so `+D(texPlaneEq(q.n,q.d))+`Check: ${M('Q')} satisfies it (${M(texDotNum(q.n,q.Q)+'='+dot(q.n,q.Q))}), and ${M(R`\mathbf{n}\cdot\mathbf{n}_0=0`)}.`;}
+};
+/* ---------- chapter 3: intersections and distances ---------- */
+Q.linePlaneMeet={name:'where a line meets a plane',
+  gen(){const P=rvec(3,-4,4);const v=rdir(-3,3,2);let n;do{n=rdir(-3,3,2);}while(dot(n,v)===0);
+    const t0=rint(-3,3);const X=vadd(P,vscale(t0,v));return {P,v,n,t0,X,d:dot(n,X),np:dot(n,P),nv:dot(n,v)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the point where the line</p>`+D(texParam(q.P,q.v))+`<p class="prompt">meets the plane ${M(texPlaneEq(q.n,q.d))}.</p>`;ptIn(el,'pt','intersection point:');},
+  check(q,el){return G(el,'pt',checkVector(val(el,'pt'),q.X));},
+  solution(q){return `Substitute the parametric equations into the plane equation: ${M(texSubstLine(q.n,q.P,q.v)+' = '+texNum(q.d))}. Collecting terms, ${M(R`\mathbf{n}\cdot\mathbf{r}_0+t(\mathbf{n}\cdot\mathbf{v})=${compTex(q.np,q.nv,'t')}=${texNum(q.d)}`)}, so ${M(R`t=\frac{${q.d}-(${q.np})}{${q.nv}}=${q.t0}`)}. Put ${M(`t=${q.t0}`)} back into the line: the point is <b>${M(texPt(q.X))}</b>.`;}
+};
+Q.twoPlanesLine={name:'line of intersection of two planes',
+  gen(){let n1,n2,det;do{n1=rdir(-3,3,2);n2=rdir(-3,3,2);det=n1[0]*n2[1]-n1[1]*n2[0];}while(vparallel(n1,n2)||det===0);
+    const X0=[rint(-4,4),rint(-4,4),0];const vRaw=cross(n1,n2);
+    return {n1,n2,d1:dot(n1,X0),d2:dot(n2,X0),X0,vRaw,g:commonFactor(vRaw),v:reduceVec(vRaw),det};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find parametric equations for the line of intersection of the planes ${M(texPlaneEq(q.n1,q.d1))} and ${M(texPlaneEq(q.n2,q.d2))}.</p>`;lineIn(el,'L',M(R`\mathbf{r}(t)=`));},
+  check(q,el){return G(el,'L',checkLine(val(el,'L'),q.X0,q.v));},
+  solution(q){return `The line lies in both planes, so its direction is orthogonal to both normals: `+D(R`\mathbf{v}=\mathbf{n}_1\times\mathbf{n}_2=`+texDet(q.n1,q.n2)+'='+texVec(q.vRaw))+
+    (q.g>1?`Scale it down by ${M(String(q.g))} to ${M(texVec(q.v))}; any multiple points the same way. `:'')+
+    `For a point, set ${M('z=0')} and solve the ${M(R`2\times 2`)} system ${M(R`${texLin([q.n1[0],q.n1[1]],['x','y'])}=${q.d1}`)}, ${M(R`${texLin([q.n2[0],q.n2[1]],['x','y'])}=${q.d2}`)}. That gives ${M(`x=${texNum(q.X0[0])}`)}, ${M(`y=${texNum(q.X0[1])}`)}, so ${M(texPt(q.X0))} is on the line. Therefore `+D(texParam(q.X0,q.v))+`Any other point of the line, or any multiple of ${M(R`\mathbf{v}`)}, is equally correct. (If the ${M(R`2\times2`)} system had been degenerate, you would set ${M('x=0')} instead.)`;}
+};
+Q.lineLine={name:'two lines: parallel, intersecting, or skew',
+  gen(){const kind=pick(['par','int','skew']);const A1=rvec(3,-4,4),d1=rdir(-3,3,2);let A2,d2,X=null,k=1;
+    if(kind==='par'){k=pick([2,-2,3,-1,-3,2]);d2=vscale(k,d1);do{A2=rvec(3,-4,4);}while(vzero(vsub(A2,A1))||vparallel(vsub(A2,A1),d1));}
+    else if(kind==='int'){do{d2=rdir(-3,3,2);}while(vparallel(d1,d2));const t0=rint(-3,3),s0=rint(-3,3);X=vadd(A1,vscale(t0,d1));A2=vsub(X,vscale(s0,d2));}
+    else{do{d2=rdir(-3,3,2);A2=rvec(3,-4,4);}while(vparallel(d1,d2)||dot(vsub(A2,A1),cross(d1,d2))===0);}
+    return {kind,A1,d1,A2,d2,X,k};},
+  render(q,el){el.innerHTML=`<p class="prompt">Classify the two lines</p>`+D(R`L_1:\; `+texParam(q.A1,q.d1,'t'))+D(R`L_2:\; `+texParam(q.A2,q.d2,'s'))+
+    `<p class="prompt">If they intersect, also give the point of intersection.</p>`;
+    q.get=choiceButtons(el,[{label:'parallel',value:'par'},{label:'intersecting',value:'int'},{label:'skew',value:'skew'}]);
+    ptIn(el,'pt','intersection point:');},
+  check(q,el){const v=q.get();if(v===null)return {ok:false,msg:'Pick a classification.'};
+    if(v!==q.kind)return {ok:false,msg:q.kind==='par'?'Look at the direction vectors first: one is a multiple of the other.':q.kind==='int'?'The directions are not parallel, and the t and s you get from two equations do satisfy the third.':'The directions are not parallel, and the t and s from two of the equations fail the third one.'};
+    if(q.kind!=='int')return {ok:true};
+    return G(el,'pt',checkVector(val(el,'pt'),q.X));},
+  solution(q){const d=`Directions ${M(R`\mathbf{v}_1=`+texVec(q.d1))} and ${M(R`\mathbf{v}_2=`+texVec(q.d2))}. `;
+    if(q.kind==='par')return d+`${M(R`\mathbf{v}_2=${texNum(q.k)}\,\mathbf{v}_1`)}, so the lines are <b>parallel</b>. They are not the same line, because ${M(texPt(q.A2))} does not satisfy the equations of ${M('L_1')}: ${M(R`\overrightarrow{A_1A_2}=`+texVec(vsub(q.A2,q.A1)))} is not a multiple of ${M(R`\mathbf{v}_1`)}.`;
+    const r=solveTS(q.A1,q.d1,q.A2,q.d2);const nm=['x','y','z'];
+    const head=d+`They are not parallel, so set the parametrizations equal and use the ${M(nm[r.i])} and ${M(nm[r.j])} equations: ${M(`t=${texNum(r.t)}`)}, ${M(`s=${texNum(r.s)}`)}. Check the ${M(nm[r.k])} equation: ${M(`${texNum(r.lhs)}`)} from ${M('L_1')} and ${M(`${texNum(r.rhs)}`)} from ${M('L_2')}. `;
+    if(q.kind==='int')return head+`They agree, so the lines <b>intersect</b>. Put ${M(`t=${texNum(r.t)}`)} into ${M('L_1')}: the point is <b>${M(texPt(q.X))}</b>.`;
+    return head+`They disagree, so no ${M('t')} and ${M('s')} put the two lines at the same place: the lines are <b>skew</b>.`;}
+};
+Q.distPtPlane={name:'distance from a point to a plane',
+  gen(){const n=rdir(-4,4,2);const d=rint(-6,6);let P;do{P=rvec(3,-5,5);}while(dot(n,P)===d);
+    const num=Math.abs(dot(n,P)-d),ss=sumSq(n);return {n,d,P,num,ss,val:dot(n,P),D:num/Math.sqrt(ss)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the distance from the point ${M(texPt(q.P))} to the plane ${M(texPlaneEq(q.n,q.d))}. An exact value like <code>7/sqrt(14)</code> or a decimal to three places is fine.</p>`;numIn(el,'dist',M('D='));},
+  check(q,el){return G(el,'dist',checkNumber(val(el,'dist'),q.D,{tol:0.005}));},
+  solution(q){return `Plug the point into the left side: ${M(R`${texDotNum(q.n,q.P)}=${q.val}`)}. Subtract the constant and take the absolute value: ${M(R`|${q.val}-(${q.d})|=${q.num}`)}. Divide by ${M(R`|\mathbf{n}|=\sqrt{${q.ss}}=${texSqrt(q.ss)}`)}: `+D(R`D=\frac{${q.num}}{${texSqrt(q.ss)}}\approx ${fmtDec(q.D,4)}`);}
+};
+Q.distPlanes={name:'distance between two parallel planes',
+  gen(){const n=rdir(-4,4,2);const d1=rint(-5,5);const k=pick([2,-2,3,-1,-3,2,3]);const m=rnz(-4,4);
+    return {n,d1,k,m,n2:vscale(k,n),e:k*(d1+m),ss:sumSq(n),D:Math.abs(m)/Math.sqrt(sumSq(n))};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the distance between the parallel planes ${M(texPlaneEq(q.n,q.d1))} and ${M(texPlaneEq(q.n2,q.e))}.</p>`;numIn(el,'dist',M('D='));},
+  check(q,el){return G(el,'dist',checkNumber(val(el,'dist'),q.D,{tol:0.005}));},
+  solution(q){return `First make the normals identical. Divide the second equation by ${M(texNum(q.k))}: ${M(texPlaneEq(q.n,q.d1+q.m))}. Now both planes have normal ${M(R`\mathbf{n}=`+texVec(q.n))}, so the gap is the difference of the constants divided by ${M(R`|\mathbf{n}|`)}: `+D(R`D=\frac{|${q.d1}-(${q.d1+q.m})|}{\sqrt{${q.ss}}}=\frac{${Math.abs(q.m)}}{${texSqrt(q.ss)}}\approx ${fmtDec(q.D,4)}`)+`Equivalently, take any point on the first plane and use the point-to-plane formula on the second.`;}
+};
+Q.distSkew={name:'distance between two skew lines',
+  gen(){let A1,d1,A2,d2,n,w,num;do{A1=rvec(3,-4,4);d1=rdir(-3,3,2);d2=rdir(-3,3,2);A2=rvec(3,-4,4);n=cross(d1,d2);w=vsub(A2,A1);num=Math.abs(dot(w,n));}while(vparallel(d1,d2)||num===0);
+    return {A1,d1,A2,d2,n,w,num,ss:sumSq(n),D:num/norm(n)};},
+  render(q,el){el.innerHTML=`<p class="prompt">The lines</p>`+D(R`L_1:\; `+texParam(q.A1,q.d1,'t'))+D(R`L_2:\; `+texParam(q.A2,q.d2,'s'))+`<p class="prompt">are skew. Find the distance between them. Exact (like <code>14/sqrt(6)</code>) or a decimal to three places.</p>`;numIn(el,'dist',M('D='));},
+  check(q,el){return G(el,'dist',checkNumber(val(el,'dist'),q.D,{tol:0.005}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Cross the two directions for a vector perpendicular to both lines, then project the vector joining ${M('P_1'+texPt(q.A1))} to ${M('P_2'+texPt(q.A2))} onto it.`;},
+  solution(q){return `A vector perpendicular to both lines: `+D(R`\mathbf{n}=\mathbf{v}_1\times\mathbf{v}_2=`+texDet(q.d1,q.d2)+'='+texVec(q.n))+`Join a point of each line (the points at ${M('t=0')} and ${M('s=0')}): ${M(R`\overrightarrow{P_1P_2}=`+texVec(q.A2)+'-'+texVec(q.A1)+'='+texVec(q.w))}. The distance is the scalar projection of that vector onto ${M(R`\mathbf{n}`)}: `+D(R`D=\frac{|\overrightarrow{P_1P_2}\cdot\mathbf{n}|}{|\mathbf{n}|}=\frac{|${texDotNum(q.w,q.n)}|}{\sqrt{${q.ss}}}=\frac{${q.num}}{${texSqrt(q.ss)}}\approx ${fmtDec(q.D,4)}`)+`Geometrically, ${M('L_1')} and ${M('L_2')} lie in two parallel planes with normal ${M(R`\mathbf{n}`)}, and this is the gap between those planes.`;}
+};
+Q.distPtLine={name:'distance from a point to a line',
+  gen(){const A=rvec(3,-4,4);const v=rdir(-3,3,2);let Qp,c;do{Qp=rvec(3,-5,5);c=cross(vsub(Qp,A),v);}while(vzero(c));
+    return {A,v,Q:Qp,w:vsub(Qp,A),c,D:norm(c)/norm(v)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the distance from the point ${M('Q'+texPt(q.Q))} to the line</p>`+D(texParam(q.A,q.v))+`<p class="prompt">Exact or decimal to three places.</p>`;numIn(el,'dist',M('D='));},
+  check(q,el){return G(el,'dist',checkNumber(val(el,'dist'),q.D,{tol:0.005}));},
+  solution(q){return `Take ${M('P'+texPt(q.A))} on the line (the point at ${M('t=0')}) and ${M(R`\mathbf{v}=`+texVec(q.v))}. Then ${M(R`\overrightarrow{PQ}=`+texVec(q.w))} and `+D(R`\overrightarrow{PQ}\times\mathbf{v}=`+texDet(q.w,q.v)+'='+texVec(q.c))+
+    `so ${M(R`D=\frac{|\overrightarrow{PQ}\times\mathbf{v}|}{|\mathbf{v}|}=\frac{${texSqrt(sumSq(q.c))}}{${texSqrt(sumSq(q.v))}}\approx ${fmtDec(q.D,4)}`)}.`;}
+};
+/* ---------- chapter 4: cylinders and quadric surfaces ---------- */
+/* a surface record: sum_i sq[i]*v_i^2/den[i] + sum_i lin[i]*v_i = rhs */
+const NM=['x','y','z'],AXNAME=['the x-axis','the y-axis','the z-axis'];
+const DENS=()=>pick([1,1,1,4,9,16,25]);
+const sqTerm=(i,den)=>den===1?`${NM[i]}^2`:R`\frac{${NM[i]}^2}{${den}}`;
+function texTerms(rec,idxs){let s='';
+  idxs.forEach(i=>{if(!rec.sq[i])return;const b=sqTerm(i,rec.den[i]);s+=s===''?(rec.sq[i]<0?'-'+b:b):(rec.sq[i]<0?' - ':' + ')+b;});
+  idxs.forEach(i=>{if(!rec.lin[i])return;const a=Math.abs(rec.lin[i]);const b=(a===1?'':texNum(a))+NM[i];s+=s===''?(rec.lin[i]<0?'-'+b:b):(rec.lin[i]<0?' - ':' + ')+b;});
+  return s||'0';}
+const lcm=(a,b)=>a*b/gcd(a,b);
+/* like texNum but willing to recognise denominators past 24, which traces of x^2/25 produce */
+function texFrac(x){
+  if(Math.abs(x-Math.round(x))<1e-9)return String(Math.round(x));
+  for(let d=2;d<=400;d++){const n=x*d;if(Math.abs(n-Math.round(n))<1e-9){const nn=Math.round(n),g=gcd(Math.abs(nn),d);
+    return (nn<0?'-':'')+R`\tfrac{${Math.abs(nn)/g}}{${d/g}}`;}}
+  return fmtDec(x,4);}
+/* the same equation with the denominators cleared: 9x^2 + 4y^2 - 36z^2 = 36 */
+function texCoefEq(rec,idxs){
+  const L=idxs.filter(i=>rec.sq[i]).map(i=>rec.den[i]).reduce(lcm,1);
+  const parts=[];
+  idxs.forEach(i=>{if(!rec.sq[i])return;const c=rec.sq[i]*L/rec.den[i];parts.push([c,(Math.abs(c)===1?'':texNum(Math.abs(c)))+`${NM[i]}^2`]);});
+  idxs.forEach(i=>{if(!rec.lin[i])return;const c=rec.lin[i]*L;parts.push([c,(Math.abs(c)===1?'':texNum(Math.abs(c)))+NM[i]]);});
+  return joinSigned(parts)+' = '+texFrac(rec.rhs*L);}
+function texSurf(rec){
+  if(rec.disp==='solved'){const i=rec.lin.findIndex(x=>x!==0);return `${NM[i]} = ${texTerms(rec,[0,1,2].filter(j=>j!==i))}`;}
+  if(rec.disp==='move'){const i=rec.sq.findIndex(x=>x<0);return `${texTerms(rec,[0,1,2].filter(j=>j!==i))} = ${sqTerm(i,rec.den[i])}`;}
+  if(rec.disp==='coef')return texCoefEq(rec,[0,1,2]);
+  return `${texTerms(rec,[0,1,2])} = ${texNum(rec.rhs)}`;}
+/* pick the cleared-denominator display when the numbers stay small */
+const maybeCoef=rec=>{const L=[0,1,2].filter(i=>rec.sq[i]).map(i=>rec.den[i]).reduce(lcm,1);
+  if(L>1&&L<=36&&Math.random()<0.4)rec.disp='coef';return rec;};
+function mkSurf(kind,ax){
+  const o=[0,1,2].filter(i=>i!==ax);const sq=[0,0,0],den=[1,1,1],lin=[0,0,0];
+  if(kind==='sphere'){const r=rint(2,6);return {kind,ax:-1,sq:[1,1,1],den:[1,1,1],lin,rhs:r*r,disp:'std',r};}
+  if(kind==='ellipsoid'){let d;do{d=[DENS(),DENS(),DENS()];}while(d[0]===d[1]&&d[1]===d[2]);return maybeCoef({kind,ax:-1,sq:[1,1,1],den:d,lin,rhs:1,disp:'std'});}
+  if(kind==='ellParab'){const s=pick([1,1,-1]);sq[o[0]]=s;sq[o[1]]=s;den[o[0]]=DENS();den[o[1]]=DENS();lin[ax]=-1;
+    return {kind,ax,sq,den,lin,rhs:0,disp:Math.random()<0.7?'solved':'std'};}
+  if(kind==='hypParab'){const f=pick([1,-1]);sq[o[0]]=f;sq[o[1]]=-f;den[o[0]]=DENS();den[o[1]]=DENS();lin[ax]=-1;
+    return {kind,ax,sq,den,lin,rhs:0,disp:Math.random()<0.7?'solved':'std'};}
+  if(kind==='cone'){sq[ax]=-1;sq[o[0]]=1;sq[o[1]]=1;den[ax]=DENS();den[o[0]]=DENS();den[o[1]]=DENS();
+    return maybeCoef({kind,ax,sq,den,lin,rhs:0,disp:Math.random()<0.5?'move':'std'});}
+  if(kind==='hyp1'){sq[ax]=-1;sq[o[0]]=1;sq[o[1]]=1;den[ax]=DENS();den[o[0]]=DENS();den[o[1]]=DENS();
+    return maybeCoef({kind,ax,sq,den,lin,rhs:1,disp:'std'});}
+  if(kind==='hyp2'){sq[ax]=1;sq[o[0]]=-1;sq[o[1]]=-1;den[ax]=DENS();den[o[0]]=DENS();den[o[1]]=DENS();
+    return maybeCoef({kind,ax,sq,den,lin,rhs:1,disp:'std'});}
+  /* cylinder: the variable at index ax is missing, the other two carry a conic */
+  const shape=kind==='cylAxis'?pick(['circ','ell']):pick(['circ','ell','parab','hyp']);
+  if(shape==='circ'){const r=rint(2,5);sq[o[0]]=1;sq[o[1]]=1;return {kind:'cylinder',ax,shape,sq,den,lin,rhs:r*r,disp:'std',r};}
+  if(shape==='ell'){let d1,d2;do{d1=DENS();d2=DENS();}while(d1===1&&d2===1);sq[o[0]]=1;sq[o[1]]=1;den[o[0]]=d1;den[o[1]]=d2;
+    return maybeCoef({kind:'cylinder',ax,shape,sq,den,lin,rhs:1,disp:'std'});}
+  if(shape==='parab'){const u=pick(o),w=o.find(i=>i!==u);sq[u]=1;den[u]=DENS();lin[w]=-1;
+    return {kind:'cylinder',ax,shape,sq,den,lin,rhs:0,disp:'solved'};}
+  const u=pick(o),w=o.find(i=>i!==u);sq[u]=1;sq[w]=-1;den[u]=DENS();den[w]=DENS();
+  return maybeCoef({kind:'cylinder',ax,shape,sq,den,lin,rhs:1,disp:'std'});
+}
+/* the trace of rec in the plane v_vi = k */
+function traceType(rec,vi,k){
+  const [i,j]=[0,1,2].filter(x=>x!==vi);
+  const rhs=rec.rhs-(rec.sq[vi]/rec.den[vi]*k*k+rec.lin[vi]*k);
+  const a=rec.sq[i]/rec.den[i],b=rec.sq[j]/rec.den[j],p=rec.lin[i],q=rec.lin[j];
+  if(a!==0&&b!==0){
+    if(a*b>0)return Math.abs(rhs)<1e-12?'point':(rhs/a>0?'ellipse':'empty');
+    return Math.abs(rhs)<1e-12?'lines':'hyperbola';}
+  if(a!==0||b!==0){
+    const A=a!==0?a:b,lin2=a!==0?q:p;
+    if(lin2!==0)return 'parabola';
+    if(Math.abs(rhs)<1e-12)return 'oneline';
+    return rhs/A>0?'lines':'empty';}
+  return 'degenerate';
+}
+function texTrace(rec,vi,k){
+  const keep=[0,1,2].filter(x=>x!==vi);
+  const rhs=rec.rhs-(rec.sq[vi]/rec.den[vi]*k*k+rec.lin[vi]*k);
+  const sub={sq:rec.sq.map((v,i)=>i===vi?0:v),den:rec.den,lin:rec.lin.map((v,i)=>i===vi?0:v),rhs,disp:rec.disp};
+  if(rec.disp==='coef')return texCoefEq(sub,keep);
+  return `${texTerms(sub,keep)} = ${texFrac(rhs)}`;
+}
+const SURFKINDS=[['ellipsoid','ellipsoid'],['ellParab','elliptic paraboloid'],['hypParab','hyperbolic paraboloid'],['cone','cone'],
+  ['hyp1','hyperboloid of one sheet'],['hyp2','hyperboloid of two sheets'],['cylinder','cylinder'],['sphere','sphere']];
+function whySurf(rec){
+  const ax=rec.ax>=0?AXNAME[rec.ax]:'';
+  switch(rec.kind){
+    case 'sphere':return `Three squares with <b>equal</b> coefficients, summing to a positive constant: a <b>sphere</b> centered at the origin with radius ${M(String(rec.r))}. (A sphere is the special ellipsoid whose three denominators agree.)`;
+    case 'ellipsoid':return `Three squares, all with a plus sign, adding up to a positive constant, and the three coefficients are not all equal: an <b>ellipsoid</b>. Divide through to put it in the standard form with 1 on the right. It is bounded, since each term alone can be at most that constant.`;
+    case 'ellParab':return `${M(NM[rec.ax])} appears to the first power and the other two variables are squared with the <b>same</b> sign: an <b>elliptic paraboloid</b> with axis ${ax}. Its horizontal traces are ellipses and its vertical traces are parabolas.`;
+    case 'hypParab':return `${M(NM[rec.ax])} appears to the first power and the other two squares have <b>opposite</b> signs: a <b>hyperbolic paraboloid</b>, the saddle.`;
+    case 'cone':return `Three squares with one sign different and the right side equal to <b>0</b>: a <b>cone</b> with axis ${ax}. The right side 0 is what separates it from a hyperboloid.`;
+    case 'hyp1':return `Three squares, exactly <b>one</b> minus sign, equal to a nonzero constant: a <b>hyperboloid of one sheet</b> with axis ${ax}. Every horizontal trace perpendicular to that axis is a nonempty ellipse, so it is one connected piece.`;
+    case 'hyp2':return `Three squares, <b>two</b> minus signs, equal to a nonzero constant: a <b>hyperboloid of two sheets</b> with axis ${ax}, the axis of the positive term. The traces perpendicular to that axis are empty near the origin, so the surface falls into two pieces.`;
+    default:{const o=[0,1,2].filter(i=>i!==rec.ax);
+      const nmShape={circ:'circle',ell:'ellipse',parab:'parabola',hyp:'hyperbola'}[rec.shape];
+      return `The variable ${M(NM[rec.ax])} never appears, so it is free: a <b>cylinder</b>. Take the ${nmShape} in the ${M(NM[o[0]]+NM[o[1]])}-plane and sweep it along every line parallel to ${ax}.`;}
+  }
+}
+Q.nameSurf={name:'name the surface',
+  gen(){const kind=pick(['ellipsoid','ellParab','ellParab','hypParab','cone','hyp1','hyp2','cylinder','cylinder','sphere']);
+    return {rec:mkSurf(kind,rint(0,2)),kind};},
+  render(q,el){el.innerHTML=`<p class="prompt">Identify the surface</p>`+D(texSurf(q.rec))+`<p class="prompt">Choose the most specific description.</p>`;
+    q.get=choiceButtons(el,SURFKINDS.map(([v,l])=>({label:l,value:v})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.kind,msg:v===q.kind?'':'Count the squares, check the signs, and look at the right-hand side.'};},
+  solution(q){return whySurf(q.rec);}
+};
+Q.traceQ={name:'identify a trace',
+  gen(){const TL=['ellipsoid','ellParab','hypParab','cone','hyp1','hyp2','cylinder'];let rec,vi,k,ty,n=0;
+    do{rec=mkSurf(pick(TL),rint(0,2));vi=rint(0,2);k=rint(-3,3);ty=traceType(rec,vi,k);n++;}
+    while((ty==='oneline'||ty==='degenerate')&&n<200);
+    if(ty==='oneline'||ty==='degenerate'){rec=mkSurf('ellipsoid',0);vi=2;k=0;ty='ellipse';}
+    return {rec,vi,k,ty};},
+  render(q,el){el.innerHTML=`<p class="prompt">Describe the trace of the surface</p>`+D(texSurf(q.rec))+`<p class="prompt">in the plane ${M(`${NM[q.vi]} = ${q.k}`)}.</p>`;
+    q.get=choiceButtons(el,TRACEOPTS.map(([v,l])=>({label:l,value:v})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ty,msg:v===q.ty?'':`Substitute ${M(`${NM[q.vi]} = ${q.k}`)} and see what equation in the other two variables is left.`};},
+  solution(q){const lab=TRACEOPTS.find(o=>o[0]===q.ty)[1];
+    return `Put ${M(`${NM[q.vi]} = ${q.k}`)} into the equation. What is left is `+D(texTrace(q.rec,q.vi,q.k))+`in the remaining variables ${M([0,1,2].filter(i=>i!==q.vi).map(i=>NM[i]).join(', '))}, which is <b>${lab}</b>. ${TRACEWHY[q.ty]}`;}
+};
+const TRACEOPTS=[['ellipse','a circle or an ellipse'],['hyperbola','a hyperbola'],['parabola','a parabola'],['lines','a pair of lines'],['point','a single point'],['empty','no trace (empty)']];
+const TRACEWHY={
+  ellipse:'Two squares with the same sign equal to a constant of that same sign is an ellipse (a circle when the two coefficients match).',
+  hyperbola:'Two squares with opposite signs equal to a nonzero constant is a hyperbola.',
+  parabola:'One variable squared, the other appearing to the first power, is a parabola.',
+  lines:'A difference of squares equal to zero factors into two lines, and a single square equal to a positive constant gives two parallel lines.',
+  point:'Two squares with the same sign summing to zero force both terms to vanish, so only one point survives.',
+  empty:'A sum of squares of one sign cannot equal a constant of the other sign, so no point of the surface has that coordinate.'
+};
+Q.axisOf={name:'axis of a surface',
+  gen(){const kind=pick(['ellParab','cone','hyp1','hyp2','cylAxis']);const ax=rint(0,2);return {rec:mkSurf(kind,ax),ax,kind};},
+  render(q,el){el.innerHTML=`<p class="prompt">Which coordinate axis is the axis of the surface</p>`+D(texSurf(q.rec))+`<p class="prompt">(for a cylinder, the direction of its rulings)?</p>`;
+    q.get=choiceButtons(el,[{label:'the x-axis',value:0},{label:'the y-axis',value:1},{label:'the z-axis',value:2}]);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ax,msg:v===q.ax?'':'Find the variable that behaves differently from the other two.'};},
+  solution(q){const r=q.rec;const ax=AXNAME[q.ax];
+    const why=r.kind==='ellParab'?`${M(NM[q.ax])} is the variable that is not squared, and the axis of a paraboloid is the axis of its linear variable`
+      :r.kind==='cylinder'?`${M(NM[q.ax])} does not appear at all, so the surface is a cylinder whose rulings run parallel to ${ax}`
+      :r.kind==='hyp2'?`${M(NM[q.ax])} is the one square with a plus sign while the other two are negative, and the axis of a hyperboloid of two sheets is the axis of the positive term`
+      :`${M(NM[q.ax])} is the one square whose sign differs from the other two`;
+    return `${why}. The axis is <b>${ax}</b>.`;}
+};
+Q.sphereSquare={name:'complete the square to find a sphere',
+  gen(){let c;do{c=rvec(3,-4,4);}while(vzero(c));const r=rint(1,6);const s=pick([1,1,1,2]);
+    return {c,r,s,lin:c.map(x=>-2*x*s),rhs:s*(r*r-sumSq(c))};},
+  render(q,el){const sq=NM.map(v=>`${q.s>1?q.s:''}${v}^2`).join('+');
+    const lp=texLin(q.lin,NM);const body=sq+(lp.startsWith('-')?' '+lp:' + '+lp);
+    q.eq=`${body} = ${texNum(q.rhs)}`;
+    el.innerHTML=`<p class="prompt">Show that the equation</p>`+D(q.eq)+`<p class="prompt">represents a sphere, and find its center and radius.</p>`;
+    ptIn(el,'ctr','center:');numIn(el,'rad',M('r='));},
+  check(q,el){return Gall(el,[['ctr',checkVector(val(el,'ctr'),q.c)],['rad',checkNumber(val(el,'rad'),q.r)]]);},
+  solution(q){const half=q.c.map(x=>x*x);
+    const grp=NM.map((v,i)=>`(${texShift(v,q.c[i])})^2`).join('+');
+    return (q.s>1?`Divide through by ${M(String(q.s))} first: ${M(`${NM.map(v=>v+'^2').join('+')}${texLin(q.c.map(x=>-2*x),NM).startsWith('-')?' ':' + '}${texLin(q.c.map(x=>-2*x),NM)} = ${texNum(q.rhs/q.s)}`)}. `:'')+
+      `Complete the square in each variable. Half of each linear coefficient, squared, is ${M(half.join(', '))}; add those to both sides: `+D(`${grp} = ${texNum(q.rhs/q.s)}+${half.join('+')} = ${q.r*q.r}`)+
+      `That is a sphere with center <b>${M(texPt(q.c))}</b> and radius <b>${M(String(q.r))}</b>.`;}
+};
+/* ============================================================ plain-text readout helpers */
+const compTxt=(p,c,tv='t')=>{if(c===0)return fmt(p);const b=(Math.abs(c)===1?'':fmt(Math.abs(c)))+tv;return p===0?(c<0?'-'+b:b):(fmt(p)+(c<0?' − ':' + ')+b);};
+const paramTxt=(P,v,tv='t')=>['x','y','z'].map((s,i)=>`${s} = ${compTxt(P[i],v[i],tv)}`).join(',  ');
+const shiftTxt=(nm,x0)=>x0===0?nm:(x0>0?`(${nm} − ${fmt(x0)})`:`(${nm} + ${fmt(-x0)})`);
+function symTxt(P,v){
+  if(vzero(v))return 'v = 0, so this is not a line.';
+  const fr=[],fx=[];['x','y','z'].forEach((s,i)=>{if(v[i]===0)fx.push(`${s} = ${fmt(P[i])}`);else fr.push(`${shiftTxt(s,P[i])}/${fmt(v[i])}`);});
+  if(fr.length===1){const free=['x','y','z'].find((s,i)=>v[i]!==0);return fx.join(',  ')+`   (${free} is free)`;}
+  return fr.join(' = ')+(fx.length?',   '+fx.join(',  '):'');
+}
+const vtxt=v=>'⟨'+v.map(x=>fmt(x)).join(', ')+'⟩';
+const ptxt=p=>'('+p.map(x=>fmt(x)).join(', ')+')';
+
+/* ============================================================ chapter 1 widget: a line in space */
+(function(){
+  const sc=new Scene3D('#lineScene',{range:4});
+  let P=[1,-1,0],v=[2,1,1],t=1;
+  ['lpx','lpy','lpz'].forEach((id,i)=>stepper('#'+id,P[i],-4,4,x=>{P[i]=x;draw();}));
+  const S=['a','b','c'].map((l,i)=>sliderRow($('#lineSliders'),{label:l,min:-3,max:3,step:0.5,value:v[i],onInput:x=>{v[i]=x;draw();}}));
+  sliderRow($('#lineT'),{label:'t',min:-3,max:3,step:0.25,value:t,onInput:x=>{t=x;draw();}});
+  function draw(){
+    const at=u=>vadd(P,vscale(u,v));
+    const ext=14/Math.max(0.5,norm(v));   /* draw a fixed length of line, whatever |v| is */
+    sc.clear();
+    if(!vzero(v))sc.polyline([at(-ext),at(ext)],{color:'#b9b5ab',width:2});
+    sc.point(P,{color:'#d97706',label:'P₀',drop:true});
+    if(!vzero(v))sc.vector(P,vadd(P,v),{color:'#2563eb',label:'v',width:3});
+    const rt=at(t);
+    sc.point(rt,{color:'#7c3aed',label:'r(t)',drop:true});
+    sc.render();
+    $('#lineOut').innerHTML=
+      `r(t) = P₀ + t v = ${vtxt(P)} + ${fmt(t)}${vtxt(v)} = <b>${vtxt(rt)}</b><br>`+
+      `parametric:  ${paramTxt(P,v)}<br>`+
+      `symmetric:  ${symTxt(P,v)}`;
+  }
+  redrawOnShow('lines',draw);draw();
+  new Drill({mount:'#drill-lines',section:'lines',goal:6,...mixDrill([Q.lineDir,Q.lineDir,Q.lineTwoPts,Q.lineTwoPts,Q.symRead,Q.onLine,Q.segment])});
+})();
+
+/* ============================================================ chapter 2 widgets: plane explorer + three-point walkthrough */
+(function(){
+  const sc=new Scene3D('#planeScene',{range:4});
+  let n=[1,1,1],d=2;
+  const S=['a','b','c'].map((l,i)=>sliderRow($('#planeSliders'),{label:l,min:-3,max:3,step:0.5,value:n[i],onInput:x=>{n[i]=x;draw();}}));
+  const SD=sliderRow($('#planeD'),{label:'d',min:-4,max:4,step:0.5,value:d,onInput:x=>{d=x;draw();}});
+  [['xy-plane:  z = 0',[0,0,1],0],['x + y + z = 1',[1,1,1],1],['2x − y = 2  (vertical)',[2,-1,0],2],['sloped:  x + 2y + 3z = 3',[1,2,3],3]]
+    .forEach(([lab,nn,dd])=>{const b=el('button',{class:'btn small'},lab);
+      b.onclick=()=>{n=nn.slice();d=dd;S.forEach((s,i)=>s.set(n[i]));SD.set(d);draw();};$('#planePresets').appendChild(b);});
+  function draw(){
+    sc.clear();
+    if(vzero(n)){sc.render();$('#planeOut').innerHTML='n = ⟨0, 0, 0⟩ is not a normal vector, so this is not a plane.';return;}
+    const p0=vscale(d/sumSq(n),n);
+    sc.plane(p0,n,{size:2.6,fill:'rgba(59,91,219,.18)',stroke:'#3b5bdb'});
+    sc.vector(p0,vadd(p0,vscale(2/norm(n),n)),{color:'#d97706',label:'n',width:3});
+    sc.point(p0,{color:'#7c3aed'});
+    sc.render();
+    const ic=['x','y','z'].map((s,i)=>n[i]===0?`no ${s}-intercept (the plane is parallel to the ${s}-axis)`:`${s} = ${fmt(d/n[i])}`);
+    $('#planeOut').innerHTML=
+      `plane:  ${linStr(n,['x','y','z']).replace(/-/g,'−')} = ${fmt(d)}<br>`+
+      `normal:  n = ${vtxt(n)},  |n| = ${fmtDec(norm(n),3)}<br>`+
+      `closest point to the origin:  ${ptxt(p0.map(x=>+fmtDec(x,2)))},  distance ${fmtDec(Math.abs(d)/norm(n),3)}<br>`+
+      `intercepts:  ${ic.join(';  ')}`;
+  }
+  redrawOnShow('planes',draw);draw();
+
+  /* walkthrough: plane through three points */
+  let A,B,C,step=0;
+  function fresh(){let n0;do{A=rvec(3,-3,4);B=rvec(3,-3,4);C=rvec(3,-3,4);n0=cross(vsub(B,A),vsub(C,A));}while(vzero(n0));step=0;show();}
+  function show(){
+    const AB=vsub(B,A),AC=vsub(C,A),nn=cross(AB,AC),dd=dot(nn,A);
+    const rows=[
+      [`P${texPt(A)},\\; Q${texPt(B)},\\; R${texPt(C)}`,'a'],
+      [R`\overrightarrow{PQ}=${texVec(B)}-${texVec(A)}=${texVec(AB)}`,'a'],
+      [R`\overrightarrow{PR}=${texVec(C)}-${texVec(A)}=${texVec(AC)}`,'b'],
+      [R`\mathbf{n}=\overrightarrow{PQ}\times\overrightarrow{PR}=${texDet(AB,AC)}=${texVec(nn)}`,'c'],
+      [texScalarPlane(nn,A),'c'],
+      [R`${texPlaneEq(nn,dd)}\qquad\text{check: }\mathbf{n}\cdot\overrightarrow{PQ}=${dot(nn,AB)},\;\mathbf{n}\cdot\overrightarrow{PR}=${dot(nn,AC)}`,'c'],
+    ];
+    $('#p3Expr').innerHTML=rows.map((r,i)=>`<div class="${i<=step?'':'faint'}"><span class="t ${r[1]} ${i===step?'now':''}">${M(r[0])}</span></div>`).join('');
+    const st=['Three points, not on one line.','Subtract to get one vector inside the plane.','A second vector inside the plane, from the same corner.','Cross them: the result is orthogonal to both, so it is normal to the plane.','Now write n · (r − r₀) = 0 using the point P.','Expand and collect. The two zero dot products confirm the normal.'];
+    $('#p3Status').textContent=st[step];
+    $('#p3Prev').disabled=step===0;$('#p3Next').disabled=step===rows.length-1;
+    typeset($('#p3Expr'));
+  }
+  $('#p3Next').onclick=()=>{step=Math.min(5,step+1);show();};
+  $('#p3Prev').onclick=()=>{step=Math.max(0,step-1);show();};
+  $('#p3New').onclick=fresh;
+  fresh();
+  new Drill({mount:'#drill-planes',section:'planes',goal:6,...mixDrill([Q.planeNormal,Q.plane3pts,Q.plane3pts,Q.planeParallel,Q.planePair,Q.planeLinePt,Q.planePerpPlane,Q.planePerpPlane])});
+})();
+/* ============================================================ chapter 3 widget: two lines */
+(function(){
+  const sc=new Scene3D('#relScene',{range:4});
+  const PRESETS=[['parallel pair',[-2,-1,0],[1,1,0.5],[1,-2,1],[2,2,1]],
+                 ['intersecting pair',[-1,0,1],[1,0.5,0],[1,2,2],[0,1,1]],
+                 ['skew pair',[-2,-2,0],[1,1,0],[0,0,2],[1,-1,0]]];
+  let A1=PRESETS[2][1],d1=PRESETS[2][2],A2=PRESETS[2][3],d2=PRESETS[2][4];
+  PRESETS.forEach(([lab,a1,v1,a2,v2])=>{const b=el('button',{class:'btn small'},lab);
+    b.onclick=()=>{A1=a1.slice();d1=v1.slice();A2=a2.slice();d2=v2.slice();draw();};$('#relPresets').appendChild(b);});
+  const rb=el('button',{class:'btn small'},'random pair');
+  rb.onclick=()=>{const q=Q.lineLine.gen();A1=q.A1;d1=q.d1;A2=q.A2;d2=q.d2;draw();};$('#relPresets').appendChild(rb);
+  function draw(){
+    sc.clear();
+    const at=(A,v,u)=>vadd(A,vscale(u,v));
+    const ext=v=>13/Math.max(0.5,norm(v));   /* a fixed drawn length, whatever the direction's size */
+    sc.polyline([at(A1,d1,-ext(d1)),at(A1,d1,ext(d1))],{color:'#d97706',width:2.4});
+    sc.polyline([at(A2,d2,-ext(d2)),at(A2,d2,ext(d2))],{color:'#2563eb',width:2.4});
+    sc.vector(A1,vadd(A1,d1),{color:'#d97706',label:'v₁',width:3.4});
+    sc.vector(A2,vadd(A2,d2),{color:'#2563eb',label:'v₂',width:3.4});
+    sc.point(A1,{color:'#d97706',r:4});sc.point(A2,{color:'#2563eb',r:4});
+    const par=vparallel(d1,d2);const r=par?null:solveTS(A1,d1,A2,d2);
+    const hit=r&&r.agree?at(A1,d1,r.t):null;
+    if(hit)sc.point(hit,{color:'#16a34a',label:'intersection',drop:true});
+    sc.render();
+    const nm=['x','y','z'];
+    let out=`L₁:  ${paramTxt(A1,d1,'t')}<br>L₂:  ${paramTxt(A2,d2,'s')}<br><br>`;
+    out+=`1. v₁ = ${vtxt(d1)}, v₂ = ${vtxt(d2)}.  v₁ × v₂ = ${vtxt(cross(d1,d2))} → directions ${par?'<b>are</b> parallel.':'are <b>not</b> parallel.'}<br>`;
+    if(par){const w=vsub(A2,A1);const same=vzero(w)||vparallel(w,d1);
+      out+=`2. A₁A₂ = ${vtxt(w)} ${same?'is':'is not'} a multiple of v₁.<br><br><b>${same?'The same line, written twice.':'Parallel and distinct.'}</b>`;}
+    else{out+=`2. Solve the ${nm[r.i]} and ${nm[r.j]} equations: t = ${fmt(r.t)}, s = ${fmt(r.s)}.<br>`;
+      out+=`3. Test the ${nm[r.k]} equation: L₁ gives ${fmtDec(r.lhs,3)}, L₂ gives ${fmtDec(r.rhs,3)} → ${r.agree?'they agree.':'they disagree.'}<br><br>`;
+      out+=r.agree?`<b>The lines intersect at ${ptxt(hit.map(x=>+fmtDec(x,3)))}.</b>`:`<b>No solution: the lines are skew.</b>`;}
+    $('#relOut').innerHTML=out;
+  }
+  redrawOnShow('relations',draw);draw();
+  new Drill({mount:'#drill-rel',section:'relations',goal:6,...mixDrill([Q.linePlaneMeet,Q.twoPlanesLine,Q.lineLine,Q.distPtPlane,Q.distPlanes,Q.distPtLine,Q.distSkew,Q.distSkew])});
+})();
+
+/* ============================================================ chapter 4 widget: the quadric gallery */
+(function(){
+  const sc=new Scene3D('#surfScene',{range:3});
+  const BOX=3.05,TAU=2*Math.PI;
+  const clipPt=p=>p.every(x=>Number.isFinite(x))&&Math.abs(p[0])<=BOX&&Math.abs(p[1])<=BOX&&Math.abs(p[2])<=BOX?p:[NaN,NaN,NaN];
+  const ellPts=(rx,ry,k,n=140)=>Array.from({length:n+1},(_,i)=>{const th=TAU*i/n;return clipPt([rx*Math.cos(th),ry*Math.sin(th),k]);});
+  const curvePts=(f,u0,u1,n=140)=>Array.from({length:n+1},(_,i)=>clipPt(f(u0+(u1-u0)*i/n)));
+  const dot2=v=>`(${fmtDec(v,2)})^2`;
+  const pointTrace=k=>({curves:[ellPts(0.03,0.03,k)],desc:'a single point'});
+  const empty=()=>({curves:[],desc:'empty: no trace at this height'});
+  const GAL=[
+    {id:'ellipsoid',label:'Ellipsoid',
+     tex:(a,b,c)=>R`\frac{x^2}{${dot2(a)}}+\frac{y^2}{${dot2(b)}}+\frac{z^2}{${dot2(c)}}=1`,
+     use:'a, b, c',
+     draw(a,b,c){sc.param((u,v)=>[a*Math.sin(u)*Math.cos(v),b*Math.sin(u)*Math.sin(v),c*Math.cos(u)],[0,Math.PI],[0,TAU],{n:20,m:36,base:SURF.blue,alpha:.6});},
+     trace(k,a,b,c){const f=1-k*k/(c*c);if(f>1e-6){const g=Math.sqrt(f);return {curves:[ellPts(a*g,b*g,k)],desc:`an ellipse with semi-axes ${fmtDec(a*g,2)} and ${fmtDec(b*g,2)}`};}
+       return Math.abs(f)<=1e-6?pointTrace(k):empty();}},
+    {id:'ellParab',label:'Elliptic paraboloid',
+     tex:(a,b)=>R`z=\frac{x^2}{${dot2(a)}}+\frac{y^2}{${dot2(b)}}`,
+     use:'a, b',
+     draw(a,b){sc.param((r,th)=>[a*r*Math.cos(th),b*r*Math.sin(th),r*r],[0,1.72],[0,TAU],{n:18,m:36,base:SURF.purple,alpha:.6});},
+     trace(k,a,b){if(k>1e-9){const g=Math.sqrt(k);return {curves:[ellPts(a*g,b*g,k)],desc:`an ellipse with semi-axes ${fmtDec(a*g,2)} and ${fmtDec(b*g,2)}`};}
+       return Math.abs(k)<=1e-9?pointTrace(0):empty();}},
+    {id:'hypParab',label:'Hyperbolic paraboloid (saddle)',
+     tex:(a,b)=>R`z=\frac{x^2}{${dot2(a)}}-\frac{y^2}{${dot2(b)}}`,
+     use:'a, b',
+     draw(a,b){sc.surface((x,y)=>x*x/(a*a)-y*y/(b*b),[-1.6*a,1.6*a],[-1.6*b,1.6*b],{n:26,base:SURF.orange,alpha:.62});},
+     trace(k,a,b){if(Math.abs(k)<=1e-9)return {curves:[curvePts(u=>[u,b*u/a,0],-3,3),curvePts(u=>[u,-b*u/a,0],-3,3)],desc:'a pair of lines through the origin'};
+       const g=Math.sqrt(Math.abs(k));
+       if(k>0)return {curves:[1,-1].map(s=>curvePts(u=>[s*a*g*Math.cosh(u),b*g*Math.sinh(u),k],-2.2,2.2)),desc:'a hyperbola opening along the x-direction'};
+       return {curves:[1,-1].map(s=>curvePts(u=>[a*g*Math.sinh(u),s*b*g*Math.cosh(u),k],-2.2,2.2)),desc:'a hyperbola opening along the y-direction'};}},
+    {id:'cone',label:'Cone',
+     tex:(a,b,c)=>R`\frac{x^2}{${dot2(a)}}+\frac{y^2}{${dot2(b)}}=\frac{z^2}{${dot2(c)}}`,
+     use:'a, b, c',
+     draw(a,b,c){sc.param((r,th)=>[a*r*Math.cos(th),b*r*Math.sin(th),c*r],[-1.2,1.2],[0,TAU],{n:16,m:36,base:SURF.green,alpha:.55});},
+     trace(k,a,b,c){if(Math.abs(k)<=1e-9)return pointTrace(0);const g=Math.abs(k)/c;
+       return {curves:[ellPts(a*g,b*g,k)],desc:`an ellipse with semi-axes ${fmtDec(a*g,2)} and ${fmtDec(b*g,2)}, growing linearly with |k|`};}},
+    {id:'hyp1',label:'Hyperboloid of one sheet',
+     tex:(a,b,c)=>R`\frac{x^2}{${dot2(a)}}+\frac{y^2}{${dot2(b)}}-\frac{z^2}{${dot2(c)}}=1`,
+     use:'a, b, c',
+     draw(a,b,c){const um=Math.min(1.2,Math.acosh(Math.max(1.02,2.9/Math.max(a,b))),Math.asinh(2.9/c));
+       sc.param((u,th)=>[a*Math.cosh(u)*Math.cos(th),b*Math.cosh(u)*Math.sin(th),c*Math.sinh(u)],[-um,um],[0,TAU],{n:16,m:36,base:SURF.pink,alpha:.55});},
+     trace(k,a,b,c){const g=Math.sqrt(1+k*k/(c*c));
+       return {curves:[ellPts(a*g,b*g,k)],desc:`an ellipse with semi-axes ${fmtDec(a*g,2)} and ${fmtDec(b*g,2)}; it never disappears, and it is smallest at k = 0`};}},
+    {id:'hyp2',label:'Hyperboloid of two sheets',
+     tex:(a,b,c)=>R`-\frac{x^2}{${dot2(a)}}-\frac{y^2}{${dot2(b)}}+\frac{z^2}{${dot2(c)}}=1`,
+     use:'a, b, c',
+     draw(a,b,c){const um=Math.min(1.3,Math.asinh(2.9/Math.max(a,b)),Math.acosh(Math.max(1.02,2.9/c)));
+       [1,-1].forEach(s=>sc.param((u,th)=>[a*Math.sinh(u)*Math.cos(th),b*Math.sinh(u)*Math.sin(th),s*c*Math.cosh(u)],[0,um],[0,TAU],{n:14,m:36,base:SURF.blue,alpha:.55}));},
+     trace(k,a,b,c){const f=k*k/(c*c)-1;if(f>1e-6){const g=Math.sqrt(f);return {curves:[ellPts(a*g,b*g,k)],desc:`an ellipse with semi-axes ${fmtDec(a*g,2)} and ${fmtDec(b*g,2)}`};}
+       return Math.abs(f)<=1e-6?pointTrace(k):{curves:[],desc:'empty: this height falls in the gap between the two sheets'};}},
+    {id:'cyl',label:'Elliptic cylinder',
+     tex:(a,b)=>R`\frac{x^2}{${dot2(a)}}+\frac{y^2}{${dot2(b)}}=1\qquad(\text{no }z)`,
+     use:'a, b',
+     draw(a,b){sc.param((th,v)=>[a*Math.cos(th),b*Math.sin(th),v],[0,TAU],[-2.7,2.7],{n:36,m:8,base:SURF.gray,alpha:.5});},
+     trace(k,a,b){return {curves:[ellPts(a,b,k)],desc:'the same ellipse at every height, which is exactly what makes it a cylinder'};}},
+    {id:'pcyl',label:'Parabolic cylinder',
+     tex:a=>R`z=\frac{x^2}{${dot2(a)}}\qquad(\text{no }y)`,
+     use:'a',
+     draw(a){sc.surface(x=>x*x/(a*a),[-1.7*a,1.7*a],[-2.7,2.7],{n:22,base:SURF.gray,alpha:.5});},
+     trace(k,a){if(k>1e-9){const x0=a*Math.sqrt(k);return {curves:[1,-1].map(s=>curvePts(u=>[s*x0,u,k],-2.7,2.7)),desc:'a pair of parallel lines'};}
+       return Math.abs(k)<=1e-9?{curves:[curvePts(u=>[0,u,0],-2.7,2.7)],desc:'the single line x = 0 (the bottom ruling)'}:empty();}},
+  ];
+  GAL.forEach((g,i)=>$('#surfPick').appendChild(el('option',{value:String(i)},g.label)));
+  let gi=0,a=1.5,b=1,c=1.2,k=1,showTrace=false,tid=null;
+  const SA=[['a',x=>a=x],['b',x=>b=x],['c',x=>c=x]].map(([l,set],i)=>
+    sliderRow($('#surfSliders'),{label:l,min:0.5,max:2.5,step:0.1,value:[a,b,c][i],onInput:x=>{set(x);draw();}}));
+  sliderRow($('#surfKrow'),{label:'k',min:-3,max:3,step:0.25,value:k,onInput:x=>{k=x;draw();}});
+  $('#surfPick').onchange=()=>{gi=+$('#surfPick').value;draw();};
+  $('#surfTrace').onchange=()=>{showTrace=$('#surfTrace').checked;draw();};
+  function draw(){
+    const g=GAL[gi];sc.clear();g.draw(a,b,c);
+    const tr=g.trace(k,a,b,c);
+    if(showTrace)tr.curves.forEach(pts=>sc.polyline(pts,{color:'#7c3aed',width:3.2}));
+    sc.render();
+    $('#surfOut').innerHTML=D(g.tex(a,b,c))+
+      `<div style="font-size:14px">uses ${g.use}${g.use.length<7?' only':''} · trace at z = ${fmt(k)}: <b>${tr.desc}</b></div>`;
+    clearTimeout(tid);tid=setTimeout(()=>typeset($('#surfOut')),90);
+  }
+  redrawOnShow('surfaces',draw);draw();
+  new Drill({mount:'#drill-surf',section:'surfaces',goal:6,...mixDrill([Q.nameSurf,Q.nameSurf,Q.traceQ,Q.traceQ,Q.axisOf,Q.sphereSquare])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.lineDir,Q.lineTwoPts,Q.planeNormal,Q.plane3pts,Q.planePair,Q.linePlaneMeet,
+  Q.twoPlanesLine,Q.lineLine,Q.distPtPlane,Q.nameSurf,Q.traceQ,Q.sphereSquare,Q.planePerpPlane,Q.distSkew]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'line through a point with a given direction':q=>({L:lineStr(q.P,q.v)}),
+  'line through two points':q=>({L:lineStr(q.P,q.v)}),
+  'read a point and a direction from symmetric equations':q=>({v:vecStr(q.v),p:ptStr(q.P)}),
+  'is the point on the line':q=>({_btn:q.yes?0:1}),
+  'parametrize a line segment':q=>({r:lineStr(q.P,q.d)}),
+  'plane through a point with a given normal':q=>({E:planeStr(q.n,q.d)}),
+  'plane through three points':q=>({E:planeStr(q.n,q.d)}),
+  'plane through a point parallel to a given plane':q=>({E:planeStr(q.n,q.d)}),
+  'two planes: parallel, perpendicular, or the angle':q=>({_btn:['par','perp','nei'].indexOf(q.kind),ang:fmtDec(q.deg,1)}),
+  'plane containing a line and a point':q=>({E:planeStr(q.n,q.d)}),
+  'where a line meets a plane':q=>({pt:ptStr(q.X)}),
+  'line of intersection of two planes':q=>({L:lineStr(q.X0,q.v)}),
+  'two lines: parallel, intersecting, or skew':q=>({_btn:['par','int','skew'].indexOf(q.kind),pt:q.X?ptStr(q.X):''}),
+  'distance from a point to a plane':q=>({dist:String(q.D)}),
+  'distance between two parallel planes':q=>({dist:String(q.D)}),
+  'distance from a point to a line':q=>({dist:String(q.D)}),
+  'distance between two skew lines':q=>({dist:String(q.D)}),
+  'plane through two points perpendicular to a plane':q=>({E:planeStr(q.n,q.d)}),
+  'name the surface':q=>({_btn:SURFKINDS.findIndex(s=>s[0]===q.kind)}),
+  'identify a trace':q=>({_btn:TRACEOPTS.findIndex(o=>o[0]===q.ty)}),
+  'axis of a surface':q=>({_btn:q.ax}),
+  'complete the square to find a sphere':q=>({ctr:ptStr(q.c),rad:String(q.r)}),
+};
+
+initModule({key:'lines-planes',title:'Lines, Planes, and Surfaces',sub:'Module 2 · Stewart 12.5 to 12.6'});
+</script>
+</body>
+</html>

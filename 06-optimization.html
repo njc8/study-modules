@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Optimization</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 6 · Stewart 14.7 to 14.8</p>
+  <h2>Optimization</h2>
+  <p class="lead">Three questions, three procedures. Where are the hills and valleys of a surface? What are the largest and smallest values on a closed region? And what happens when the input is trapped on a curve?</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches a procedure, gives you something to move around, walks through one full example step by step, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <h4>Answer formats</h4>
+    <ul>
+      <li><b>Lists of numbers</b> are comma separated and order does not matter: <code>-4, 0, 9</code>. List each distinct value once.</li>
+      <li><b>Points</b> go in parentheses: <code>(1, -2)</code>. Several points: <code>(0, 0), (2, 2)</code>.</li>
+      <li><b>Nothing there?</b> Type <code>DNE</code>. A function with no local maximum, or no absolute maximum on an unbounded constraint, gets <code>DNE</code>.</li>
+      <li><b>Exact values</b> are always accepted: <code>3/4</code>, <code>sqrt(13)</code>, <code>5sqrt(2)</code>, <code>-25/4</code>. Where a problem says so, a decimal to two or three places is accepted too.</li>
+    </ul>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--c)"></i> local <b>minimum</b></span>
+      <span><i class="dot" style="background:var(--a)"></i> local <b>maximum</b></span>
+      <span><i class="dot" style="background:var(--d)"></i> <b>saddle</b> point</span>
+      <span><i class="dot" style="background:var(--b)"></i> boundary candidate</span>
+      <span><i class="dot" style="background:#a8a29e"></i> corner</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Find every critical point of a function of two variables by solving \(f_x=0,\ f_y=0\).</li>
+      <li>Run the second derivative test with \(D=f_{xx}f_{yy}-(f_{xy})^2\) and say which of the four cases you are in.</li>
+      <li>Report local maximum values, local minimum values, and saddle points separately, and know when the answer is DNE.</li>
+      <li>Find absolute extrema on a rectangle, a disk, and a triangle by comparing interior critical points, boundary candidates, and corners.</li>
+      <li>Solve constrained problems with Lagrange multipliers, including three variables and word problems, and explain why \(\nabla f=\lambda\nabla g\) is the right condition.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 CRITICAL POINTS -->
+<section data-id="critical" data-title="Critical points and the second derivative test" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 14.7</p>
+  <h2>Critical points and the second derivative test</h2>
+  <p class="lead">Hills and valleys sit where the tangent plane is flat. Finding the flat spots is easy. Telling a hill from a valley from a mountain pass takes one determinant.</p>
+
+  <p>A function \(f\) has a <b>local maximum</b> at \((a,b)\) if \(f(x,y)\le f(a,b)\) for every \((x,y)\) in some disk around \((a,b)\). The number \(f(a,b)\) is the <b>local maximum value</b>. Swap the inequality and you get a <b>local minimum</b>. Notice the language: the <i>point</i> is where it happens, the <i>value</i> is the number \(f(a,b)\). Exams ask for one or the other, so read carefully.</p>
+
+  <p>If \(f\) has a local max or min at \((a,b)\) and both first partials exist there, then both must vanish. The reason is one-variable calculus twice over: freeze \(y=b\) and \(g(x)=f(x,b)\) has a local extremum at \(x=a\), so \(g'(a)=f_x(a,b)=0\). Freeze \(x=a\) and the same argument gives \(f_y(a,b)=0\).</p>
+
+  <div class="formula">\((a,b)\text{ is a }\textbf{critical point}\iff f_x(a,b)=0\text{ and }f_y(a,b)=0,\ \text{ or one of them does not exist}\)<span class="cap">Equivalently \(\nabla f(a,b)=\mathbf{0}\). The tangent plane there is horizontal: \(z=f(a,b)\).</span></div>
+
+  <div class="note"><b>Necessary, not sufficient.</b> Every local extremum is a critical point, but plenty of critical points are neither a max nor a min. The origin is a critical point of \(f=x^2-y^2\), yet \(f\) climbs along the \(x\)-axis and falls along the \(y\)-axis. That is a <b>saddle point</b>.</div>
+
+  <h3>The second derivative test</h3>
+  <p>To sort the critical points, look at the second partials. Build the <b>discriminant</b> \(D\), which is the determinant of the matrix of second partials (the Hessian):</p>
+  <div class="formula">\(D=D(a,b)=\begin{vmatrix}f_{xx}&f_{xy}\\ f_{xy}&f_{yy}\end{vmatrix}=f_{xx}(a,b)\,f_{yy}(a,b)-\big(f_{xy}(a,b)\big)^2\)<span class="cap">Note the square on the mixed partial. Since \(f_{xy}=f_{yx}\) for the functions in this course, the matrix is symmetric and only one mixed partial is needed.</span></div>
+  <p>With \(f_x(a,b)=f_y(a,b)=0\), the four cases are:</p>
+  <div class="card tint">
+    <ul>
+      <li><b>\(D&gt;0\) and \(f_{xx}(a,b)&gt;0\):</b> local <b>minimum</b> at \((a,b)\). The surface curves up in every direction.</li>
+      <li><b>\(D&gt;0\) and \(f_{xx}(a,b)&lt;0\):</b> local <b>maximum</b>. The surface curves down in every direction.</li>
+      <li><b>\(D&lt;0\):</b> <b>saddle point</b>. It curves up in one direction and down in another, so it is neither.</li>
+      <li><b>\(D=0\):</b> the test is <b>inconclusive</b>. It could be any of the three, and you need another argument.</li>
+    </ul>
+  </div>
+  <p>Where does \(D\) come from? Near a critical point the surface looks like the quadratic \(f(a,b)+\tfrac12\big(f_{xx}h^2+2f_{xy}hk+f_{yy}k^2\big)\). That quadratic keeps one sign for all \((h,k)\ne(0,0)\) exactly when \(f_{xx}f_{yy}-(f_{xy})^2&gt;0\), and then the sign it keeps is the sign of \(f_{xx}\). When \(D&lt;0\) the quadratic takes both signs, which is a saddle.</p>
+
+  <div class="warn"><b>\(D&gt;0\) is only half the answer.</b> A positive \(D\) tells you the point is an extremum but not which kind. You must then look at the sign of \(f_{xx}\) (or of \(f_{yy}\); when \(D&gt;0\) they always agree). Writing "\(D&gt;0\), so it is a minimum" is the single most common error on this topic.</div>
+
+  <h3>The procedure</h3>
+  <div class="card">
+    <h4>Finding and classifying local extrema</h4>
+    <ol class="steps">
+      <li>Compute \(f_x\) and \(f_y\).</li>
+      <li>Solve the system \(f_x=0,\ f_y=0\) for <b>all</b> solutions. Factor rather than divide, so you do not lose roots.</li>
+      <li>Compute \(f_{xx}\), \(f_{xy}\), and \(f_{yy}\) once, as functions of \(x\) and \(y\).</li>
+      <li>Evaluate \(D=f_{xx}f_{yy}-(f_{xy})^2\) at each critical point.</li>
+      <li>Classify with the four cases, and evaluate \(f\) at the maxima and minima to get the extreme <b>values</b>.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: run the procedure</h4>
+    <div class="expr" id="cwHead"></div>
+    <ul class="steps" id="cwSteps"></ul>
+    <div class="controls">
+      <button class="btn" id="cwPrev">◀ Back</button>
+      <button class="btn primary" id="cwNext">Next step ▶</button>
+      <button class="btn" id="cwNew">New function</button>
+      <span class="status" id="cwStatus"></span>
+    </div>
+    <p class="hint">Step 2 is where problems are lost. When \(f_x\) factors as a product, every factor gives a branch, and each branch must be carried through the other equation.</p>
+  </div>
+
+  <h3>Explore: the surface and its contour map</h3>
+  <div class="card">
+    <h4>Explore: what each kind of critical point looks like</h4>
+    <div class="presets" id="critPresets"></div>
+    <div class="two">
+      <div><canvas class="scene" id="critScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. Heights are compressed by a monotone rescaling so every surface fits the box; hills stay hills and saddles stay saddles.</p></div>
+      <div><canvas class="scene" id="critMap"></canvas><p class="plotcap">Contour map of the same \(f\). Gray curves are the level curves through the critical points.</p></div>
+    </div>
+    <div class="readout" id="critOut"></div>
+    <div class="legend" style="margin-top:10px">
+      <span><i class="dot" style="background:var(--c)"></i> minimum</span>
+      <span><i class="dot" style="background:var(--a)"></i> maximum</span>
+      <span><i class="dot" style="background:var(--d)"></i> saddle</span>
+    </div>
+    <p class="hint">Read the contour map, not just the surface. Around a maximum or a minimum the level curves close up into small loops. Around a saddle the gray level curve crosses itself and the nearby curves form four hyperbola-like arms. That crossing is the signature of \(D&lt;0\).</p>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-critical"></div>
+</section>
+
+<!-- ============================================================ 2 ABSOLUTE EXTREMA -->
+<section data-id="absolute" data-title="Absolute extrema on closed regions" data-goal="5">
+  <p class="eyebrow">Chapter 2 · Stewart 14.7</p>
+  <h2>Absolute extrema on closed regions</h2>
+  <p class="lead">On a closed bounded region the largest and smallest values are guaranteed to exist. Finding them is a search over a short list of candidates, with no second derivative test in sight.</p>
+
+  <p>A region is <b>closed</b> if it contains all of its boundary points, and <b>bounded</b> if it fits inside some disk. A filled rectangle, a filled disk, and a filled triangle are all closed and bounded. The open square \(0&lt;x&lt;1,\ 0&lt;y&lt;1\) is not closed, and the whole plane is not bounded.</p>
+
+  <div class="formula">\(\text{If }f\text{ is continuous on a closed, bounded set }R\text{, then }f\text{ attains an absolute maximum and an absolute minimum on }D.\)<span class="cap">The Extreme Value Theorem. It promises the answers exist, which is why a finite candidate list is enough.</span></div>
+
+  <p>An absolute extremum happens either at an interior point, where it is also a local extremum and therefore a critical point, or somewhere on the boundary. That splits the search in two.</p>
+
+  <div class="card">
+    <h4>Finding absolute extrema on a closed bounded region \(R\)</h4>
+    <ol class="steps">
+      <li>Find the critical points of \(f\) <b>inside</b> \(R\) and evaluate \(f\) at each. A critical point outside \(R\) is irrelevant and must be dropped.</li>
+      <li>Reduce the boundary to one-variable problems. Each edge or arc gets its own function of a single variable on a closed interval.</li>
+      <li>On each piece, find the interior critical numbers of that one-variable function and also take the endpoints of the piece.</li>
+      <li>Compare every value. The largest is the absolute maximum, the smallest is the absolute minimum.</li>
+    </ol>
+  </div>
+
+  <h3>Reducing the boundary</h3>
+  <p><b>Rectangle</b> \([p,q]\times[r,s]\): four edges. On the bottom edge \(y=r\), the function is \(g(x)=f(x,r)\) for \(p\le x\le q\). Do the same on the other three. The four corners are the endpoints shared by two edges, so they always land on the candidate list.</p>
+  <p><b>Disk</b> \(x^2+y^2\le r^2\): the boundary is the circle \(x^2+y^2=r^2\). Either parametrize it, \(x=r\cos t,\ y=r\sin t\) with \(0\le t\le 2\pi\), or substitute \(y^2=r^2-x^2\) when \(f\) only involves \(y^2\), which turns the boundary into a one-variable problem on \([-r,r]\). Lagrange multipliers (Chapter 3) handle the same job.</p>
+  <p><b>Triangle</b>: three edges, each a segment. Parametrize the slanted one, for instance \((x,y)=(1-t)P+tQ\) for \(0\le t\le 1\), and include the three vertices.</p>
+
+  <div class="note"><b>No second derivative test here.</b> Once the region is closed and bounded, you never classify anything. You build a candidate list and compare numbers. An interior saddle point still belongs on the list; it simply will not win.</div>
+  <div class="warn"><b>Three things get dropped.</b> Forgetting the corners, forgetting to check that the interior critical point actually lies inside \(R\), and forgetting the endpoints of each boundary piece. Any one of them can hide the true maximum. Write the candidate list out in full before you compare.</div>
+
+  <div class="card">
+    <h4>Explore: the candidate list</h4>
+    <div class="presets" id="absPresets"></div>
+    <div class="xf">
+      <div><canvas class="scene" id="absMap"></canvas><p class="plotcap">The shaded region, the contour map of \(f\), and every candidate with its value of \(f\).</p></div>
+      <div>
+        <div class="readout" id="absOut"></div>
+        <div class="legend" style="margin-top:10px">
+          <span><i class="dot" style="background:var(--c)"></i> interior critical point</span>
+          <span><i class="dot" style="background:var(--b)"></i> boundary candidate</span>
+          <span><i class="dot" style="background:#a8a29e"></i> corner or vertex</span>
+        </div>
+        <p class="hint">Compare the square preset with the rectangle preset. On \(f=x^2-y^2\) the interior critical point is a saddle and wins nothing, while both extremes sit at boundary candidates. On the disk, the maximum is on the circle and the minimum is the interior critical point, which is exactly the split the procedure is built for.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-absolute"></div>
+</section>
+
+<!-- ============================================================ 3 LAGRANGE -->
+<section data-id="lagrange" data-title="Lagrange multipliers" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 14.8</p>
+  <h2>Lagrange multipliers</h2>
+  <p class="lead">Optimize \(f\) when the input is not free but locked onto a curve or a surface. One vector equation replaces the whole substitution mess.</p>
+
+  <p>To find the extreme values of \(f(x,y)\) subject to a constraint \(g(x,y)=c\), you could try to solve the constraint for \(y\) and substitute. That works when it works, and fails the moment the constraint will not solve cleanly. The method of <b>Lagrange multipliers</b> never needs to.</p>
+
+  <div class="formula">\(\nabla f(x,y)=\lambda\,\nabla g(x,y)\qquad\text{together with}\qquad g(x,y)=c\)<span class="cap">Three equations in three unknowns \(x,y,\lambda\). The number \(\lambda\) is the <b>Lagrange multiplier</b>.</span></div>
+
+  <h3>Why parallel gradients</h3>
+  <p>Walk along the constraint curve and watch \(f\) change. The rate of change is the component of \(\nabla f\) along your direction of travel. At a point where \(f\) is largest or smallest along the curve, that rate is zero, so \(\nabla f\) has <b>no component along the curve</b>: it is perpendicular to the curve. But \(\nabla g\) is also perpendicular to the curve, because the curve is a level curve of \(g\). Two vectors perpendicular to the same curve at the same point are parallel, and parallel means one is a scalar multiple of the other. That scalar is \(\lambda\).</p>
+  <p>The same statement in pictures: at the extreme point the level curve of \(f\) is <b>tangent</b> to the constraint curve. If they crossed instead of touching, you could slide a little along the constraint onto a higher level curve of \(f\), so you were not at the maximum.</p>
+
+  <div class="card">
+    <h4>The procedure</h4>
+    <ol class="steps">
+      <li>Write \(g(x,y)=c\) with everything moved to one side, and compute \(\nabla f\) and \(\nabla g\).</li>
+      <li>Set up \(f_x=\lambda g_x\), \(f_y=\lambda g_y\), and \(g=c\).</li>
+      <li>Solve the system. Standard tricks: divide one equation by the other to eliminate \(\lambda\), or solve each for \(\lambda\) and set the results equal. Before you divide, handle the case where the thing you are dividing by is zero, as a separate branch.</li>
+      <li>Collect every solution point. Evaluate \(f\) at each one.</li>
+      <li>The largest value is the maximum, the smallest is the minimum. If the constraint set is unbounded, check whether \(f\) actually runs off to \(\pm\infty\); if it does, that extreme is DNE.</li>
+    </ol>
+  </div>
+
+  <div class="warn"><b>\(\lambda\) is not the answer.</b> The multiplier is scaffolding. Nobody is asking for it. After you solve, you still have to plug each candidate point back into \(f\) and compare the values. Students who stop at \(\lambda=3\) have not answered the question.</div>
+
+  <div class="card">
+    <h4>Step-by-step: maximize and minimize \(f(x,y)=xy\) on \(x^2+y^2=8\)</h4>
+    <ul class="steps" id="lwSteps"></ul>
+    <div class="controls">
+      <button class="btn" id="lwPrev">◀ Back</button>
+      <button class="btn primary" id="lwNext">Next step ▶</button>
+      <span class="status" id="lwStatus"></span>
+    </div>
+    <p class="hint">Step 3 is the archetype: multiply the two gradient equations by \(y\) and \(x\) so both right sides become \(2\lambda xy\), then set the left sides equal. That eliminates \(\lambda\) without ever dividing by something that might be zero.</p>
+  </div>
+
+  <h3>Explore: sliding along the constraint</h3>
+  <div class="card">
+    <h4>Explore: where the gradients line up</h4>
+    <div class="presets" id="lagPresets"></div>
+    <div class="xf">
+      <div><canvas class="scene" id="lagMap"></canvas><p class="plotcap">Purple: the constraint. Blue: level curves of \(f\). Green: the level curve of \(f\) through the moving point. Arrows are drawn at a fixed length, so only their directions matter.</p></div>
+      <div>
+        <div class="sliders" id="lagSliders" style="grid-template-columns:1fr"></div>
+        <div class="readout" id="lagOut"></div>
+        <div id="lagFlag"></div>
+        <div class="legend" style="margin-top:10px">
+          <span><i class="dot" style="background:var(--c)"></i> \(\nabla f\)</span>
+          <span><i class="dot" style="background:var(--a)"></i> \(\nabla g\)</span>
+          <span><i class="dot" style="background:var(--d)"></i> constraint</span>
+        </div>
+        <p class="hint">Drag the slider slowly through a candidate. The green level curve of \(f\) sweeps across the constraint, pauses to kiss it, then sweeps back. At the kiss the two arrows point along the same line and \(f\) stops changing. Those are the only places a constrained max or min can be.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Three variables, and two constraints</h3>
+  <p>Nothing changes in three variables: to extremize \(f(x,y,z)\) on the surface \(g(x,y,z)=c\), solve \(\nabla f=\lambda\nabla g\) together with \(g=c\). That is four equations in \(x,y,z,\lambda\).</p>
+  <p>With <b>two</b> constraints \(g=c\) and \(h=k\), the feasible set is a curve, the intersection of two surfaces. At an extreme point \(\nabla f\) must be perpendicular to that curve, and the vectors perpendicular to it are exactly the combinations of \(\nabla g\) and \(\nabla h\):</p>
+  <div class="formula">\(\nabla f=\lambda\,\nabla g+\mu\,\nabla h,\qquad g=c,\qquad h=k\)<span class="cap">Five equations in \(x,y,z,\lambda,\mu\).</span></div>
+
+  <div class="note"><b>When an extreme is DNE.</b> Lagrange finds the candidates, but only a closed bounded constraint set guarantees both extremes exist. On a circle or a sphere both always exist. On a line or a plane, \(f\) may be unbounded in one direction: \(f=x^2+y^2\) on \(x+y=4\) has a minimum of \(8\) and no maximum at all.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-lagrange"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const wideIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{wide:true,placeholder:ph}));
+
+const COL={min:'#16a34a',max:'#d97706',saddle:'#7c3aed',inc:'#6b6862'};
+const KINDNAME={min:'local minimum',max:'local maximum',saddle:'saddle point',inc:'inconclusive'};
+const KINDS=[['local minimum','min'],['local maximum','max'],['saddle point','saddle'],['the test is inconclusive','inc']];
+const kindIndex=k=>KINDS.findIndex(z=>z[1]===k);
+
+/* build TeX for a polynomial from [coefficient, monomial] pairs; '' monomial is the constant */
+function poly(terms){let s='';
+  for(const [c,m] of terms){if(!c)continue;const a=Math.abs(c);
+    const body=m===''?texNum(a):((a===1?'':texNum(a))+m);
+    s+=(s===''?(c<0?'-':''):(c<0?' - ':' + '))+body;}
+  return s||'0';}
+const isNice=x=>Math.abs(x*24-Math.round(x*24))<1e-9;
+const num=x=>isNice(x)?texNum(x):fmtDec(x,3);
+const PTX=p=>`(${p.map(num).join(',\\,')})`;
+const PTS=p=>`(${p.map(x=>isNice(x)?fmt(x):fmtDec(x,2)).join(', ')})`;
+const uniqv=a=>{const out=[];a.forEach(v=>{if(!out.some(w=>Math.abs(w-v)<1e-9))out.push(v);});return out.sort((x,y)=>x-y);};
+const listStr=a=>a.length?a.map(v=>fmt(v)).join(', '):'DNE';
+const ptListStr=a=>a.length?a.map(PTS).join(', '):'DNE';
+const classifyD=(D,fxx)=>Math.abs(D)<1e-9?'inc':(D<0?'saddle':(fxx>0?'min':'max'));
+
+/* ============================================================ critical point families
+   Each family returns everything needed to state the problem, solve it, and explain it. */
+const CF={};
+CF.quad=()=>{const a=pick([1,-1,2,-2]),b=pick([1,-1,2,-2]);const x0=rnz(-3,3),y0=rnz(-3,3);
+  const c=-2*a*x0,d=-2*b*y0,e=rint(-4,4);
+  return {tex:poly([[a,'x^2'],[b,'y^2'],[c,'x'],[d,'y'],[e,'']]),f:(x,y)=>a*x*x+b*y*y+c*x+d*y+e,
+    fxT:poly([[2*a,'x'],[c,'']]),fyT:poly([[2*b,'y'],[d,'']]),
+    fxxT:texNum(2*a),fyyT:texNum(2*b),fxyT:'0',
+    fxx:()=>2*a,fyy:()=>2*b,fxy:()=>0,pts:[[x0,y0]],
+    how:`Each equation holds one unknown. ${M(R`${2*a}x=${-c}`)} gives ${M(R`x=${texNum(x0)}`)}, and ${M(R`${2*b}y=${-d}`)} gives ${M(R`y=${texNum(y0)}`)}.`};};
+CF.cubicX=()=>{const a=pick([1,2,3]),b=rnz(-3,3);
+  return {tex:poly([[1,'x^3'],[-3*a*a,'x'],[1,'y^2'],[-2*b,'y']]),f:(x,y)=>x*x*x-3*a*a*x+y*y-2*b*y,
+    fxT:poly([[3,'x^2'],[-3*a*a,'']]),fyT:poly([[2,'y'],[-2*b,'']]),
+    fxxT:'6x',fyyT:'2',fxyT:'0',fxx:x=>6*x,fyy:()=>2,fxy:()=>0,pts:[[a,b],[-a,b]],
+    how:`From ${M(R`3x^2=${3*a*a}`)} you get ${M(R`x^2=${a*a}`)}, so ${M(R`x=\pm${a}`)}. From ${M(R`2y=${2*b}`)} you get ${M(R`y=${texNum(b)}`)}. Every combination is a critical point.`};};
+CF.quarticX=()=>{const a=pick([1,2]);
+  return {tex:poly([[1,'x^4'],[-2*a*a,'x^2'],[1,'y^2']]),f:(x,y)=>x*x*x*x-2*a*a*x*x+y*y,
+    fxT:poly([[4,'x^3'],[-4*a*a,'x']]),fyT:'2y',
+    fxxT:poly([[12,'x^2'],[-4*a*a,'']]),fyyT:'2',fxyT:'0',
+    fxx:x=>12*x*x-4*a*a,fyy:()=>2,fxy:()=>0,pts:[[0,0],[a,0],[-a,0]],
+    how:`Factor rather than divide: ${M(R`f_x=4x(x^2-${a*a})=0`)} gives ${M(R`x=0`)} <b>and</b> ${M(R`x=\pm${a}`)}. Then ${M(R`2y=0`)} forces ${M('y=0')}.`};};
+CF.cubicY=()=>{const b=pick([1,2,3]);
+  return {tex:poly([[1,'x^2'],[1,'y^3'],[-3*b*b,'y']]),f:(x,y)=>x*x+y*y*y-3*b*b*y,
+    fxT:'2x',fyT:poly([[3,'y^2'],[-3*b*b,'']]),
+    fxxT:'2',fyyT:'6y',fxyT:'0',fxx:()=>2,fyy:(x,y)=>6*y,fxy:()=>0,pts:[[0,b],[0,-b]],
+    how:`${M('2x=0')} gives ${M('x=0')}, and ${M(R`3y^2=${3*b*b}`)} gives ${M(R`y=\pm${b}`)}.`};};
+CF.bilin=()=>{const a=rnz(-4,4),b=rnz(-4,4);
+  return {tex:poly([[1,'xy'],[-a,'x'],[-b,'y']]),f:(x,y)=>x*y-a*x-b*y,
+    fxT:poly([[1,'y'],[-a,'']]),fyT:poly([[1,'x'],[-b,'']]),
+    fxxT:'0',fyyT:'0',fxyT:'1',fxx:()=>0,fyy:()=>0,fxy:()=>1,pts:[[b,a]],
+    how:`${M(R`f_x=y-(${texNum(a)})=0`)} gives ${M(R`y=${texNum(a)}`)}, and ${M(R`f_y=x-(${texNum(b)})=0`)} gives ${M(R`x=${texNum(b)}`)}.`};};
+CF.sym=()=>{const a=rnz(-3,3);
+  return {tex:poly([[1,'x^3'],[1,'y^3'],[-3*a,'xy']]),f:(x,y)=>x*x*x+y*y*y-3*a*x*y,
+    fxT:poly([[3,'x^2'],[-3*a,'y']]),fyT:poly([[3,'y^2'],[-3*a,'x']]),
+    fxxT:'6x',fyyT:'6y',fxyT:texNum(-3*a),
+    fxx:x=>6*x,fyy:(x,y)=>6*y,fxy:()=>-3*a,pts:[[0,0],[a,a]],
+    how:`The first equation gives ${M(R`y=x^2/(${texNum(a)})`)}. Substituting into ${M(R`y^2=${texNum(a)}x`)} gives ${M(R`x^4=${texNum(a*a*a)}x`)}, so ${M(R`x\big(x^3-${texNum(a*a*a)}\big)=0`)} and ${M(R`x=0`)} or ${M(R`x=${texNum(a)}`)}.`};};
+const CFLIST=[CF.quad,CF.cubicX,CF.quarticX,CF.cubicY,CF.bilin,CF.sym];
+
+/* functions whose second derivative test fails (D = 0) at the origin */
+const DEGLIST=[
+  {tex:'x^4+y^4',f:(x,y)=>x*x*x*x+y*y*y*y,fxT:'4x^3',fyT:'4y^3',fxxT:'12x^2',fyyT:'12y^2',fxyT:'0',
+   fxx:x=>12*x*x,fyy:(x,y)=>12*y*y,fxy:()=>0,truth:'a local (in fact absolute) minimum, since \\(x^4+y^4>0\\) everywhere except at the origin'},
+  {tex:'-x^4-y^4',f:(x,y)=>-x*x*x*x-y*y*y*y,fxT:'-4x^3',fyT:'-4y^3',fxxT:'-12x^2',fyyT:'-12y^2',fxyT:'0',
+   fxx:x=>-12*x*x,fyy:(x,y)=>-12*y*y,fxy:()=>0,truth:'a local maximum, since \\(-x^4-y^4<0\\) everywhere except at the origin'},
+  {tex:'x^3+y^3',f:(x,y)=>x*x*x+y*y*y,fxT:'3x^2',fyT:'3y^2',fxxT:'6x',fyyT:'6y',fxyT:'0',
+   fxx:x=>6*x,fyy:(x,y)=>6*y,fxy:()=>0,truth:'a saddle point, since \\(f(t,t)=2t^3\\) is positive for \\(t>0\\) and negative for \\(t<0\\)'},
+  {tex:'x^4-y^4',f:(x,y)=>x*x*x*x-y*y*y*y,fxT:'4x^3',fyT:'-4y^3',fxxT:'12x^2',fyyT:'-12y^2',fxyT:'0',
+   fxx:x=>12*x*x,fyy:(x,y)=>-12*y*y,fxy:()=>0,truth:'a saddle point, since \\(f\\) rises along the \\(x\\)-axis and falls along the \\(y\\)-axis'},
+];
+
+/* ============================================================ region candidate enumeration
+   f(x,y) = A x^2 + B y^2 + C xy + D x + E y + F on a convex polygon (rectangle or triangle).
+   Exact: each edge restriction is a quadratic in the parameter, recovered from three samples. */
+function insidePoly(pt,verts){let s=0;
+  for(let i=0;i<verts.length;i++){const P=verts[i],Q=verts[(i+1)%verts.length];
+    const cr=(Q[0]-P[0])*(pt[1]-P[1])-(Q[1]-P[1])*(pt[0]-P[0]);
+    if(Math.abs(cr)<1e-9)return false;
+    const sg=cr>0?1:-1;if(s===0)s=sg;else if(sg!==s)return false;}
+  return true;}
+function quadCands(co,verts){const {A,B,C,D,E,F}=co;
+  const f=(x,y)=>A*x*x+B*y*y+C*x*y+D*x+E*y+F;const out=[];
+  verts.forEach(v=>out.push({p:v.slice(),kind:'corner',v:f(v[0],v[1])}));
+  for(let i=0;i<verts.length;i++){const P=verts[i],Q=verts[(i+1)%verts.length];
+    const p0=f(P[0],P[1]),p1=f((P[0]+Q[0])/2,(P[1]+Q[1])/2),p2=f(Q[0],Q[1]);
+    const al=2*p0-4*p1+2*p2,be=-3*p0+4*p1-p2;
+    if(Math.abs(al)>1e-12){const t=-be/(2*al);
+      if(t>1e-9&&t<1-1e-9){const x=P[0]+t*(Q[0]-P[0]),y=P[1]+t*(Q[1]-P[1]);out.push({p:[x,y],kind:'edge',v:f(x,y)});}}}
+  const det=4*A*B-C*C;
+  if(Math.abs(det)>1e-12){const x=(C*E-2*B*D)/det,y=(C*D-2*A*E)/det;
+    if(insidePoly([x,y],verts))out.push({p:[x,y],kind:'interior',v:f(x,y)});}
+  return out;}
+/* f = A x^2 + B y^2 + C x + F on the disk of radius r: the circle reduces to a quadratic in x */
+function diskCandsAB(A,B,C,F,r){const f=(x,y)=>A*x*x+B*y*y+C*x+F;const out=[];
+  if(A!==0&&B!==0){const x=-C/(2*A);if(x*x<r*r-1e-12)out.push({p:[x,0],kind:'interior',v:f(x,0)});}
+  out.push({p:[r,0],kind:'edge',v:f(r,0)});out.push({p:[-r,0],kind:'edge',v:f(-r,0)});
+  if(A!==B){const x=-C/(2*(A-B));if(Math.abs(x)<r-1e-12){const y=Math.sqrt(r*r-x*x);
+    out.push({p:[x,y],kind:'edge',v:f(x,y)});out.push({p:[x,-y],kind:'edge',v:f(x,-y)});}}
+  return out;}
+/* f = x^2 + y^2 + a x + b y on the disk of radius r: on the circle f = r^2 + a x + b y is linear */
+function diskCandsCirc(a,b,r){const h=Math.hypot(a,b);const out=[];
+  if(h<2*r-1e-12)out.push({p:[-a/2,-b/2],kind:'interior',v:-(a*a+b*b)/4});
+  out.push({p:[r*a/h,r*b/h],kind:'edge',v:r*r+r*h});
+  out.push({p:[-r*a/h,-r*b/h],kind:'edge',v:r*r-r*h});
+  return out;}
+const bestOf=c=>({mx:Math.max(...c.map(z=>z.v)),mn:Math.min(...c.map(z=>z.v))});
+/* cheap sanity assertion: a coarse grid must not beat the candidate list */
+function sanityPoly(f,verts,mx,mn){
+  const xs=verts.map(v=>v[0]),ys=verts.map(v=>v[1]);
+  const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const N=48;
+  for(let i=0;i<=N;i++)for(let j=0;j<=N;j++){const x=x0+(x1-x0)*i/N,y=y0+(y1-y0)*j/N;
+    if(!insidePoly([x,y],verts)&&!verts.some(v=>Math.hypot(v[0]-x,v[1]-y)<1e-9))continue;
+    const v=f(x,y);if(v>mx+1e-6||v<mn-1e-6){console.warn('candidate list missed a value',x,y,v,mx,mn);return;}}}
+function sanityDisk(f,r,mx,mn){const N=26,M=200;
+  for(let i=0;i<=N;i++)for(let j=0;j<M;j++){const rr=r*i/N,t=2*Math.PI*j/M;
+    const v=f(rr*Math.cos(t),rr*Math.sin(t));if(v>mx+1e-6||v<mn-1e-6){console.warn('disk candidate list missed a value',v,mx,mn);return;}}}
+
+const candLine=c=>`<li><i class="dot" style="background:${c.kind==='interior'?'var(--c)':c.kind==='edge'?'var(--b)':'#a8a29e'};width:10px;height:10px;border-radius:50%"></i> ${M(PTX(c.p))} <span class="muted">(${c.kind==='interior'?'interior critical point':c.kind==='edge'?'boundary':'corner'})</span>: ${M('f='+num(c.v))}</li>`;
+/* contour levels placed at quantiles of f over the window, so a steep function
+   still gets evenly spread level curves instead of a dozen bunched at one corner */
+function quantLevels(f,x0,x1,y0,y1,n){const v=[],N=44;
+  for(let i=0;i<=N;i++)for(let j=0;j<=N;j++){const z=f(x0+(x1-x0)*i/N,y0+(y1-y0)*j/N);if(Number.isFinite(z))v.push(z);}
+  if(!v.length)return [];v.sort((a,b)=>a-b);const out=[];
+  for(let k=1;k<=n;k++){const z=v[Math.round((v.length-1)*k/(n+1))];
+    if(!out.some(w=>Math.abs(w-z)<1e-9))out.push(z);}
+  return out;}
+const candList=cands=>`<ul class="small" style="list-style:none;padding:0;margin:8px 0;line-height:1.9">${cands.slice().sort((a,b)=>b.v-a.v).map(candLine).join('')}</ul>`;
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1 ---------- */
+Q.critFind={name:'find all critical points',
+  gen(){const F=pick(CFLIST)();return {F,pts:F.pts};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find every critical point of ${M('f(x,y)='+q.F.tex)}. Enter a comma separated list of points, like <code>(1, -2), (0, 3)</code>.</p>`;
+    wideIn(el,'pts','critical points:','(a, b), (c, d)');},
+  check(q,el){return G(el,'pts',checkPointList($('[data-k=pts]',el).value,q.pts));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el.ownerDocument.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`f_x=${q.F.fxT}=0`)+'<br>'+M(R`f_y=${q.F.fyT}=0`);},
+  solution(q){return `Set both first partials to zero:${D(R`f_x=${q.F.fxT}=0,\qquad f_y=${q.F.fyT}=0`)}${q.F.how} The critical points are <b>${ptListStr(q.pts)}</b>.`;}
+};
+Q.critClassify={name:'classify a critical point',
+  gen(){let F,p,deg=false;
+    if(Math.random()<0.28){F=pick(DEGLIST);p=[0,0];deg=true;}
+    else{F=pick(CFLIST)();p=pick(F.pts);}
+    const fxx=F.fxx(p[0],p[1]),fyy=F.fyy(p[0],p[1]),fxy=F.fxy(p[0],p[1]);
+    const Dv=fxx*fyy-fxy*fxy;const kind=classifyD(Dv,fxx);
+    return {F,p,fxx,fyy,fxy,Dv,kind,deg,ci:kindIndex(kind)};},
+  render(q,el){el.innerHTML=`<p class="prompt">The point ${M(PTX(q.p))} is a critical point of ${M('f(x,y)='+q.F.tex)}. Use the second derivative test to classify it.</p>`;
+    q.get=choiceButtons(el,KINDS.map((k,i)=>({label:k[0],value:i})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    if(v===q.ci)return {ok:true};
+    return {ok:false,msg:q.kind==='inc'?'Recompute D. When D is exactly 0 the test says nothing.':(q.Dv>0?'D is positive, so it is a max or a min. Which one depends on the sign of f_xx.':q.Dv<0?'Check the sign of D again.':'Not quite.')};},
+  solution(q){const F=q.F;
+    let s=`Second partials: ${M(R`f_{xx}=${F.fxxT},\ f_{xy}=${F.fxyT},\ f_{yy}=${F.fyyT}`)}. At ${M(PTX(q.p))} these are ${M(R`f_{xx}=${texNum(q.fxx)},\ f_{xy}=${texNum(q.fxy)},\ f_{yy}=${texNum(q.fyy)}`)}, so`;
+    s+=D(R`D=(${texNum(q.fxx)})(${texNum(q.fyy)})-(${texNum(q.fxy)})^2=${texNum(q.Dv)}`);
+    if(q.kind==='inc')s+=`\\(D=0\\), so the second derivative test is <b>inconclusive</b>: it gives no information at all here. (Looking at the function directly, the origin is ${q.F.truth}.)`;
+    else if(q.kind==='saddle')s+=`\\(D<0\\), so ${M(PTX(q.p))} is a <b>saddle point</b>.`;
+    else s+=`\\(D>0\\) and \\(f_{xx}=${texNum(q.fxx)}${q.fxx>0?'>':'<'}0\\), so ${M(PTX(q.p))} is a <b>local ${q.kind==='min'?'minimum':'maximum'}</b>, with value ${M('f='+texNum(q.F.f(q.p[0],q.p[1])))}.`;
+    return s;}
+};
+Q.critExtremes={name:'local extreme values and saddle points',
+  gen(){const F=pick(CFLIST)();const mxv=[],mnv=[],sad=[];const rows=[];
+    F.pts.forEach(p=>{const fxx=F.fxx(p[0],p[1]),fyy=F.fyy(p[0],p[1]),fxy=F.fxy(p[0],p[1]);
+      const Dv=fxx*fyy-fxy*fxy;const k=classifyD(Dv,fxx);const v=F.f(p[0],p[1]);
+      rows.push({p,Dv,fxx,k,v});
+      if(k==='max')mxv.push(v);else if(k==='min')mnv.push(v);else sad.push(p);});
+    return {F,rows,mxv:uniqv(mxv),mnv:uniqv(mnv),sad};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M('f(x,y)='+q.F.tex)}, find the local maximum and minimum <b>values</b> and the saddle <b>points</b>. Enter <code>DNE</code> where there are none; list each distinct value once.</p>`;
+    wideIn(el,'mx','local maximum value(s):','e.g. 4  or  DNE');
+    wideIn(el,'mn','local minimum value(s):','e.g. -1, 3  or  DNE');
+    wideIn(el,'sd','saddle point(s):','e.g. (0, 0)  or  DNE');},
+  check(q,el){return Gall(el,[
+    ['mx',checkNumberList($('[data-k=mx]',el).value,q.mxv)],
+    ['mn',checkNumberList($('[data-k=mn]',el).value,q.mnv)],
+    ['sd',checkPointList($('[data-k=sd]',el).value,q.sad)]]);},
+  solution(q){let s=`${M(R`f_x=${q.F.fxT}`)} and ${M(R`f_y=${q.F.fyT}`)}, giving the critical points ${ptListStr(q.F.pts)}. With ${M(R`f_{xx}=${q.F.fxxT},\ f_{xy}=${q.F.fxyT},\ f_{yy}=${q.F.fyyT}`)}:`;
+    s+=`<ul class="small" style="list-style:none;padding:0;margin:8px 0;line-height:1.9">`+q.rows.map(r=>
+      `<li><i class="dot" style="background:${COL[r.k]};width:10px;height:10px;border-radius:50%"></i> ${M(PTX(r.p))}: ${M('D='+texNum(r.Dv))}, ${M(R`f_{xx}=${texNum(r.fxx)}`)} &rarr; <b>${KINDNAME[r.k]}</b>${r.k==='saddle'?'':', '+M('f='+texNum(r.v))}</li>`).join('')+`</ul>`;
+    s+=`Local maximum value(s): <b>${listStr(q.mxv)}</b>. Local minimum value(s): <b>${listStr(q.mnv)}</b>. Saddle point(s): <b>${ptListStr(q.sad)}</b>.`;
+    return s;}
+};
+Q.critTestNums={name:'the second derivative test from numbers',
+  gen(){const kind=pick(['min','max','saddle','saddle','min','max','inc']);
+    let fxx,fyy,fxy;
+    if(kind==='inc'){const m=rint(1,4),n=rint(1,4),s=pick([1,-1]);fxx=s*m*m;fyy=s*n*n;fxy=pick([1,-1])*m*n;}
+    else{let g=0;do{fxx=rnz(-6,6);fyy=rint(-6,6);fxy=rint(-5,5);g++;}while(classifyD(fxx*fyy-fxy*fxy,fxx)!==kind&&g<600);}
+    const Dv=fxx*fyy-fxy*fxy;const k=classifyD(Dv,fxx);
+    const a=rint(-3,3),b=rint(-3,3);
+    return {fxx,fyy,fxy,Dv,kind:k,a,b,ci:kindIndex(k)};},
+  render(q,el){el.innerHTML=`<p class="prompt">A function \\(f\\) has a critical point at ${M(PTX([q.a,q.b]))}, and there ${M(R`f_{xx}=${texNum(q.fxx)}`)}, ${M(R`f_{xy}=${texNum(q.fxy)}`)}, ${M(R`f_{yy}=${texNum(q.fyy)}`)}. Compute \\(D\\) and classify the point.</p>`;
+    numIn(el,'d',M('D='));
+    q.get=choiceButtons(el,KINDS.map((k,i)=>({label:k[0],value:i})));},
+  check(q,el){const r=G(el,'d',checkNumber($('[data-k=d]',el).value,q.Dv));
+    const v=q.get();if(v===null)return {ok:false,msg:'Pick a classification.'};
+    if(!r.ok)return {ok:false,msg:'Check D again: it is \\(f_{xx}f_{yy}\\) minus the <b>square</b> of \\(f_{xy}\\).'};
+    if(v!==q.ci)return {ok:false,msg:q.Dv>0?'D is positive, so this is a max or a min. Look at the sign of f_xx.':q.Dv<0?'A negative D always means a saddle point.':'D is exactly 0, so the test tells you nothing.'};
+    return {ok:true};},
+  solution(q){let s=D(R`D=f_{xx}f_{yy}-(f_{xy})^2=(${texNum(q.fxx)})(${texNum(q.fyy)})-(${texNum(q.fxy)})^2=${texNum(q.fxx*q.fyy)}-${texNum(q.fxy*q.fxy)}=${texNum(q.Dv)}`);
+    if(q.kind==='inc')s+=`Since \\(D=0\\), <b>the test is inconclusive</b>. No conclusion of any kind may be drawn from these three numbers.`;
+    else if(q.kind==='saddle')s+=`Since \\(D<0\\), the point is a <b>saddle point</b>.`;
+    else s+=`Since \\(D>0\\) and \\(f_{xx}=${texNum(q.fxx)}${q.fxx>0?'>':'<'}0\\), the point is a <b>local ${q.kind==='min'?'minimum':'maximum'}</b>.`;
+    return s;}
+};
+
+/* ---------- chapter 2 ---------- */
+const RECTFALL={fam:'sq',co:{A:1,B:1,C:0,D:-2,E:-4,F:0},xr:[0,3],yr:[0,4],x0:1,y0:2};
+Q.absRect={name:'absolute extrema on a rectangle',
+  gen(){let best=null;
+    for(let t=0;t<400;t++){
+      const fam=pick(['sq','neg','cross','bil']);
+      const a=rint(2,5),b=rint(2,5);const centered=Math.random()<0.4;
+      const xr=centered?[-a,a]:[0,a],yr=centered?[-b,b]:[0,b];
+      const x0=rint(xr[0]+1,xr[1]-1),y0=rint(yr[0]+1,yr[1]-1);
+      let co;
+      if(fam==='sq')co={A:1,B:1,C:0,D:-2*x0,E:-2*y0,F:0};
+      else if(fam==='neg')co={A:-1,B:-1,C:0,D:2*x0,E:2*y0,F:0};
+      else if(fam==='cross')co={A:1,B:1,C:1,D:-(2*x0+y0),E:-(x0+2*y0),F:0};
+      else co={A:0,B:0,C:1,D:-y0,E:-x0,F:0};
+      const verts=[[xr[0],yr[0]],[xr[1],yr[0]],[xr[1],yr[1]],[xr[0],yr[1]]];
+      const cands=quadCands(co,verts);const {mx,mn}=bestOf(cands);
+      if(mx===mn||!isNice(mx)||!isNice(mn))continue;
+      best={fam,co,verts,xr,yr,cands,mx,mn,x0,y0};break;}
+    if(!best){const z=RECTFALL;const verts=[[z.xr[0],z.yr[0]],[z.xr[1],z.yr[0]],[z.xr[1],z.yr[1]],[z.xr[0],z.yr[1]]];
+      const cands=quadCands(z.co,verts);best={...z,verts,cands,...bestOf(cands)};}
+    const {A,B,C,D:Dc,E,F}=best.co;
+    best.f=(x,y)=>A*x*x+B*y*y+C*x*y+Dc*x+E*y+F;
+    best.tex=poly([[A,'x^2'],[B,'y^2'],[C,'xy'],[Dc,'x'],[E,'y'],[F,'']]);
+    best.fxT=poly([[2*A,'x'],[C,'y'],[Dc,'']]);best.fyT=poly([[2*B,'y'],[C,'x'],[E,'']]);
+    sanityPoly(best.f,best.verts,best.mx,best.mn);
+    return best;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the absolute maximum and minimum values of ${M('f(x,y)='+q.tex)} on the rectangle ${M(R`${q.xr[0]}\le x\le ${q.xr[1]},\ ${q.yr[0]}\le y\le ${q.yr[1]}`)}.</p>`;
+    numIn(el,'mx','absolute maximum value =');numIn(el,'mn','absolute minimum value =');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx)],['mn',checkNumber($('[data-k=mn]',el).value,q.mn)]]);},
+  solution(q){const inter=q.cands.find(c=>c.kind==='interior');
+    let s=`${M(R`f_x=${q.fxT}`)} and ${M(R`f_y=${q.fyT}`)}. `;
+    s+=inter?`The only critical point is ${M(PTX(inter.p))}, which lies inside the rectangle, so it is a candidate. `
+            :`The critical point of \\(f\\) does not lie inside this rectangle, so the extremes must be on the boundary. `;
+    s+=`On each edge, substituting the fixed variable leaves a one-variable quadratic; its vertex is a candidate when it falls inside the edge, and the four corners are candidates too. The full list:`;
+    s+=candList(q.cands);
+    s+=`Comparing: absolute maximum <b>${fmt(q.mx)}</b> and absolute minimum <b>${fmt(q.mn)}</b>.`;
+    return s;}
+};
+const DISKAB=[[1,2,-4,0],[2,3,-4,-6],[1,-1,2,0],[2,1,-3,1],[3,1,6,-2],[-1,-2,4,0],[1,3,-2,-5],[2,-1,4,3],[1,2,3,0],[-2,-1,-4,2]];
+const DISKCIRC=[[3,4],[4,3],[0,5],[5,0],[6,8],[8,6],[0,2],[2,0],[1,0],[0,1],[5,12],[12,5]];
+Q.absDisk={name:'absolute extrema on a disk',
+  gen(){if(Math.random()<0.5){
+      const [A,B,C,F]=pick(DISKAB);const r=pick([1,2,3]);
+      const f=(x,y)=>A*x*x+B*y*y+C*x+F;
+      const cands=diskCandsAB(A,B,C,F,r);const {mx,mn}=bestOf(cands);
+      sanityDisk(f,r,mx,mn);
+      return {kind:'ab',A,B,C,F,r,f,cands,mx,mn,
+        tex:poly([[A,'x^2'],[B,'y^2'],[C,'x'],[F,'']]),
+        fxT:poly([[2*A,'x'],[C,'']]),fyT:poly([[2*B,'y']]),
+        red:`On the circle ${M(R`y^2=${r*r}-x^2`)}, so ${M(R`f=${poly([[A-B,'x^2'],[C,'x'],[B*r*r+F,'']])}`)} for ${M(R`-${r}\le x\le ${r}`)}.`};}
+    let [a,b]=pick(DISKCIRC);a*=pick([1,-1]);b*=pick([1,-1]);
+    const r=pick([1,2,3,4,5,6,7]);const f=(x,y)=>x*x+y*y+a*x+b*y;
+    const cands=diskCandsCirc(a,b,r);const {mx,mn}=bestOf(cands);
+    sanityDisk(f,r,mx,mn);
+    return {kind:'circ',a,b,r,f,cands,mx,mn,h:Math.hypot(a,b),
+      tex:poly([[1,'x^2'],[1,'y^2'],[a,'x'],[b,'y']]),
+      fxT:poly([[2,'x'],[a,'']]),fyT:poly([[2,'y'],[b,'']]),
+      red:`On the circle ${M(R`x^2+y^2=${r*r}`)}, so ${M('f='+poly([[r*r,''],[a,'x'],[b,'y']]))}, a linear function on a circle of radius ${r}. Its extremes are ${M(R`${r*r}\pm ${r}\cdot${texSqrt(a*a+b*b)}=${r*r}\pm${texNum(r*Math.hypot(a,b))}`)}.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the absolute maximum and minimum values of ${M('f(x,y)='+q.tex)} on the disk ${M(R`x^2+y^2\le ${q.r*q.r}`)}. Give values to two decimals if they are not exact.</p>`;
+    numIn(el,'mx','absolute maximum value =');numIn(el,'mn','absolute minimum value =');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx,{tol:0.01})],['mn',checkNumber($('[data-k=mn]',el).value,q.mn,{tol:0.01})]]);},
+  solution(q){const inter=q.cands.find(c=>c.kind==='interior');
+    let s=`${M(R`f_x=${q.fxT}`)} and ${M(R`f_y=${q.fyT}`)}. `;
+    s+=inter?`Setting both to zero gives the single critical point ${M(PTX(inter.p))}, where ${M(R`x^2+y^2=${num(inter.p[0]*inter.p[0]+inter.p[1]*inter.p[1])}`)}, less than ${M(texNum(q.r*q.r))}, so it is inside the disk. `
+            :`The critical point of \\(f\\) is not inside this disk, so both extremes are on the circle. `;
+    s+=q.red+` The candidates are:`;
+    s+=candList(q.cands);
+    s+=`Comparing: absolute maximum <b>${isNice(q.mx)?fmt(q.mx):fmtDec(q.mx,2)}</b> and absolute minimum <b>${isNice(q.mn)?fmt(q.mn):fmtDec(q.mn,2)}</b>.`;
+    return s;}
+};
+Q.absTri={name:'absolute extrema on a triangle',
+  gen(){let best=null;
+    for(let t=0;t<400;t++){
+      const a=rint(2,5),b=rint(2,5);const verts=[[0,0],[a,0],[0,b]];
+      const fam=pick(['conv','conc','xy']);let co;
+      if(fam==='xy')co={A:0,B:0,C:1,D:0,E:0,F:0};
+      else{const c=2*rint(1,4),d=2*rint(1,4);
+        if(c/(2*a)+d/(2*b)>=0.95)continue;
+        co=fam==='conv'?{A:1,B:1,C:0,D:-c,E:-d,F:0}:{A:-1,B:-1,C:0,D:c,E:d,F:0};}
+      const cands=quadCands(co,verts);const {mx,mn}=bestOf(cands);
+      if(mx===mn||!isNice(mx)||!isNice(mn))continue;
+      best={fam,co,verts,cands,mx,mn,a,b};break;}
+    if(!best){const verts=[[0,0],[4,0],[0,4]];const co={A:1,B:1,C:0,D:-2,E:-4,F:0};
+      const cands=quadCands(co,verts);best={fam:'conv',co,verts,cands,...bestOf(cands),a:4,b:4};}
+    const {A,B,C,D:Dc,E,F}=best.co;
+    best.f=(x,y)=>A*x*x+B*y*y+C*x*y+Dc*x+E*y+F;
+    best.tex=poly([[A,'x^2'],[B,'y^2'],[C,'xy'],[Dc,'x'],[E,'y'],[F,'']]);
+    best.fxT=poly([[2*A,'x'],[C,'y'],[Dc,'']]);best.fyT=poly([[2*B,'y'],[C,'x'],[E,'']]);
+    sanityPoly(best.f,best.verts,best.mx,best.mn);
+    return best;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the absolute maximum and minimum values of ${M('f(x,y)='+q.tex)} on the closed triangular region with vertices ${M('(0,\\,0)')}, ${M(`(${q.a},\\,0)`)}, and ${M(`(0,\\,${q.b})`)}.</p>`;
+    numIn(el,'mx','absolute maximum value =');numIn(el,'mn','absolute minimum value =');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx)],['mn',checkNumber($('[data-k=mn]',el).value,q.mn)]]);},
+  solution(q){const inter=q.cands.find(c=>c.kind==='interior');
+    let s=`${M(R`f_x=${q.fxT}`)} and ${M(R`f_y=${q.fyT}`)}. `;
+    s+=inter?`The critical point ${M(PTX(inter.p))} lies inside the triangle, so it is a candidate. `
+            :`There is no critical point strictly inside the triangle, so everything happens on the boundary. `;
+    s+=`Take the two legs as ${M('y=0')} and ${M('x=0')}, and parametrize the hypotenuse as ${M(R`(x,y)=\big(${q.a}(1-t),\,${q.b}t\big),\ 0\le t\le 1`)}. Each piece is a quadratic in one variable, so its vertex (when it falls inside) and its endpoints are candidates. The full list:`;
+    s+=candList(q.cands);
+    s+=`Comparing: absolute maximum <b>${fmt(q.mx)}</b> and absolute minimum <b>${fmt(q.mn)}</b>.`;
+    return s;}
+};
+const ABSWHERE=[
+  {q:'On a closed rectangle, where can the absolute maximum of a continuous \\(f\\) occur?',
+   right:'At an interior critical point, at a critical point of a boundary edge, or at a corner',
+   wrong:['Only at an interior critical point','Only in the interior of an edge','Only at one of the four corners'],
+   why:'An absolute extremum is either interior, and then it is a local extremum and so a critical point, or on the boundary. On a rectangle the boundary splits into four edges whose endpoints are the corners.'},
+  {q:'Why does the Extreme Value Theorem guarantee that \\(f(x,y)=x^2+xy\\) has an absolute maximum on the disk \\(x^2+y^2\\le 4\\)?',
+   right:'\\(f\\) is continuous and the disk is closed and bounded',
+   wrong:['\\(f\\) is a polynomial, so it is bounded','The disk is convex','\\(f\\) has a critical point inside the disk'],
+   why:'The theorem needs exactly two things: a continuous function and a closed, bounded set. Convexity and the existence of interior critical points are irrelevant to it.'},
+  {q:'On a closed region you find an interior critical point where \\(D<0\\). What do you do with it?',
+   right:'Evaluate \\(f\\) there and keep it on the candidate list',
+   wrong:['Discard it, since a saddle can never be a candidate','Apply the second derivative test to the boundary instead','Conclude that \\(f\\) has no absolute maximum'],
+   why:'On a closed bounded region you compare values rather than classify. Including a saddle point costs one evaluation and it simply will not win.'},
+  {q:'To find the extreme values of \\(f\\) on the boundary circle \\(x^2+y^2=9\\), you can:',
+   right:'Substitute \\(x=3\\cos t,\\ y=3\\sin t\\) and optimize the resulting function of \\(t\\) on \\([0,2\\pi]\\)',
+   wrong:['Set \\(f_x=f_y=0\\) and keep whichever solutions lie on the circle','Evaluate \\(f\\) at \\((\\pm3,0)\\) and \\((0,\\pm3)\\) only','Apply the second derivative test at each point of the circle'],
+   why:'Parametrizing turns the boundary into a one-variable closed-interval problem. Lagrange multipliers do the same job without parametrizing.'},
+  {q:'Which region is <b>not</b> closed and bounded, so the Extreme Value Theorem does not apply?',
+   right:'The open square \\(0<x<1,\\ 0<y<1\\)',
+   wrong:['The disk \\(x^2+y^2\\le 1\\)','The triangle with vertices \\((0,0),(2,0),(0,2)\\) including its edges','The rectangle \\(0\\le x\\le 2,\\ 1\\le y\\le 4\\)'],
+   why:'It is bounded but not closed: it is missing its boundary. On it, \\(f(x,y)=x\\) gets arbitrarily close to 1 without ever reaching a maximum.'},
+];
+Q.absWhere={name:'where absolute extrema can occur',
+  gen(){const it=pick(ABSWHERE);const opts=shuffle([it.right,...it.wrong]);
+    return {it,opts,ci:opts.indexOf(it.right)};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.it.q}</p>`;
+    q.get=choiceButtons(el,q.opts.map((o,i)=>({label:o,value:i})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return v===q.ci?{ok:true,msg:q.it.why}:{ok:false,msg:'Not that one. Think about what the procedure actually requires.'};},
+  solution(q){return `<b>${q.it.right}.</b> ${q.it.why}`;}
+};
+
+/* ---------- chapter 3 ---------- */
+const LAGPAIRS=[[3,4],[4,3],[6,8],[5,12],[8,15],[1,2],[2,1],[2,3],[1,1],[3,1],[2,2],[9,12],[1,3],[7,24]];
+Q.lagLine={name:'Lagrange: a linear function on a circle',
+  gen(){let [a,b]=pick(LAGPAIRS);a*=pick([1,-1]);b*=pick([1,-1]);
+    const r=pick([1,2,3,5]);const h=Math.hypot(a,b);
+    return {a,b,r,h,mx:r*h,mn:-r*h,pt:[a*r/h,b*r/h],ss:a*a+b*b};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use Lagrange multipliers to find the maximum and minimum values of ${M('f(x,y)='+poly([[q.a,'x'],[q.b,'y']]))} subject to ${M(R`x^2+y^2=${q.r*q.r}`)}. Exact answers like <code>5sqrt(2)</code> are best; otherwise give three decimals.</p>`;
+    numIn(el,'mx','maximum =');numIn(el,'mn','minimum =');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx,{tol:0.005})],['mn',checkNumber($('[data-k=mn]',el).value,q.mn,{tol:0.005})]]);},
+  solution(q){return `With ${M(R`g=x^2+y^2`)}, the system ${M(R`\nabla f=\lambda\nabla g`)} reads${D(R`${texNum(q.a)}=2\lambda x,\qquad ${texNum(q.b)}=2\lambda y,\qquad x^2+y^2=${q.r*q.r}`)}`+
+    `\\(\\lambda\\) cannot be 0 (the first equation would fail), so ${M(R`x=\frac{${texNum(q.a)}}{2\lambda},\ y=\frac{${texNum(q.b)}}{2\lambda}`)}. Substituting into the constraint gives ${M(R`\frac{${q.ss}}{4\lambda^2}=${q.r*q.r}`)}, so ${M(R`2\lambda=\pm\frac{${texSqrt(q.ss)}}{${q.r}}`)}. `+
+    `That puts the candidates at ${M(R`\pm\frac{${q.r}}{${texSqrt(q.ss)}}\,(${texNum(q.a)},\,${texNum(q.b)})`)}, where ${M(R`f=\pm\frac{${q.r}\cdot ${q.ss}}{${texSqrt(q.ss)}}=\pm ${texSqrt(q.r*q.r*q.ss)}`)}. `+
+    `Maximum <b>${isNice(q.mx)?fmt(q.mx):fmtDec(q.mx,3)}</b>, minimum <b>${isNice(q.mn)?fmt(q.mn):fmtDec(q.mn,3)}</b>. (Shortcut worth remembering: the extremes of ${M(R`ax+by`)} on a circle of radius \\(r\\) are ${M(R`\pm r\sqrt{a^2+b^2}`)}.)`;}
+};
+Q.lagCurve={name:'Lagrange: maximum and minimum on a curve',
+  gen(){const which=pick(['xy','x2y','sum','sqline','xyline']);
+    if(which==='xy'){const r=pick([1,2,3]);
+      return {which,ftex:'xy',gtex:R`x^2+y^2=${2*r*r}`,mx:r*r,mn:-r*r,
+        work:`${M(R`\nabla f=\langle y,x\rangle`)} and ${M(R`\nabla g=\langle 2x,2y\rangle`)}, so ${M(R`y=2\lambda x`)} and ${M(R`x=2\lambda y`)}. Multiply the first by \\(y\\) and the second by \\(x\\): both right sides become ${M(R`2\lambda xy`)}, so ${M(R`y^2=x^2`)}. The constraint then gives ${M(R`2x^2=${2*r*r}`)}, so ${M(R`x=\pm${r}`)} and ${M(R`y=\pm${r}`)}. The four candidates give ${M(R`f=\pm${r*r}`)}.`};}
+    if(which==='x2y'){const c=pick([1,2]);
+      return {which,ftex:'x^2y',gtex:R`x^2+y^2=${3*c*c}`,mx:2*c*c*c,mn:-2*c*c*c,
+        work:`${M(R`\nabla f=\langle 2xy,x^2\rangle`)} and ${M(R`\nabla g=\langle 2x,2y\rangle`)}, so ${M(R`2xy=2\lambda x`)} and ${M(R`x^2=2\lambda y`)}. The first gives ${M('x=0')} or ${M(R`\lambda=y`)}. If ${M('x=0')} then ${M(R`y=\pm${texSqrt(3*c*c)}`)} and ${M('f=0')}. If ${M(R`\lambda=y`)} then ${M(R`x^2=2y^2`)}, and the constraint ${M(R`3y^2=${3*c*c}`)} gives ${M(R`y=\pm${c}`)}, ${M(R`x^2=${2*c*c}`)}, so ${M(R`f=x^2y=\pm${2*c*c*c}`)}.`};}
+    if(which==='sum'){const c=pick([1,2,3]);
+      return {which,ftex:'x+y',gtex:R`x^2+y^2=${2*c*c}`,mx:2*c,mn:-2*c,
+        work:`${M(R`1=2\lambda x`)} and ${M(R`1=2\lambda y`)} force ${M('x=y')}. The constraint gives ${M(R`2x^2=${2*c*c}`)}, so ${M(R`x=y=\pm${c}`)} and ${M(R`f=\pm${2*c}`)}.`};}
+    if(which==='sqline'){const opt=pick([[1,1,2],[1,1,4],[1,2,5],[2,1,-5],[3,4,5],[3,4,10],[1,1,-6]]);
+      const [a,b,c]=opt;const mn=c*c/(a*a+b*b);
+      return {which,a,b,c,ftex:'x^2+y^2',gtex:poly([[a,'x'],[b,'y']])+'='+texNum(c),mx:'DNE',mn,
+        work:`${M(R`\nabla f=\langle 2x,2y\rangle=\lambda\langle ${texNum(a)},${texNum(b)}\rangle`)} gives ${M(R`x=\tfrac{${texNum(a)}\lambda}{2},\ y=\tfrac{${texNum(b)}\lambda}{2}`)}. The constraint gives ${M(R`\tfrac{${a*a+b*b}}{2}\lambda=${texNum(c)}`)}, so ${M(R`\lambda=\tfrac{${texNum(2*c)}}{${a*a+b*b}}`)} and the single candidate has ${M(R`f=\tfrac{${c*c}}{${a*a+b*b}}=${texNum(mn)}`)}. The constraint line is unbounded and ${M(R`x^2+y^2`)} grows without bound along it, so there is no maximum.`};}
+    const c=pick([2,4,6,-4,8,-6]);
+    return {which,c,ftex:'xy',gtex:`x+y=${texNum(c)}`,mx:c*c/4,mn:'DNE',
+      work:`${M(R`\langle y,x\rangle=\lambda\langle 1,1\rangle`)} gives ${M('x=y=\\lambda')}. The constraint gives ${M(R`2x=${texNum(c)}`)}, so ${M(R`x=y=${texNum(c/2)}`)} and ${M(R`f=${texNum(c*c/4)}`)}. Along the line, ${M(R`f=x(${texNum(c)}-x)\to-\infty`)} as ${M(R`x\to\pm\infty`)}, so there is no minimum.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the maximum and minimum values of ${M('f(x,y)='+q.ftex)} subject to ${M(q.gtex)}. Type <code>DNE</code> if one of them does not exist.</p>`;
+    numIn(el,'mx','maximum =');numIn(el,'mn','minimum =');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx,{tol:0.005})],['mn',checkNumber($('[data-k=mn]',el).value,q.mn,{tol:0.005})]]);},
+  solution(q){return q.work+` Maximum <b>${q.mx==='DNE'?'DNE':fmt(q.mx)}</b>, minimum <b>${q.mn==='DNE'?'DNE':fmt(q.mn)}</b>.`;}
+};
+const SPHERES=[[1,2,3,14],[1,2,2,9],[2,3,6,4],[1,4,8,1],[2,6,9,9],[3,4,12,4],[2,2,1,16],[1,1,1,3],[1,1,2,6],[2,3,6,1],[1,2,2,36]];
+Q.lag3={name:'Lagrange in three variables',
+  gen(){const which=pick(['plane','plane','xyz','sumsq']);
+    if(which==='plane'){let [a,b,c,S]=pick(SPHERES);
+      a*=pick([1,-1]);b*=pick([1,-1]);c*=pick([1,-1]);
+      const n=Math.sqrt(a*a+b*b+c*c),v=Math.sqrt(S)*n;
+      return {which,a,b,c,S,n,mx:v,mn:-v,
+        ftex:poly([[a,'x'],[b,'y'],[c,'z']]),gtex:R`x^2+y^2+z^2=${S}`,
+        work:`${M(R`\nabla f=\langle ${texNum(a)},${texNum(b)},${texNum(c)}\rangle=\lambda\langle 2x,2y,2z\rangle`)}, so ${M(R`(x,y,z)=\tfrac{1}{2\lambda}(${texNum(a)},${texNum(b)},${texNum(c)})`)}. The constraint gives ${M(R`\tfrac{${a*a+b*b+c*c}}{4\lambda^2}=${S}`)}, so ${M(R`2\lambda=\pm\sqrt{${(a*a+b*b+c*c)}/${S}}`)}, and at the two candidates ${M(R`f=\pm\sqrt{${S}}\sqrt{${a*a+b*b+c*c}}=\pm${texNum(v)}`)}.`};}
+    if(which==='xyz'){const c=pick([1,2,3,4]);
+      return {which,c,mx:c*c*c,mn:'DNE',ftex:'xyz',gtex:R`x+y+z=${3*c}\ \ (x,y,z>0)`,
+        work:`${M(R`\langle yz,xz,xy\rangle=\lambda\langle 1,1,1\rangle`)} gives ${M(R`yz=xz=xy`)}. Since all three variables are positive, dividing gives ${M('x=y=z')}, and the constraint gives ${M(R`x=y=z=${c}`)}, where ${M(R`f=${c*c*c}`)}. Pushing one variable toward 0 sends the product toward 0 but never reaches it, so there is no minimum on the open region ${M('x,y,z>0')}.`};}
+    const c=pick([1,2,3,4]);
+    return {which,c,mx:'DNE',mn:3*c*c,ftex:'x^2+y^2+z^2',gtex:R`x+y+z=${3*c}`,
+      work:`${M(R`\langle 2x,2y,2z\rangle=\lambda\langle 1,1,1\rangle`)} gives ${M(R`x=y=z=\lambda/2`)}. The constraint gives ${M(R`x=y=z=${c}`)}, where ${M(R`f=3(${c})^2=${3*c*c}`)}. This is the squared distance from the origin to the plane, and it is the minimum. Moving far out along the plane sends ${M(R`x^2+y^2+z^2\to\infty`)}, so there is no maximum.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the maximum and minimum values of ${M('f(x,y,z)='+q.ftex)} subject to ${M(q.gtex)}. Type <code>DNE</code> if one does not exist.</p>`;
+    numIn(el,'mx','maximum =');numIn(el,'mn','minimum =');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx,{tol:0.005})],['mn',checkNumber($('[data-k=mn]',el).value,q.mn,{tol:0.005})]]);},
+  solution(q){return q.work+` Maximum <b>${q.mx==='DNE'?'DNE':fmt(q.mx)}</b>, minimum <b>${q.mn==='DNE'?'DNE':fmt(q.mn)}</b>.`;}
+};
+Q.lagWord={name:'optimization word problem',
+  gen(){const which=pick(['noTop','closed','postal']);
+    if(which==='noTop'){const k=pick([1,2,3,4]);const S=12*k*k;
+      return {which,k,S,
+        prompt:`A rectangular box with <b>no top</b> is built from ${S} square centimeters of cardboard. Find the dimensions that maximize its volume, and that maximum volume.`,
+        inputs:[['a','side of the square base =',2*k,'cm'],['h','height =',k,'cm'],['v','maximum volume =',4*k*k*k,'cm³']],
+        work:`Let the base be ${M(R`x\times y`)} and the height ${M('z')}. Maximize ${M('V=xyz')} subject to ${M(R`g=xy+2xz+2yz=${S}`)}. The system ${M(R`\nabla V=\lambda\nabla g`)} is${D(R`yz=\lambda(y+2z),\qquad xz=\lambda(x+2z),\qquad xy=\lambda(2x+2y)`)}Subtracting the first two gives ${M(R`z(y-x)=\lambda(y-x)`)}, and ${M(R`z=\lambda`)} would turn the first equation into ${M(R`yz=yz+2z^2`)}, forcing ${M('z=0')}. So ${M('x=y')}. Then ${M(R`xz=\lambda(x+2z)`)} and ${M(R`x^2=4\lambda x`)} give ${M(R`\lambda=x/4`)}, hence ${M(R`4z=x+2z`)} and ${M('x=2z')}. The constraint becomes ${M(R`12z^2=${S}`)}, so ${M(R`z=${k}`)} and ${M(R`x=y=${2*k}`)}, with ${M(R`V=${4*k*k*k}`)}.`};}
+    if(which==='closed'){const k=pick([2,3,4,5]);const V=k*k*k;
+      return {which,k,V,
+        prompt:`A <b>closed</b> rectangular box must hold exactly ${V} cubic meters. Find the dimensions that use the least material, and that minimum surface area.`,
+        inputs:[['a','each side =',k,'m'],['v','minimum surface area =',6*k*k,'m²']],
+        work:`Minimize ${M('S=2xy+2xz+2yz')} subject to ${M(R`xyz=${V}`)}. The system gives ${M(R`2(y+z)=\lambda yz,\ 2(x+z)=\lambda xz,\ 2(x+y)=\lambda xy`)}. Multiply the first by ${M('x')}, the second by ${M('y')}: both right sides become ${M(R`\lambda xyz`)}, so ${M(R`x(y+z)=y(x+z)`)} and therefore ${M('x=y')}. The same trick on the second and third gives ${M('y=z')}. So the box is a cube: ${M(R`x^3=${V}`)}, ${M(R`x=${k}`)}, and ${M(R`S=6(${k})^2=${6*k*k}`)}.`};}
+    const L=pick([60,72,108,120]);
+    return {which,L,
+      prompt:`A parcel service accepts a rectangular package only if its length plus its girth (the perimeter of the cross section perpendicular to the length) is at most ${L} inches. Find the dimensions of the largest package by volume, and that volume.`,
+      inputs:[['a','length =',L/3,'in'],['b','side of the square cross section =',L/6,'in'],['v','maximum volume =',L*L*L/108,'in³']],
+      work:`Let the length be ${M('x')} and the cross section ${M(R`y\times z`)}, so the girth is ${M('2y+2z')} and the largest package uses ${M(R`x+2y+2z=${L}`)}. Maximize ${M('V=xyz')}: ${M(R`yz=\lambda,\ xz=2\lambda,\ xy=2\lambda`)}. The last two give ${M('y=z')}, and comparing ${M(R`xz=2\lambda`)} with ${M(R`yz=\lambda`)} gives ${M('x=2y')}. The constraint becomes ${M(R`6y=${L}`)}, so ${M(R`y=z=${L/6}`)}, ${M(R`x=${L/3}`)}, and ${M(R`V=${L/3}\cdot ${L/6}^2=${L*L*L/108}`)}.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt}</p>`;
+    q.inputs.forEach(([k,lab,,unit])=>numIn(el,k,lab,unit));},
+  check(q,el){return Gall(el,q.inputs.map(([k,,val])=>[k,checkNumber($(`[data-k=${k}]`,el).value,val,{tol:0.005})]));},
+  solution(q){return q.work+` So ${q.inputs.map(([,lab,val,unit])=>`${lab.replace(/ =$/,'')}: <b>${fmt(val)} ${unit}</b>`).join(', ')}.`;}
+};
+const LAGCONCEPT=[
+  {q:'At a constrained extreme point, \\(\\nabla f=\\lambda\\nabla g\\) says geometrically that:',
+   right:'The level curve of \\(f\\) through the point is tangent to the constraint curve',
+   wrong:['\\(f\\) and \\(g\\) take the same value at the point','\\(\\nabla f=\\mathbf{0}\\) at the point','The constraint curve has a horizontal tangent there'],
+   why:'\\(\\nabla f\\) is perpendicular to the level curve of \\(f\\), and \\(\\nabla g\\) is perpendicular to the constraint curve. If the two gradients are parallel, the two curves share a tangent line: they touch instead of crossing.'},
+  {q:'In the method of Lagrange multipliers, the number \\(\\lambda\\) is:',
+   right:'An extra unknown used to solve the system; the extreme values come from evaluating \\(f\\) at the solution points',
+   wrong:['The maximum value of \\(f\\)','Always positive at a maximum and negative at a minimum','Equal to \\(f(x,y)\\) at each candidate point'],
+   why:'\\(\\lambda\\) is scaffolding. Once you have the candidate points you discard it and compare values of \\(f\\).'},
+  {q:'Walking along the constraint curve, the value of \\(f\\) stops changing exactly when:',
+   right:'\\(\\nabla f\\) has no component along the curve, so \\(\\nabla f\\) is parallel to \\(\\nabla g\\)',
+   wrong:['\\(\\nabla f=\\mathbf{0}\\)','\\(|\\nabla f|\\) is as large as possible','\\(g=0\\)'],
+   why:'The rate of change of \\(f\\) along the curve is the component of \\(\\nabla f\\) in the direction of travel. Zero rate means \\(\\nabla f\\) is perpendicular to the curve, and so is \\(\\nabla g\\).'},
+  {q:'To extremize \\(f(x,y,z)\\) subject to two constraints \\(g=c\\) and \\(h=k\\), you solve:',
+   right:'\\(\\nabla f=\\lambda\\nabla g+\\mu\\nabla h\\) together with both constraints',
+   wrong:['\\(\\nabla f=\\lambda\\nabla g\\) and \\(\\nabla f=\\mu\\nabla h\\) separately','\\(\\nabla f=\\lambda(\\nabla g+\\nabla h)\\)','\\(\\nabla g=\\lambda\\nabla h\\) and then \\(g=c\\)'],
+   why:'Two constraints cut out a curve. The vectors perpendicular to that curve are exactly the linear combinations of \\(\\nabla g\\) and \\(\\nabla h\\), so \\(\\nabla f\\) must be one of them.'},
+  {q:'Lagrange multipliers give you two candidate points on a circle, with \\(f=7\\) and \\(f=-3\\). What can you conclude?',
+   right:'The maximum of \\(f\\) on the circle is 7 and the minimum is \\(-3\\)',
+   wrong:['Only that 7 is a local maximum along the curve','Nothing until you run the second derivative test','That \\(\\lambda\\) must equal 7 at the first point'],
+   why:'A circle is closed and bounded and \\(f\\) is continuous, so the extremes exist and must be among the candidates. Comparing the values settles it.'},
+];
+Q.lagConcept={name:'the meaning of the Lagrange condition',
+  gen(){const it=pick(LAGCONCEPT);const opts=shuffle([it.right,...it.wrong]);
+    return {it,opts,ci:opts.indexOf(it.right)};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.it.q}</p>`;
+    q.get=choiceButtons(el,q.opts.map((o,i)=>({label:o,value:i})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return v===q.ci?{ok:true,msg:q.it.why}:{ok:false,msg:'Not that one. Picture the two gradients at the point.'};},
+  solution(q){return `<b>${q.it.right}.</b> ${q.it.why}`;}
+};
+
+/* ============================================================ chapter 1 widgets */
+(function(){
+  /* --- walkthrough --- */
+  let F,step=0;const NSTEP=5;
+  function rows(){return F.pts.map(p=>{const fxx=F.fxx(p[0],p[1]),fyy=F.fyy(p[0],p[1]),fxy=F.fxy(p[0],p[1]);
+    const Dv=fxx*fyy-fxy*fxy;return {p,fxx,fyy,fxy,Dv,k:classifyD(Dv,fxx),v:F.f(p[0],p[1])};});}
+  function draw(){
+    const rw=rows();
+    $('#cwHead').innerHTML=M('f(x,y)='+F.tex);
+    const body=[
+      `Differentiate once in each variable: ${M(R`f_x=${F.fxT}`)} and ${M(R`f_y=${F.fyT}`)}.`,
+      `Solve ${M(R`f_x=0,\ f_y=0`)}. ${F.how} Critical points: <b>${ptListStr(F.pts)}</b>.`,
+      `Differentiate again: ${M(R`f_{xx}=${F.fxxT}`)}, ${M(R`f_{xy}=${F.fxyT}`)}, ${M(R`f_{yy}=${F.fyyT}`)}, so ${M(R`D=(${F.fxxT})(${F.fyyT})-(${F.fxyT})^2`)}.`,
+      `Evaluate ${M('D')} at each critical point:<ul class="small" style="list-style:none;padding:0;margin:6px 0;line-height:1.8">`+
+        rw.map(r=>`<li>${M(PTX(r.p))}: ${M(R`D=(${texNum(r.fxx)})(${texNum(r.fyy)})-(${texNum(r.fxy)})^2=${texNum(r.Dv)}`)}</li>`).join('')+`</ul>`,
+      `Read off the four cases, then evaluate ${M('f')} at the extrema:<ul class="small" style="list-style:none;padding:0;margin:6px 0;line-height:1.8">`+
+        rw.map(r=>`<li><i class="dot" style="background:${COL[r.k]};width:10px;height:10px;border-radius:50%"></i> ${M(PTX(r.p))}: ${M(R`D=${texNum(r.Dv)}`)}${r.Dv>0?', '+M(R`f_{xx}=${texNum(r.fxx)}`):''} &rarr; <b>${KINDNAME[r.k]}</b>${r.k==='saddle'?'':', value '+M(texNum(r.v))}</li>`).join('')+`</ul>`,
+    ];
+    $('#cwSteps').innerHTML=body.map((b,i)=>`<li class="${i===step-1?'now':(i>step-1?'dim':'')}">${i<step?b:'<span class="muted">'+['Compute the first partials.','Solve the system.','Compute the second partials.','Evaluate D at each point.','Classify and evaluate f.'][i]+'</span>'}</li>`).join('');
+    const st=['Five steps, always the same five. Press Next.','Step 1: the first partials.','Step 2: solve the system for every solution.','Step 3: the second partials and D.','Step 4: D at each critical point.','Step 5: classify, then evaluate f.'];
+    $('#cwStatus').textContent=st[step];
+    $('#cwPrev').disabled=step===0;$('#cwNext').disabled=step===NSTEP;
+    typeset($('#cwSteps'));typeset($('#cwHead'));}
+  function fresh(){F=pick(CFLIST)();step=0;draw();}
+  $('#cwNext').onclick=()=>{step=Math.min(NSTEP,step+1);draw();};
+  $('#cwPrev').onclick=()=>{step=Math.max(0,step-1);draw();};
+  $('#cwNew').onclick=fresh;
+  fresh();
+
+  /* --- surface + contour explore --- */
+  const PRESETS=[
+    {n:'x² + y²',tex:'x^2+y^2',f:(x,y)=>x*x+y*y,fxx:()=>2,fyy:()=>2,fxy:()=>0,pts:[[0,0]],L:2},
+    {n:'−x² − y²',tex:'-x^2-y^2',f:(x,y)=>-x*x-y*y,fxx:()=>-2,fyy:()=>-2,fxy:()=>0,pts:[[0,0]],L:2},
+    {n:'x² − y²',tex:'x^2-y^2',f:(x,y)=>x*x-y*y,fxx:()=>2,fyy:()=>-2,fxy:()=>0,pts:[[0,0]],L:2},
+    {n:'x³ − 3x + y²',tex:'x^3-3x+y^2',f:(x,y)=>x*x*x-3*x+y*y,fxx:x=>6*x,fyy:()=>2,fxy:()=>0,pts:[[1,0],[-1,0]],L:2},
+    {n:'x³ − 3x + y³ − 3y',tex:'x^3-3x+y^3-3y',f:(x,y)=>x*x*x-3*x+y*y*y-3*y,fxx:x=>6*x,fyy:(x,y)=>6*y,fxy:()=>0,pts:[[1,1],[1,-1],[-1,1],[-1,-1]],L:2},
+    {n:'x⁴ − 2x² + y³ − 3y',tex:'x^4-2x^2+y^3-3y',f:(x,y)=>x*x*x*x-2*x*x+y*y*y-3*y,fxx:x=>12*x*x-4,fyy:(x,y)=>6*y,fxy:()=>0,pts:[[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],L:2},
+    {n:'(x − y)(16 − xy)',tex:'(x-y)(16-xy)',f:(x,y)=>(x-y)*(16-x*y),fxx:(x,y)=>-2*y,fyy:(x,y)=>2*x,fxy:(x,y)=>-2*x+2*y,pts:[[4,4],[-4,-4]],L:6},
+  ];
+  let P=PRESETS[0];
+  const scene=new Scene3D('#critScene',{range:2,azim:-58,elev:26});
+  const map=new Plot2D('#critMap',{xmin:-2,xmax:2,ymin:-2,ymax:2});
+  PRESETS.forEach(pp=>{const b=el('button',{class:'btn small'},pp.n);
+    b.onclick=()=>{P=pp;$$('#critPresets .btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw2();};
+    $('#critPresets').appendChild(b);});
+  $$('#critPresets .btn')[0].classList.add('on');
+  const kindAt=(pp,p)=>classifyD(pp.fxx(p[0],p[1])*pp.fyy(p[0],p[1])-pp.fxy(p[0],p[1])**2,pp.fxx(p[0],p[1]));
+  function draw2(){
+    const L=P.L;
+    let big=0;
+    for(let i=0;i<=24;i++)for(let j=0;j<=24;j++)big=Math.max(big,Math.abs(P.f(-L+2*L*i/24,-L+2*L*j/24)));
+    /* tanh is increasing, so hills stay hills and saddles stay saddles, but the box always fits */
+    const Z=v=>0.92*L*Math.tanh(3*v/(big||1));
+    scene.o.range=L;scene.clear();
+    scene.surface((x,y)=>Z(P.f(x,y)),[-L,L],[-L,L],{n:34,base:SURF.blue,alpha:0.6,stroke:'rgba(30,40,80,.12)'});
+    P.pts.forEach(p=>{const k=kindAt(P,p);
+      scene.point([p[0],p[1],Z(P.f(p[0],p[1]))+0.05*L],{color:COL[k],r:6.5});});
+    scene.render();
+    Object.assign(map.o,{xmin:-L,xmax:L,ymin:-L,ymax:L});
+    map.begin();
+    const crit=P.pts.map(p=>P.f(p[0],p[1]));
+    map.contour(P.f,quantLevels(P.f,-L,L,-L,L,13),{color:'#a8bce9',width:1.2,labels:false});
+    map.contour(P.f,uniqv(crit),{color:'#8b877e',width:1.9,labels:false});
+    P.pts.forEach(p=>{const k=kindAt(P,p);map.point(p,{color:COL[k],r:6.5});});
+    $('#critOut').innerHTML=`f(x, y) = ${P.n}<br>`+P.pts.map(p=>{
+      const fxx=P.fxx(p[0],p[1]),fyy=P.fyy(p[0],p[1]),fxy=P.fxy(p[0],p[1]);const Dv=fxx*fyy-fxy*fxy;const k=kindAt(P,p);
+      return `<i class="dot" style="background:${COL[k]};width:10px;height:10px;border-radius:50%"></i> (${fmt(p[0])}, ${fmt(p[1])}): D = ${fmt(Dv)}, f<sub>xx</sub> = ${fmt(fxx)} &rarr; <b>${KINDNAME[k]}</b>, f = ${fmt(P.f(p[0],p[1]))}`;}).join('<br>');}
+  redrawOnShow('critical',draw2);draw2();
+
+  new Drill({mount:'#drill-critical',section:'critical',goal:6,
+    ...mixDrill([Q.critFind,Q.critFind,Q.critClassify,Q.critClassify,Q.critExtremes,Q.critExtremes,Q.critTestNums])});
+})();
+
+/* ============================================================ chapter 2 widgets */
+(function(){
+  const PRE=[
+    {n:'rectangle',type:'poly',co:{A:1,B:1,C:0,D:-2,E:-4,F:0},tex:'x^2+y^2-2x-4y',
+     verts:[[0,0],[3,0],[3,4],[0,4]],win:[-1.4,4.4,-1.4,5.4]},
+    {n:'square, saddle inside',type:'poly',co:{A:1,B:-1,C:0,D:0,E:0,F:0},tex:'x^2-y^2',
+     verts:[[-2,-2],[2,-2],[2,2],[-2,2]],win:[-3,3,-3,3]},
+    {n:'disk',type:'disk',A:2,B:3,C:-4,F:-6,r:2,tex:'2x^2+3y^2-4x-6',win:[-3,3,-3,3]},
+    {n:'triangle',type:'poly',co:{A:1,B:1,C:0,D:-2,E:-4,F:0},tex:'x^2+y^2-2x-4y',
+     verts:[[0,0],[4,0],[0,4]],win:[-1.4,5,-1.4,5]},
+  ];
+  let P=PRE[0];
+  const plot=new Plot2D('#absMap',{xmin:-3,xmax:3,ymin:-3,ymax:3});
+  PRE.forEach(pp=>{const b=el('button',{class:'btn small'},pp.n);
+    b.onclick=()=>{P=pp;$$('#absPresets .btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};
+    $('#absPresets').appendChild(b);});
+  $$('#absPresets .btn')[0].classList.add('on');
+  function draw(){
+    Object.assign(plot.o,{xmin:P.win[0],xmax:P.win[1],ymin:P.win[2],ymax:P.win[3]});
+    plot.begin();
+    let f,cands,shape;
+    if(P.type==='poly'){const {A,B,C,D,E,F}=P.co;f=(x,y)=>A*x*x+B*y*y+C*x*y+D*x+E*y+F;
+      cands=quadCands(P.co,P.verts);shape=P.verts;}
+    else{const {A,B,C,F,r}=P;f=(x,y)=>A*x*x+B*y*y+C*x+F;cands=diskCandsAB(A,B,C,F,r);
+      shape=[];for(let i=0;i<80;i++){const t=2*Math.PI*i/80;shape.push([r*Math.cos(t),r*Math.sin(t)]);}}
+    const xs=shape.map(p=>p[0]),ys=shape.map(p=>p[1]);
+    plot.contour(f,quantLevels(f,Math.min(...xs),Math.max(...xs),Math.min(...ys),Math.max(...ys),12),
+      {color:'#c3cfe9',width:1.1,labels:false});
+    plot.poly(shape,{fill:'rgba(59,91,219,.10)',stroke:'#3b5bdb',width:1.8});
+    const {mx,mn}=bestOf(cands);
+    cands.forEach(c=>{const cc=c.kind==='interior'?'#16a34a':c.kind==='edge'?'#2563eb':'#a8a29e';
+      plot.point(c.p,{color:cc,r:6,ring:Math.abs(c.v-mx)<1e-9||Math.abs(c.v-mn)<1e-9});
+      plot.text(c.p,fmt(c.v),{color:cc,dx:9,dy:-8,font:'600 12px -apple-system,Segoe UI,sans-serif'});});
+    const top=cands.filter(c=>Math.abs(c.v-mx)<1e-9),bot=cands.filter(c=>Math.abs(c.v-mn)<1e-9);
+    $('#absOut').innerHTML=`f(x, y) = ${P.tex.replace(/\^2/g,'²').replace(/\*/g,'')}<br>`+
+      `region: ${P.type==='disk'?'x² + y² ≤ '+P.r*P.r:(P.verts.length===3?'triangle':'rectangle')+' with vertices '+P.verts.map(v=>`(${v[0]}, ${v[1]})`).join(' ')}<br>`+
+      `candidates: ${cands.length}<br>`+
+      `<b>absolute maximum ${fmt(mx)}</b> at ${top.map(c=>`(${fmt(c.p[0])}, ${fmt(c.p[1])})`).join(' and ')}<br>`+
+      `<b>absolute minimum ${fmt(mn)}</b> at ${bot.map(c=>`(${fmtDec(c.p[0],2)}, ${fmtDec(c.p[1],2)})`).join(' and ')}`;}
+  redrawOnShow('absolute',draw);draw();
+
+  new Drill({mount:'#drill-absolute',section:'absolute',goal:5,
+    ...mixDrill([Q.absRect,Q.absRect,Q.absDisk,Q.absDisk,Q.absTri,Q.absWhere])});
+})();
+
+/* ============================================================ chapter 3 widgets */
+(function(){
+  /* --- walkthrough: f = xy on x^2 + y^2 = 8 --- */
+  let step=0;const LN=5;
+  const body=[
+    `Write the constraint as ${M(R`g(x,y)=x^2+y^2=8`)} and compute both gradients: ${M(R`\nabla f=\langle y,\,x\rangle`)} and ${M(R`\nabla g=\langle 2x,\,2y\rangle`)}.`,
+    `Set ${M(R`\nabla f=\lambda\nabla g`)} and keep the constraint:${D(R`y=2\lambda x,\qquad x=2\lambda y,\qquad x^2+y^2=8`)}`,
+    `Eliminate ${M(R`\lambda`)} without dividing: multiply the first equation by ${M('y')} and the second by ${M('x')}. Both right sides become ${M(R`2\lambda xy`)}, so ${M(R`y^2=x^2`)}, that is ${M(R`y=\pm x`)}. (Neither ${M('x')} nor ${M('y')} can be 0 here: if ${M('x=0')} the first equation forces ${M('y=0')}, and ${M('(0,0)')} is not on the circle.)`,
+    `Substitute into the constraint. With ${M(R`y^2=x^2`)}, ${M(R`2x^2=8`)} gives ${M(R`x=\pm2`)}, so the candidates are ${M('(2,2)')}, ${M('(-2,-2)')}, ${M('(2,-2)')}, ${M('(-2,2)')}.`,
+    `Evaluate ${M('f=xy')} at all four: ${M('f(2,2)=4')}, ${M('f(-2,-2)=4')}, ${M('f(2,-2)=-4')}, ${M('f(-2,2)=-4')}. The circle is closed and bounded, so both extremes exist and are on this list: <b>maximum 4, minimum −4</b>.`,
+  ];
+  const labels=['Gradients.','The system.','Eliminate λ.','Solve the constraint.','Compare the values.'];
+  function draw(){
+    $('#lwSteps').innerHTML=body.map((b,i)=>`<li class="${i===step-1?'now':(i>step-1?'dim':'')}">${i<step?b:'<span class="muted">'+labels[i]+'</span>'}</li>`).join('');
+    const st=['Five steps. Press Next.','Step 1: both gradients.','Step 2: the three equations.','Step 3: the algebra trick that avoids dividing by zero.','Step 4: back into the constraint.','Step 5: compare the values of f, not of λ.'];
+    $('#lwStatus').textContent=st[step];
+    $('#lwPrev').disabled=step===0;$('#lwNext').disabled=step===LN;
+    typeset($('#lwSteps'));}
+  $('#lwNext').onclick=()=>{step=Math.min(LN,step+1);draw();};
+  $('#lwPrev').onclick=()=>{step=Math.max(0,step-1);draw();};
+  draw();
+
+  /* --- constraint explore --- */
+  const PRE=[
+    {n:'f = xy on x² + y² = 8',ftex:'xy',gtex:'x^2+y^2=8',f:(x,y)=>x*y,
+     gf:(x,y)=>[y,x],gg:(x,y)=>[2*x,2*y],c:t=>[Math.sqrt(8)*Math.cos(t),Math.sqrt(8)*Math.sin(t)],win:4.2},
+    {n:'f = x + 2y on x² + y² = 5',ftex:'x+2y',gtex:'x^2+y^2=5',f:(x,y)=>x+2*y,
+     gf:()=>[1,2],gg:(x,y)=>[2*x,2*y],c:t=>[Math.sqrt(5)*Math.cos(t),Math.sqrt(5)*Math.sin(t)],win:3.4},
+    {n:'f = x² + y² on x²/4 + y² = 1',ftex:'x^2+y^2',gtex:'x^2/4+y^2=1',f:(x,y)=>x*x+y*y,
+     gf:(x,y)=>[2*x,2*y],gg:(x,y)=>[x/2,2*y],c:t=>[2*Math.cos(t),Math.sin(t)],win:2.8},
+    {n:'f = x²y on x² + y² = 3',ftex:'x^2y',gtex:'x^2+y^2=3',f:(x,y)=>x*x*y,
+     gf:(x,y)=>[2*x*y,x*x],gg:(x,y)=>[2*x,2*y],c:t=>[Math.sqrt(3)*Math.cos(t),Math.sqrt(3)*Math.sin(t)],win:2.6},
+  ];
+  let P=PRE[0],tdeg=35;
+  const plot=new Plot2D('#lagMap',{xmin:-4.2,xmax:4.2,ymin:-4.2,ymax:4.2});
+  PRE.forEach(pp=>{const b=el('button',{class:'btn small'},pp.n);
+    b.onclick=()=>{P=pp;$$('#lagPresets .btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');draw2();};
+    $('#lagPresets').appendChild(b);});
+  $$('#lagPresets .btn')[0].classList.add('on');
+  sliderRow($('#lagSliders'),{label:'position along the constraint',min:0,max:360,step:1,value:tdeg,
+    fmt:v=>fmtDec(v,0)+'°',onInput:v=>{tdeg=v;draw2();}});
+  function draw2(){
+    const W=P.win;Object.assign(plot.o,{xmin:-W,xmax:W,ymin:-W,ymax:W});
+    plot.begin();
+    plot.contour(P.f,quantLevels(P.f,-W,W,-W,W,14),{color:'#c3cfe9',width:1.1,labels:false});
+    const t=tdeg*Math.PI/180,p=P.c(t);
+    const val=P.f(p[0],p[1]);
+    plot.contour(P.f,[val],{color:'#16a34a',width:2,labels:false});
+    plot.param(P.c,0,2*Math.PI,{color:'#7c3aed',width:2.4});
+    const a=P.gf(p[0],p[1]),b=P.gg(p[0],p[1]);
+    const ua=unit(a),ub=unit(b),len=0.34*W;
+    plot.vector(p,[p[0]+len*ub[0],p[1]+len*ub[1]],{color:'#d97706',width:3});
+    plot.vector(p,[p[0]+len*ua[0],p[1]+len*ua[1]],{color:'#16a34a',width:3});
+    plot.point(p,{color:'#1c1b1a',r:5,ring:true});
+    const na=norm(a),nb=norm(b);
+    const cosv=na*nb>1e-12?clamp(Math.abs(dot(a,b))/(na*nb),0,1):1;
+    const ang=Math.acos(cosv)*180/Math.PI;
+    $('#lagOut').innerHTML=`point on the constraint: (${fmtDec(p[0],3)}, ${fmtDec(p[1],3)})<br>`+
+      `f = ${fmtDec(val,3)}<br>`+
+      `∇f = ⟨${fmtDec(a[0],2)}, ${fmtDec(a[1],2)}⟩ &nbsp; ∇g = ⟨${fmtDec(b[0],2)}, ${fmtDec(b[1],2)}⟩<br>`+
+      `angle between the two directions: ${fmtDec(ang,2)}°`;
+    $('#lagFlag').innerHTML=ang<3
+      ? `<div class="note" style="margin-top:10px"><b>Gradients aligned.</b> ∇f and ∇g point along the same line, so ∇f = λ∇g here: this is a candidate. The green level curve of f is tangent to the purple constraint.</div>`
+      : `<div class="hint" style="margin-top:10px">Keep sliding. While the two arrows disagree, f is still changing as you move along the constraint, so this cannot be a maximum or a minimum.</div>`;}
+  redrawOnShow('lagrange',draw2);draw2();
+
+  new Drill({mount:'#drill-lagrange',section:'lagrange',goal:6,
+    ...mixDrill([Q.lagLine,Q.lagLine,Q.lagCurve,Q.lagCurve,Q.lag3,Q.lag3,Q.lagWord,Q.lagConcept])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.critFind,Q.critClassify,Q.critExtremes,Q.critTestNums,
+  Q.absRect,Q.absDisk,Q.absTri,Q.absWhere,
+  Q.lagLine,Q.lagCurve,Q.lag3,Q.lagWord,Q.lagConcept]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'find all critical points':q=>({pts:q.pts.map(p=>`(${p[0]}, ${p[1]})`).join(', ')}),
+  'classify a critical point':q=>({_btn:q.ci}),
+  'local extreme values and saddle points':q=>({mx:listStr(q.mxv),mn:listStr(q.mnv),sd:ptListStr(q.sad)}),
+  'the second derivative test from numbers':q=>({d:String(q.Dv),_btn:q.ci}),
+  'absolute extrema on a rectangle':q=>({mx:fmt(q.mx),mn:fmt(q.mn)}),
+  'absolute extrema on a disk':q=>({mx:String(q.mx),mn:String(q.mn)}),
+  'absolute extrema on a triangle':q=>({mx:fmt(q.mx),mn:fmt(q.mn)}),
+  'where absolute extrema can occur':q=>({_btn:q.ci}),
+  'Lagrange: a linear function on a circle':q=>({mx:String(q.mx),mn:String(q.mn)}),
+  'Lagrange: maximum and minimum on a curve':q=>({mx:q.mx==='DNE'?'DNE':String(q.mx),mn:q.mn==='DNE'?'DNE':String(q.mn)}),
+  'Lagrange in three variables':q=>({mx:q.mx==='DNE'?'DNE':String(q.mx),mn:q.mn==='DNE'?'DNE':String(q.mn)}),
+  'optimization word problem':q=>q.inputs.reduce((o,i)=>(o[i[0]]=String(i[2]),o),{}),
+  'the meaning of the Lagrange condition':q=>({_btn:q.ci}),
+};
+
+initModule({key:'optimization',title:'Optimization',sub:'Module 6 · Stewart 14.7 to 14.8'});
+</script>
+</body>
+</html>

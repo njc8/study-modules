@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gradient, Directional Derivatives, Chain Rule</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 5 · Stewart 14.6, then 14.5</p>
+  <h2>Gradient, directional derivatives, chain rule</h2>
+  <p class="lead">Three ideas that are really one idea. Once you can build the vector \(\nabla f\), the rate of change in any direction, every tangent plane in the course, and the chain rule all fall out of a dot product.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or click, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats are flexible. Vectors can be typed as <code>&lt;1, -2, 3&gt;</code>, <code>(1,-2,3)</code>, or <code>i - 2j + 3k</code>. Expressions use ordinary typing: <code>2xy</code>, <code>x^2y</code>, <code>e^y</code>, <code>sin(xy)</code>, <code>sqrt(x^2+y^2)</code>, <code>ln(x^2+y^2)</code>. Numbers can be exact, like <code>3/5</code>, <code>sqrt(13)</code>, <code>26/sqrt(29)</code>, or <code>pi/3</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> level curve, level surface</span>
+      <span><i class="dot" style="background:var(--b)"></i> the direction <b>u</b></span>
+      <span><i class="dot" style="background:var(--c)"></i> the gradient, and results</span>
+      <span><i class="dot" style="background:var(--d)"></i> the point <b>P</b></span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Compute \(\nabla f\) in two or three variables, at a point or as a function.</li>
+      <li>Say which direction increases \(f\) fastest, how fast that is, and which directions give zero change.</li>
+      <li>Write the tangent plane and normal line to a level surface, and the tangent line to a level curve.</li>
+      <li>Compute \(D_{\mathbf{u}}f\) from a direction vector, an angle, or a target point, without ever forgetting to normalize.</li>
+      <li>Draw the tree diagram for any chain of dependencies and write the chain rule from it, with one term per path.</li>
+      <li>Differentiate implicitly: \(dy/dx\) from \(F(x,y)=0\), and \(\partial z/\partial x\), \(\partial z/\partial y\) from \(F(x,y,z)=0\).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 GRADIENT -->
+<section data-id="grad" data-title="The gradient" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 14.6</p>
+  <h2>The gradient</h2>
+  <p class="lead">Collect the partial derivatives into a vector. That vector knows which way is uphill, how steep it is, and which way the level curve runs.</p>
+
+  <p>The <b>gradient</b> of \(f\) is the vector whose components are the partial derivatives:</p>
+  <div class="formula">\(\nabla f=\langle f_x,\,f_y\rangle \qquad\qquad \nabla f=\langle f_x,\,f_y,\,f_z\rangle\)<span class="cap">Read \(\nabla f\) as "grad f" or "del f". It is a <b>vector</b> built out of a <b>scalar</b> function, and it has one component per input variable.</span></div>
+  <p>Evaluating it at a point \(P\) gives a vector of numbers, \(\nabla f(P)\). Three facts make it the most useful object in this chapter.</p>
+  <ul>
+    <li><b>It is perpendicular to the level set.</b> In two variables \(\nabla f(P)\) is perpendicular to the level curve \(f(x,y)=k\) through \(P\). In three variables \(\nabla F(P)\) is perpendicular to the level surface \(F(x,y,z)=k\) through \(P\).</li>
+    <li><b>It points in the direction of fastest increase</b>, and its length \(|\nabla f(P)|\) <b>is</b> that maximum rate of change.</li>
+    <li><b>The minimum rate is \(-|\nabla f(P)|\)</b>, in the direction \(-\nabla f(P)\), and the rate is <b>zero</b> in the two directions perpendicular to \(\nabla f(P)\): exactly the directions along the level curve.</li>
+  </ul>
+
+  <div class="card">
+    <h4>Explore: contour map and gradient field</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene" id="gradPlot"></canvas>
+        <p class="plotcap">Gray arrows: the gradient field. Click anywhere to drop \(P\). Orange: the level curve through \(P\). Green: \(\nabla f(P)\).</p>
+      </div>
+      <div>
+        <div class="presets" id="gradPresets"></div>
+        <div class="readout" id="gradOut"></div>
+        <p class="hint">Click a few points and watch two things. The green arrow always crosses the orange curve at a right angle, everywhere, for every function. And the arrows are longest where the level curves are packed tightest, because crowded contours mean a steep climb.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Perpendicular to the level set.</b> This one fact does the work of three formulas. It gives the tangent plane (the plane through \(P\) with normal \(\nabla F(P)\)), the normal line (the line through \(P\) with direction \(\nabla F(P)\)), and the tangent line to a level curve in the plane.</div>
+
+  <h3>Tangent planes, normal lines, tangent lines</h3>
+  <p>Let \(S\) be the level surface \(F(x,y,z)=k\) and let \(P(x_0,y_0,z_0)\) be a point on it. Every curve lying in \(S\) through \(P\) has a tangent vector perpendicular to \(\nabla F(P)\), so all those tangent vectors sweep out a plane with normal \(\nabla F(P)\):</p>
+  <div class="formula">\(F_x(P)(x-x_0)+F_y(P)(y-y_0)+F_z(P)(z-z_0)=0\)<span class="cap">Tangent plane to \(F(x,y,z)=k\) at \(P\). The coefficients are <b>numbers</b>: evaluate the partials at \(P\) first.</span></div>
+  <p>The <b>normal line</b> at \(P\) is the line through \(P\) in the direction \(\nabla F(P)\), so \(\;x=x_0+F_x(P)\,t,\;\; y=y_0+F_y(P)\,t,\;\; z=z_0+F_z(P)\,t\).</p>
+  <p>In two variables the same argument gives the <b>tangent line to a level curve</b> \(f(x,y)=k\) at \(P(x_0,y_0)\):</p>
+  <div class="formula">\(f_x(P)(x-x_0)+f_y(P)(y-y_0)=0\)<span class="cap">Same shape, one dimension down. The gradient is the normal vector of the tangent line.</span></div>
+  <p>A surface given as a graph \(z=g(x,y)\) is a level surface too: set \(F(x,y,z)=g(x,y)-z\), which has \(F=0\) on the surface and \(\nabla F=\langle g_x,\,g_y,\,-1\rangle\). That recovers the tangent plane formula from the previous module.</p>
+
+  <div class="warn"><b>Evaluate before you write.</b> The tangent plane coefficients are \(F_x(P)\), not \(F_x\). If an \(x\) or a \(y\) is still sitting in front of the parenthesis in your final answer, you skipped the evaluation step and the answer is not a plane. Also keep \(f\) and \(\nabla f\) straight: \(f\) is a number, \(\nabla f\) is a vector, and asking for "the rate" means a number while asking for "the direction" means a vector.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-grad"></div>
+</section>
+
+<!-- ============================================================ 2 DIRECTIONAL DERIVATIVES -->
+<section data-id="dir" data-title="Directional derivatives" data-goal="8">
+  <p class="eyebrow">Chapter 2 · Stewart 14.6</p>
+  <h2>Directional derivatives</h2>
+  <p class="lead">The partial derivatives give the rate of change along the axes. The directional derivative gives it along any direction you like, and it is just a dot product.</p>
+
+  <p>The <b>directional derivative</b> of \(f\) at \(P\) in the direction of a <b>unit</b> vector \(\mathbf{u}\) is the rate at which \(f\) changes as you step away from \(P\) along \(\mathbf{u}\):</p>
+  <div class="formula">\(D_{\mathbf{u}}f(P)=\nabla f(P)\cdot\mathbf{u}\)<span class="cap">A number, not a vector. It is positive when \(f\) increases in that direction, negative when \(f\) decreases, zero when \(f\) holds steady.</span></div>
+  <p>Notice the two special cases: \(\mathbf{u}=\langle 1,0\rangle\) gives \(D_{\mathbf{u}}f=f_x\) and \(\mathbf{u}=\langle 0,1\rangle\) gives \(f_y\). The partials are directional derivatives along the axes.</p>
+
+  <h3>Getting \(\mathbf{u}\): three ways a problem states the direction</h3>
+  <div class="card tint">
+    <ol>
+      <li><b>"In the direction of the vector \(\mathbf{v}\)"</b>: \(\mathbf{v}\) is almost never a unit vector, so normalize it. \(\mathbf{u}=\dfrac{\mathbf{v}}{|\mathbf{v}|}\).</li>
+      <li><b>"In the direction that makes angle \(\theta\) with the positive \(x\)-axis"</b>: \(\mathbf{u}=\langle\cos\theta,\ \sin\theta\rangle\), which already has length 1.</li>
+      <li><b>"Toward the point \(Q\)"</b>: the direction is \(\mathbf{v}=\overrightarrow{PQ}=Q-P\), then normalize. Subtract in that order, terminal minus initial, or you will walk away from \(Q\).</li>
+    </ol>
+  </div>
+
+  <div class="warn"><b>Forgetting to normalize is the number one error in this section.</b> \(\nabla f(P)\cdot\mathbf{v}\) is not the directional derivative unless \(|\mathbf{v}|=1\). If the problem hands you \(\mathbf{v}=\langle 3,4\rangle\), the answer is \(\nabla f(P)\cdot\langle \tfrac35,\tfrac45\rangle\), which is one fifth of \(\nabla f(P)\cdot\langle 3,4\rangle\). Every time you write \(D_{\mathbf{u}}f\), check that the vector you dotted with has length 1.</div>
+
+  <h3>Why the gradient is the steepest direction</h3>
+  <p>Write the dot product with the angle: \(D_{\mathbf{u}}f=\nabla f\cdot\mathbf{u}=|\nabla f|\,|\mathbf{u}|\cos\phi=|\nabla f|\cos\phi\), where \(\phi\) is the angle between \(\mathbf{u}\) and \(\nabla f\). As \(\mathbf{u}\) rotates, the only thing that changes is \(\cos\phi\), which swings between \(1\) and \(-1\). So:</p>
+  <div class="formula">\(-|\nabla f(P)|\ \le\ D_{\mathbf{u}}f(P)\ \le\ |\nabla f(P)|\)<span class="cap">Maximum \(|\nabla f|\) when \(\mathbf{u}\) points along \(\nabla f\) (\(\phi=0\)). Minimum \(-|\nabla f|\) in the opposite direction (\(\phi=\pi\)). Zero when \(\mathbf{u}\perp\nabla f\) (\(\phi=\pi/2\)), which is along the level curve.</span></div>
+  <p>In three variables nothing changes: \(D_{\mathbf{u}}f(P)=\nabla f(P)\cdot\mathbf{u}\) with \(\mathbf{u}\) a unit vector in space, and the same three bounds hold.</p>
+
+  <div class="card">
+    <h4>Explore: rotate \(\mathbf{u}\) and watch the rate</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene" id="dirPlot"></canvas>
+        <p class="plotcap">Drag anywhere to move \(P\). Green: \(\nabla f(P)\), drawn shortened to fit. Blue: the unit vector \(\mathbf{u}\).</p>
+      </div>
+      <div>
+        <div class="presets" id="dirPresets"></div>
+        <div class="sliders" id="dirSliders" style="grid-template-columns:1fr"></div>
+        <div class="readout" id="dirOut"></div>
+        <div style="position:relative;height:20px;background:#e9e6df;border-radius:99px;margin-top:10px;overflow:hidden">
+          <i id="dirGauge" style="position:absolute;top:0;bottom:0;left:50%;width:0;background:var(--c)"></i>
+          <b style="position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#b9b5ab"></b>
+        </div>
+        <div class="row" style="justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px"><span id="dirLo"></span><span>0</span><span id="dirHi"></span></div>
+        <p class="hint">Sweep the angle through a full turn. The bar hits its right end exactly when \(\mathbf{u}\) lines up with the green arrow, hits its left end in the opposite direction, and passes through zero twice, at the two directions perpendicular to the gradient. Those are the directions that run along the level curve.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>The three answers you will be asked for over and over.</b> Fastest increase: direction \(\nabla f(P)\), rate \(|\nabla f(P)|\). Fastest decrease: direction \(-\nabla f(P)\), rate \(-|\nabla f(P)|\). No change: any direction perpendicular to \(\nabla f(P)\), rate \(0\).</div>
+
+  <div class="card">
+    <h4>Step-by-step: computing \(D_{\mathbf{u}}f(P)\)</h4>
+    <div class="expr" id="dirExpr"></div>
+    <div class="controls">
+      <button class="btn" id="dirPrev">◀ Back</button>
+      <button class="btn primary" id="dirNext">Next step ▶</button>
+      <button class="btn" id="dirNew">New problem</button>
+      <span class="status" id="dirStatus"></span>
+    </div>
+    <p class="hint">Four steps, always the same four: gradient as a function, gradient at the point, unit vector, dot product. The third step is the one people skip.</p>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-dir"></div>
+</section>
+
+<!-- ============================================================ 3 CHAIN RULE -->
+<section data-id="chain" data-title="The chain rule" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 14.5</p>
+  <h2>The chain rule</h2>
+  <p class="lead">When the inputs of a function are themselves functions, the derivative collects one term for every route the dependency can travel.</p>
+
+  <p>In one variable, \(\frac{d}{dt}f(x(t))=f'(x)\,\frac{dx}{dt}\): the outer derivative times the inner derivative. With two inputs there are two routes from \(z\) down to \(t\), one through \(x\) and one through \(y\), so there are two terms.</p>
+
+  <div class="formula">\(\dfrac{dz}{dt}=\dfrac{\partial z}{\partial x}\dfrac{dx}{dt}+\dfrac{\partial z}{\partial y}\dfrac{dy}{dt}\)<span class="cap"><b>Case 1.</b> \(z=f(x,y)\) with \(x=x(t)\) and \(y=y(t)\). Everything ends up depending on the single variable \(t\), so the answer is an ordinary derivative \(dz/dt\).</span></div>
+
+  <p>If the inner functions depend on <b>two</b> parameters instead of one, run the same rule once for each parameter, holding the other fixed. The outer derivatives \(\partial z/\partial x\) and \(\partial z/\partial y\) do not change; only the inner ones do.</p>
+
+  <div class="formula">\(\dfrac{\partial z}{\partial s}=\dfrac{\partial z}{\partial x}\dfrac{\partial x}{\partial s}+\dfrac{\partial z}{\partial y}\dfrac{\partial y}{\partial s} \qquad\qquad \dfrac{\partial z}{\partial t}=\dfrac{\partial z}{\partial x}\dfrac{\partial x}{\partial t}+\dfrac{\partial z}{\partial y}\dfrac{\partial y}{\partial t}\)<span class="cap"><b>Case 2.</b> \(z=f(x,y)\) with \(x=x(s,t)\) and \(y=y(s,t)\). Two parameters, so two formulas, and every derivative is a partial.</span></div>
+
+  <p>The <b>general chain rule</b> is one sentence: <b>draw the tree, multiply along each path, add the paths.</b> Write the output on top, the intermediate variables below it, the independent variables at the bottom, and label every edge with the derivative of the upper variable with respect to the lower one. To get the derivative of the top with respect to a bottom variable, find every path from the top down to it, multiply the labels along each path, and add.</p>
+
+  <div class="card">
+    <h4>Explore: the tree diagram</h4>
+    <div class="xf">
+      <div>
+        <div id="treeBox" style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px"></div>
+        <p class="plotcap">Click a variable at the bottom of the tree to light up every path that reaches it.</p>
+      </div>
+      <div>
+        <div class="row" style="gap:8px;margin-bottom:10px"><select id="treeSel"></select></div>
+        <div class="readout" id="treeOut"></div>
+        <div id="treeTex" style="margin-top:6px"></div>
+        <p class="hint">Count the paths before you read the formula. Two intermediate variables give two terms, three give three. The number of terms never depends on how many parameters are at the bottom, only on how many variables sit in the middle layer.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>One term per path.</b> That is the whole rule. If your answer has fewer terms than the tree has paths, you dropped one. If it has more, you counted a path twice.</div>
+
+  <h3>Implicit differentiation</h3>
+  <p>Suppose an equation in \(x\) and \(y\) defines \(y\) implicitly as a function of \(x\). Move everything to one side so the equation reads \(F(x,y)=0\). Now differentiate both sides with respect to \(x\), using the chain rule on the left with \(x=x\) and \(y=y(x)\):</p>
+  <p>\(F_x\dfrac{dx}{dx}+F_y\dfrac{dy}{dx}=0\), and \(dx/dx=1\), so:</p>
+  <div class="formula">\(\dfrac{dy}{dx}=-\dfrac{F_x}{F_y}\)<span class="cap">Valid wherever \(F_y\ne 0\). The minus sign comes from moving \(F_x\) to the other side.</span></div>
+  <p>The same argument with three variables, where \(F(x,y,z)=0\) defines \(z\) as a function of \(x\) and \(y\), gives two formulas. Differentiating with respect to \(x\) holds \(y\) fixed, so \(\partial y/\partial x=0\) and that path dies:</p>
+  <div class="formula">\(\dfrac{\partial z}{\partial x}=-\dfrac{F_x}{F_z} \qquad\qquad \dfrac{\partial z}{\partial y}=-\dfrac{F_y}{F_z}\)<span class="cap">Valid wherever \(F_z\ne 0\). Note which letter sits in the denominator: always the variable you solved for.</span></div>
+
+  <div class="warn"><b>Two ways to lose points here.</b> First, forgetting the inner derivative: \(\frac{d}{dt}(x^2)\) is \(2x\,\frac{dx}{dt}\), not \(2x\). Second, dropping the minus sign in \(dy/dx=-F_x/F_y\). Before you use the implicit formulas, check that you actually moved everything to one side, so that the equation really reads \(F=0\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-chain"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const rand=(a,b)=>a+Math.random()*(b-a);
+const NICE2=[[3,4],[4,3],[5,12],[12,5],[8,15],[6,8],[8,6],[7,24]];
+const NICE3=[[2,-1,2],[1,2,2],[2,3,6],[6,2,3],[3,4,12],[0,3,4],[4,0,3],[2,2,1],[1,4,8]];
+const niceVec=dim=>shuffle(pick(dim===2?NICE2:NICE3)).map(x=>x*pick([1,-1]));
+const rvec=(dim,lo=-4,hi=4)=>Array.from({length:dim},()=>rint(lo,hi));
+const rvecNZ=(dim,lo=-4,hi=4)=>{let v;do{v=rvec(dim,lo,hi);}while(vzero(v));return v;};
+const V=v=>M(texVec(v)),PT=p=>M(texPt(p));
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const vecIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{wide:true,placeholder:ph||'⟨a, b⟩'}));
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const wideIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+/* a decimal string the expression parser can read back (never exponent notation) */
+const numS=x=>Math.abs(x)<1e-12?'0':(Number.isInteger(x)?String(x):x.toFixed(10));
+const vecS=v=>'<'+v.map(numS).join(', ')+'>';
+const signS=(c,v)=>`${c<0?'-':'+'}${Math.abs(c)}${v}`;
+/* a(x - x0) + b(y - y0) + ... written the way a person writes it */
+const shiftTex=(v,x0)=>x0===0?v:`${v}${x0<0?'+':'-'}${texNum(Math.abs(x0))}`;
+const ptEqTex=(g,P,vars)=>{let s='';vars.forEach((v,i)=>{const c=g[i];if(c===0)return;
+  const mag=Math.abs(c)===1?'':texNum(Math.abs(c));
+  s+=(s===''?(c<0?'-':''):(c<0?' - ':' + '))+mag+`\\left(${shiftTex(v,P[i])}\\right)`;});
+  return (s||'0')+'=0';};
+const VPH=n=>n===2?'⟨a, b⟩':'⟨a, b, c⟩';
+const sumSq=v=>v.reduce((s,x)=>s+x*x,0);
+const texDot=(a,b)=>a.map((x,i)=>`(${texNum(x)})(${texNum(b[i])})`).join('+');
+const hintBox=(el,html)=>{let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}h.innerHTML=html;};
+/* exact-looking length: integer if perfect square, else sqrt(n) */
+const lenTex=v=>{const s=sumSq(v);return Math.abs(s-Math.round(s))<1e-9?texSqrt(Math.round(s)):fmtDec(Math.sqrt(s),3);};
+const gradTexOf=fam=>R`\nabla f=\langle `+fam.gT.join(',\\; ')+R` \rangle`;
+
+/* ============================================================ function catalogue
+   Each family: tex of f, gT (TeX of the gradient components), gS (plain strings the
+   expression engine can parse), g(P) (numeric gradient), pt() (a point with clean values),
+   dom (sampling domain when the formula needs one), int (gradient at pt() is an integer vector). */
+const FF2=[
+ {tex:R`x^2y`, gT:[R`2xy`,R`x^2`], gS:['2*x*y','x^2'],
+  g:p=>[2*p[0]*p[1],p[0]*p[0]], pt:()=>[rnz(-3,3),rnz(-3,3)], int:true},
+ {tex:R`x^2-xy+y^2`, gT:[R`2x-y`,R`2y-x`], gS:['2*x-y','2*y-x'],
+  g:p=>[2*p[0]-p[1],2*p[1]-p[0]], pt:()=>[rnz(-3,3),rnz(-3,3)], int:true},
+ {tex:R`x^3-3xy`, gT:[R`3x^2-3y`,R`-3x`], gS:['3*x^2-3*y','-3*x'],
+  g:p=>[3*p[0]*p[0]-3*p[1],-3*p[0]], pt:()=>[rnz(-3,3),rnz(-3,3)], int:true},
+ {tex:R`xe^{y}`, gT:[R`e^{y}`,R`xe^{y}`], gS:['exp(y)','x*exp(y)'],
+  g:p=>[Math.exp(p[1]),p[0]*Math.exp(p[1])], pt:()=>[rnz(-4,4),0], int:true},
+ {tex:R`\sin(xy)`, gT:[R`y\cos(xy)`,R`x\cos(xy)`], gS:['y*cos(x*y)','x*cos(x*y)'],
+  g:p=>[p[1]*Math.cos(p[0]*p[1]),p[0]*Math.cos(p[0]*p[1])], pt:()=>pick([[rnz(-4,4),0],[0,rnz(-4,4)]]), int:true},
+ {tex:R`xy^2-y^3`, gT:[R`y^2`,R`2xy-3y^2`], gS:['y^2','2*x*y-3*y^2'],
+  g:p=>[p[1]*p[1],2*p[0]*p[1]-3*p[1]*p[1]], pt:()=>[rnz(-3,3),rnz(-3,3)], int:true},
+ {tex:R`e^{xy}`, gT:[R`ye^{xy}`,R`xe^{xy}`], gS:['y*exp(x*y)','x*exp(x*y)'],
+  g:p=>[p[1]*Math.exp(p[0]*p[1]),p[0]*Math.exp(p[0]*p[1])], pt:()=>pick([[rnz(-4,4),0],[0,rnz(-4,4)]])},
+ {tex:R`\ln(x^2+y^2)`, gT:[R`\frac{2x}{x^2+y^2}`,R`\frac{2y}{x^2+y^2}`], gS:['2*x/(x^2+y^2)','2*y/(x^2+y^2)'],
+  g:p=>{const d=p[0]*p[0]+p[1]*p[1];return [2*p[0]/d,2*p[1]/d];},
+  pt:()=>pick([[1,2],[2,1],[1,1],[3,1],[1,3],[2,2]]).map(x=>x*pick([1,-1])), dom:{x:[0.5,2.5],y:[0.5,2.5]}},
+ {tex:R`\sqrt{x^2+y^2}`, gT:[R`\frac{x}{\sqrt{x^2+y^2}}`,R`\frac{y}{\sqrt{x^2+y^2}}`], gS:['x/sqrt(x^2+y^2)','y/sqrt(x^2+y^2)'],
+  g:p=>unit(p), pt:()=>niceVec(2), dom:{x:[0.5,2.5],y:[0.5,2.5]}},
+];
+const FF3=[
+ {tex:R`xyz`, gT:[R`yz`,R`xz`,R`xy`], gS:['y*z','x*z','x*y'],
+  g:p=>[p[1]*p[2],p[0]*p[2],p[0]*p[1]], pt:()=>[rnz(-3,3),rnz(-3,3),rnz(-3,3)], int:true},
+ {tex:R`x^2+y^2+z^2`, gT:[R`2x`,R`2y`,R`2z`], gS:['2*x','2*y','2*z'],
+  g:p=>vscale(2,p), pt:()=>[rnz(-3,3),rnz(-3,3),rnz(-3,3)], int:true},
+ {tex:R`x^2y-z^3`, gT:[R`2xy`,R`x^2`,R`-3z^2`], gS:['2*x*y','x^2','-3*z^2'],
+  g:p=>[2*p[0]*p[1],p[0]*p[0],-3*p[2]*p[2]], pt:()=>[rnz(-3,3),rnz(-3,3),rnz(-2,2)], int:true},
+ {tex:R`xe^{yz}`, gT:[R`e^{yz}`,R`xze^{yz}`,R`xye^{yz}`], gS:['exp(y*z)','x*z*exp(y*z)','x*y*exp(y*z)'],
+  g:p=>{const E=Math.exp(p[1]*p[2]);return [E,p[0]*p[2]*E,p[0]*p[1]*E];},
+  pt:()=>pick([[rnz(-3,3),0,rnz(-3,3)],[rnz(-3,3),rnz(-3,3),0]]), int:true},
+ {tex:R`y^2e^{xz}`, gT:[R`y^2ze^{xz}`,R`2ye^{xz}`,R`xy^2e^{xz}`], gS:['y^2*z*exp(x*z)','2*y*exp(x*z)','x*y^2*exp(x*z)'],
+  g:p=>{const E=Math.exp(p[0]*p[2]);return [p[1]*p[1]*p[2]*E,2*p[1]*E,p[0]*p[1]*p[1]*E];},
+  pt:()=>pick([[0,rnz(-3,3),rnz(-3,3)],[rnz(-3,3),rnz(-3,3),0]]), int:true},
+ {tex:R`\sqrt{x^2+y^2+z^2}`, gT:[R`\frac{x}{\sqrt{x^2+y^2+z^2}}`,R`\frac{y}{\sqrt{x^2+y^2+z^2}}`,R`\frac{z}{\sqrt{x^2+y^2+z^2}}`],
+  gS:['x/sqrt(x^2+y^2+z^2)','y/sqrt(x^2+y^2+z^2)','z/sqrt(x^2+y^2+z^2)'],
+  g:p=>unit(p), pt:()=>niceVec(3), dom:{x:[0.5,2.5],y:[0.5,2.5],z:[0.5,2.5]}},
+];
+const FFall=FF2.concat(FF3);
+const intFams=n=>(n===2?FF2:FF3).filter(f=>f.int);
+
+/* contour-map presets, shared by the two plot widgets and the picture question */
+const PRESETS=[
+ {name:'x² + y²', tex:R`x^2+y^2`, f:(x,y)=>x*x+y*y, g:(x,y)=>[2*x,2*y], levels:[0.5,1,2,4,6,9,12,16], gs:0.10, gmin:0.8},
+ {name:'x² − y²', tex:R`x^2-y^2`, f:(x,y)=>x*x-y*y, g:(x,y)=>[2*x,-2*y], levels:[-8,-4,-2,-0.5,0,0.5,2,4,8], gs:0.10, gmin:0.8},
+ {name:'xy', tex:R`xy`, f:(x,y)=>x*y, g:(x,y)=>[y,x], levels:[-6,-3,-1.5,0,1.5,3,6], gs:0.18, gmin:0.8},
+ {name:'x² + 4y²', tex:R`x^2+4y^2`, f:(x,y)=>x*x+4*y*y, g:(x,y)=>[2*x,8*y], levels:[1,2,4,8,12,18,25], gs:0.05, gmin:0.8},
+ {name:'sin x + cos y', tex:R`\sin x+\cos y`, f:(x,y)=>Math.sin(x)+Math.cos(y), g:(x,y)=>[Math.cos(x),-Math.sin(y)], levels:[-1.5,-1,-0.5,0,0.5,1,1.5], gs:0.45, gmin:0.55},
+];
+
+/* ============================================================ chain rule data */
+/* outer functions z = f(x,y): numeric partials, TeX partials, and templates that
+   substitute given strings for x and y so a solver answer can be built */
+const ZF=[
+ {tex:R`x^2y`, fxT:R`2xy`, fyT:R`x^2`, fx:(x,y)=>2*x*y, fy:(x,y)=>x*x,
+  fxS:(X,Y)=>`2*(${X})*(${Y})`, fyS:(X,Y)=>`(${X})^2`},
+ {tex:R`x^2y+y^3`, fxT:R`2xy`, fyT:R`x^2+3y^2`, fx:(x,y)=>2*x*y, fy:(x,y)=>x*x+3*y*y,
+  fxS:(X,Y)=>`2*(${X})*(${Y})`, fyS:(X,Y)=>`(${X})^2+3*(${Y})^2`},
+ {tex:R`xy^2`, fxT:R`y^2`, fyT:R`2xy`, fx:(x,y)=>y*y, fy:(x,y)=>2*x*y,
+  fxS:(X,Y)=>`(${Y})^2`, fyS:(X,Y)=>`2*(${X})*(${Y})`},
+ {tex:R`x^2-y^2`, fxT:R`2x`, fyT:R`-2y`, fx:(x,y)=>2*x, fy:(x,y)=>-2*y,
+  fxS:(X,Y)=>`2*(${X})`, fyS:(X,Y)=>`-2*(${Y})`},
+ {tex:R`x^2+xy+y^2`, fxT:R`2x+y`, fyT:R`x+2y`, fx:(x,y)=>2*x+y, fy:(x,y)=>x+2*y,
+  fxS:(X,Y)=>`2*(${X})+(${Y})`, fyS:(X,Y)=>`(${X})+2*(${Y})`},
+ {tex:R`x^3y`, fxT:R`3x^2y`, fyT:R`x^3`, fx:(x,y)=>3*x*x*y, fy:(x,y)=>x*x*x,
+  fxS:(X,Y)=>`3*(${X})^2*(${Y})`, fyS:(X,Y)=>`(${X})^3`},
+];
+/* inner functions of one parameter t */
+const TF=[
+ {tex:R`t^2`, dT:R`2t`, f:t=>t*t, d:t=>2*t, s:'t^2', sd:'2*t', alg:true},
+ {tex:R`t^3`, dT:R`3t^2`, f:t=>t*t*t, d:t=>3*t*t, s:'t^3', sd:'3*t^2', alg:true},
+ {tex:R`2t+1`, dT:R`2`, f:t=>2*t+1, d:()=>2, s:'2*t+1', sd:'2', alg:true},
+ {tex:R`e^{t}`, dT:R`e^{t}`, f:Math.exp, d:Math.exp, s:'exp(t)', sd:'exp(t)', alg:true},
+ {tex:R`\sin t`, dT:R`\cos t`, f:Math.sin, d:Math.cos, s:'sin(t)', sd:'cos(t)', trig:true},
+ {tex:R`\cos t`, dT:R`-\sin t`, f:Math.cos, d:t=>-Math.sin(t), s:'cos(t)', sd:'-sin(t)', trig:true},
+];
+/* inner functions of two parameters s and t */
+const XF=[
+ {tex:R`s+2t`, f:(s,t)=>s+2*t, ds:()=>1, dt:()=>2, dsT:R`1`, dtT:R`2`},
+ {tex:R`st`, f:(s,t)=>s*t, ds:(s,t)=>t, dt:(s,t)=>s, dsT:R`t`, dtT:R`s`},
+ {tex:R`s^2-t`, f:(s,t)=>s*s-t, ds:(s,t)=>2*s, dt:()=>-1, dsT:R`2s`, dtT:R`-1`},
+];
+const YF=[
+ {tex:R`s-t`, f:(s,t)=>s-t, ds:()=>1, dt:()=>-1, dsT:R`1`, dtT:R`-1`},
+ {tex:R`2st`, f:(s,t)=>2*s*t, ds:(s,t)=>2*t, dt:(s,t)=>2*s, dsT:R`2t`, dtT:R`2s`},
+ {tex:R`s+t^2`, f:(s,t)=>s+t*t, ds:()=>1, dt:(s,t)=>2*t, dsT:R`1`, dtT:R`2t`},
+];
+/* implicit families. Fx, Fy, Fz are strings the engine parses; compiled once below. */
+const IM2=[
+ {kg:()=>rint(1,9), eq:k=>R`x^2+xy+y^2=${k}`, Fx:'2*x+y', Fy:'x+2*y', FxT:R`2x+y`, FyT:R`x+2y`, FT:k=>R`x^2+xy+y^2-${k}`},
+ {kg:()=>null, eq:()=>R`x^3+y^3=6xy`, Fx:'3*x^2-6*y', Fy:'3*y^2-6*x', FxT:R`3x^2-6y`, FyT:R`3y^2-6x`, FT:()=>R`x^3+y^3-6xy`},
+ {kg:()=>rint(1,6), eq:k=>R`xe^{y}+y=${k}`, Fx:'exp(y)', Fy:'x*exp(y)+1', FxT:R`e^{y}`, FyT:R`xe^{y}+1`, FT:k=>R`xe^{y}+y-${k}`},
+ {kg:()=>rint(1,3), eq:k=>R`\sin(xy)+x^2=${k}`, Fx:'y*cos(x*y)+2*x', Fy:'x*cos(x*y)', FxT:R`y\cos(xy)+2x`, FyT:R`x\cos(xy)`, FT:k=>R`\sin(xy)+x^2-${k}`},
+ {kg:()=>rint(1,9), eq:k=>R`x^2y-xy^2=${k}`, Fx:'2*x*y-y^2', Fy:'x^2-2*x*y', FxT:R`2xy-y^2`, FyT:R`x^2-2xy`, FT:k=>R`x^2y-xy^2-${k}`},
+];
+const IM3=[
+ {eq:R`x^3+y^3+z^3+6xyz=1`, FT:R`x^3+y^3+z^3+6xyz-1`, Fx:'3*x^2+6*y*z', Fy:'3*y^2+6*x*z', Fz:'3*z^2+6*x*y', FxT:R`3x^2+6yz`, FyT:R`3y^2+6xz`, FzT:R`3z^2+6xy`},
+ {eq:R`x^2-y^2+z^2-2z=4`, FT:R`x^2-y^2+z^2-2z-4`, Fx:'2*x', Fy:'-2*y', Fz:'2*z-2', FxT:R`2x`, FyT:R`-2y`, FzT:R`2z-2`},
+ {eq:R`e^{z}=xyz`, FT:R`e^{z}-xyz`, Fx:'-y*z', Fy:'-x*z', Fz:'exp(z)-x*y', FxT:R`-yz`, FyT:R`-xz`, FzT:R`e^{z}-xy`},
+ {eq:R`x^2+2y^2+3z^2=1`, FT:R`x^2+2y^2+3z^2-1`, Fx:'2*x', Fy:'4*y', Fz:'6*z', FxT:R`2x`, FyT:R`4y`, FzT:R`6z`},
+ {eq:R`xyz=\cos(x+y+z)`, FT:R`xyz-\cos(x+y+z)`, Fx:'y*z+sin(x+y+z)', Fy:'x*z+sin(x+y+z)', Fz:'x*y+sin(x+y+z)', FxT:R`yz+\sin(x+y+z)`, FyT:R`xz+\sin(x+y+z)`, FzT:R`xy+\sin(x+y+z)`},
+];
+IM2.forEach(m=>{m.cx=Expr.compile(m.Fx);m.cy=Expr.compile(m.Fy);});
+IM3.forEach(m=>{m.cx=Expr.compile(m.Fx);m.cy=Expr.compile(m.Fy);m.cz=Expr.compile(m.Fz);});
+
+/* ============================================================ question types */
+const Q={};
+
+Q.chainT={name:'chain rule dz/dt',
+  gen(){const Z=pick(ZF);let X=pick(TF),Y=pick(TF);while(Y===X)Y=pick(TF);
+    const ref=e=>Z.fx(X.f(e.t),Y.f(e.t))*X.d(e.t)+Z.fy(X.f(e.t),Y.f(e.t))*Y.d(e.t);
+    const ans=`(${Z.fxS(X.s,Y.s)})*(${X.sd})+(${Z.fyS(X.s,Y.s)})*(${Y.sd})`;
+    return {Z,X,Y,ref,ans};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`z=`+q.Z.tex)}, where ${M('x='+q.X.tex)} and ${M('y='+q.Y.tex)}. Use the chain rule to find ${M(R`\frac{dz}{dt}`)} as a function of ${M('t')}. You do not have to simplify.</p>`;
+    wideIn(el,'dz',M(R`\frac{dz}{dt}=`),'an expression in t');},
+  check(q,el){return G(el,'dz',checkExpr($('[data-k=dz]',el).value,q.ref,['t'],{domain:{t:[-1.5,1.5]}}));},
+  hint(q,el){hintBox(el,M(R`\frac{\partial z}{\partial x}=${q.Z.fxT},\quad \frac{\partial z}{\partial y}=${q.Z.fyT},\quad \frac{dx}{dt}=${q.X.dT},\quad \frac{dy}{dt}=${q.Y.dT}`));},
+  solution(q){return `Two paths down the tree, so two terms.`+D(R`\frac{dz}{dt}=\frac{\partial z}{\partial x}\frac{dx}{dt}+\frac{\partial z}{\partial y}\frac{dy}{dt}=\left(${q.Z.fxT}\right)\left(${q.X.dT}\right)+\left(${q.Z.fyT}\right)\left(${q.Y.dT}\right)`)+
+    `Now substitute ${M('x='+q.X.tex)} and ${M('y='+q.Y.tex)} everywhere an ${M('x')} or a ${M('y')} appears, and the answer is a function of ${M('t')} alone.`;}
+};
+
+Q.chainT0={name:'chain rule at a value of t',
+  gen(){const Z=pick(ZF);const t0=pick([0,0,1,1,Math.PI/2]);
+    const pool=t0===0?TF:(t0===1?TF.filter(f=>f.alg):TF.filter(f=>f.trig));
+    let X=pick(pool),Y=pick(pool);while(Y===X)Y=pick(pool);
+    const x=X.f(t0),y=Y.f(t0);let val=Z.fx(x,y)*X.d(t0)+Z.fy(x,y)*Y.d(t0);
+    if(Math.abs(val)<1e-12)val=0;
+    const t0T=t0===0?'0':(t0===1?'1':R`\pi/2`);
+    return {Z,X,Y,t0,t0T,x,y,val,fx:Z.fx(x,y),fy:Z.fy(x,y),xd:X.d(t0),yd:Y.d(t0)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`z=`+q.Z.tex)}, where ${M('x='+q.X.tex)} and ${M('y='+q.Y.tex)}. Find ${M(R`\frac{dz}{dt}`)} at ${M('t='+q.t0T)}. Give an exact value (things like <code>2e^2</code>, <code>3/4</code>, and <code>sqrt(2)</code> are fine) or a decimal good to four places.</p>`;
+    numIn(el,'v',M(R`\left.\frac{dz}{dt}\right|_{t=${q.t0T}}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{tol:1e-4}));},
+  hint(q,el){hintBox(el,M(R`t=${q.t0T}\;\Rightarrow\; x=${fmtDec(q.x,4)},\; y=${fmtDec(q.y,4)}`));},
+  solution(q){return `At ${M('t='+q.t0T)}: ${M(R`x=${fmtDec(q.x,4)}`)} and ${M(R`y=${fmtDec(q.y,4)}`)}, so ${M(R`z_x=${fmtDec(q.fx,4)}`)} and ${M(R`z_y=${fmtDec(q.fy,4)}`)}. Also ${M(R`\frac{dx}{dt}=${fmtDec(q.xd,4)}`)} and ${M(R`\frac{dy}{dt}=${fmtDec(q.yd,4)}`)}.`+
+    D(R`\frac{dz}{dt}=z_x\frac{dx}{dt}+z_y\frac{dy}{dt}=(${fmtDec(q.fx,4)})(${fmtDec(q.xd,4)})+(${fmtDec(q.fy,4)})(${fmtDec(q.yd,4)})=${fmtDec(q.val,4)}`);}
+};
+
+Q.chainST={name:'chain rule with two parameters',
+  gen(){const Z=pick(ZF),X=pick(XF),Y=pick(YF);const s0=rnz(-2,2),t0=rnz(-2,2);
+    const x=X.f(s0,t0),y=Y.f(s0,t0);const fx=Z.fx(x,y),fy=Z.fy(x,y);
+    return {Z,X,Y,s0,t0,x,y,fx,fy,
+      xs:X.ds(s0,t0),xt:X.dt(s0,t0),ys:Y.ds(s0,t0),yt:Y.dt(s0,t0),
+      zs:fx*X.ds(s0,t0)+fy*Y.ds(s0,t0), zt:fx*X.dt(s0,t0)+fy*Y.dt(s0,t0)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`z=`+q.Z.tex)}, where ${M('x='+q.X.tex)} and ${M('y='+q.Y.tex)}. Find ${M(R`\frac{\partial z}{\partial s}`)} and ${M(R`\frac{\partial z}{\partial t}`)} at ${M(R`(s,t)=(${q.s0},${q.t0})`)}.</p>`;
+    numIn(el,'zs',M(R`\frac{\partial z}{\partial s}=`));numIn(el,'zt',M(R`\frac{\partial z}{\partial t}=`));},
+  check(q,el){return Gall(el,[['zs',checkNumber($('[data-k=zs]',el).value,q.zs)],['zt',checkNumber($('[data-k=zt]',el).value,q.zt)]]);},
+  hint(q,el){hintBox(el,M(R`(s,t)=(${q.s0},${q.t0})\;\Rightarrow\; x=${q.x},\; y=${q.y}`));},
+  solution(q){return `At ${M(R`(s,t)=(${q.s0},${q.t0})`)} the inner functions give ${M(R`x=${q.x}`)} and ${M(R`y=${q.y}`)}, so ${M(R`z_x=${q.Z.fxT}=${texNum(q.fx)}`)} and ${M(R`z_y=${q.Z.fyT}=${texNum(q.fy)}`)}. The inner partials are ${M(R`x_s=${texNum(q.xs)},\ x_t=${texNum(q.xt)},\ y_s=${texNum(q.ys)},\ y_t=${texNum(q.yt)}`)}.`+
+    D(R`\frac{\partial z}{\partial s}=z_xx_s+z_yy_s=(${texNum(q.fx)})(${texNum(q.xs)})+(${texNum(q.fy)})(${texNum(q.ys)})=${texNum(q.zs)}`)+
+    D(R`\frac{\partial z}{\partial t}=z_xx_t+z_yy_t=(${texNum(q.fx)})(${texNum(q.xt)})+(${texNum(q.fy)})(${texNum(q.yt)})=${texNum(q.zt)}`);}
+};
+
+Q.implicit2={name:'implicit differentiation dy/dx',
+  gen(){const m=pick(IM2);const k=m.kg();
+    const ref=e=>{const fy=m.cy(e);if(!Number.isFinite(fy)||Math.abs(fy)<0.2)return NaN;return -m.cx(e)/fy;};
+    return {m,k,ref,ans:`-(${m.Fx})/(${m.Fy})`};},
+  render(q,el){el.innerHTML=`<p class="prompt">The equation ${M(q.m.eq(q.k))} defines ${M('y')} implicitly as a function of ${M('x')}. Find ${M(R`\frac{dy}{dx}`)} in terms of ${M('x')} and ${M('y')}.</p>`;
+    wideIn(el,'dy',M(R`\frac{dy}{dx}=`),'an expression in x and y');},
+  check(q,el){return G(el,'dy',checkExpr($('[data-k=dy]',el).value,q.ref,['x','y']));},
+  hint(q,el){hintBox(el,M(R`F(x,y)=${q.m.FT(q.k)},\qquad \frac{dy}{dx}=-\frac{F_x}{F_y}`));},
+  solution(q){return `Move everything to one side: ${M(R`F(x,y)=${q.m.FT(q.k)}=0`)}. Then ${M(R`F_x=${q.m.FxT}`)} and ${M(R`F_y=${q.m.FyT}`)}, so`+
+    D(R`\frac{dy}{dx}=-\frac{F_x}{F_y}=-\frac{${q.m.FxT}}{${q.m.FyT}}`)+`This holds wherever ${M(R`F_y\ne 0`)}.`;}
+};
+
+Q.implicit3={name:'implicit partial derivatives of z',
+  gen(){const m=pick(IM3);
+    const mk=c=>e=>{const fz=m.cz(e);if(!Number.isFinite(fz)||Math.abs(fz)<0.2)return NaN;const n=c(e);if(!Number.isFinite(n))return NaN;return -n/fz;};
+    return {m,rx:mk(m.cx),ry:mk(m.cy),ansx:`-(${m.Fx})/(${m.Fz})`,ansy:`-(${m.Fy})/(${m.Fz})`};},
+  render(q,el){el.innerHTML=`<p class="prompt">The equation ${M(q.m.eq)} defines ${M('z')} implicitly as a function of ${M('x')} and ${M('y')}. Find both partial derivatives, in terms of ${M('x')}, ${M('y')}, and ${M('z')}.</p>`;
+    wideIn(el,'zx',M(R`\frac{\partial z}{\partial x}=`),'expression in x, y, z');
+    wideIn(el,'zy',M(R`\frac{\partial z}{\partial y}=`),'expression in x, y, z');},
+  check(q,el){return Gall(el,[['zx',checkExpr($('[data-k=zx]',el).value,q.rx,['x','y','z'])],['zy',checkExpr($('[data-k=zy]',el).value,q.ry,['x','y','z'])]]);},
+  hint(q,el){hintBox(el,M(R`F(x,y,z)=${q.m.FT},\qquad F_z=${q.m.FzT}`));},
+  solution(q){return `Write the equation as ${M(R`F(x,y,z)=${q.m.FT}=0`)}. The three partials are ${M(R`F_x=${q.m.FxT}`)}, ${M(R`F_y=${q.m.FyT}`)}, ${M(R`F_z=${q.m.FzT}`)}. So`+
+    D(R`\frac{\partial z}{\partial x}=-\frac{F_x}{F_z}=-\frac{${q.m.FxT}}{${q.m.FzT}},\qquad \frac{\partial z}{\partial y}=-\frac{F_y}{F_z}=-\frac{${q.m.FyT}}{${q.m.FzT}}`);}
+};
+
+/* ============================================================ gradient data */
+/* level surfaces F(x,y,z)=k with integer gradients at integer points */
+const SF3=[
+ {FT:R`x^2+y^2+z^2`, show:k=>R`x^2+y^2+z^2=${k}`, gT:[R`2x`,R`2y`,R`2z`],
+  F:p=>sumSq(p), g:p=>vscale(2,p), pt:()=>[rnz(-3,3),rnz(-3,3),rnz(-3,3)]},
+ {FT:R`x^2+2y^2+3z^2`, show:k=>R`x^2+2y^2+3z^2=${k}`, gT:[R`2x`,R`4y`,R`6z`],
+  F:p=>p[0]*p[0]+2*p[1]*p[1]+3*p[2]*p[2], g:p=>[2*p[0],4*p[1],6*p[2]], pt:()=>[rnz(-3,3),rnz(-2,2),rnz(-2,2)]},
+ {FT:R`xyz`, show:k=>R`xyz=${k}`, gT:[R`yz`,R`xz`,R`xy`],
+  F:p=>p[0]*p[1]*p[2], g:p=>[p[1]*p[2],p[0]*p[2],p[0]*p[1]], pt:()=>[rnz(-3,3),rnz(-3,3),rnz(-3,3)]},
+ {FT:R`x^2-y^2+z^2`, show:k=>R`x^2-y^2+z^2=${k}`, gT:[R`2x`,R`-2y`,R`2z`],
+  F:p=>p[0]*p[0]-p[1]*p[1]+p[2]*p[2], g:p=>[2*p[0],-2*p[1],2*p[2]], pt:()=>[rnz(-3,3),rnz(-3,3),rnz(-3,3)]},
+ {FT:R`x^2+y^2-z`, show:()=>R`z=x^2+y^2`, gT:[R`2x`,R`2y`,R`-1`], graph:true,
+  F:p=>p[0]*p[0]+p[1]*p[1]-p[2], g:p=>[2*p[0],2*p[1],-1], pt:()=>{const a=rnz(-2,2),b=rnz(-2,2);return [a,b,a*a+b*b];}},
+];
+/* level curves f(x,y)=k with integer gradients at integer points */
+const CF2=[
+ {fT:R`x^2+y^2`, show:k=>R`x^2+y^2=${k}`, gT:[R`2x`,R`2y`], f:p=>sumSq(p), g:p=>vscale(2,p), pt:()=>[rnz(-4,4),rnz(-4,4)]},
+ {fT:R`xy`, show:k=>R`xy=${k}`, gT:[R`y`,R`x`], f:p=>p[0]*p[1], g:p=>[p[1],p[0]], pt:()=>[rnz(-4,4),rnz(-4,4)]},
+ {fT:R`x^2-y^2`, show:k=>R`x^2-y^2=${k}`, gT:[R`2x`,R`-2y`], f:p=>p[0]*p[0]-p[1]*p[1], g:p=>[2*p[0],-2*p[1]], pt:()=>[rnz(-4,4),rnz(-4,4)]},
+ {fT:R`x^2+2y^2`, show:k=>R`x^2+2y^2=${k}`, gT:[R`2x`,R`4y`], f:p=>p[0]*p[0]+2*p[1]*p[1], g:p=>[2*p[0],4*p[1]], pt:()=>[rnz(-3,3),rnz(-3,3)]},
+ {fT:R`x^3+y^3`, show:k=>R`x^3+y^3=${k}`, gT:[R`3x^2`,R`3y^2`], f:p=>p[0]**3+p[1]**3, g:p=>[3*p[0]*p[0],3*p[1]*p[1]], pt:()=>[rnz(-3,3),rnz(-3,3)]},
+ {fT:R`x^2y`, show:k=>R`x^2y=${k}`, gT:[R`2xy`,R`x^2`], f:p=>p[0]*p[0]*p[1], g:p=>[2*p[0]*p[1],p[0]*p[0]], pt:()=>[rnz(-3,3),rnz(-3,3)]},
+];
+
+Q.gradAt={name:'gradient at a point',
+  gen(){const fam=pick(FFall);const P=fam.pt();return {fam,P,g:fam.g(P),n:P.length};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find ${M(R`\nabla f`)} at ${M('P'+texPt(q.P))} for ${M('f='+q.fam.tex)}. Fractions like <code>2/5</code> are fine.</p>`;
+    vecIn(el,'g',M(R`\nabla f(P)=`),VPH(q.n));},
+  check(q,el){return G(el,'g',checkVector($('[data-k=g]',el).value,q.g));},
+  hint(q,el){hintBox(el,M(gradTexOf(q.fam)));},
+  solution(q){return `Differentiate once per variable: ${M(gradTexOf(q.fam))}. Now put ${M(texPt(q.P))} in: ${M(R`\nabla f(P)=`+texVec(q.g))}.`;}
+};
+
+Q.gradFn={name:'gradient as a function',
+  gen(){const fam=pick(FFall);const vars=fam.gS.length===2?['x','y']:['x','y','z'];
+    return {fam,vars,n:fam.gS.length};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the gradient of ${M('f='+q.fam.tex)} as a function. Enter the components separated by commas, for example <code>&lt;2xy, x^2&gt;</code>.</p>`;
+    el.appendChild(ansLine(M(R`\nabla f=`),'g',{xwide:true,placeholder:VPH(q.n)}));},
+  check(q,el){return G(el,'g',checkExprVector($('[data-k=g]',el).value,q.fam.gS,q.vars,{domain:q.fam.dom}));},
+  solution(q){return `Take one partial derivative per variable, treating the other letters as constants: ${M(gradTexOf(q.fam))}.`;}
+};
+
+Q.maxRate={name:'maximum rate of change',
+  gen(){const fam=pick(FFall);const P=fam.pt();const g=fam.g(P);
+    return {fam,P,g,rate:norm(g),n:P.length};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M('f='+q.fam.tex)} at ${M('P'+texPt(q.P))}: what is the maximum rate of change of ${M('f')}, and in which direction does it happen? Exact answers like <code>sqrt(13)</code> are expected for the rate. For the direction, any vector pointing the right way is accepted.</p>`;
+    numIn(el,'rate','maximum rate =');vecIn(el,'dir','direction =',VPH(q.n));},
+  check(q,el){return Gall(el,[['rate',checkNumber($('[data-k=rate]',el).value,q.rate)],['dir',checkVector($('[data-k=dir]',el).value,q.g,{sameDir:true})]]);},
+  hint(q,el){hintBox(el,M(R`\nabla f(P)=`+texVec(q.g)));},
+  solution(q){return `${M(gradTexOf(q.fam))}, so ${M(R`\nabla f(P)=`+texVec(q.g))}. The fastest increase is in the direction of the gradient itself, and the rate is its length: ${M(R`|\nabla f(P)|=${lenTex(q.g)}\approx ${fmtDec(q.rate,3)}`)}. Any positive multiple of ${M(texVec(q.g))} names the same direction.`;}
+};
+
+Q.tanPlane={name:'tangent plane to a level surface',
+  gen(){const s=pick(SF3);const P=s.pt();const k=s.F(P);const g=s.g(P);
+    const ref=e=>g[0]*(e.x-P[0])+g[1]*(e.y-P[1])+g[2]*(e.z-P[2]);
+    const ans=`(${g[0]})*(x-(${P[0]}))+(${g[1]})*(y-(${P[1]}))+(${g[2]})*(z-(${P[2]}))=0`;
+    return {s,P,k,g,ref,ans};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the tangent plane to the surface ${M(q.s.show(q.k))} at the point ${M('P'+texPt(q.P))}. Any equivalent form of the equation is accepted.</p>`;
+    el.appendChild(ansLine('plane:','eq',{xwide:true,placeholder:'a(x - x0) + b(y - y0) + c(z - z0) = 0'}));},
+  check(q,el){return G(el,'eq',checkEquation($('[data-k=eq]',el).value,q.ref,['x','y','z']));},
+  hint(q,el){hintBox(el,M(R`\nabla F(P)=`+texVec(q.g)));},
+  solution(q){const d=dot(q.g,q.P);return `Write the surface as a level surface ${M(R`F(x,y,z)=${q.s.FT}`)}${q.s.graph?' by moving the '+M('z')+' to the other side':''}. Then ${M(R`\nabla F=\langle `+q.s.gT.join(',\\; ')+R` \rangle`)} and at ${M(texPt(q.P))} this is the normal vector ${M(texVec(q.g))}.`+
+    D(ptEqTex(q.g,q.P,['x','y','z']))+
+    `which tidies up to ${M(texLin(q.g,['x','y','z'])+'='+texNum(d))}.`;}
+};
+
+Q.normalLine={name:'normal line to a level surface',
+  gen(){const q=Q.tanPlane.gen();q.ans=q.P.map((p,i)=>numS(p)+signS(q.g[i],'*t')).join(', ');return q;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find parametric equations for the normal line to the surface ${M(q.s.show(q.k))} at ${M('P'+texPt(q.P))}. Write it as three components in ${M('t')}, for example <code>&lt;1+2t, 3-t, 4t&gt;</code>. Any parametrization of the same line is accepted.</p>`;
+    el.appendChild(ansLine('line:','ln',{xwide:true,placeholder:'x = ..., y = ..., z = ...'}));},
+  check(q,el){return G(el,'ln',checkLine($('[data-k=ln]',el).value,q.P,q.g));},
+  hint(q,el){hintBox(el,M(R`\nabla F(P)=`+texVec(q.g)));},
+  solution(q){return `The normal line runs through ${M('P'+texPt(q.P))} in the direction of the gradient ${M(R`\nabla F(P)=`+texVec(q.g))}, because the gradient is perpendicular to the surface.`+
+    D(R`x=${texNum(q.P[0])}+${texNum(q.g[0])}t,\qquad y=${texNum(q.P[1])}+${texNum(q.g[1])}t,\qquad z=${texNum(q.P[2])}+${texNum(q.g[2])}t`)+
+    `Any nonzero multiple of the direction, and any shift of the parameter, gives the same line.`;}
+};
+
+Q.tanLine2D={name:'tangent line to a level curve',
+  gen(){const c=pick(CF2);let P,g;do{P=c.pt();g=c.g(P);}while(vzero(g));const k=c.f(P);
+    const ref=e=>g[0]*(e.x-P[0])+g[1]*(e.y-P[1]);
+    const ans=`(${g[0]})*(x-(${P[0]}))+(${g[1]})*(y-(${P[1]}))=0`;
+    return {c,P,g,k,ref,ans};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the tangent line to the curve ${M(q.c.show(q.k))} at the point ${M(texPt(q.P))}. Any equivalent form is accepted.</p>`;
+    el.appendChild(ansLine('line:','eq',{xwide:true,placeholder:'a(x - x0) + b(y - y0) = 0'}));},
+  check(q,el){return G(el,'eq',checkEquation($('[data-k=eq]',el).value,q.ref,['x','y']));},
+  hint(q,el){hintBox(el,M(R`\nabla f(P)=`+texVec(q.g)));},
+  solution(q){const d=dot(q.g,q.P);return `The curve is the level curve ${M(q.c.fT+'='+texNum(q.k))}, and ${M(R`\nabla f=\langle `+q.c.gT.join(',\\; ')+R` \rangle`)}, so ${M(R`\nabla f(P)=`+texVec(q.g))}. That vector is perpendicular to the curve, so it is the normal vector of the tangent line:`+
+    D(ptEqTex(q.g,q.P,['x','y'])+R`\quad\Longleftrightarrow\quad `+texLin(q.g,['x','y'])+'='+texNum(d));}
+};
+
+/* ============================================================ directional derivatives */
+const ANGLES=[[Math.PI/6,R`\pi/6`],[Math.PI/4,R`\pi/4`],[Math.PI/3,R`\pi/3`],[2*Math.PI/3,R`2\pi/3`],
+  [3*Math.PI/4,R`3\pi/4`],[5*Math.PI/6,R`5\pi/6`],[-Math.PI/6,R`-\pi/6`],[-Math.PI/4,R`-\pi/4`]];
+/* the shared worked-solution body for a directional derivative */
+function dirWork(fam,P,g,v,val){
+  const u=unit(v);
+  return `${M(gradTexOf(fam))}, so ${M(R`\nabla f(P)=`+texVec(g))}.`+
+    ` The direction vector ${M(R`\mathbf{v}=`+texVec(v))} has length ${M(R`|\mathbf{v}|=${lenTex(v)}`)}, so the unit vector is ${M(R`\mathbf{u}=\frac{\mathbf{v}}{|\mathbf{v}|}=\frac{1}{${lenTex(v)}}`+texVec(v))}.`+
+    D(R`D_{\mathbf{u}}f(P)=\nabla f(P)\cdot\mathbf{u}=\frac{${texDot(g,v)}}{${lenTex(v)}}=\frac{${texNum(dot(g,v))}}{${lenTex(v)}}\approx ${fmtDec(val,4)}`);
+}
+
+Q.dirVec={name:'directional derivative in the direction of a vector',
+  gen(){const fam=pick(FF2);const P=fam.pt();const g=fam.g(P);
+    const v=Math.random()<0.6?niceVec(2):rvecNZ(2,-4,4);
+    return {fam,P,g,v,val:dot(g,v)/norm(v)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the directional derivative of ${M('f='+q.fam.tex)} at ${M('P'+texPt(q.P))} in the direction of ${M(R`\mathbf{v}=`+texVec(q.v))}. Careful: ${M(R`\mathbf{v}`)} is not a unit vector. Give an exact value (like <code>13/5</code> or <code>26/sqrt(29)</code>).</p>`;
+    numIn(el,'d',M(R`D_{\mathbf{u}}f(P)=`));},
+  check(q,el){return G(el,'d',checkNumber($('[data-k=d]',el).value,q.val));},
+  hint(q,el){hintBox(el,M(R`\nabla f(P)=`+texVec(q.g)+R`,\qquad |\mathbf{v}|=${lenTex(q.v)}`));},
+  solution(q){return dirWork(q.fam,q.P,q.g,q.v,q.val);}
+};
+
+Q.dirAngle={name:'directional derivative from an angle',
+  gen(){const fam=pick(FF2);const P=fam.pt();const g=fam.g(P);const a=pick(ANGLES);
+    const u=[Math.cos(a[0]),Math.sin(a[0])];
+    return {fam,P,g,th:a[0],thT:a[1],u,val:dot(g,u)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the directional derivative of ${M('f='+q.fam.tex)} at ${M('P'+texPt(q.P))} in the direction that makes an angle ${M(R`\theta=${q.thT}`)} with the positive ${M('x')}-axis. Exact or four decimal places.</p>`;
+    numIn(el,'d',M(R`D_{\mathbf{u}}f(P)=`));},
+  check(q,el){return G(el,'d',checkNumber($('[data-k=d]',el).value,q.val,{tol:1e-4}));},
+  hint(q,el){hintBox(el,M(R`\mathbf{u}=\langle\cos(${q.thT}),\,\sin(${q.thT})\rangle=\langle ${fmtDec(q.u[0],4)},\,${fmtDec(q.u[1],4)}\rangle`));},
+  solution(q){return `An angle already gives a unit vector: ${M(R`\mathbf{u}=\langle\cos(${q.thT}),\ \sin(${q.thT})\rangle=\langle ${fmtDec(q.u[0],4)},\ ${fmtDec(q.u[1],4)}\rangle`)}. With ${M(R`\nabla f(P)=`+texVec(q.g))},`+
+    D(R`D_{\mathbf{u}}f(P)=\nabla f(P)\cdot\mathbf{u}=(${texNum(q.g[0])})(${fmtDec(q.u[0],4)})+(${texNum(q.g[1])})(${fmtDec(q.u[1],4)})\approx ${fmtDec(q.val,4)}`);}
+};
+
+Q.dirToward={name:'directional derivative toward a point',
+  gen(){const fam=pick(FF2);const P=fam.pt();const g=fam.g(P);
+    const v=Math.random()<0.6?niceVec(2):rvecNZ(2,-5,5);const Qp=vadd(P,v);
+    return {fam,P,Q:Qp,g,v,val:dot(g,v)/norm(v)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the directional derivative of ${M('f='+q.fam.tex)} at ${M('P'+texPt(q.P))} in the direction toward ${M('Q'+texPt(q.Q))}. Exact or four decimal places.</p>`;
+    numIn(el,'d',M(R`D_{\mathbf{u}}f(P)=`));},
+  check(q,el){return G(el,'d',checkNumber($('[data-k=d]',el).value,q.val,{tol:1e-4}));},
+  hint(q,el){hintBox(el,M(R`\mathbf{v}=\overrightarrow{PQ}=`+texVec(q.v)+R`,\qquad |\mathbf{v}|=${lenTex(q.v)}`));},
+  solution(q){return `"Toward ${M('Q')}" means the direction ${M(R`\mathbf{v}=\overrightarrow{PQ}=Q-P=`+texVec(q.v))}, terminal minus initial. `+dirWork(q.fam,q.P,q.g,q.v,q.val);}
+};
+
+Q.dir3={name:'directional derivative in space',
+  gen(){const fam=pick(FF3);const P=fam.pt();const g=fam.g(P);
+    const v=Math.random()<0.6?niceVec(3):rvecNZ(3,-3,3);
+    return {fam,P,g,v,val:dot(g,v)/norm(v)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the directional derivative of ${M('f='+q.fam.tex)} at ${M('P'+texPt(q.P))} in the direction of ${M(R`\mathbf{v}=`+texVec(q.v))}. Exact or four decimal places.</p>`;
+    numIn(el,'d',M(R`D_{\mathbf{u}}f(P)=`));},
+  check(q,el){return G(el,'d',checkNumber($('[data-k=d]',el).value,q.val,{tol:1e-4}));},
+  hint(q,el){hintBox(el,M(R`\nabla f(P)=`+texVec(q.g)+R`,\qquad |\mathbf{v}|=${lenTex(q.v)}`));},
+  solution(q){return `Nothing changes in space except that the vectors have three components. `+dirWork(q.fam,q.P,q.g,q.v,q.val);}
+};
+
+Q.dirZero={name:'direction of zero change',
+  gen(){const fam=pick(intFams(2));const P=fam.pt();const g=fam.g(P);
+    const u=unit([-g[1],g[0]]);
+    return {fam,P,g,u,perp:[-g[1],g[0]]};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M('f='+q.fam.tex)} at ${M('P'+texPt(q.P))}, give a <b>unit</b> vector ${M(R`\mathbf{u}`)} for which ${M(R`D_{\mathbf{u}}f(P)=0`)}. Either of the two possible directions is accepted. Give exact components, for example <code>&lt;-2/sqrt(13), 3/sqrt(13)&gt;</code>.</p>`;
+    vecIn(el,'u',M(R`\mathbf{u}=`),'⟨a, b⟩');},
+  check(q,el){const r=parseVector($('[data-k=u]',el).value,2);
+    if(r.err)return G(el,'u',{ok:false,err:r.err});
+    const n=norm(r.v);
+    if(Math.abs(n-1)>1e-3)return G(el,'u',{ok:false,msg:'That vector has length '+fmtDec(n,3)+'. It has to be a unit vector.'});
+    if(Math.abs(dot(q.g,r.v))>1e-3)return G(el,'u',{ok:false,msg:'That direction does change f. You need a direction perpendicular to the gradient.'});
+    return G(el,'u',{ok:true});},
+  hint(q,el){hintBox(el,M(R`\nabla f(P)=`+texVec(q.g)+R`\quad\text{and}\quad \langle a,b\rangle\cdot\langle -b,a\rangle=0`));},
+  solution(q){return `${M(R`\nabla f(P)=`+texVec(q.g))}. The rate of change is zero exactly in the directions perpendicular to the gradient, and in the plane you get a perpendicular vector by swapping the components and flipping one sign: ${M(texVec(q.perp))}. Normalize it, since the answer must be a unit vector:`+
+    D(R`\mathbf{u}=\frac{1}{${lenTex(q.perp)}}${texVec(q.perp)}=\langle ${fmtDec(q.u[0],4)},\ ${fmtDec(q.u[1],4)}\rangle`)+
+    `The opposite vector ${M(texVec(vscale(-1,q.u).map(x=>+fmtDec(x,4))))} works just as well. These are the two directions along the level curve through ${M('P')}.`;}
+};
+
+Q.dirSign={name:'sign of a directional derivative from a contour map',
+  gen(){const pr=pick(PRESETS);let P,g,ng,tries=0;
+    do{P=[Math.round(rand(-2.3,2.3)*2)/2,Math.round(rand(-2.3,2.3)*2)/2];g=pr.g(P[0],P[1]);ng=norm(g);tries++;}while(ng<pr.gmin&&tries<300);
+    const kind=pick(['pos','pos','neg','neg','zero']);const gth=Math.atan2(g[1],g[0]);
+    let off;
+    if(kind==='zero')off=Math.PI/2*pick([1,-1]);
+    else if(kind==='pos')off=rand(0,1.0)*pick([1,-1]);
+    else off=rand(2.15,Math.PI)*pick([1,-1]);
+    const th=gth+off;const u=[Math.cos(th),Math.sin(th)];
+    return {pr,P,g,ng,u,kind,val:dot(g,u)};},
+  render(q,el){el.innerHTML=`<p class="prompt">The contour map of ${M('f='+q.pr.tex)} is drawn below, with a point ${M('P')} and a unit vector ${M(R`\mathbf{u}`)}. Is ${M(R`D_{\mathbf{u}}f(P)`)} positive, negative, or zero?</p><canvas class="scene short" style="max-width:380px" id="dirSignPlot"></canvas>`;
+    q.get=choiceButtons(el,[{label:'positive',value:'pos'},{label:'negative',value:'neg'},{label:'zero',value:'zero'}]);
+    const cv=$('#dirSignPlot',el);const p=new Plot2D(cv,{xmin:-3.2,xmax:3.2,ymin:-3.2,ymax:3.2,labels:false});
+    const drawIt=()=>{if(!cv.isConnected)return;p.begin();
+      p.contour(q.pr.f,q.pr.levels.concat([q.pr.f(q.P[0],q.P[1])]),{color:'#c9c5bb',labels:true});
+      p.vector(q.P,vadd(q.P,vscale(1.1,q.u)),{color:'#2563eb',label:'u',width:3});
+      p.point(q.P,{color:'#7c3aed',label:'P',r:5});};
+    drawIt();setTimeout(drawIt,50);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.kind,msg:v===q.kind?'':'Compare the arrow with the contours: crossing toward a larger level means positive, toward a smaller level means negative, running along a contour means zero.'};},
+  solution(q){return `Here ${M(R`\nabla f(P)=\langle ${fmtDec(q.g[0],2)},\ ${fmtDec(q.g[1],2)}\rangle`)} and ${M(R`\mathbf{u}=\langle ${fmtDec(q.u[0],3)},\ ${fmtDec(q.u[1],3)}\rangle`)}, so ${M(R`D_{\mathbf{u}}f(P)=\nabla f(P)\cdot\mathbf{u}\approx ${fmtDec(q.val,3)}`)}: <b>${q.kind==='pos'?'positive':q.kind==='neg'?'negative':'zero'}</b>. `+
+    (q.kind==='zero'?'The arrow runs along the level curve, tangent to the contour, so \\(f\\) does not change to first order.':'The arrow crosses the contours toward '+(q.kind==='pos'?'larger':'smaller')+' values, and it makes an '+(q.kind==='pos'?'acute':'obtuse')+' angle with the gradient.');}
+};
+
+/* ============================================================ chapter 3: tree diagram */
+(function(){
+  const PAT={
+    a:{top:'z',mid:['x','y'],bot:['t'],label:'z = f(x, y)   with   x = x(t), y = y(t)'},
+    b:{top:'z',mid:['x','y'],bot:['s','t'],label:'z = f(x, y)   with   x = x(s, t), y = y(s, t)'},
+    c:{top:'w',mid:['x','y','z'],bot:['t'],label:'w = f(x, y, z)   with   x = x(t), y = y(t), z = z(t)'},
+    d:{top:'w',mid:['x','y','z'],bot:['s','t'],label:'w = f(x, y, z)   with   x, y, z functions of s and t'}
+  };
+  let key='a',sel=null;
+  const host=$('#treeBox'),dd=$('#treeSel');
+  Object.keys(PAT).forEach(k=>dd.appendChild(el('option',{value:k},PAT[k].label)));
+  dd.onchange=()=>{key=dd.value;sel=null;draw();};
+  function draw(){
+    const p=PAT[key],W=480,H=300,ty=36,my=152,by=262;
+    const mx=i=>W/2+(i-(p.mid.length-1)/2)*(p.mid.length===2?170:152);
+    const bx=j=>W/2+(j-(p.bot.length-1)/2)*200;
+    const ON='#3b5bdb',OFF='#c9c5bb',OFFT='#8b877e';
+    const one=p.bot.length===1;
+    const out=[`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">`];
+    const seg=(x1,y1,x2,y2,txt,hot)=>{
+      const cx=(x1+x2)/2,cy=(y1+y2)/2,side=cx<W/2-2?-1:1;
+      out.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${hot?ON:OFF}" stroke-width="${hot?2.8:1.5}"/>`);
+      out.push(`<text x="${cx+side*28}" y="${cy+4}" text-anchor="middle" font-size="13" fill="${hot?ON:OFFT}" style="paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round">${txt}</text>`);
+    };
+    const node=(x,y,name,hot,b)=>out.push(`<g ${b!=null?`data-bot="${b}" style="cursor:pointer"`:''}>`+
+      `<circle cx="${x}" cy="${y}" r="21" fill="#fff" stroke="${hot?ON:'#b9b5ab'}" stroke-width="${hot?2.6:1.5}"/>`+
+      `<text x="${x}" y="${y+6}" text-anchor="middle" font-size="18" font-style="italic" fill="${hot?ON:'#1c1b1a'}">${name}</text></g>`);
+    p.mid.forEach((m,i)=>seg(W/2,ty,mx(i),my,`∂${p.top}/∂${m}`,sel!==null));
+    p.mid.forEach((m,i)=>p.bot.forEach((b,j)=>seg(mx(i),my,bx(j),by,one?`d${m}/d${b}`:`∂${m}/∂${b}`,sel===j)));
+    node(W/2,ty,p.top,sel!==null,null);
+    p.mid.forEach((m,i)=>node(mx(i),my,m,sel!==null,null));
+    p.bot.forEach((b,j)=>node(bx(j),by,b,sel===j,j));
+    out.push('</svg>');
+    host.innerHTML=out.join('');
+    $$('[data-bot]',host).forEach(g=>g.addEventListener('click',()=>{sel=+g.dataset.bot;draw();}));
+    if(sel===null){
+      $('#treeOut').innerHTML=`Click <b>${p.bot.join('</b> or <b>')}</b> at the bottom of the tree.`;
+      $('#treeTex').innerHTML='';
+    }else{
+      const v=p.bot[sel];
+      const lhs=one?R`\frac{d${p.top}}{d${v}}`:R`\frac{\partial ${p.top}}{\partial ${v}}`;
+      const terms=p.mid.map(m=>R`\frac{\partial ${p.top}}{\partial ${m}}\,`+(one?R`\frac{d${m}}{d${v}}`:R`\frac{\partial ${m}}{\partial ${v}}`));
+      $('#treeOut').innerHTML=`${p.mid.length} paths from <b>${p.top}</b> down to <b>${v}</b>, so ${p.mid.length} terms.`;
+      $('#treeTex').innerHTML=D(lhs+'='+terms.join('+'));
+      typeset($('#treeTex'));
+    }
+  }
+  draw();
+  new Drill({mount:'#drill-chain',section:'chain',goal:6,
+    ...mixDrill([Q.chainT,Q.chainT,Q.chainT0,Q.chainST,Q.chainST,Q.implicit2,Q.implicit2,Q.implicit3])});
+})();
+
+/* ============================================================ chapter 1: contour map + gradient field */
+(function(){
+  const plot=new Plot2D('#gradPlot',{xmin:-3.2,xmax:3.2,ymin:-3.2,ymax:3.2});
+  let pr=PRESETS[0],P=[1.5,1],btns=[];
+  PRESETS.forEach(q=>{const b=el('button',{class:'btn small'},q.name);b.onclick=()=>{pr=q;draw();};btns.push([b,q]);$('#gradPresets').appendChild(b);});
+  plot.on('down',w=>{P=w;draw();}).on('drag',w=>{P=w;draw();});
+  function draw(){
+    btns.forEach(([b,q])=>b.classList.toggle('on',q===pr));
+    const g=pr.g(P[0],P[1]),ng=norm(g),fv=pr.f(P[0],P[1]);
+    plot.begin();
+    plot.field((x,y)=>pr.g(x,y),{step:0.8,scale:pr.gs,normalize:false,color:'#d5d1c8',width:1.2});
+    plot.contour(pr.f,pr.levels,{color:'#c9c5bb',labels:true});
+    plot.contour(pr.f,[fv],{color:'#d97706',width:2.6,labels:false});
+    if(ng>1e-9){const L=Math.min(pr.gs*2.6,2.2/ng);plot.vector(P,vadd(P,vscale(L,g)),{color:'#16a34a',label:'∇f',width:3});}
+    plot.point(P,{color:'#7c3aed',label:'P',r:5});
+    $('#gradOut').innerHTML=`P = (${P.map(x=>fmtDec(x,2)).join(', ')})<br>`+
+      `f(P) = ${fmtDec(fv,3)} &nbsp; (the orange level curve)<br>`+
+      `∇f(P) = ⟨${g.map(x=>fmtDec(x,2)).join(', ')}⟩<br>`+
+      `|∇f(P)| = ${fmtDec(ng,3)} &nbsp; (the maximum rate of change)`;
+  }
+  redrawOnShow('grad',draw);draw();
+  new Drill({mount:'#drill-grad',section:'grad',goal:6,
+    ...mixDrill([Q.gradAt,Q.gradAt,Q.gradFn,Q.gradFn,Q.maxRate,Q.maxRate,Q.tanPlane,Q.normalLine,Q.tanLine2D])});
+})();
+
+/* ============================================================ chapter 2: rotating u + gauge */
+(function(){
+  const plot=new Plot2D('#dirPlot',{xmin:-3.2,xmax:3.2,ymin:-3.2,ymax:3.2});
+  let pr=PRESETS[0],P=[1.5,1],ang=35,btns=[];
+  PRESETS.forEach(q=>{const b=el('button',{class:'btn small'},q.name);b.onclick=()=>{pr=q;draw();};btns.push([b,q]);$('#dirPresets').appendChild(b);});
+  sliderRow($('#dirSliders'),{label:'angle of u',min:0,max:360,step:1,value:ang,fmt:v=>fmtDec(v,0)+'°',onInput:v=>{ang=v;draw();}});
+  plot.on('down',w=>{P=w;draw();}).on('drag',w=>{P=w;draw();});
+  function draw(){
+    btns.forEach(([b,q])=>b.classList.toggle('on',q===pr));
+    const g=pr.g(P[0],P[1]),ng=norm(g),th=ang*Math.PI/180,u=[Math.cos(th),Math.sin(th)],Dv=dot(g,u);
+    plot.begin();
+    plot.contour(pr.f,pr.levels,{color:'#c9c5bb',labels:true});
+    plot.contour(pr.f,[pr.f(P[0],P[1])],{color:'#d97706',width:2.4,labels:false});
+    if(ng>1e-9){const L=Math.min(pr.gs*2.6,2.2/ng);plot.vector(P,vadd(P,vscale(L,g)),{color:'#16a34a',label:'∇f',width:3});}
+    plot.vector(P,vadd(P,u),{color:'#2563eb',label:'u',width:2.6});
+    plot.point(P,{color:'#7c3aed',label:'P',r:5});
+    $('#dirOut').innerHTML=`∇f(P) = ⟨${g.map(x=>fmtDec(x,2)).join(', ')}⟩, &nbsp; |∇f(P)| = ${fmtDec(ng,3)}<br>`+
+      `u = ⟨${fmtDec(u[0],3)}, ${fmtDec(u[1],3)}⟩ &nbsp; (length 1)<br>`+
+      `D<sub>u</sub> f(P) = (${fmtDec(g[0],2)})(${fmtDec(u[0],3)}) + (${fmtDec(g[1],2)})(${fmtDec(u[1],3)}) = <b>${fmtDec(Dv,3)}</b>`;
+    const pct=ng>1e-9?50*Math.min(1,Math.abs(Dv)/ng):0,gz=$('#dirGauge');
+    gz.style.width=pct+'%';gz.style.left=(Dv>=0?50:50-pct)+'%';
+    gz.style.background=Dv>=0?'var(--c)':'#dc2626';
+    $('#dirLo').textContent='−'+fmtDec(ng,2);$('#dirHi').textContent='+'+fmtDec(ng,2);
+  }
+  redrawOnShow('dir',draw);draw();
+
+  /* step-by-step walkthrough */
+  let fam,WP,v,step=0;
+  function fresh(){fam=pick(intFams(2));WP=fam.pt();v=Math.random()<0.7?niceVec(2):rvecNZ(2,-4,4);step=0;wdraw();}
+  function wdraw(){
+    const g=fam.g(WP),nv=norm(v),u=unit(v),Dv=dot(g,v)/nv;
+    const L=[
+      M(R`f(x,y)=${fam.tex}`)+', '+M('P'+texPt(WP))+', '+M(R`\mathbf{v}=`+texVec(v)),
+      M(gradTexOf(fam)),
+      M(R`\nabla f(P)=`+texVec(g)),
+      M(R`|\mathbf{v}|=${lenTex(v)},\qquad \mathbf{u}=\frac{\mathbf{v}}{|\mathbf{v}|}=\langle ${fmtDec(u[0],4)},\ ${fmtDec(u[1],4)}\rangle`),
+      M(R`D_{\mathbf{u}}f(P)=\nabla f(P)\cdot\mathbf{u}=\frac{${texDot(g,v)}}{${lenTex(v)}}\approx ${fmtDec(Dv,4)}`)
+    ];
+    const cls=['','a','b','c','c'];
+    $('#dirExpr').innerHTML=L.map((s,i)=>`<div class="${i<=step?'':'faint'}"><span class="t ${cls[i]} ${i===step?'now':''}">${s}</span></div>`).join('');
+    const st=['The problem. Read off the function, the point, and the direction vector.',
+      'Step 1: the gradient as a function, one partial derivative per variable.',
+      'Step 2: evaluate it at P. Now it is a vector of numbers.',
+      'Step 3: normalize. This is the step people skip, and v almost never has length 1.',
+      'Step 4: dot the gradient with the unit vector. The answer is a number.'];
+    $('#dirStatus').textContent=st[step];
+    $('#dirPrev').disabled=step===0;$('#dirNext').disabled=step===4;
+    typeset($('#dirExpr'));
+  }
+  $('#dirNext').onclick=()=>{step=Math.min(4,step+1);wdraw();};
+  $('#dirPrev').onclick=()=>{step=Math.max(0,step-1);wdraw();};
+  $('#dirNew').onclick=fresh;
+  fresh();
+
+  new Drill({mount:'#drill-dir',section:'dir',goal:8,
+    ...mixDrill([Q.dirVec,Q.dirVec,Q.dirAngle,Q.dirToward,Q.dir3,Q.dir3,Q.dirZero,Q.dirSign])});
+})();
+
+/* ============================================================ test hook */
+window.__solvers={
+  'chain rule dz/dt':q=>({dz:q.ans}),
+  'chain rule at a value of t':q=>({v:numS(q.val)}),
+  'chain rule with two parameters':q=>({zs:numS(q.zs),zt:numS(q.zt)}),
+  'implicit differentiation dy/dx':q=>({dy:q.ans}),
+  'implicit partial derivatives of z':q=>({zx:q.ansx,zy:q.ansy}),
+  'gradient at a point':q=>({g:vecS(q.g)}),
+  'gradient as a function':q=>({g:'<'+q.fam.gS.join(', ')+'>'}),
+  'maximum rate of change':q=>({rate:numS(q.rate),dir:vecS(q.g)}),
+  'tangent plane to a level surface':q=>({eq:q.ans}),
+  'normal line to a level surface':q=>({ln:q.ans}),
+  'tangent line to a level curve':q=>({eq:q.ans}),
+  'directional derivative in the direction of a vector':q=>({d:numS(q.val)}),
+  'directional derivative from an angle':q=>({d:numS(q.val)}),
+  'directional derivative toward a point':q=>({d:numS(q.val)}),
+  'directional derivative in space':q=>({d:numS(q.val)}),
+  'direction of zero change':q=>({u:vecS(q.u)}),
+  'sign of a directional derivative from a contour map':q=>({_btn:['pos','neg','zero'].indexOf(q.kind)}),
+};
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.chainT,Q.chainT0,Q.chainST,Q.implicit2,Q.implicit3,
+  Q.gradAt,Q.gradFn,Q.maxRate,Q.tanPlane,Q.normalLine,Q.tanLine2D,
+  Q.dirVec,Q.dirAngle,Q.dirToward,Q.dir3,Q.dirZero,Q.dirSign]});
+
+initModule({key:'gradient',title:'Gradient, Directional Derivatives, Chain Rule',sub:'Module 5 · Stewart 14.6, then 14.5'});
+</script>
+</body>
+</html>

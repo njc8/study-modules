@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surface Integrals, Stokes, Divergence Theorem</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 11 · Stewart 16.6 to 16.9</p>
+  <h2>Surface integrals, Stokes, and the divergence theorem</h2>
+  <p class="lead">A surface is a two-parameter object. Once you can write it as \(\mathbf{r}(u,v)\), every integral over it becomes an ordinary double integral, and the last two big theorems of the course fall out.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work the chapters in order. Each one teaches an idea, gives you something to move around in 3D, walks through a computation step by step, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats: a vector whose components are expressions in \(u\) and \(v\) is typed like <code>&lt;-2u, -2v, 1&gt;</code> or <code>&lt;3cos(u), 3sin(u), 0&gt;</code>. Numbers can be exact, like <code>12pi/5</code>, <code>sqrt(14)*6</code>, <code>2pi*sqrt(2)/3</code>, or a decimal to three places. Equations of planes can be written in any equivalent form. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> \(\mathbf{r}_u\), and the field \(\mathbf{F}\)</span>
+      <span><i class="dot" style="background:var(--b)"></i> \(\mathbf{r}_v\)</span>
+      <span><i class="dot" style="background:var(--c)"></i> the normal \(\mathbf{r}_u\times\mathbf{r}_v\), and results</span>
+      <span><i class="dot" style="background:var(--d)"></i> points, curves, boundaries</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Parametrize a plane, cylinder, sphere, cone, graph, or surface of revolution, and recognize a surface from its parametrization.</li>
+      <li>Compute \(\mathbf{r}_u\), \(\mathbf{r}_v\), and \(\mathbf{r}_u\times\mathbf{r}_v\), write the tangent plane, and find surface area.</li>
+      <li>Evaluate \(\iint_S f\,dS\) for a scalar function: mass of a sheet, average value, area.</li>
+      <li>Evaluate the flux \(\iint_S \mathbf{F}\cdot d\mathbf{S}\) through an oriented surface, and get the sign right.</li>
+      <li>Use Stokes' theorem to trade a line integral for a flux of curl, or the other way round.</li>
+      <li>Use the divergence theorem to trade a closed-surface flux for a triple integral, and say which of the five big theorems a problem wants.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 PARAMETRIC SURFACES -->
+<section data-id="param" data-title="Parametric surfaces and surface area" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 16.6</p>
+  <h2>Parametric surfaces and surface area</h2>
+  <p class="lead">A curve needs one parameter. A surface needs two. Everything else follows from that one fact.</p>
+
+  <p>A <b>parametric surface</b> is a vector function of two variables,</p>
+  <div class="formula">\(\mathbf{r}(u,v)=\langle x(u,v),\,y(u,v),\,z(u,v)\rangle,\qquad (u,v)\in D\)<span class="cap">\(D\) is the <b>parameter domain</b>, a flat region in the \(uv\)-plane. The surface \(S\) is the image of \(D\).</span></div>
+  <p>Freezing one parameter gives a <b>grid curve</b>. Fix \(u=u_0\) and let \(v\) run: you get a curve lying in \(S\). Fix \(v=v_0\) and let \(u\) run: another curve. The two families of grid curves are the mesh you see drawn on every surface picture.</p>
+
+  <h3>The parametrizations you should know cold</h3>
+  <div class="card tint">
+    <table class="simple">
+      <tr><th>Surface</th><th>Parametrization</th><th>Domain</th></tr>
+      <tr><td>Plane through \(P\) spanned by \(\mathbf{a},\mathbf{b}\)</td><td>\(\mathbf{r}=\mathbf{p}+u\,\mathbf{a}+v\,\mathbf{b}\)</td><td>\(u,v\in\mathbb{R}\)</td></tr>
+      <tr><td>Graph \(z=f(x,y)\)</td><td>\(\mathbf{r}=\langle x,\,y,\,f(x,y)\rangle\)</td><td>\((x,y)\in D\)</td></tr>
+      <tr><td>Cylinder \(x^2+y^2=a^2\)</td><td>\(\mathbf{r}=\langle a\cos u,\,a\sin u,\,v\rangle\)</td><td>\(0\le u\le 2\pi\)</td></tr>
+      <tr><td>Sphere of radius \(a\)</td><td>\(\mathbf{r}=\langle a\sin\phi\cos\theta,\,a\sin\phi\sin\theta,\,a\cos\phi\rangle\)</td><td>\(0\le\phi\le\pi,\ 0\le\theta\le 2\pi\)</td></tr>
+      <tr><td>Cone \(z=\sqrt{x^2+y^2}\)</td><td>\(\mathbf{r}=\langle u\cos v,\,u\sin v,\,u\rangle\)</td><td>\(u\ge 0,\ 0\le v\le 2\pi\)</td></tr>
+      <tr><td>Revolving \(y=f(x)\), \(a\le x\le b\), about the \(x\)-axis</td><td>\(\mathbf{r}=\langle u,\,f(u)\cos v,\,f(u)\sin v\rangle\)</td><td>\(a\le u\le b,\ 0\le v\le 2\pi\)</td></tr>
+    </table>
+    <p class="hint">Pattern: whenever a circle is involved, one parameter is the angle. Whenever the surface is a graph, the two parameters are just \(x\) and \(y\).</p>
+  </div>
+
+  <h3>Tangent vectors and the normal</h3>
+  <p>Differentiate along each grid curve:</p>
+  <div class="formula">\(\mathbf{r}_u=\left\langle \dfrac{\partial x}{\partial u},\dfrac{\partial y}{\partial u},\dfrac{\partial z}{\partial u}\right\rangle,\qquad \mathbf{r}_v=\left\langle \dfrac{\partial x}{\partial v},\dfrac{\partial y}{\partial v},\dfrac{\partial z}{\partial v}\right\rangle\)<span class="cap">\(\mathbf{r}_u\) is tangent to the curve where \(v\) is frozen; \(\mathbf{r}_v\) is tangent to the curve where \(u\) is frozen. Both are tangent to \(S\).</span></div>
+  <p>Two tangent vectors determine the tangent plane, and their cross product is perpendicular to it:</p>
+  <div class="formula">\(\mathbf{n}=\mathbf{r}_u\times\mathbf{r}_v\)<span class="cap">The normal vector. The surface is <b>smooth</b> where \(\mathbf{r}_u\times\mathbf{r}_v\neq\mathbf{0}\). The tangent plane at \(\mathbf{r}(u_0,v_0)\) is the plane through that point with this normal.</span></div>
+  <p>For a graph \(\mathbf{r}=\langle u,v,f(u,v)\rangle\) this collapses to something worth memorizing: \(\mathbf{r}_u=\langle 1,0,f_u\rangle\), \(\mathbf{r}_v=\langle 0,1,f_v\rangle\), so</p>
+  <div class="formula">\(\mathbf{r}_u\times\mathbf{r}_v=\langle -f_u,\,-f_v,\,1\rangle\)<span class="cap">The \(z\)-component is \(+1\), so this normal always points <b>upward</b>. You will use it constantly in the flux chapter.</span></div>
+
+  <div class="card">
+    <h4>Explore: grid curves, \(\mathbf{r}_u\), \(\mathbf{r}_v\), and \(\mathbf{r}_u\times\mathbf{r}_v\)</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="pScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. Purple curves are the two grid curves through the marked point. Arrows are drawn to a common scale, not to true length.</p></div>
+      <div>
+        <div class="controls"><select id="pSel"></select></div>
+        <div class="sliders" id="pSliders"></div>
+        <div class="readout" id="pOut"></div>
+        <p class="hint">Put the point on the sphere's north pole (\(u=0\)): \(\mathbf{r}_v\) collapses to zero and the normal dies with it, which is why the sphere's parametrization is not smooth at the poles. On the cone, do the same at \(u=0\): the vertex is the one bad point. On the helicoid, notice \(|\mathbf{r}_u\times\mathbf{r}_v|=\sqrt{1+u^2}\) grows as you move out along the ramp.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>The normal is not unique.</b> Swapping the roles of \(u\) and \(v\) reverses the cross product: \(\mathbf{r}_v\times\mathbf{r}_u=-(\mathbf{r}_u\times\mathbf{r}_v)\). For area it makes no difference, because area uses the length. For flux it flips the sign of the answer, so from Chapter 3 on you must check which way your normal points.</div>
+
+  <h3>Surface area</h3>
+  <p>A small rectangle \(\Delta u\times\Delta v\) in the parameter domain maps to a small patch on \(S\) that is almost the parallelogram spanned by \(\mathbf{r}_u\,\Delta u\) and \(\mathbf{r}_v\,\Delta v\). The area of that parallelogram is \(|\mathbf{r}_u\times\mathbf{r}_v|\,\Delta u\,\Delta v\). Add up and take the limit:</p>
+  <div class="formula">\(A(S)=\displaystyle\iint_D |\mathbf{r}_u\times\mathbf{r}_v|\,dA\)<span class="cap">\(|\mathbf{r}_u\times\mathbf{r}_v|\) is the <b>stretch factor</b>: how much area the map from \(D\) to \(S\) creates at each point.</span></div>
+  <p>For a graph \(z=f(x,y)\), \(|\langle -f_x,-f_y,1\rangle|=\sqrt{1+f_x^2+f_y^2}\), which gives the version you have probably seen first:</p>
+  <div class="formula">\(A(S)=\displaystyle\iint_D \sqrt{1+f_x^2+f_y^2}\;dA\)</div>
+
+  <div class="warn"><b>Do not integrate over the surface's shadow and forget the stretch.</b> \(dA\) is area in the parameter domain; \(dS=|\mathbf{r}_u\times\mathbf{r}_v|\,dA\) is area on the surface. Dropping that factor is the single most common error in this chapter, and it always makes the answer too small.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-param"></div>
+</section>
+
+<!-- ============================================================ 2 SCALAR SURFACE INTEGRALS -->
+<section data-id="scalar" data-title="Surface integrals of scalar functions" data-goal="5">
+  <p class="eyebrow">Chapter 2 · Stewart 16.7</p>
+  <h2>Surface integrals of scalar functions</h2>
+  <p class="lead">Same idea as a line integral, one dimension up: chop the surface, weight each piece by \(f\), add.</p>
+
+  <p>Cut \(D\) into small rectangles, map them to patches on \(S\), multiply the value of \(f\) at a sample point by the patch's area, and add. The patch area is \(|\mathbf{r}_u\times\mathbf{r}_v|\,\Delta u\,\Delta v\), so:</p>
+  <div class="formula">\(\displaystyle\iint_S f\,dS=\iint_D f\big(\mathbf{r}(u,v)\big)\,\big|\mathbf{r}_u\times\mathbf{r}_v\big|\,dA\)<span class="cap">Substitute the parametrization into \(f\), multiply by the stretch factor, integrate over the flat parameter domain.</span></div>
+  <p>For a graph \(z=g(x,y)\) over a region \(D\) in the \(xy\)-plane:</p>
+  <div class="formula">\(\displaystyle\iint_S f\,dS=\iint_D f\big(x,y,g(x,y)\big)\,\sqrt{1+g_x^2+g_y^2}\;dA\)<span class="cap">The \(z\) inside \(f\) gets replaced by \(g(x,y)\). Nothing is left over the surface: everything is now a function of \(x\) and \(y\).</span></div>
+
+  <p>Three things this computes:</p>
+  <ul>
+    <li><b>Area</b>, when \(f=1\).</li>
+    <li><b>Mass</b> of a thin sheet with surface density \(\rho(x,y,z)\): \(m=\iint_S \rho\,dS\). Centers of mass and moments work the same way as in earlier chapters.</li>
+    <li><b>Average value</b> of \(f\) on \(S\): \(\dfrac{1}{A(S)}\iint_S f\,dS\).</li>
+  </ul>
+  <p>If \(S\) is made of several smooth pieces (a box, a closed cylinder with its two lids), integrate over each piece and add. That is legal because area adds.</p>
+
+  <div class="card">
+    <h4>Step by step: \(\iint_S z\,dS\) over a piece of a plane</h4>
+    <div class="given" id="w1Given"></div>
+    <ol class="steps" id="w1Steps"></ol>
+    <div class="controls">
+      <button class="btn" id="w1Prev">◀ Back</button>
+      <button class="btn primary" id="w1Next">Next step ▶</button>
+      <button class="btn" id="w1New">New problem</button>
+      <span class="status" id="w1Status"></span>
+    </div>
+    <p class="hint">Notice where the work actually is: the stretch factor is a constant for a plane, so it slides straight out of the integral, and what remains is a first-year double integral of a linear function over a rectangle.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: how one parameter cell stretches</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="sScene"></canvas><p class="plotcap">Color shows the value of \(f\) on the surface: blue is low, orange is high. The purple outline is the image of one parameter cell \(\Delta u\times\Delta v\).</p></div>
+      <div>
+        <div class="controls"><select id="sSel"></select></div>
+        <div class="sliders" id="sSliders"></div>
+        <div class="readout" id="sOut"></div>
+        <p class="hint">Move the cell around and watch the two areas in the readout. On the sphere the cell shrinks to nothing near the poles even though \(\Delta u\,\Delta v\) never changes: that is the \(\sin\phi\) in \(dS=a^2\sin\phi\,d\phi\,d\theta\). On the plane the ratio is the same everywhere, which is why a plane's stretch factor comes out of the integral.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Orientation does not matter here.</b> \(dS\) is an area, always positive. Reversing \(u\) and \(v\), or walking the surface the other way, changes nothing: \(\iint_S f\,dS\) has one value. That is the difference between this chapter and the next one.</div>
+  <div class="warn"><b>Substitute before you integrate.</b> \(\iint_S z\,dS\) over \(z=g(x,y)\) is <i>not</i> \(\iint_D z\,dA\). Replace \(z\) by \(g(x,y)\) and attach \(\sqrt{1+g_x^2+g_y^2}\). If any \(z\) is still standing after you set up the double integral, you have made this mistake.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-scalar"></div>
+</section>
+
+<!-- ============================================================ 3 FLUX -->
+<section data-id="flux" data-title="Surface integrals of vector fields" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 16.7</p>
+  <h2>Surface integrals of vector fields: flux</h2>
+  <p class="lead">How much of the field crosses the surface, and which way. This is the integral the last two theorems are about.</p>
+
+  <p>An <b>oriented</b> surface comes with a choice of unit normal \(\mathbf{n}\) at every point, varying continuously. A smooth parametrized surface has two choices, and they are negatives of each other:</p>
+  <div class="formula">\(\mathbf{n}=\dfrac{\mathbf{r}_u\times\mathbf{r}_v}{|\mathbf{r}_u\times\mathbf{r}_v|}\qquad\text{or}\qquad -\mathbf{n}\)</div>
+  <p>The <b>flux</b> of \(\mathbf{F}\) through \(S\) is the surface integral of the normal component of \(\mathbf{F}\):</p>
+  <div class="formula">\(\displaystyle\iint_S \mathbf{F}\cdot d\mathbf{S}=\iint_S \mathbf{F}\cdot\mathbf{n}\,dS=\iint_D \mathbf{F}\big(\mathbf{r}(u,v)\big)\cdot\big(\mathbf{r}_u\times\mathbf{r}_v\big)\,dA\)<span class="cap">The lengths cancel: \(\mathbf{n}\,dS=(\mathbf{r}_u\times\mathbf{r}_v)\,dA\). You never normalize anything. Just dot \(\mathbf{F}\) with the raw cross product.</span></div>
+  <p>Only the component of \(\mathbf{F}\) along \(\mathbf{n}\) counts. Field sliding tangent to the surface contributes nothing. If \(\mathbf{F}\) is a fluid velocity times density, the flux is mass per unit time crossing \(S\) in the direction of \(\mathbf{n}\).</p>
+
+  <p>For a graph \(z=g(x,y)\) with the <b>upward</b> normal, use \(\mathbf{r}_u\times\mathbf{r}_v=\langle -g_x,-g_y,1\rangle\) and \(\mathbf{F}=\langle P,Q,R\rangle\):</p>
+  <div class="formula">\(\displaystyle\iint_S \mathbf{F}\cdot d\mathbf{S}=\iint_D\big(-P\,g_x-Q\,g_y+R\big)\,dA\)<span class="cap">Everything inside is evaluated at \((x,y,g(x,y))\). For the downward normal, negate the whole thing.</span></div>
+  <p>For a <b>closed</b> surface (a sphere, the skin of a box, a capped cylinder) the convention is fixed: <b>positive orientation means the outward normal</b>. Flux through a closed surface then measures net outflow.</p>
+  <p>A box, or a cylinder with lids, is handled one face at a time: each face is its own parametrized surface with its own outward normal, and the fluxes add. On the face \(x=a\) of a box the outward normal is \(\mathbf{i}\), so that face contributes \(\iint P\,dA\) with \(x=a\) substituted; on the face \(x=0\) it is \(-\mathbf{i}\).</p>
+
+  <div class="card">
+    <h4>Step by step: flux through a piece of a plane</h4>
+    <div class="given" id="w2Given"></div>
+    <ol class="steps" id="w2Steps"></ol>
+    <div class="controls">
+      <button class="btn" id="w2Prev">◀ Back</button>
+      <button class="btn primary" id="w2Next">Next step ▶</button>
+      <button class="btn" id="w2New">New problem</button>
+      <span class="status" id="w2Status"></span>
+    </div>
+    <p class="hint">Step 2 is the one to slow down on. Write \(\mathbf{r}_u\times\mathbf{r}_v\) first, then look at its \(z\)-component to see which way it points, and only then decide whether you need it or its negative.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: normals, the field, and the sign of the flux</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="fScene"></canvas><p class="plotcap">Green arrows are the chosen normals. Orange arrows are \(\mathbf{F}\) sampled at the same points. Where they lean the same way, that patch contributes positively.</p></div>
+      <div>
+        <div class="controls">
+          <select id="fSel"></select><select id="fFld"></select>
+          <label class="chk"><input type="checkbox" id="fFlip"> flip orientation</label>
+        </div>
+        <div class="readout" id="fOut"></div>
+        <p class="hint">Try \(\mathbf{F}=\langle -y,x,0\rangle\) on every surface: it circulates around the \(z\)-axis, always tangent to the cylinder and never crossing it, so the flux is 0. Then try \(\mathbf{F}=\langle 0,0,1\rangle\) on the hemisphere and on the flat disk that shares its boundary circle: same answer, a first hint of the divergence theorem. Tick the box and every number changes sign.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>Flux depends on orientation.</b> \(\iint_S f\,dS\) has one value, but \(\iint_S\mathbf{F}\cdot d\mathbf{S}\) has two, differing by a sign. An answer without a stated orientation is not an answer. If the problem says "upward", check that the \(z\)-component of your \(\mathbf{r}_u\times\mathbf{r}_v\) is positive; if it says "outward" on a closed surface, check the normal at one easy point, for example the top of a sphere.</div>
+  <div class="note"><b>Shortcut for spheres.</b> On the sphere \(x^2+y^2+z^2=a^2\) the outward unit normal is \(\mathbf{n}=\frac{1}{a}\langle x,y,z\rangle\), the position vector normalized. So for \(\mathbf{F}=\langle x,y,z\rangle\), \(\mathbf{F}\cdot\mathbf{n}=\frac{x^2+y^2+z^2}{a}=a\) is constant and the flux is just \(a\cdot 4\pi a^2\). Look for that kind of collapse before setting up any integral.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-flux"></div>
+</section>
+
+<!-- ============================================================ 4 STOKES -->
+<section data-id="stokes" data-title="Stokes' theorem" data-goal="5">
+  <p class="eyebrow">Chapter 4 · Stewart 16.8</p>
+  <h2>Stokes' theorem</h2>
+  <p class="lead">The circulation around the edge equals the total curl through the inside. Green's theorem, lifted off the plane.</p>
+
+  <div class="formula">\(\displaystyle\oint_C \mathbf{F}\cdot d\mathbf{r}=\iint_S \operatorname{curl}\mathbf{F}\cdot d\mathbf{S}\)<span class="cap">\(S\) is an oriented piecewise-smooth surface whose boundary is the simple closed curve \(C\), oriented compatibly. \(\mathbf{F}\) needs continuous partials on an open region containing \(S\).</span></div>
+
+  <p><b>Compatible orientation</b> is the whole game. The <b>right-hand rule</b>: point your right thumb along the normal \(\mathbf{n}\); your fingers curl the way \(C\) must be traversed. Equivalently, walk along \(C\) with your head pointing along \(\mathbf{n}\), and the surface should be on your left.</p>
+  <p>The flat case: if \(S\) is a region in the \(xy\)-plane with the upward normal \(\mathbf{k}\), then \(\operatorname{curl}\mathbf{F}\cdot\mathbf{k}=Q_x-P_y\) and \(C\) is counterclockwise seen from above. Stokes reads \(\oint_C P\,dx+Q\,dy=\iint_D (Q_x-P_y)\,dA\), which is exactly <b>Green's theorem</b>.</p>
+
+  <p>Two ways to use it, and you choose based on which side looks worse:</p>
+  <div class="card tint">
+    <ol>
+      <li><b>Ugly line integral, nice surface.</b> \(C\) is a circle or a triangle in space and \(\mathbf{F}\) is messy. Replace \(\oint_C\mathbf{F}\cdot d\mathbf{r}\) by the flux of \(\operatorname{curl}\mathbf{F}\) through the flattest surface you can find with that boundary, usually a disk or a triangle. When \(\operatorname{curl}\mathbf{F}\) is constant, the flux is just \(\operatorname{curl}\mathbf{F}\cdot\mathbf{n}\) times the area.</li>
+      <li><b>Ugly surface, nice boundary.</b> \(S\) is a hemisphere or a paraboloid cap and you are asked for \(\iint_S\operatorname{curl}\mathbf{F}\cdot d\mathbf{S}\). Drop to the boundary circle and compute one line integral in \(t\).</li>
+    </ol>
+  </div>
+
+  <div class="note"><b>Any surface with the same boundary works.</b> If \(S_1\) and \(S_2\) share the boundary curve \(C\) and are oriented compatibly with the same direction on \(C\), then \(\iint_{S_1}\operatorname{curl}\mathbf{F}\cdot d\mathbf{S}=\oint_C\mathbf{F}\cdot d\mathbf{r}=\iint_{S_2}\operatorname{curl}\mathbf{F}\cdot d\mathbf{S}\). A hemisphere, a paraboloid cap, and the flat disk over the same circle all give the same answer, so always take the flat one.</div>
+
+  <div class="card">
+    <h4>Step by step: a line integral around a circle, done with Stokes</h4>
+    <div class="given" id="w3Given"></div>
+    <ol class="steps" id="w3Steps"></ol>
+    <div class="controls">
+      <button class="btn" id="w3Prev">◀ Back</button>
+      <button class="btn primary" id="w3Next">Next step ▶</button>
+      <button class="btn" id="w3New">New problem</button>
+      <span class="status" id="w3Status"></span>
+    </div>
+    <p class="hint">Compare the work here with parametrizing the circle and grinding out \(\oint\mathbf{F}\cdot d\mathbf{r}\) directly. Same answer, a quarter of the algebra, because the curl turned out to be a constant vector.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: both sides of Stokes' theorem at once</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="kScene"></canvas><p class="plotcap">Purple is the boundary circle \(C\); the moving dot shows its direction. Green arrows are \(\operatorname{curl}\mathbf{F}\) on the surface. Both integrals are computed numerically.</p></div>
+      <div>
+        <div class="controls">
+          <select id="kSel"></select><select id="kFld"></select>
+          <label class="chk"><input type="checkbox" id="kFlip"> flip normal</label>
+        </div>
+        <div class="readout" id="kOut"></div>
+        <p class="hint">Switch between the hemisphere, the paraboloid cap, and the flat disk without touching the field: the flux of curl does not move, because all three have the same boundary. Then flip the normal: the dot reverses and both sides change sign together, which is what "compatibly oriented" means.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>Curl, then dot, then integrate.</b> Two sign traps. First, \(\operatorname{curl}\mathbf{F}=\langle R_y-Q_z,\;P_z-R_x,\;Q_x-P_y\rangle\): the middle component is the one people get backwards, so expand the determinant instead of trusting memory. Second, if the normal points down, \(C\) runs clockwise seen from above; using the counterclockwise direction anyway costs you a minus sign.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-stokes"></div>
+</section>
+
+<!-- ============================================================ 5 DIVERGENCE THEOREM -->
+<section data-id="div" data-title="The divergence theorem" data-goal="5">
+  <p class="eyebrow">Chapter 5 · Stewart 16.9</p>
+  <h2>The divergence theorem</h2>
+  <p class="lead">Total outflow through the skin equals the sum of the sources inside.</p>
+
+  <div class="formula">\(\displaystyle\iint_S \mathbf{F}\cdot d\mathbf{S}=\iiint_E \operatorname{div}\mathbf{F}\,dV\)<span class="cap">\(E\) is a solid region, \(S=\partial E\) is its closed boundary surface with the <b>outward</b> normal, and \(\operatorname{div}\mathbf{F}=P_x+Q_y+R_z\).</span></div>
+
+  <p>The intuition: \(\operatorname{div}\mathbf{F}\) at a point is the rate at which the field is "created" there, outflow per unit volume. Add that over the whole solid and the interior contributions cancel in pairs, since whatever leaves one small box enters its neighbor. Only the outer skin survives, and that is the flux.</p>
+  <p>Use it in either direction:</p>
+  <ul>
+    <li><b>Surface to volume.</b> A flux through six faces of a box, or through a sphere, becomes one triple integral. When \(\operatorname{div}\mathbf{F}\) is constant the answer is (that constant) \(\times\) (the volume), and there is nothing left to compute.</li>
+    <li><b>Volume to surface.</b> Rarely, a hard triple integral is easier as a flux.</li>
+    <li><b>Surface to surface.</b> If \(\operatorname{div}\mathbf{F}=0\), the flux out of any closed surface is 0, so the flux through a complicated surface equals the flux through any nicer one that traps no extra divergence between them.</li>
+  </ul>
+
+  <div class="card">
+    <h4>Explore: flux out, divergence in</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="dScene"></canvas><p class="plotcap">The solid is drawn faintly with its outward normals in green and \(\mathbf{F}\) in orange. Both sides of the theorem are computed numerically on a grid.</p></div>
+      <div>
+        <div class="controls"><select id="dSel"></select><select id="dFld"></select></div>
+        <div class="readout" id="dOut"></div>
+        <p class="hint">Take \(\mathbf{F}=\langle -y,x,0\rangle\): the divergence is 0 and the flux is 0 on every solid, because the field only swirls. Now take \(\mathbf{F}=\langle x,y,z\rangle\): the divergence is 3 everywhere, so the flux must be exactly 3 times the volume, whichever solid you pick. And \(\langle x^2,0,0\rangle\) gives 0 on these symmetric solids: the positive outflow on one side is cancelled by inflow on the other.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>The surface must be closed.</b> The divergence theorem applies to \(\partial E\), the entire boundary of a solid. For an open surface such as a paraboloid cap or a cylinder without lids, either close it with a disk and subtract the lid's flux at the end, or compute the surface integral directly. Using it on an open surface is the most common way to lose every point on a problem.</div>
+  <div class="note"><b>Divergence zero means sourceless.</b> If \(\operatorname{div}\mathbf{F}=0\) on a region, the flux through every closed surface inside that region is 0. This is the 3D analogue of a conservative field having zero circulation, and it is why magnetic fields have no net flux out of any closed surface.</div>
+
+  <h3>The family of fundamental theorems</h3>
+  <p>All five say the same sentence: <b>the integral of a derivative over a region equals an integral of the original function over the boundary of that region.</b></p>
+  <div class="card tint">
+    <table class="simple">
+      <tr><th>Theorem</th><th>Region</th><th>Statement</th><th>Boundary</th></tr>
+      <tr><td>FTC</td><td>interval \([a,b]\)</td><td>\(\int_a^b F'(x)\,dx=F(b)-F(a)\)</td><td>two endpoints</td></tr>
+      <tr><td>FTC for line integrals</td><td>curve \(C\)</td><td>\(\int_C \nabla f\cdot d\mathbf{r}=f(B)-f(A)\)</td><td>two endpoints</td></tr>
+      <tr><td>Green</td><td>plane region \(D\)</td><td>\(\iint_D (Q_x-P_y)\,dA=\oint_C P\,dx+Q\,dy\)</td><td>closed curve \(C\)</td></tr>
+      <tr><td>Stokes</td><td>surface \(S\) in space</td><td>\(\iint_S \operatorname{curl}\mathbf{F}\cdot d\mathbf{S}=\oint_C \mathbf{F}\cdot d\mathbf{r}\)</td><td>closed curve \(C\)</td></tr>
+      <tr><td>Divergence</td><td>solid \(E\)</td><td>\(\iiint_E \operatorname{div}\mathbf{F}\,dV=\iint_S \mathbf{F}\cdot d\mathbf{S}\)</td><td>closed surface \(S\)</td></tr>
+    </table>
+    <p class="hint">Reading the table by dimension: 1D region with 0D boundary, then curve with endpoints, then 2D with 1D, then surface with curve, then 3D with 2D. Picking the right theorem is mostly a matter of asking what kind of region you are integrating over and what its boundary is.</p>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-div"></div>
+</section>
+
+<!-- ============================================================ 6 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 6</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions, one of each type, drawn from all five chapters. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const TOL={tol:1e-3};
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const vecIn=(el,k,label,ph='⟨ , , ⟩')=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+const eqIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+const PI=Math.PI;
+const EXACT='Exact (like <code>12pi/5</code> or <code>6sqrt(14)</code>) or a decimal to three places.';
+/* rational multiple of pi, as TeX */
+const piTex=v=>{const c=v/PI;if(Math.abs(c)<1e-12)return '0';const s=texNum(c);return s==='1'?R`\pi`:s==='-1'?R`-\pi`:s+R`\pi`;};
+/* c*sqrt(D) as TeX, with the radical simplified and integer parts folded in */
+function radTex(c,D){let A=1,B=Math.round(D);for(let k=2;k*k<=B;k++){while(B%(k*k)===0){B/=k*k;A*=k;}}
+  const co=c*A;if(B===1)return texNum(co);
+  return (near(co,1)?'':near(co,-1)?'-':texNum(co))+R`\sqrt{${B}}`;}
+const C1=n=>n===1?'':(n===-1?'-':String(n));
+const negStr=s=>s.trim().startsWith('-')?s.trim().slice(1):'-('+s+')';
+const negTex=s=>s.trim().startsWith('-')?s.trim().slice(1):'-'+(/[+-]/.test(s.trim().slice(1))?`(${s})`:s);
+const fv=v=>'⟨'+v.map(x=>fmtDec(x,2)).join(', ')+'⟩';
+const texFld=c=>R`\langle ${c[0]},\; ${c[1]},\; ${c[2]}\rangle`;
+/* numeric differential geometry, used by the widgets */
+const RU=(r,u,v,h=1e-4)=>vscale(1/(2*h),vsub(r(u+h,v),r(u-h,v)));
+const RV=(r,u,v,h=1e-4)=>vscale(1/(2*h),vsub(r(u,v+h),r(u,v-h)));
+const NRM=(r,u,v)=>cross(RU(r,u,v),RV(r,u,v));
+function fluxNum(F,r,[u0,u1],[v0,v1],n=44){let s=0;const du=(u1-u0)/n,dv=(v1-v0)/n;
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const u=u0+(i+0.5)*du,v=v0+(j+0.5)*dv;const N=NRM(r,u,v);const w=dot(F(r(u,v)),N);if(Number.isFinite(w))s+=w*du*dv;}return s;}
+function areaNum(r,[u0,u1],[v0,v1],n=44){let s=0;const du=(u1-u0)/n,dv=(v1-v0)/n;
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const w=norm(NRM(r,u0+(i+0.5)*du,v0+(j+0.5)*dv));if(Number.isFinite(w))s+=w*du*dv;}return s;}
+function curlNum(F,p,h=1e-4){const d=(i,j)=>{const a=p.slice(),b=p.slice();a[j]+=h;b[j]-=h;return (F(a)[i]-F(b)[i])/(2*h);};
+  return [d(2,1)-d(1,2),d(0,2)-d(2,0),d(1,0)-d(0,1)];}
+function divNum(F,p,h=1e-4){let s=0;for(let j=0;j<3;j++){const a=p.slice(),b=p.slice();a[j]+=h;b[j]-=h;s+=(F(a)[j]-F(b)[j])/(2*h);}return s;}
+function lineNum(F,c,t0,t1,n=900){let s=0;const dt=(t1-t0)/n,h=1e-5;
+  for(let i=0;i<n;i++){const t=t0+(i+0.5)*dt;const rp=vscale(1/(2*h),vsub(c(t+h),c(t-h)));s+=dot(F(c(t)),rp)*dt;}return s;}
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------------------------------------------------------- chapter 1 */
+const ID_KINDS=['plane','cylinder','sphere','cone','paraboloid','helicoid','torus'];
+Q.idSurface={name:'identify the surface',
+  gen(){
+    const kind=pick(ID_KINDS);const a=rint(2,4),k=rint(2,3);let tex,dom,why;
+    if(kind==='plane'){let A,B;do{A=[rnz(-2,2),rint(-2,2),rint(-2,2)];B=[rint(-2,2),rnz(-2,2),rint(-2,2)];}while(vzero(cross(A,B)));
+      const p=[rint(-2,2),rint(-2,2),rint(-2,2)];
+      tex=R`\langle ${texLin([A[0],B[0]],['u','v'],{constant:p[0]})},\; ${texLin([A[1],B[1]],['u','v'],{constant:p[1]})},\; ${texLin([A[2],B[2]],['u','v'],{constant:p[2]})}\rangle`;
+      dom=R`u,\,v\in\mathbb{R}`;
+      why=`Every component is a linear function of \\(u\\) and \\(v\\), so this is \\(\\mathbf r=\\mathbf p+u\\,\\mathbf a+v\\,\\mathbf b\\) with \\(\\mathbf p=${texPt(p)}\\), \\(\\mathbf a=${texVec(A)}\\), \\(\\mathbf b=${texVec(B)}\\): a <b>plane</b>. No squares, no trig, nothing but \\(u\\) and \\(v\\) to the first power.`;}
+    else if(kind==='cylinder'){tex=R`\langle ${a}\cos u,\; ${a}\sin u,\; v\rangle`;dom=R`0\le u\le 2\pi,\; 0\le v\le 4`;
+      why=`\\(x^2+y^2=${a}^2\\cos^2u+${a}^2\\sin^2u=${a*a}\\) no matter what \\(u\\) is, while \\(z=v\\) runs free. Every point sits at distance ${a} from the \\(z\\)-axis: a <b>cylinder</b> of radius ${a}.`;}
+    else if(kind==='sphere'){tex=R`\langle ${a}\sin u\cos v,\; ${a}\sin u\sin v,\; ${a}\cos u\rangle`;dom=R`0\le u\le \pi,\; 0\le v\le 2\pi`;
+      why=`Add the squares: \\(x^2+y^2+z^2=${a*a}\\sin^2u+${a*a}\\cos^2u=${a*a}\\). Every point is ${a} units from the origin, so this is a <b>sphere</b> of radius ${a}, with \\(u=\\phi\\) and \\(v=\\theta\\).`;}
+    else if(kind==='cone'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}u\rangle`;dom=R`0\le u\le 3,\; 0\le v\le 2\pi`;
+      why=`Here \\(x^2+y^2=u^2\\) and \\(z=${k}u\\), so \\(z=${k}\\sqrt{x^2+y^2}\\): the height is proportional to the distance from the axis, which is a <b>cone</b>. (Compare the paraboloid, where \\(z\\) is proportional to \\(u^2\\) instead.)`;}
+    else if(kind==='paraboloid'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}u^2\rangle`;dom=R`0\le u\le 2,\; 0\le v\le 2\pi`;
+      why=`\\(x^2+y^2=u^2\\) and \\(z=${k}u^2\\), so \\(z=${k}(x^2+y^2)\\): a circular <b>paraboloid</b> opening upward.`;}
+    else if(kind==='helicoid'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}v\rangle`;dom=R`0\le u\le 2,\; 0\le v\le 4\pi`;
+      why=`Freeze \\(v\\): you get a straight ray out from the \\(z\\)-axis, sitting at the fixed height \\(z=${k}v\\). As \\(v\\) increases the ray rotates and rises at the same time, sweeping out a spiral ramp: a <b>helicoid</b>.`;}
+    else {const b=a+3;tex=R`\langle (${b}+${a}\cos u)\cos v,\; (${b}+${a}\cos u)\sin v,\; ${a}\sin u\rangle`;dom=R`0\le u\le 2\pi,\; 0\le v\le 2\pi`;
+      why=`The distance from the \\(z\\)-axis is \\(\\sqrt{x^2+y^2}=${b}+${a}\\cos u\\) and the height is \\(${a}\\sin u\\), so in each vertical half-plane you see a circle of radius ${a} centered ${b} units out. Spinning that circle around the axis with \\(v\\) gives a <b>torus</b>.`;}
+    return {kind,tex,dom,why,ai:ID_KINDS.indexOf(kind)};},
+  render(q,el){el.innerHTML=`<p class="prompt">What surface does this parametrization describe?</p>${D(R`\mathbf r(u,v)=`+q.tex)}<p class="prompt" style="font-weight:400">for ${M(q.dom)}.</p>`;
+    q.get=choiceButtons(el,ID_KINDS.map(k=>({label:k,value:k})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.kind,msg:v===q.kind?'':'Two questions sort almost all of these out: what is \\(x^2+y^2\\), and how does \\(z\\) depend on the parameters?'};},
+  solution(q){return q.why;}
+};
+
+Q.normalPlane={name:'normal vector to a parametrized plane',
+  gen(){let A,B;do{A=[rnz(-3,3),rint(-3,3),rint(-3,3)];B=[rint(-3,3),rnz(-3,3),rint(-3,3)];}while(vzero(cross(A,B)));
+    const p=[rint(-3,3),rint(-3,3),rint(-3,3)];return {A,B,p,n:cross(A,B)};},
+  render(q,el){el.innerHTML=`<p class="prompt">A plane is parametrized by ${M(R`\mathbf r(u,v)=\mathbf p+u\,\mathbf a+v\,\mathbf b`)} with ${M(R`\mathbf p=`+texVec(q.p))}, ${M(R`\mathbf a=`+texVec(q.A))}, ${M(R`\mathbf b=`+texVec(q.B))}. Compute ${M(R`\mathbf r_u\times\mathbf r_v`)}.</p>`;
+    vecIn(el,'n',M(R`\mathbf r_u\times\mathbf r_v=`),'⟨a, b, c⟩');},
+  check(q,el){return G(el,'n',checkVector($('[data-k=n]',el).value,q.n));},
+  solution(q){return `Differentiate: the constant ${M(R`\mathbf p`)} dies, so ${M(R`\mathbf r_u=\mathbf a=`+texVec(q.A))} and ${M(R`\mathbf r_v=\mathbf b=`+texVec(q.B))}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\mathbf a\times\mathbf b=`+texVec(q.n))}. It is the same at every point, which is exactly what you expect from a plane.`;}
+};
+
+const GRAPH_POOL=[
+  {tex:'u^2+v^2',fu:'2u',fv:'2v',fuT:'2u',fvT:'2v'},
+  {tex:'u^2-v^2',fu:'2u',fv:'-2v',fuT:'2u',fvT:'-2v'},
+  {tex:'uv',fu:'v',fv:'u',fuT:'v',fvT:'u'},
+  {tex:'3u^2+v^2',fu:'6u',fv:'2v',fuT:'6u',fvT:'2v'},
+  {tex:'u^2v',fu:'2u*v',fv:'u^2',fuT:'2uv',fvT:'u^2'},
+  {tex:'u^3-v',fu:'3u^2',fv:'-1',fuT:'3u^2',fvT:'-1'},
+  {tex:'4-u^2-2v^2',fu:'-2u',fv:'-4v',fuT:'-2u',fvT:'-4v'}
+];
+Q.normalParam={name:'cross product r_u x r_v',
+  gen(){const kind=pick(['cyl','cone','graph','graph','sphere']);
+    if(kind==='cyl'){const a=rint(2,5);
+      return {kind,tex:R`\langle ${a}\cos u,\; ${a}\sin u,\; v\rangle`,
+        ruT:R`\langle -${a}\sin u,\; ${a}\cos u,\; 0\rangle`,rvT:R`\langle 0,\;0,\;1\rangle`,
+        refs:[`${a}cos(u)`,`${a}sin(u)`,'0'],ansT:R`\langle ${a}\cos u,\; ${a}\sin u,\; 0\rangle`,
+        ans:`<${a}cos(u), ${a}sin(u), 0>`,
+        note:`This normal is horizontal and points straight out from the \\(z\\)-axis, which is what an outward normal on a cylinder should do. Its length is ${a}, the radius.`};}
+    if(kind==='cone'){const k=rint(1,3);const kt=k===1?'':k;
+      return {kind,tex:R`\langle u\cos v,\; u\sin v,\; ${kt}u\rangle`,
+        ruT:R`\langle \cos v,\; \sin v,\; ${k}\rangle`,rvT:R`\langle -u\sin v,\; u\cos v,\; 0\rangle`,
+        refs:[`-${k}u*cos(v)`,`-${k}u*sin(v)`,'u'],ansT:R`\langle -${kt}u\cos v,\; -${kt}u\sin v,\; u\rangle`,
+        ans:`<-${k}u*cos(v), -${k}u*sin(v), u>`,
+        note:`Its length is \\(u\\sqrt{${k*k+1}}\\), which vanishes at the vertex \\(u=0\\): the cone is not smooth at its tip.`};}
+    if(kind==='graph'){const g=pick(GRAPH_POOL);
+      return {kind,tex:R`\langle u,\; v,\; ${g.tex}\rangle`,
+        ruT:R`\langle 1,\;0,\;${g.fuT}\rangle`,rvT:R`\langle 0,\;1,\;${g.fvT}\rangle`,
+        refs:[negStr(g.fu),negStr(g.fv),'1'],ansT:R`\langle ${negTex(g.fuT)},\; ${negTex(g.fvT)},\; 1\rangle`,
+        ans:`<${negStr(g.fu)}, ${negStr(g.fv)}, 1>`,
+        note:`For any graph \\(\\langle u,v,f\\rangle\\) the normal is \\(\\langle -f_u,-f_v,1\\rangle\\). The \\(+1\\) in the last slot means it points upward.`};}
+    const a=rint(2,3);
+    return {kind,tex:R`\langle ${a}\sin u\cos v,\; ${a}\sin u\sin v,\; ${a}\cos u\rangle`,
+      ruT:R`\langle ${a}\cos u\cos v,\; ${a}\cos u\sin v,\; -${a}\sin u\rangle`,rvT:R`\langle -${a}\sin u\sin v,\; ${a}\sin u\cos v,\; 0\rangle`,
+      refs:[`${a*a}sin(u)^2*cos(v)`,`${a*a}sin(u)^2*sin(v)`,`${a*a}sin(u)*cos(u)`],
+      ansT:R`${a*a}\sin u\,\langle \sin u\cos v,\; \sin u\sin v,\; \cos u\rangle`,
+      ans:`<${a*a}sin(u)^2cos(v), ${a*a}sin(u)^2sin(v), ${a*a}sin(u)cos(u)>`,
+      note:`Factor it: \\(${a*a}\\sin u\\,\\langle\\sin u\\cos v,\\sin u\\sin v,\\cos u\\rangle=${a}\\sin u\\;\\mathbf r\\). The normal is parallel to the position vector, pointing outward, and its length is \\(${a*a}\\sin u\\): that is the \\(a^2\\sin\\phi\\) in \\(dS\\).`};},
+  render(q,el){el.innerHTML=`<p class="prompt">For the surface ${M(R`\mathbf r(u,v)=`+q.tex)}, compute ${M(R`\mathbf r_u\times\mathbf r_v`)}. Write the components as expressions in ${M('u')} and ${M('v')}, for example <code>&lt;-2u, -2v, 1&gt;</code>.</p>`;
+    vecIn(el,'n',M(R`\mathbf r_u\times\mathbf r_v=`),'⟨ , , ⟩');},
+  check(q,el){return G(el,'n',checkExprVector($('[data-k=n]',el).value,q.refs,['u','v']));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el2());}h.innerHTML=`${M(R`\mathbf r_u=`+q.ruT)} and ${M(R`\mathbf r_v=`+q.rvT)}. Now take the cross product.`;},
+  solution(q){return `Differentiate each component: ${M(R`\mathbf r_u=`+q.ruT)} and ${M(R`\mathbf r_v=`+q.rvT)}. The cross product is ${M(R`\mathbf r_u\times\mathbf r_v=`+q.ansT)}. ${q.note}`;}
+};
+function el2(){const d=document.createElement('div');d.className='hintbox expr';return d;}
+
+const TP_POOL=[
+  {tex:R`\langle u^2,\; v^2,\; u+2v\rangle`,r:(u,v)=>[u*u,v*v,u+2*v],ru:(u,v)=>[2*u,0,1],rv:(u,v)=>[0,2*v,2],
+   ruT:R`\langle 2u,\;0,\;1\rangle`,rvT:R`\langle 0,\;2v,\;2\rangle`},
+  {tex:R`\langle u+v,\; u-v,\; uv\rangle`,r:(u,v)=>[u+v,u-v,u*v],ru:(u,v)=>[1,1,v],rv:(u,v)=>[1,-1,u],
+   ruT:R`\langle 1,\;1,\;v\rangle`,rvT:R`\langle 1,\;-1,\;u\rangle`},
+  {tex:R`\langle u^2,\; uv,\; v^2\rangle`,r:(u,v)=>[u*u,u*v,v*v],ru:(u,v)=>[2*u,v,0],rv:(u,v)=>[0,u,2*v],
+   ruT:R`\langle 2u,\;v,\;0\rangle`,rvT:R`\langle 0,\;u,\;2v\rangle`},
+  {tex:R`\langle uv,\; u+v,\; u-v\rangle`,r:(u,v)=>[u*v,u+v,u-v],ru:(u,v)=>[v,1,1],rv:(u,v)=>[u,1,-1],
+   ruT:R`\langle v,\;1,\;1\rangle`,rvT:R`\langle u,\;1,\;-1\rangle`}
+];
+Q.tangentPlane={name:'tangent plane to a parametric surface',
+  gen(){const it=pick(TP_POOL);let u0,v0,n,A,B;
+    do{u0=pick([-2,-1,1,2]);v0=pick([-2,-1,1,2]);A=it.ru(u0,v0);B=it.rv(u0,v0);n=cross(A,B);}while(vzero(n));
+    const P=it.r(u0,v0);return {it,u0,v0,A,B,n,P,d:dot(n,P),ans:`${n[0]}*x+${n[1]}*y+${n[2]}*z=${dot(n,P)}`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the tangent plane to ${M(R`\mathbf r(u,v)=`+q.it.tex)} at the point where ${M(R`(u,v)=(${q.u0},${q.v0})`)}. Any equivalent form is accepted.</p>`;
+    eqIn(el,'p','Plane:','e.g.  2x - y + 3z = 5');},
+  check(q,el){const n=q.n,d=q.d;return G(el,'p',checkEquation($('[data-k=p]',el).value,e=>n[0]*e.x+n[1]*e.y+n[2]*e.z-d,['x','y','z']));},
+  solution(q){return `The point is ${M(R`\mathbf r(${q.u0},${q.v0})=`+texPt(q.P))}. The tangent vectors are ${M(R`\mathbf r_u=`+q.it.ruT+'='+texVec(q.A))} and ${M(R`\mathbf r_v=`+q.it.rvT+'='+texVec(q.B))}, so the normal is ${M(R`\mathbf n=\mathbf r_u\times\mathbf r_v=`+texVec(q.n))}. The plane through ${M(texPt(q.P))} with that normal is ${M(R`${q.n[0]}(x-(${q.P[0]}))+${q.n[1]}(y-(${q.P[1]}))+${q.n[2]}(z-(${q.P[2]}))=0`)}, that is ${M(R`${texLin(q.n,['x','y','z'])}=${q.d}`)}.`;}
+};
+
+Q.surfArea={name:'surface area',
+  gen(){const k=pick(['sphere','cyl','cone','plane','parab','helicoid']);
+    if(k==='sphere'){const a=rint(1,5);return {k,val:4*PI*a*a,
+      prompt:`Find the surface area of the sphere of radius ${a}.`,
+      sol:`With ${M(R`\mathbf r(\phi,\theta)=\langle ${C1(a)}\sin\phi\cos\theta,\,${C1(a)}\sin\phi\sin\theta,\,${C1(a)}\cos\phi\rangle`)} the stretch factor is ${M(R`|\mathbf r_\phi\times\mathbf r_\theta|=${C1(a*a)}\sin\phi`)}, so ${M(R`A=\int_0^{2\pi}\!\!\int_0^{\pi}${C1(a*a)}\sin\phi\,d\phi\,d\theta=${a*a}\cdot 2\cdot 2\pi=${4*a*a}\pi\approx ${fmtDec(4*PI*a*a,3)}`)}. In general \\(A=4\\pi a^2\\).`};}
+    if(k==='cyl'){const a=rint(2,5),h=rint(2,6);return {k,val:2*PI*a*h,
+      prompt:`Find the area of the lateral surface of the cylinder ${M(R`x^2+y^2=${a*a}`)} between ${M('z=0')} and ${M(`z=${h}`)} (no top or bottom).`,
+      sol:`Use ${M(R`\mathbf r(u,v)=\langle ${a}\cos u,\,${a}\sin u,\,v\rangle`)} on ${M(R`0\le u\le 2\pi,\;0\le v\le ${h}`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${a}\cos u,\,${a}\sin u,\,0\rangle`)} has length ${a}, so ${M(R`A=\int_0^{${h}}\!\!\int_0^{2\pi}${a}\,du\,dv=${a}(2\pi)(${h})=${2*a*h}\pi\approx ${fmtDec(2*PI*a*h,3)}`)}. This is the "unroll it into a rectangle" answer ${M(R`2\pi a h`)}.`};}
+    if(k==='cone'){const h=rint(2,5);return {k,val:PI*h*h*Math.SQRT2,
+      prompt:`Find the area of the part of the cone ${M(R`z=\sqrt{x^2+y^2}`)} with ${M(`0\\le z\\le ${h}`)}.`,
+      sol:`Parametrize ${M(R`\mathbf r=\langle u\cos v,\,u\sin v,\,u\rangle`)} with ${M(R`0\le u\le ${h}`)}, ${M(R`0\le v\le 2\pi`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle -u\cos v,\,-u\sin v,\,u\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=u\sqrt2`)}. So ${M(R`A=\int_0^{2\pi}\!\!\int_0^{${h}}\sqrt2\,u\,du\,dv=\sqrt2\,(2\pi)\frac{${h}^2}{2}=${radTex(h*h,2)}\,\pi\approx ${fmtDec(PI*h*h*Math.SQRT2,3)}`)}. (Same as \\(\\pi r\\ell\\) with \\(r=${h}\\), \\(\\ell=${h}\\sqrt2\\).)`};}
+    if(k==='plane'){const [a,b]=pick([[1,1],[2,1],[1,2],[2,2],[3,1],[1,3],[2,3],[3,2],[1,0],[0,2],[-1,2],[2,-1],[-2,-2]]);
+      const c=rint(0,4),p=rint(1,4),q=rint(1,4);const D=1+a*a+b*b;
+      return {k,val:p*q*Math.sqrt(D),
+        prompt:`Find the area of the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} that lies above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}.`,
+        sol:`For a graph, ${M(R`dS=\sqrt{1+z_x^2+z_y^2}\,dA=\sqrt{1+(${a})^2+(${b})^2}\,dA=\sqrt{${D}}\,dA`)}, a constant. So the area is that constant times the area of the shadow: ${M(R`A=\sqrt{${D}}\cdot(${p})(${q})=${radTex(p*q,D)}\approx ${fmtDec(p*q*Math.sqrt(D),3)}`)}. A tilted plane's area is always its shadow's area times ${M(R`\sqrt{1+a^2+b^2}`)}.`};}
+    if(k==='parab'){const a=pick([2,6,12]);const s=Math.pow(1+4*a,1.5);
+      return {k,val:PI/6*(s-1),
+        prompt:`Find the area of the part of the paraboloid ${M('z=x^2+y^2')} that lies below the plane ${M(`z=${a}`)}.`,
+        sol:`The shadow is the disk ${M(`x^2+y^2\\le ${a}`)} and ${M(R`\sqrt{1+z_x^2+z_y^2}=\sqrt{1+4x^2+4y^2}`)}. In polar coordinates ${M(R`A=\int_0^{2\pi}\!\!\int_0^{\sqrt{${a}}}\sqrt{1+4r^2}\;r\,dr\,d\theta=2\pi\Big[\tfrac{1}{12}(1+4r^2)^{3/2}\Big]_0^{\sqrt{${a}}}=\tfrac{\pi}{6}\big((1+4\cdot${a})^{3/2}-1\big)`)}. Since ${M(`1+4\\cdot${a}=${1+4*a}`)} and ${M(`${1+4*a}^{3/2}=${Math.round(s)}`)}, this is ${M(R`\tfrac{\pi}{6}(${Math.round(s)}-1)=${piTex(PI/6*(s-1))}\approx ${fmtDec(PI/6*(s-1),3)}`)}.`};}
+    return {k,val:PI*(Math.SQRT2+Math.log(1+Math.SQRT2)),
+      prompt:`Find the area of the helicoid ${M(R`\mathbf r(u,v)=\langle u\cos v,\,u\sin v,\,v\rangle`)} for ${M(R`0\le u\le 1`)}, ${M(R`0\le v\le 2\pi`)}.`,
+      sol:`${M(R`\mathbf r_u=\langle\cos v,\sin v,0\rangle`)} and ${M(R`\mathbf r_v=\langle -u\sin v,u\cos v,1\rangle`)}, so ${M(R`\mathbf r_u\times\mathbf r_v=\langle \sin v,\,-\cos v,\,u\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+u^2}`)}. Then ${M(R`A=\int_0^{2\pi}\!\!\int_0^1\sqrt{1+u^2}\,du\,dv=2\pi\cdot\tfrac12\big[u\sqrt{1+u^2}+\ln(u+\sqrt{1+u^2})\big]_0^1=\pi\big(\sqrt2+\ln(1+\sqrt2)\big)\approx ${fmtDec(PI*(Math.SQRT2+Math.log(1+Math.SQRT2)),3)}`)}.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt} ${EXACT}</p>`;numIn(el,'a','Area =');},
+  check(q,el){return G(el,'a',checkNumber($('[data-k=a]',el).value,q.val,TOL));},
+  solution(q){return q.sol;}
+};
+
+const PARAM_CHOICE=[
+  {desc:`the part of the cylinder ${M('x^2+y^2=9')} between ${M('z=0')} and ${M('z=2')}`,
+   ok:R`\langle 3\cos u,\,3\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ 0\le v\le 2`,
+   bad:[R`\langle 9\cos u,\,9\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ 0\le v\le 2`,
+        R`\langle 3\sin u\cos v,\,3\sin u\sin v,\,3\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`,
+        R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 3,\ 0\le v\le 2\pi`],
+   why:`The radius is ${M(R`\sqrt9=3`)}, not 9, so the circle is ${M(R`\langle 3\cos u,3\sin u\rangle`)}; the height is a free parameter running from 0 to 2. The third option is a sphere and the fourth is a cone.`},
+  {desc:`the sphere of radius 2 centered at the origin`,
+   ok:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`,
+   bad:[R`\langle 2\cos u,\,2\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ -2\le v\le 2`,
+        R`\langle u\cos v,\,u\sin v,\,\sqrt{4-u^2}\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`,
+        R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`],
+   why:`Spherical coordinates with ${M(R`\rho=2`)} fixed, ${M('u=\\phi')} from 0 to ${M('\\pi')} and ${M('v=\\theta')} from 0 to ${M('2\\pi')}. The second option is a cylinder, the third covers only the upper half, and the fourth has radius 4.`},
+  {desc:`the part of the plane ${M('z=3-x-y')} that lies above the unit square ${M('0\\le x\\le 1')}, ${M('0\\le y\\le 1')}`,
+   ok:R`\langle u,\,v,\,3-u-v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`,
+   bad:[R`\langle u,\,v,\,3-u-v\rangle,\ 0\le u\le 3,\ 0\le v\le 3`,
+        R`\langle u,\,v,\,3+u+v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`,
+        R`\langle 3-u-v,\,u,\,v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`],
+   why:`A graph is parametrized by its own ${M('x')} and ${M('y')}: ${M(R`\mathbf r=\langle x,y,f(x,y)\rangle`)}. The parameter domain must be the square, not a bigger region, and the components have to stay in the order ${M('x,y,z')}.`},
+  {desc:`the part of the cone ${M('z=2\\sqrt{x^2+y^2}')} below ${M('z=4')}`,
+   ok:R`\langle u\cos v,\,u\sin v,\,2u\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`,
+   bad:[R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`,
+        R`\langle 2u\cos v,\,2u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`,
+        R`\langle u\cos v,\,u\sin v,\,2u^2\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`],
+   why:`Let ${M('u')} be the distance from the axis, so ${M(R`x^2+y^2=u^2`)} and ${M('z=2u')}. The ceiling ${M('z=4')} means ${M('2u\\le 4')}, that is ${M('u\\le 2')}. The last option is a paraboloid, and the middle one has the cone opening the wrong way (${M('z=\\tfrac12\\sqrt{x^2+y^2}')}).`},
+  {desc:`the part of the sphere ${M('x^2+y^2+z^2=16')} that lies above the cone ${M('z=\\sqrt{x^2+y^2}')}`,
+   ok:R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le \tfrac{\pi}{4},\ 0\le v\le 2\pi`,
+   bad:[R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le \tfrac{\pi}{2},\ 0\le v\le 2\pi`,
+        R`\langle 16\sin u\cos v,\,16\sin u\sin v,\,16\cos u\rangle,\ 0\le u\le \tfrac{\pi}{4},\ 0\le v\le 2\pi`,
+        R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`],
+   why:`Radius ${M(R`\sqrt{16}=4`)}. The cone ${M(R`z=\sqrt{x^2+y^2}`)} is the surface ${M(R`\phi=\pi/4`)}, so "above the cone" is ${M(R`0\le\phi\le\pi/4`)}. Stopping at ${M(R`\pi/2`)} would give the whole upper hemisphere.`}
+];
+Q.chooseParam={name:'choose the parametrization',
+  gen(){const it=pick(PARAM_CHOICE);const opts=shuffle([{label:M(it.ok),value:1},...it.bad.map(b=>({label:M(b),value:0}))]);
+    return {it,opts,ai:opts.findIndex(o=>o.value===1)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Which parametrization describes ${q.it.desc}?</p>`;q.get=choiceButtons(el,q.opts);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===1,msg:v===1?'':'Check two things: does the parametrization land on the right surface, and does the parameter domain cover exactly the right piece?'};},
+  solution(q){return `The correct choice is ${M(q.it.ok)}. ${q.it.why}`;}
+};
+
+/* ---------------------------------------------------------- chapter 2 */
+const PLANE_AB=[[1,1],[2,1],[1,2],[2,2],[3,1],[1,3],[2,3],[3,2],[1,0],[0,1],[2,0],[0,2],[-1,2],[2,-1],[-2,1],[1,-2],[-1,-1],[-2,-2],[3,3]];
+const planeSetup=(a,b,c,p,q)=>`Parametrize the piece as ${M(R`\mathbf r(u,v)=\langle u,\,v,\,${texLin([a,b],['u','v'],{constant:c})}\rangle`)} over ${M(`0\\le u\\le ${p}`)}, ${M(`0\\le v\\le ${q}`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${-a},\,${-b},\,1\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+(${a})^2+(${b})^2}=\sqrt{${1+a*a+b*b}}`)}.`;
+
+Q.scalarPlane={name:'surface integral over a plane piece',
+  gen(){const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);const f=pick(['z','s']);
+    const D=1+a*a+b*b;
+    const I=f==='z'?a*p*p*q/2+b*p*q*q/2+c*p*q:(1+a)*p*p*q/2+(1+b)*p*q*q/2+c*p*q;
+    return {a,b,c,p,q,f,D,I,val:Math.sqrt(D)*I};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.f==='z'?'z':'(x+y+z)'}\,dS`)} where ${M('S')} is the part of the plane ${M(`z=${texLin([q.a,q.b],['x','y'],{constant:q.c})}`)} that lies above the rectangle ${M(`0\\le x\\le ${q.p}`)}, ${M(`0\\le y\\le ${q.q}`)}. ${EXACT}</p>`;
+    numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){const inner=q.f==='z'?texLin([q.a,q.b],['u','v'],{constant:q.c}):texLin([1+q.a,1+q.b],['u','v'],{constant:q.c});
+    return `${planeSetup(q.a,q.b,q.c,q.p,q.q)} On the surface ${q.f==='z'?M(`z=${texLin([q.a,q.b],['u','v'],{constant:q.c})}`):M(`x+y+z=u+v+(${texLin([q.a,q.b],['u','v'],{constant:q.c})})=${inner}`)}, so ${D(R`\iint_S f\,dS=\sqrt{${q.D}}\int_0^{${q.q}}\!\!\int_0^{${q.p}}\big(${inner}\big)\,du\,dv=\sqrt{${q.D}}\,\big(${texNum(q.I)}\big)=${radTex(q.I,q.D)}\approx ${fmtDec(q.val,3)}`)} The stretch factor is constant on a plane, so it comes straight out of the integral.`;}
+};
+
+const SPH_SCALAR=[
+  {f:R`(x^2+y^2)`,val:a=>8*PI*a**4/3,tex:a=>R`\tfrac{8\pi a^4}{3}`,
+   why:a=>`On the sphere ${M(`x^2+y^2+z^2=${a*a}`)}, so ${M(R`\iint_S (x^2+y^2+z^2)\,dS=${a*a}\cdot 4\pi(${a})^2=${4*a**4}\pi`)}. By symmetry the three pieces ${M(R`\iint x^2`)}, ${M(R`\iint y^2`)}, ${M(R`\iint z^2`)} are equal, so each is ${M(R`\tfrac{${4*a**4}\pi}{3}`)} and ${M(R`\iint (x^2+y^2)\,dS=\tfrac{2}{3}(${4*a**4}\pi)=\tfrac{8\pi a^4}{3}=${piTex(8*PI*a**4/3)}`)}.`},
+  {f:R`z^2`,val:a=>4*PI*a**4/3,tex:a=>R`\tfrac{4\pi a^4}{3}`,
+   why:a=>`Directly: ${M(R`z=${C1(a)}\cos\phi`)} and ${M(R`dS=${C1(a*a)}\sin\phi\,d\phi\,d\theta`)}, so ${M(R`\iint_S z^2\,dS=\int_0^{2\pi}\!\!\int_0^\pi ${C1(a**4)}\cos^2\phi\sin\phi\,d\phi\,d\theta=${C1(a**4)}(2\pi)\tfrac{2}{3}=${piTex(4*PI*a**4/3)}`)}. Or use symmetry: it is one third of ${M(R`\iint(x^2+y^2+z^2)dS=${4*a**4}\pi`)}.`},
+  {f:R`(x^2+y^2+z^2)`,val:a=>4*PI*a**4,tex:a=>R`4\pi a^4`,
+   why:a=>`The integrand is constant on the sphere: ${M(`x^2+y^2+z^2=${a*a}`)} everywhere. So the integral is ${M(`${a*a}`)} times the area: ${M(R`${a*a}\cdot 4\pi(${a})^2=${4*a**4}\pi`)}.`},
+  {f:R`1`,val:a=>4*PI*a*a,tex:a=>R`4\pi a^2`,
+   why:a=>`With ${M('f=1')} the surface integral is just the area, ${M(R`4\pi(${a})^2=${4*a*a}\pi`)}.`},
+  {f:R`z`,half:true,val:a=>PI*a**3,tex:a=>R`\pi a^3`,
+   why:a=>`On the upper hemisphere ${M(R`z=${C1(a)}\cos\phi`)}, ${M(R`dS=${C1(a*a)}\sin\phi\,d\phi\,d\theta`)}, and ${M(R`0\le\phi\le\pi/2`)}: ${M(R`\int_0^{2\pi}\!\!\int_0^{\pi/2}${C1(a**3)}\cos\phi\sin\phi\,d\phi\,d\theta=${C1(a**3)}(2\pi)\big[\tfrac{\sin^2\phi}{2}\big]_0^{\pi/2}=${C1(a**3)}(2\pi)\tfrac12=${piTex(PI*a**3)}`)}. Over the whole sphere it would be 0, since the bottom half cancels the top.`}
+];
+Q.scalarSphere={name:'surface integral over a sphere',
+  gen(){const it=pick(SPH_SCALAR);const a=rint(1,3);return {it,a,val:it.val(a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.it.f}\,dS`)} where ${M('S')} is ${q.it.half?`the upper half (${M('z\\ge 0')}) of the sphere`:'the sphere'} ${M(`x^2+y^2+z^2=${q.a*q.a}`)}. ${EXACT}</p>`;
+    numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return q.it.why(q.a)+` In symbols the answer is ${M(q.it.tex(q.a))} with ${M(`a=${q.a}`)}, that is ${M(piTex(q.val))}.`;}
+};
+
+const CYL_SCALAR=[
+  {f:R`z`,val:(a,h)=>PI*a*h*h,tex:R`\pi a h^2`,
+   why:(a,h)=>`${M(R`dS=${C1(a)}\,d\theta\,dz`)}, so ${M(R`\iint_S z\,dS=\int_0^{2\pi}\!\!\int_0^{${h}} z\,(${a})\,dz\,d\theta=${C1(a)}(2\pi)\tfrac{${h}^2}{2}=${piTex(PI*a*h*h)}`)}.`},
+  {f:R`(x^2+y^2)`,val:(a,h)=>2*PI*a**3*h,tex:R`2\pi a^3 h`,
+   why:(a,h)=>`On the cylinder ${M(`x^2+y^2=${a*a}`)} is constant, so the integral is ${M(`${a*a}`)} times the area ${M(R`2\pi(${a})(${h})=${2*a*h}\pi`)}, giving ${M(piTex(2*PI*a**3*h))}.`},
+  {f:R`x^2`,val:(a,h)=>PI*a**3*h,tex:R`\pi a^3 h`,
+   why:(a,h)=>`${M(R`x=${C1(a)}\cos\theta`)} and ${M(R`dS=${C1(a)}\,d\theta\,dz`)}: ${M(R`\int_0^{${h}}\!\!\int_0^{2\pi}${C1(a*a)}\cos^2\theta\,(${a})\,d\theta\,dz=${C1(a**3)}(${h})\pi=${piTex(PI*a**3*h)}`)}, using ${M(R`\int_0^{2\pi}\cos^2\theta\,d\theta=\pi`)}. By symmetry ${M(R`\iint x^2\,dS`)} is exactly half of ${M(R`\iint (x^2+y^2)\,dS`)}.`},
+  {f:R`z^2`,val:(a,h)=>2*PI*a*h**3/3,tex:R`\tfrac{2\pi a h^3}{3}`,
+   why:(a,h)=>`${M(R`\int_0^{2\pi}\!\!\int_0^{${h}} z^2(${a})\,dz\,d\theta=${C1(a)}(2\pi)\tfrac{${h}^3}{3}=${piTex(2*PI*a*h**3/3)}`)}.`}
+];
+Q.scalarCylinder={name:'surface integral over a cylinder',
+  gen(){const it=pick(CYL_SCALAR);const a=rint(1,3),h=rint(2,5);return {it,a,h,val:it.val(a,h)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.it.f}\,dS`)} where ${M('S')} is the lateral surface of the cylinder ${M(`x^2+y^2=${q.a*q.a}`)}, ${M(`0\\le z\\le ${q.h}`)} (no top or bottom). ${EXACT}</p>`;
+    numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return `Use ${M(R`\mathbf r=\langle ${C1(q.a)}\cos\theta,\,${C1(q.a)}\sin\theta,\,z\rangle`)}, whose normal ${M(R`\langle ${C1(q.a)}\cos\theta,\,${C1(q.a)}\sin\theta,\,0\rangle`)} has length ${q.a}, so ${M(R`dS=${C1(q.a)}\,d\theta\,dz`)}. ${q.it.why(q.a,q.h)} The general formula is ${M(q.it.tex)}.`;}
+};
+
+Q.scalarMass={name:'mass of a thin sheet',
+  gen(){const k=pick(['coneZ','coneK','planeK']);
+    if(k==='coneZ'){const h=rint(2,4);return {k,h,val:2*PI*Math.SQRT2*h**3/3,
+      prompt:`A thin sheet has the shape of the cone ${M(R`z=\sqrt{x^2+y^2}`)}, ${M(`0\\le z\\le ${h}`)}, with density ${M(R`\rho(x,y,z)=z`)}. Find its mass.`,
+      sol:`Parametrize ${M(R`\mathbf r=\langle u\cos v,u\sin v,u\rangle`)}, so ${M(R`|\mathbf r_u\times\mathbf r_v|=u\sqrt2`)} and ${M(R`\rho=z=u`)}. Then ${M(R`m=\int_0^{2\pi}\!\!\int_0^{${h}} u\cdot\sqrt2\,u\,du\,dv=\sqrt2\,(2\pi)\tfrac{${h}^3}{3}=\tfrac{2\pi\sqrt2\,(${h})^3}{3}\approx ${fmtDec(2*PI*Math.SQRT2*h**3/3,3)}`)}.`};}
+    if(k==='coneK'){const h=rint(2,4),c=rint(2,6);return {k,h,c,val:c*Math.SQRT2*PI*h*h,
+      prompt:`A thin sheet has the shape of the cone ${M(R`z=\sqrt{x^2+y^2}`)}, ${M(`0\\le z\\le ${h}`)}, with constant density ${M(`\\rho=${c}`)}. Find its mass.`,
+      sol:`Constant density means mass is density times area. The cone's area is ${M(R`\pi h^2\sqrt2=${radTex(h*h,2)}\,\pi`)}, so ${M(R`m=${c}\cdot ${radTex(h*h,2)}\,\pi=${radTex(c*h*h,2)}\,\pi\approx ${fmtDec(c*Math.SQRT2*PI*h*h,3)}`)}.`};}
+    const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3),k2=rint(2,5);const Dv=1+a*a+b*b;
+    return {k,a,b,c,p,q,k2,D:Dv,val:k2*p*q*Math.sqrt(Dv),
+      prompt:`A thin sheet is the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}, with constant density ${M(`\\rho=${k2}`)}. Find its mass.`,
+      sol:`${planeSetup(a,b,c,p,q)} With constant density, ${M(R`m=${k2}\iint_S dS=${k2}\cdot(${p})(${q})\sqrt{${Dv}}=${radTex(k2*p*q,Dv)}\approx ${fmtDec(k2*p*q*Math.sqrt(Dv),3)}`)}.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt} ${EXACT}</p>`;numIn(el,'m','m =');},
+  check(q,el){return G(el,'m',checkNumber($('[data-k=m]',el).value,q.val,TOL));},
+  solution(q){return q.sol;}
+};
+
+/* ---------------------------------------------------------- chapter 3 */
+/* F = <A x + d1, B y + d2, C z + d3> through z = a x + b y + c over [0,p]x[0,q], upward */
+const fluxPlaneVal=(a,b,c,p,q,A,B,C,d)=>a*(C-A)*p*p*q/2+b*(C-B)*p*q*q/2+(C*c-a*d[0]-b*d[1]+d[2])*p*q;
+Q.fluxPlane={name:'flux through a plane piece',
+  gen(){const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);
+    const shape=pick(['lin','const','mix']);let A=0,B=0,C=0,d=[0,0,0];
+    if(shape==='lin'){A=pick([1,2,-1]);B=pick([1,2,-1]);C=pick([1,2,3,-1]);}
+    else if(shape==='const'){d=[rint(-2,3),rint(-2,3),rnz(-2,4)];}
+    else{A=pick([1,2]);C=pick([1,2,-1]);d=[0,rnz(-2,3),0];}
+    const comp=[texLin([A],['x'],{constant:d[0]}),texLin([B],['y'],{constant:d[1]}),texLin([C],['z'],{constant:d[2]})];
+    const up=pick([true,true,false]);
+    const raw=fluxPlaneVal(a,b,c,p,q,A,B,C,d);
+    return {a,b,c,p,q,A,B,C,d,comp,up,raw,val:up?raw:-raw};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the flux of ${M(R`\mathbf F=`+texFld(q.comp))} through the part of the plane ${M(`z=${texLin([q.a,q.b],['x','y'],{constant:q.c})}`)} that lies above the rectangle ${M(`0\\le x\\le ${q.p}`)}, ${M(`0\\le y\\le ${q.q}`)}, oriented <b>${q.up?'upward':'downward'}</b>. ${EXACT}</p>`;
+    numIn(el,'v',M(R`\iint_S\mathbf F\cdot d\mathbf S=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el2());}
+    h.innerHTML=`For a graph, ${M(R`\mathbf r_u\times\mathbf r_v=\langle -z_x,-z_y,1\rangle=\langle ${-q.a},${-q.b},1\rangle`)}, which points upward. Dot ${M(R`\mathbf F`)} with it, then integrate over the rectangle${q.up?'':', and remember to negate at the end'}.`;},
+  solution(q){const P=texLin([q.A],['u'],{constant:q.d[0]}),Qc=texLin([q.B],['v'],{constant:q.d[1]});
+    const zz=texLin([q.a,q.b],['u','v'],{constant:q.c});
+    const Rc=q.C===0?texNum(q.d[2]):texLin([q.C],[`(${zz})`],{constant:q.d[2]});
+    const integrand=texLin([q.a*(q.C-q.A),q.b*(q.C-q.B)],['u','v'],{constant:q.C*q.c-q.a*q.d[0]-q.b*q.d[1]+q.d[2]});
+    return `Parametrize ${M(R`\mathbf r(u,v)=\langle u,\,v,\,${zz}\rangle`)} over the rectangle. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${-q.a},\,${-q.b},\,1\rangle`)}, whose ${M('z')}-component is ${M('+1')}, so this is the <b>upward</b> normal${q.up?'':', and we will negate at the end'}. On the surface ${M(R`\mathbf F=\langle ${P},\,${Qc},\,${Rc}\rangle`)}, so ${D(R`\mathbf F\cdot(\mathbf r_u\times\mathbf r_v)=${integrand}`)} Integrating over ${M(`0\\le u\\le ${q.p}`)}, ${M(`0\\le v\\le ${q.q}`)} gives ${M(texNum(q.raw))}${q.up?'':`, and the downward orientation flips the sign to ${M(texNum(q.val))}`}. Answer: ${M(texNum(q.val))}.`;}
+};
+
+const SPH_FLUX=[
+  {F:R`\langle x,\,y,\,z\rangle`,val:a=>4*PI*a**3,
+   why:a=>`The outward unit normal is ${M(R`\mathbf n=\tfrac1{${a}}\langle x,y,z\rangle`)}, so ${M(R`\mathbf F\cdot\mathbf n=\tfrac{x^2+y^2+z^2}{${a}}=\tfrac{${a*a}}{${a}}=${a}`)} is constant. Flux ${M(R`=${a}\cdot 4\pi(${a})^2=${piTex(4*PI*a**3)}`)}.`},
+  {F:R`\langle 0,\,0,\,z\rangle`,val:a=>4*PI*a**3/3,
+   why:a=>`${M(R`\mathbf F\cdot\mathbf n=\tfrac{z^2}{${a}}`)}, and ${M(R`\iint_S z^2\,dS=\tfrac{4\pi a^4}{3}=${piTex(4*PI*a**4/3)}`)} from the symmetry argument, so the flux is ${M(R`\tfrac{1}{${a}}\cdot ${piTex(4*PI*a**4/3)}=${piTex(4*PI*a**3/3)}`)}. (Divergence theorem check: ${M(R`\operatorname{div}\mathbf F=1`)}, and the volume is ${M(R`\tfrac43\pi(${a})^3=${piTex(4*PI*a**3/3)}`)}.)`},
+  {F:R`\langle x,\,0,\,0\rangle`,val:a=>4*PI*a**3/3,
+   why:a=>`${M(R`\mathbf F\cdot\mathbf n=\tfrac{x^2}{${a}}`)} and ${M(R`\iint_S x^2\,dS=\tfrac{4\pi a^4}{3}`)} by symmetry, so the flux is ${M(piTex(4*PI*a**3/3))}. (Or: ${M(R`\operatorname{div}\mathbf F=1`)} times the volume.)`},
+  {F:R`\langle x^3,\,y^3,\,z^3\rangle`,val:a=>12*PI*a**5/5,
+   why:a=>`${M(R`\operatorname{div}\mathbf F=3(x^2+y^2+z^2)=3\rho^2`)}, so by the divergence theorem the flux is ${M(R`\int_0^{2\pi}\!\!\int_0^{\pi}\!\!\int_0^{${a}}3\rho^2\cdot\rho^2\sin\phi\,d\rho\,d\phi\,d\theta=3\cdot\tfrac{${a}^5}{5}\cdot 2\cdot 2\pi=\tfrac{12\pi a^5}{5}=${piTex(12*PI*a**5/5)}`)}. Straight from the surface it is ${M(R`\iint \tfrac{x^4+y^4+z^4}{${a}}dS`)}, which is much more work.`},
+  {F:R`\langle y,\,-x,\,0\rangle`,val:a=>0,
+   why:a=>`${M(R`\mathbf F\cdot\mathbf n=\tfrac{xy-xy}{${a}}=0`)} at every point: the field is everywhere tangent to the sphere, circulating around the ${M('z')}-axis, so nothing crosses the surface. Flux ${M('=0')}.`}
+];
+Q.fluxSphere={name:'flux through a sphere',
+  gen(){const it=pick(SPH_FLUX);const a=rint(1,3);return {it,a,val:it.val(a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the outward flux of ${M(R`\mathbf F=`+q.it.F)} through the sphere ${M(`x^2+y^2+z^2=${q.a*q.a}`)}. ${EXACT}</p>`;
+    numIn(el,'v',M(R`\iint_S\mathbf F\cdot d\mathbf S=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return q.it.why(q.a);}
+};
+
+const CYL_FLUX=[
+  {F:R`\langle x,\,y,\,0\rangle`,val:(a,h)=>2*PI*a*a*h,
+   why:(a,h)=>`The outward normal on the side is ${M(R`\mathbf n=\tfrac1{${a}}\langle x,y,0\rangle`)}, so ${M(R`\mathbf F\cdot\mathbf n=\tfrac{x^2+y^2}{${a}}=${a}`)}, constant. Flux ${M(R`=${a}\cdot 2\pi(${a})(${h})=${piTex(2*PI*a*a*h)}`)}.`},
+  {F:R`\langle x,\,y,\,z\rangle`,val:(a,h)=>2*PI*a*a*h,
+   why:(a,h)=>`The normal on the side has no ${M('z')}-component, so the ${M('z')}-part of ${M(R`\mathbf F`)} contributes nothing: ${M(R`\mathbf F\cdot\mathbf n=\tfrac{x^2+y^2}{${a}}=${a}`)}. Flux ${M(R`=${a}\cdot 2\pi(${a})(${h})=${piTex(2*PI*a*a*h)}`)}, the same as for ${M(R`\langle x,y,0\rangle`)}.`},
+  {F:R`\langle 0,\,0,\,z\rangle`,val:(a,h)=>0,
+   why:(a,h)=>`${M(R`\mathbf F`)} is vertical and the outward normal on the side is horizontal, so ${M(R`\mathbf F\cdot\mathbf n=0`)} everywhere. Flux ${M('=0')}. (The lids are not part of ${M('S')} here; they are where all the flux would go.)`},
+  {F:R`\langle x^2,\,0,\,0\rangle`,val:(a,h)=>0,
+   why:(a,h)=>`${M(R`\mathbf F\cdot\mathbf n=\tfrac{x^3}{${a}}=${a*a}\cos^3\theta`)} and ${M(R`dS=${a}\,d\theta\,dz`)}, so the flux is ${M(R`${a**3}(${h})\int_0^{2\pi}\cos^3\theta\,d\theta=0`)}. Geometrically: the outflow on the ${M('x>0')} side is exactly cancelled by the inflow on the ${M('x<0')} side, where ${M(R`\mathbf F`)} still points in the ${M('+x')} direction but the normal points the other way.`}
+];
+Q.fluxCylinder={name:'flux through a cylinder',
+  gen(){const it=pick(CYL_FLUX);const a=rint(1,3),h=rint(2,5);return {it,a,h,val:it.val(a,h)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the outward flux of ${M(R`\mathbf F=`+q.it.F)} through the lateral surface of the cylinder ${M(`x^2+y^2=${q.a*q.a}`)}, ${M(`0\\le z\\le ${q.h}`)} (side only, no lids). ${EXACT}</p>`;
+    numIn(el,'v',M(R`\iint_S\mathbf F\cdot d\mathbf S=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return q.it.why(q.a,q.h);}
+};
+
+const CUBE_FLUX=[
+  {F:R`\langle x,\,y,\,z\rangle`,val:a=>3*a**3,
+   why:a=>`Face by face: on ${M(`x=${a}`)} the outward normal is ${M(R`\mathbf i`)} and ${M(R`\mathbf F\cdot\mathbf i=x=${a}`)}, contributing ${M(`${a}\\cdot ${a*a}=${a**3}`)}; on ${M('x=0')} the normal is ${M(R`-\mathbf i`)} and ${M('x=0')}, contributing 0. The same happens in ${M('y')} and ${M('z')}, so the total is ${M(`3(${a**3})=${3*a**3}`)}. (Check with the divergence theorem: ${M(R`\operatorname{div}\mathbf F=3`)} times volume ${M(`${a**3}`)}.)`},
+  {F:R`\langle x,\,0,\,0\rangle`,val:a=>a**3,
+   why:a=>`Only the two faces perpendicular to ${M(R`\mathbf i`)} matter. On ${M(`x=${a}`)}: ${M(`${a}\\cdot ${a*a}=${a**3}`)}. On ${M('x=0')}: ${M(R`\mathbf F=\mathbf 0`)}, so 0. The other four faces have ${M(R`\mathbf F\cdot\mathbf n=0`)}. Total ${M(`${a**3}`)}.`},
+  {F:R`\langle x^2,\,0,\,0\rangle`,val:a=>a**4,
+   why:a=>`On ${M(`x=${a}`)}: ${M(R`\mathbf F\cdot\mathbf n=x^2=${a*a}`)} over an area of ${M(`${a*a}`)}, giving ${M(`${a**4}`)}. On ${M('x=0')}: ${M(R`\mathbf F\cdot\mathbf n=-x^2=0`)}. Total ${M(`${a**4}`)}. (Divergence check: ${M(R`\iiint 2x\,dV=2\cdot\tfrac{${a}^2}{2}\cdot ${a*a}=${a**4}`)}.)`},
+  {F:R`\langle y,\,0,\,0\rangle`,val:a=>0,
+   why:a=>`On ${M(`x=${a}`)} the contribution is ${M(R`\iint y\,dA=\tfrac{${a}^2}{2}\cdot ${a}=${a**3/2}`)}; on ${M('x=0')} the normal is ${M(R`-\mathbf i`)} so it is ${M(`-${a**3/2}`)}. They cancel, and every other face has ${M(R`\mathbf F\cdot\mathbf n=0`)}. Total 0. (Divergence check: ${M(R`\operatorname{div}\mathbf F=0`)}.)`}
+];
+Q.fluxCube={name:'flux through a cube',
+  gen(){const it=pick(CUBE_FLUX);const a=rint(1,4);return {it,a,val:it.val(a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the outward flux of ${M(R`\mathbf F=`+q.it.F)} through the surface of the cube ${M(`0\\le x\\le ${q.a}`)}, ${M(`0\\le y\\le ${q.a}`)}, ${M(`0\\le z\\le ${q.a}`)}. Work face by face.</p>`;
+    numIn(el,'v',M(R`\iint_S\mathbf F\cdot d\mathbf S=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return q.it.why(q.a);}
+};
+
+Q.fluxOrient={name:'orientation and the sign of flux',
+  gen(){const mode=pick(['num','num','choice']);
+    if(mode==='num'){const n=rnz(-12,12),d=pick([1,1,2,3,5]);const pi=pick([true,false]);
+      const val=pi?n*PI/d:n/d;
+      return {mode,val:-val,shown:val,tex:pi?piTex(val):texNum(val),ansTex:pi?piTex(-val):texNum(-val)};}
+    const opts=shuffle([{label:'the outward normal',value:1},{label:'the inward normal',value:0},
+      {label:'the upward normal',value:0},{label:'either one, flux does not care',value:0}]);
+    return {mode,opts,ai:opts.findIndex(o=>o.value===1)};},
+  render(q,el){
+    if(q.mode==='num'){el.innerHTML=`<p class="prompt">The flux of ${M(R`\mathbf F`)} through a surface ${M('S')} with the <b>upward</b> normal is ${M(q.tex)}. What is the flux through the same surface with the <b>downward</b> normal? ${EXACT}</p>`;
+      numIn(el,'v','Flux =');}
+    else{el.innerHTML=`<p class="prompt">For a <b>closed</b> surface, which orientation is the positive one by convention?</p>`;
+      q.get=choiceButtons(el,q.opts);}},
+  check(q,el){if(q.mode==='num')return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));
+    const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===1,msg:v===1?'':'Think about what a positive answer should mean physically for a closed surface.'};},
+  solution(q){if(q.mode==='num')return `Reversing the orientation replaces ${M(R`\mathbf n`)} by ${M(R`-\mathbf n`)}, so every term in ${M(R`\iint_S\mathbf F\cdot\mathbf n\,dS`)} changes sign and the whole integral is negated: ${M(q.ansTex)}. The surface, the field, and ${M('dS')} are untouched; only the direction of ${M(R`\mathbf n`)} moved.`;
+    return `<b>The outward normal.</b> For a closed surface the standard (positive) orientation is outward, so a positive flux means net outflow: more field leaving the region than entering it. That is the convention the divergence theorem is stated in.`;}
+};
+
+/* ---------------------------------------------------------- chapter 4 */
+const CCURL=[
+  {F:R`\langle -y,\,x,\,z\rangle`,c:[0,0,2],cT:R`\langle 0,\,0,\,2\rangle`,dot:a=>`${a*a}`},
+  {F:R`\langle z,\,x,\,y\rangle`,c:[1,1,1],cT:R`\langle 1,\,1,\,1\rangle`,dot:a=>`${a*a}\\cos^2 t`},
+  {F:R`\langle y,\,z,\,x\rangle`,c:[-1,-1,-1],cT:R`\langle -1,\,-1,\,-1\rangle`,dot:a=>`-${a*a}\\sin^2 t`},
+  {F:R`\langle -y,\,x,\,0\rangle`,c:[0,0,2],cT:R`\langle 0,\,0,\,2\rangle`,dot:a=>`${a*a}`},
+  {F:R`\langle 2y,\,3z,\,x\rangle`,c:[-3,-1,-2],cT:R`\langle -3,\,-1,\,-2\rangle`,dot:a=>`-${2*a*a}\\sin^2 t`}
+];
+const CCURL2=CCURL.concat([{F:R`\langle y,\,-x,\,z^2\rangle`,c:[0,0,-2],cT:R`\langle 0,\,0,\,-2\rangle`,dot:a=>`-${a*a}`}]);
+
+Q.stokesLine={name:'Stokes: a line integral from a flat surface',
+  gen(){const it=pick(CCURL);const geo=pick(['circle','circle','tri']);const a=rint(1,3);
+    if(geo==='circle'){const c=rint(-2,3);return {it,geo,a,c,val:it.c[2]*PI*a*a};}
+    return {it,geo,a,c:0,val:(it.c[0]+it.c[1]+it.c[2])*a*a/2};},
+  render(q,el){const where=q.geo==='circle'
+      ?`${M('C')} is the circle ${M(`x^2+y^2=${q.a*q.a}`)} in the plane ${M(`z=${q.c}`)}, oriented counterclockwise when viewed from above`
+      :`${M('C')} is the boundary of the triangle with vertices ${M(`(${q.a},0,0)`)}, ${M(`(0,${q.a},0)`)}, ${M(`(0,0,${q.a})`)}, oriented so that the normal of the triangle points away from the origin`;
+    el.innerHTML=`<p class="prompt">Use Stokes' theorem to evaluate ${M(R`\displaystyle\oint_C\mathbf F\cdot d\mathbf r`)} for ${M(R`\mathbf F=`+q.it.F)}, where ${where}. ${EXACT}</p>`;
+    numIn(el,'v',M(R`\oint_C\mathbf F\cdot d\mathbf r=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){const c=q.it.c;
+    if(q.geo==='circle')return `${M(R`\operatorname{curl}\mathbf F=`+q.it.cT)}, a constant vector. Take ${M('S')} to be the flat disk ${M(`x^2+y^2\\le ${q.a*q.a}`)} in the plane ${M(`z=${q.c}`)}; counterclockwise from above means the compatible normal is ${M(R`\mathbf n=\mathbf k`)}. Then ${M(R`\operatorname{curl}\mathbf F\cdot\mathbf n=${c[2]}`)}, so ${D(R`\oint_C\mathbf F\cdot d\mathbf r=\iint_S \operatorname{curl}\mathbf F\cdot d\mathbf S=${c[2]}\cdot\text{area}=${c[2]}\cdot\pi(${q.a})^2=${piTex(q.val)}\approx ${fmtDec(q.val,3)}`)}`;
+    return `${M(R`\operatorname{curl}\mathbf F=`+q.it.cT)}, a constant vector. The triangle lies in the plane ${M(`x+y+z=${q.a}`)}, whose unit normal pointing away from the origin is ${M(R`\mathbf n=\tfrac{1}{\sqrt3}\langle 1,1,1\rangle`)}. Its area is ${M(R`\tfrac12|\overrightarrow{PQ}\times\overrightarrow{PR}|=\tfrac{\sqrt3}{2}(${q.a})^2`)}. So ${D(R`\oint_C\mathbf F\cdot d\mathbf r=\big(\operatorname{curl}\mathbf F\cdot\mathbf n\big)\,\text{area}=\frac{${c[0]}+${c[1]}+${c[2]}}{\sqrt3}\cdot\frac{\sqrt3\,(${q.a})^2}{2}=\frac{(${c[0]+c[1]+c[2]})(${q.a*q.a})}{2}=${texNum(q.val)}`)} The ${M(R`\sqrt3`)} cancels, which is why constant-curl problems on that triangle always come out as ${M(R`(p+q+r)a^2/2`)}.`;}
+};
+
+Q.stokesSurf={name:'Stokes: a surface integral from the boundary',
+  gen(){const it=pick(CCURL2);const surf=pick(['hemi','parab']);const a=rint(1,3);
+    return {it,surf,a,val:it.c[2]*PI*a*a};},
+  render(q,el){const s=q.surf==='hemi'
+      ?`the upper hemisphere ${M(`x^2+y^2+z^2=${q.a*q.a}`)}, ${M('z\\ge 0')}`
+      :`the part of the paraboloid ${M(`z=${q.a*q.a}-x^2-y^2`)} above the ${M('xy')}-plane`;
+    el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S\operatorname{curl}\mathbf F\cdot d\mathbf S`)} for ${M(R`\mathbf F=`+q.it.F)}, where ${M('S')} is ${s}, oriented upward. Use Stokes' theorem to drop to the boundary curve. ${EXACT}</p>`;
+    numIn(el,'v',M(R`\iint_S\operatorname{curl}\mathbf F\cdot d\mathbf S=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){const a=q.a;
+    return `The boundary of ${M('S')} is the circle ${M(`x^2+y^2=${a*a}`)} in the plane ${M('z=0')}. An upward normal makes the compatible direction counterclockwise seen from above, so take ${M(R`\mathbf r(t)=\langle ${a}\cos t,\,${a}\sin t,\,0\rangle`)}, ${M(R`0\le t\le 2\pi`)}, with ${M(R`\mathbf r'(t)=\langle -${a}\sin t,\,${a}\cos t,\,0\rangle`)}. Then ${M(R`\mathbf F(\mathbf r(t))\cdot\mathbf r'(t)=${q.it.dot(a)}`)}, so ${D(R`\iint_S\operatorname{curl}\mathbf F\cdot d\mathbf S=\oint_C\mathbf F\cdot d\mathbf r=\int_0^{2\pi}\big(${q.it.dot(a)}\big)dt=${piTex(q.val)}\approx ${fmtDec(q.val,3)}`)} Check it the other way: ${M(R`\operatorname{curl}\mathbf F=`+q.it.cT)} is constant, and the flat disk with the same boundary gives ${M(R`${q.it.c[2]}\cdot\pi(${a})^2=${piTex(q.val)}`)}. The curved surface and the flat one agree, as Stokes promises.`;}
+};
+
+const CURL_POOL=[
+  {F:R`\langle -y,\,x,\,z\rangle`,curl:['0','0','2'],cT:R`\langle 0,\,0,\,2\rangle`,ans:'<0, 0, 2>',
+   flux:a=>2*PI*a*a,fw:a=>`${M(R`\operatorname{curl}\mathbf F\cdot\mathbf k=2`)} is constant, so the flux is ${M(R`2\cdot\pi(${a})^2=${piTex(2*PI*a*a)}`)}.`},
+  {F:R`\langle z,\,x,\,y\rangle`,curl:['1','1','1'],cT:R`\langle 1,\,1,\,1\rangle`,ans:'<1, 1, 1>',
+   flux:a=>PI*a*a,fw:a=>`Only the ${M('z')}-component survives the dot with ${M(R`\mathbf k`)}: the flux is ${M(R`1\cdot\pi(${a})^2=${piTex(PI*a*a)}`)}.`},
+  {F:R`\langle y,\,-x,\,z^2\rangle`,curl:['0','0','-2'],cT:R`\langle 0,\,0,\,-2\rangle`,ans:'<0, 0, -2>',
+   flux:a=>-2*PI*a*a,fw:a=>`${M(R`\operatorname{curl}\mathbf F\cdot\mathbf k=-2`)}, so the flux is ${M(R`-2\pi(${a})^2=${piTex(-2*PI*a*a)}`)}. The negative sign says the circulation runs clockwise seen from above.`},
+  {F:R`\langle xz,\,yz,\,0\rangle`,curl:['-y','x','0'],cT:R`\langle -y,\,x,\,0\rangle`,ans:'<-y, x, 0>',
+   flux:a=>0,fw:a=>`${M(R`\operatorname{curl}\mathbf F\cdot\mathbf k=0`)} at every point, so the flux is 0: this curl is horizontal and slides along the disk without crossing it.`},
+  {F:R`\langle xy,\,yz,\,zx\rangle`,curl:['-y','-z','-x'],cT:R`\langle -y,\,-z,\,-x\rangle`,ans:'<-y, -z, -x>',
+   flux:a=>0,fw:a=>`${M(R`\operatorname{curl}\mathbf F\cdot\mathbf k=-x`)}, so the flux is ${M(R`\iint_D(-x)\,dA=0`)}: the disk is symmetric about ${M('x=0')} and ${M('-x')} is odd in ${M('x')}.`},
+  {F:R`\langle y^2,\,x^2,\,z\rangle`,curl:['0','0','2x-2y'],cT:R`\langle 0,\,0,\,2x-2y\rangle`,ans:'<0, 0, 2x-2y>',
+   flux:a=>0,fw:a=>`${M(R`\operatorname{curl}\mathbf F\cdot\mathbf k=2x-2y`)}, and ${M(R`\iint_D(2x-2y)\,dA=0`)} because the disk is symmetric in both ${M('x')} and ${M('y')}.`},
+  {F:R`\langle -y^3,\,x^3,\,0\rangle`,curl:['0','0','3x^2+3y^2'],cT:R`\langle 0,\,0,\,3x^2+3y^2\rangle`,ans:'<0, 0, 3x^2+3y^2>',
+   flux:a=>3*PI*a**4/2,fw:a=>`${M(R`\operatorname{curl}\mathbf F\cdot\mathbf k=3(x^2+y^2)=3r^2`)}, so in polar coordinates the flux is ${M(R`\int_0^{2\pi}\!\!\int_0^{${a}}3r^2\cdot r\,dr\,d\theta=2\pi\cdot\tfrac{3(${a})^4}{4}=${piTex(3*PI*a**4/2)}`)}.`}
+];
+Q.curlFlux={name:'curl and its flux through a disk',
+  gen(){const it=pick(CURL_POOL);const a=rint(1,3);return {it,a,val:it.flux(a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\mathbf F=`+q.it.F)}, compute ${M(R`\operatorname{curl}\mathbf F`)} and then its flux through the disk ${M(`x^2+y^2\\le ${q.a*q.a}`)} in the plane ${M('z=0')}, oriented upward. Write the curl in terms of ${M('x, y, z')}.</p>`;
+    vecIn(el,'c',M(R`\operatorname{curl}\mathbf F=`),'⟨ , , ⟩');
+    numIn(el,'v','Flux =');},
+  check(q,el){return Gall(el,[['c',checkExprVector($('[data-k=c]',el).value,q.it.curl,['x','y','z'])],
+    ['v',checkNumber($('[data-k=v]',el).value,q.val,TOL)]]);},
+  solution(q){return `${M(R`\operatorname{curl}\mathbf F=\langle R_y-Q_z,\;P_z-R_x,\;Q_x-P_y\rangle=`+q.it.cT)}. On the disk the upward unit normal is ${M(R`\mathbf k`)} and ${M(R`d\mathbf S=\mathbf k\,dA`)}, so only the ${M('z')}-component of the curl matters. ${q.it.fw(q.a)}`;}
+};
+
+Q.stokesOrient={name:'compatible orientation',
+  gen(){const up=pick([true,false]);const opts=[{label:'counterclockwise, viewed from above',value:'ccw'},{label:'clockwise, viewed from above',value:'cw'}];
+    const ans=up?'ccw':'cw';return {up,opts,ans,ai:opts.findIndex(o=>o.value===ans)};},
+  render(q,el){el.innerHTML=`<p class="prompt">${M('S')} is a surface lying over a region of the ${M('xy')}-plane, and its boundary ${M('C')} is a closed curve. If ${M('S')} is oriented with its normal pointing <b>${q.up?'upward':'downward'}</b>, how must ${M('C')} be traversed for Stokes' theorem to apply?</p>`;
+    q.get=choiceButtons(el,q.opts);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ans,msg:v===q.ans?'':'Point your right thumb along the normal and look at which way your fingers curl.'};},
+  solution(q){return `Right-hand rule: thumb along the normal, fingers give the direction of ${M('C')}. With the normal pointing <b>${q.up?'upward':'downward'}</b>, ${M('C')} must run <b>${q.up?'counterclockwise':'clockwise'}</b> as seen from above. ${q.up?'This is the same convention as Green’s theorem.':'Using the counterclockwise direction here would give you the answer with the wrong sign.'}`;}
+};
+
+/* ---------------------------------------------------------- chapter 5 */
+const BOX_F=[
+  {F:R`\langle x,\,y,\,z\rangle`,div:R`3`,val:(a,b,c)=>3*a*b*c,
+   why:(a,b,c)=>`${M(R`\operatorname{div}\mathbf F=1+1+1=3`)} is constant, so the flux is ${M(`3V=3(${a})(${b})(${c})=${3*a*b*c}`)}.`},
+  {F:R`\langle x^2,\,y^2,\,z^2\rangle`,div:R`2x+2y+2z`,val:(a,b,c)=>a*b*c*(a+b+c),
+   why:(a,b,c)=>`${M(R`\operatorname{div}\mathbf F=2(x+y+z)`)}. Since ${M(R`\iiint_E x\,dV=\tfrac{${a}^2}{2}(${b})(${c})`)} and similarly for ${M('y')} and ${M('z')}, the total is ${M(`2\\cdot\\tfrac{(${a})(${b})(${c})(${a}+${b}+${c})}{2}=${a*b*c*(a+b+c)}`)}.`},
+  {F:R`\langle x^2,\,0,\,0\rangle`,div:R`2x`,val:(a,b,c)=>a*a*b*c,
+   why:(a,b,c)=>`${M(R`\operatorname{div}\mathbf F=2x`)}, so the flux is ${M(R`\int_0^{${c}}\!\!\int_0^{${b}}\!\!\int_0^{${a}}2x\,dx\,dy\,dz=(${a})^2(${b})(${c})=${a*a*b*c}`)}.`},
+  {F:R`\langle xy,\,yz,\,zx\rangle`,div:R`x+y+z`,val:(a,b,c)=>a*b*c*(a+b+c)/2,
+   why:(a,b,c)=>`${M(R`\operatorname{div}\mathbf F=y+z+x`)}, and ${M(R`\iiint_E(x+y+z)\,dV=\tfrac{(${a})(${b})(${c})(${a}+${b}+${c})}{2}=${texNum(a*b*c*(a+b+c)/2)}`)}.`},
+  {F:R`\langle x^3,\,0,\,0\rangle`,div:R`3x^2`,val:(a,b,c)=>a**3*b*c,
+   why:(a,b,c)=>`${M(R`\operatorname{div}\mathbf F=3x^2`)}, so the flux is ${M(R`\int_0^{${c}}\!\!\int_0^{${b}}\!\!\int_0^{${a}}3x^2\,dx\,dy\,dz=(${a})^3(${b})(${c})=${a**3*b*c}`)}.`},
+  {F:R`\langle 2x,\,-3y,\,5z\rangle`,div:R`4`,val:(a,b,c)=>4*a*b*c,
+   why:(a,b,c)=>`${M(R`\operatorname{div}\mathbf F=2-3+5=4`)}, constant, so the flux is ${M(`4V=4(${a})(${b})(${c})=${4*a*b*c}`)}.`}
+];
+Q.divBox={name:'divergence theorem: a box',
+  gen(){const it=pick(BOX_F);const a=rint(1,3),b=rint(1,3),c=rint(1,3);return {it,a,b,c,val:it.val(a,b,c)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use the divergence theorem to find the outward flux of ${M(R`\mathbf F=`+q.it.F)} through the surface of the box ${M(`0\\le x\\le ${q.a}`)}, ${M(`0\\le y\\le ${q.b}`)}, ${M(`0\\le z\\le ${q.c}`)}.</p>`;
+    numIn(el,'v',M(R`\iint_S\mathbf F\cdot d\mathbf S=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return `${q.it.why(q.a,q.b,q.c)} Six faces, one triple integral: that is the trade the divergence theorem makes.`;}
+};
+
+const SPH_DIV=[
+  {F:R`\langle x,\,y,\,z\rangle`,div:R`3`,val:a=>4*PI*a**3,
+   why:a=>`${M(R`\operatorname{div}\mathbf F=3`)}, so the flux is ${M(R`3\cdot\tfrac43\pi(${a})^3=4\pi(${a})^3=${piTex(4*PI*a**3)}`)}.`},
+  {F:R`\langle x+y,\,y+z,\,z+x\rangle`,div:R`3`,val:a=>4*PI*a**3,
+   why:a=>`${M(R`\operatorname{div}\mathbf F=1+1+1=3`)} (the cross terms have no effect), so the flux is ${M(R`3V=4\pi(${a})^3=${piTex(4*PI*a**3)}`)}.`},
+  {F:R`\langle y,\,z,\,x\rangle`,div:R`0`,val:a=>0,
+   why:a=>`${M(R`\operatorname{div}\mathbf F=\partial_x y+\partial_y z+\partial_z x=0`)}, so the flux through any closed surface is 0.`},
+  {F:R`\langle x,\,2y,\,3z\rangle`,div:R`6`,val:a=>8*PI*a**3,
+   why:a=>`${M(R`\operatorname{div}\mathbf F=1+2+3=6`)}, so the flux is ${M(R`6\cdot\tfrac43\pi(${a})^3=8\pi(${a})^3=${piTex(8*PI*a**3)}`)}.`},
+  {F:R`\langle x^3,\,y^3,\,z^3\rangle`,div:R`3(x^2+y^2+z^2)`,val:a=>12*PI*a**5/5,
+   why:a=>`${M(R`\operatorname{div}\mathbf F=3(x^2+y^2+z^2)=3\rho^2`)}. In spherical coordinates ${M(R`\iiint_E 3\rho^2\,dV=\int_0^{2\pi}\!\!\int_0^\pi\!\!\int_0^{${a}}3\rho^4\sin\phi\,d\rho\,d\phi\,d\theta=3\cdot\tfrac{(${a})^5}{5}\cdot2\cdot2\pi=${piTex(12*PI*a**5/5)}`)}.`},
+  {F:R`\langle x^3,\,0,\,0\rangle`,div:R`3x^2`,val:a=>4*PI*a**5/5,
+   why:a=>`${M(R`\operatorname{div}\mathbf F=3x^2`)}. By symmetry ${M(R`\iiint x^2\,dV=\tfrac13\iiint \rho^2\,dV=\tfrac13\cdot\tfrac{4\pi(${a})^5}{5}`)}, so the flux is ${M(R`3\cdot\tfrac{4\pi(${a})^5}{15}=${piTex(4*PI*a**5/5)}`)}.`}
+];
+Q.divSphere={name:'divergence theorem: a sphere',
+  gen(){const it=pick(SPH_DIV);const a=rint(1,3);return {it,a,val:it.val(a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use the divergence theorem to find the outward flux of ${M(R`\mathbf F=`+q.it.F)} through the sphere ${M(`x^2+y^2+z^2=${q.a*q.a}`)}. ${EXACT}</p>`;
+    numIn(el,'v',M(R`\iint_S\mathbf F\cdot d\mathbf S=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return q.it.why(q.a);}
+};
+
+const CYL_DIV=[
+  {F:R`\langle x,\,y,\,z^2\rangle`,div:R`2+2z`,val:(a,h)=>PI*a*a*(2*h+h*h),
+   why:(a,h)=>`${M(R`\operatorname{div}\mathbf F=1+1+2z=2+2z`)}. Integrating over the cylinder, ${M(R`\iiint(2+2z)\,dV=\pi(${a})^2\int_0^{${h}}(2+2z)\,dz=\pi(${a})^2\big(2(${h})+(${h})^2\big)=${piTex(PI*a*a*(2*h+h*h))}`)}.`},
+  {F:R`\langle x,\,y,\,z\rangle`,div:R`3`,val:(a,h)=>3*PI*a*a*h,
+   why:(a,h)=>`${M(R`\operatorname{div}\mathbf F=3`)}, so the flux is ${M(R`3V=3\pi(${a})^2(${h})=${piTex(3*PI*a*a*h)}`)}.`},
+  {F:R`\langle x^3,\,y^3,\,0\rangle`,div:R`3x^2+3y^2`,val:(a,h)=>3*PI*a**4*h/2,
+   why:(a,h)=>`${M(R`\operatorname{div}\mathbf F=3(x^2+y^2)=3r^2`)}, so in cylindrical coordinates ${M(R`\int_0^{${h}}\!\!\int_0^{2\pi}\!\!\int_0^{${a}}3r^2\cdot r\,dr\,d\theta\,dz=(${h})(2\pi)\tfrac{3(${a})^4}{4}=${piTex(3*PI*a**4*h/2)}`)}.`},
+  {F:R`\langle 0,\,0,\,z^3\rangle`,div:R`3z^2`,val:(a,h)=>PI*a*a*h**3,
+   why:(a,h)=>`${M(R`\operatorname{div}\mathbf F=3z^2`)}, so the flux is ${M(R`\pi(${a})^2\int_0^{${h}}3z^2\,dz=\pi(${a})^2(${h})^3=${piTex(PI*a*a*h**3)}`)}.`},
+  {F:R`\langle y,\,-x,\,z\rangle`,div:R`1`,val:(a,h)=>PI*a*a*h,
+   why:(a,h)=>`${M(R`\operatorname{div}\mathbf F=0-0+1=1`)}, so the flux is just the volume ${M(R`\pi(${a})^2(${h})=${piTex(PI*a*a*h)}`)}.`}
+];
+Q.divCylinder={name:'divergence theorem: a cylinder',
+  gen(){const it=pick(CYL_DIV);const a=rint(1,3),h=rint(2,4);return {it,a,h,val:it.val(a,h)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the outward flux of ${M(R`\mathbf F=`+q.it.F)} through the <b>closed</b> surface of the solid cylinder ${M(`x^2+y^2\\le ${q.a*q.a}`)}, ${M(`0\\le z\\le ${q.h}`)} (side, top, and bottom). ${EXACT}</p>`;
+    numIn(el,'v',M(R`\iint_S\mathbf F\cdot d\mathbf S=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return `The surface is closed, so the divergence theorem applies. ${q.it.why(q.a,q.h)}`;}
+};
+
+const THEOREMS=[{label:'FTC for line integrals'},{label:'Green’s theorem'},{label:'Stokes’ theorem'},{label:'the divergence theorem'}];
+const WHICH=[
+  {desc:`${M(R`\displaystyle\iint_S\mathbf F\cdot d\mathbf S`)} where ${M('S')} is the entire surface of a solid box, oriented outward`,ai:3,
+   why:`A flux through a <b>closed</b> surface bounding a solid becomes ${M(R`\iiint_E\operatorname{div}\mathbf F\,dV`)}.`},
+  {desc:`${M(R`\displaystyle\oint_C\mathbf F\cdot d\mathbf r`)} where ${M('C')} is a closed curve in the ${M('xy')}-plane and ${M(R`\mathbf F=\langle P(x,y),Q(x,y)\rangle`)}`,ai:1,
+   why:`A closed curve bounding a flat region with a two-dimensional field is exactly Green's theorem, ${M(R`\oint_C P\,dx+Q\,dy=\iint_D(Q_x-P_y)\,dA`)}. (Stokes would also work, since Green is its flat case.)`},
+  {desc:`${M(R`\displaystyle\int_C\nabla f\cdot d\mathbf r`)} along a curve from ${M('A')} to ${M('B')}`,ai:0,
+   why:`The integrand is a gradient, so the integral depends only on the endpoints: ${M(R`f(B)-f(A)`)}.`},
+  {desc:`${M(R`\displaystyle\iint_S\operatorname{curl}\mathbf F\cdot d\mathbf S`)} where ${M('S')} is a paraboloid cap whose boundary is a circle`,ai:2,
+   why:`A flux of a <b>curl</b> through an open surface drops to a line integral around its boundary.`},
+  {desc:`${M(R`\displaystyle\oint_C\mathbf F\cdot d\mathbf r`)} where ${M('C')} is a closed curve in space bounding a surface, and ${M(R`\mathbf F`)} is not conservative`,ai:2,
+   why:`A closed curve in space with a non-conservative field: replace it by the flux of ${M(R`\operatorname{curl}\mathbf F`)} through any surface with that boundary.`},
+  {desc:`${M(R`\displaystyle\iint_S\mathbf F\cdot d\mathbf S`)} where ${M('S')} is a sphere, oriented outward`,ai:3,
+   why:`Closed surface, so trade it for ${M(R`\iiint_E\operatorname{div}\mathbf F\,dV`)} over the ball inside.`},
+  {desc:`${M(R`\displaystyle\int_C\mathbf F\cdot d\mathbf r`)} where ${M(R`\mathbf F=\langle 2x,\,2y,\,2z\rangle`)} and ${M('C')} runs from ${M('(0,0,0)')} to ${M('(1,2,3)')}`,ai:0,
+   why:`${M(R`\mathbf F=\nabla(x^2+y^2+z^2)`)} is conservative, so the integral is ${M(R`f(B)-f(A)=14`)} regardless of the path.`}
+];
+Q.whichTheorem={name:'which theorem applies',
+  gen(){const it=pick(WHICH);return {it,ai:it.ai};},
+  render(q,el){el.innerHTML=`<p class="prompt">Which theorem is the natural tool for ${q.it.desc}?</p>`;
+    q.get=choiceButtons(el,THEOREMS.map((t,i)=>({label:t.label,value:i})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ai,msg:v===q.ai?'':'Ask what kind of region you are integrating over, and what its boundary is.'};},
+  solution(q){return `<b>${THEOREMS[q.ai].label.replace(/^the /,'')}</b>. ${q.it.why}`;}
+};
+
+Q.divZero={name:'what zero divergence means',
+  gen(){const opts=shuffle([
+      {label:'the flux through every closed surface is 0',value:1},
+      {label:'the flux through every surface is 0',value:0},
+      {label:'F is the zero field',value:0},
+      {label:'curl F = 0',value:0}]);
+    return {opts,ai:opts.findIndex(o=>o.value===1)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Suppose ${M(R`\operatorname{div}\mathbf F=0`)} everywhere in space. Which conclusion follows?</p>`;
+    q.get=choiceButtons(el,q.opts);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===1,msg:v===1?'':'The divergence theorem only says something about surfaces that bound a solid.'};},
+  solution(q){return `<b>The flux through every closed surface is 0.</b> By the divergence theorem, ${M(R`\iint_S\mathbf F\cdot d\mathbf S=\iiint_E 0\,dV=0`)} for any solid ${M('E')}. It says nothing about an open surface: ${M(R`\mathbf F=\langle 0,0,1\rangle`)} has zero divergence but nonzero flux through a horizontal disk. And ${M(R`\operatorname{div}\mathbf F=0`)} does not force ${M(R`\operatorname{curl}\mathbf F=0`)}; the swirling field ${M(R`\langle -y,x,0\rangle`)} has zero divergence and curl ${M(R`\langle 0,0,2\rangle`)}.`;}
+};
+
+/* ============================================================ step-by-step walkthroughs */
+function makeWalk(pfx,build){
+  let st=0,data=null;
+  const gEl=$('#'+pfx+'Given'),sEl=$('#'+pfx+'Steps'),stat=$('#'+pfx+'Status');
+  function draw(){
+    gEl.innerHTML=data.given;
+    sEl.innerHTML=data.steps.map((s,i)=>`<li class="${i===st?'now':i>st?'dim':''}">${i>st?`<span class="muted">${s.title}</span>`:s.html}</li>`).join('');
+    stat.textContent=`Step ${st+1} of ${data.steps.length}`;
+    $('#'+pfx+'Prev').disabled=st===0;$('#'+pfx+'Next').disabled=st===data.steps.length-1;
+    typeset(gEl);typeset(sEl);
+  }
+  function fresh(){data=build();st=0;draw();}
+  $('#'+pfx+'Prev').onclick=()=>{st=Math.max(0,st-1);draw();};
+  $('#'+pfx+'Next').onclick=()=>{st=Math.min(data.steps.length-1,st+1);draw();};
+  $('#'+pfx+'New').onclick=fresh;
+  fresh();
+}
+
+/* ============================================================ chapter 1: parametric surface explorer */
+const PSURF=[
+  {label:'cylinder',tex:R`\langle 2\cos u,\,2\sin u,\,v\rangle`,r:(u,v)=>[2*Math.cos(u),2*Math.sin(u),v],
+   U:[0,2*PI],V:[-2,2],rng:3.2},
+  {label:'sphere',tex:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle`,
+   r:(u,v)=>[2*Math.sin(u)*Math.cos(v),2*Math.sin(u)*Math.sin(v),2*Math.cos(u)],U:[0,PI],V:[0,2*PI],rng:3},
+  {label:'cone',tex:R`\langle u\cos v,\,u\sin v,\,u\rangle`,r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),u],
+   U:[0,2.4],V:[0,2*PI],rng:3},
+  {label:'helicoid',tex:R`\langle u\cos v,\,u\sin v,\,v\rangle`,r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),v],
+   U:[0,2],V:[0,2*PI],rng:3.4},
+  {label:'torus',tex:R`\langle (2+\cos u)\cos v,\,(2+\cos u)\sin v,\,\sin u\rangle`,
+   r:(u,v)=>[(2+Math.cos(u))*Math.cos(v),(2+Math.cos(u))*Math.sin(v),Math.sin(u)],U:[0,2*PI],V:[0,2*PI],rng:3.4},
+  {label:'graph  z = x² − y²',tex:R`\langle u,\,v,\,u^2-v^2\rangle`,r:(u,v)=>[u,v,u*u-v*v],
+   U:[-1.6,1.6],V:[-1.6,1.6],rng:3},
+  {label:'plane',tex:R`\langle 1+u,\,v,\,2-u+v\rangle`,r:(u,v)=>[1+u,v,2-u+v],U:[-2,2],V:[-2,2],rng:3.4}
+];
+(function(){
+  const scene=new Scene3D('#pScene',{range:3.2});
+  let cur=0,u0=0,v0=0,su=null,sv=null;
+  const sel=$('#pSel');PSURF.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
+  function build(i){
+    cur=i;const P=PSURF[i];scene.o.range=P.rng;scene.o.zoom=1;
+    u0=P.U[0]+(P.U[1]-P.U[0])*0.35;v0=P.V[0]+(P.V[1]-P.V[0])*0.3;
+    const box=$('#pSliders');box.innerHTML='';
+    su=sliderRow(box,{label:'u',min:P.U[0],max:P.U[1],step:(P.U[1]-P.U[0])/60,value:u0,onInput:x=>{u0=x;draw();}});
+    sv=sliderRow(box,{label:'v',min:P.V[0],max:P.V[1],step:(P.V[1]-P.V[0])/60,value:v0,onInput:x=>{v0=x;draw();}});
+    draw();
+  }
+  function draw(){
+    const P=PSURF[cur],r=P.r;
+    scene.clear();
+    scene.param(r,P.U,P.V,{n:34,m:34,base:SURF.blue,alpha:0.22,stroke:'rgba(30,40,80,.16)'});
+    scene.curve(t=>r(u0,t),P.V[0],P.V[1],{color:'#7c3aed',width:2.2,n:160});
+    scene.curve(t=>r(t,v0),P.U[0],P.U[1],{color:'#a78bfa',width:2.2,n:160});
+    const p=r(u0,v0),ru=RU(r,u0,v0),rv=RV(r,u0,v0),n=cross(ru,rv);
+    const L=Math.max(norm(ru),norm(rv),1e-9),sc=1.3/L;
+    if(norm(ru)>1e-7)scene.vector(p,vadd(p,vscale(sc,ru)),{color:'#d97706',width:3,label:'r_u'});
+    if(norm(rv)>1e-7)scene.vector(p,vadd(p,vscale(sc,rv)),{color:'#2563eb',width:3,label:'r_v'});
+    if(norm(n)>1e-7)scene.vector(p,vadd(p,vscale(1.4/norm(n),n)),{color:'#16a34a',width:3,label:'r_u × r_v'});
+    scene.point(p,{color:'#7c3aed',r:5});
+    scene.render();
+    $('#pOut').innerHTML=`r(u, v) = <b>${fv(p)}</b><br>r<sub>u</sub> = ${fv(ru)}<br>r<sub>v</sub> = ${fv(rv)}<br>`+
+      `r<sub>u</sub> × r<sub>v</sub> = <b>${fv(n)}</b><br>|r<sub>u</sub> × r<sub>v</sub>| = <b>${fmtDec(norm(n),3)}</b>`+
+      (norm(n)<1e-6?' &nbsp;<span style="color:#dc2626">not smooth here</span>':'');
+  }
+  sel.onchange=()=>build(+sel.value);
+  build(0);
+  redrawOnShow('param',draw);
+  new Drill({mount:'#drill-param',section:'param',goal:6,
+    ...mixDrill([Q.idSurface,Q.normalPlane,Q.normalParam,Q.normalParam,Q.tangentPlane,Q.surfArea,Q.surfArea,Q.chooseParam])});
+})();
+
+/* ============================================================ chapter 2: walkthrough + cell explorer */
+makeWalk('w1',()=>{
+  const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);
+  const Dv=1+a*a+b*b,zz=texLin([a,b],['u','v'],{constant:c});
+  const t1=a*p*p*q/2,t2=b*p*q*q/2,t3=c*p*q,I=t1+t2+t3;
+  return {given:`Compute ${M(R`\displaystyle\iint_S z\,dS`)} where ${M('S')} is the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}.`,
+    steps:[
+      {title:'Parametrize the surface.',
+       html:`<b>Parametrize.</b> It is a graph, so the parameters are just ${M('x')} and ${M('y')}: ${M(R`\mathbf r(u,v)=\langle u,\,v,\,${zz}\rangle`)} on ${M(`0\\le u\\le ${p},\\; 0\\le v\\le ${q}`)}.`},
+      {title:'Find the stretch factor |r_u × r_v|.',
+       html:`<b>Stretch factor.</b> ${M(R`\mathbf r_u=\langle 1,0,${a}\rangle`)}, ${M(R`\mathbf r_v=\langle 0,1,${b}\rangle`)}, so ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${-a},\,${-b},\,1\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+${a*a}+${b*b}}=\sqrt{${Dv}}`)}. It is constant, because a plane stretches the same way everywhere.`},
+      {title:'Write the integrand on the surface.',
+       html:`<b>Substitute.</b> On ${M('S')}, ${M(`z=${zz}`)}. Every ${M('z')} in the integrand is now gone: ${M(R`f(\mathbf r(u,v))=${zz}`)}.`},
+      {title:'Set up the double integral.',
+       html:`<b>Set up.</b> ${D(R`\iint_S z\,dS=\int_0^{${q}}\!\!\int_0^{${p}}\big(${zz}\big)\sqrt{${Dv}}\;du\,dv`)} The constant ${M(R`\sqrt{${Dv}}`)} pulls out front.`},
+      {title:'Evaluate.',
+       html:`<b>Evaluate.</b> ${M(R`\int_0^{${q}}\!\!\int_0^{${p}}(${zz})\,du\,dv=${a===0?'0':R`${a}\tfrac{(${p})^2}{2}(${q})`}+${b===0?'0':R`${b}(${p})\tfrac{(${q})^2}{2}`}+${c}(${p})(${q})=${texNum(I)}`)}, so the answer is ${M(R`\sqrt{${Dv}}\cdot ${texNum(I)}=${radTex(I,Dv)}\approx ${fmtDec(Math.sqrt(Dv)*I,3)}`)}.`}
+    ]};
+});
+
+const SSURF=[
+  {label:'sphere,  f = z²',tex:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle`,fTex:R`f=z^2`,
+   r:(u,v)=>[2*Math.sin(u)*Math.cos(v),2*Math.sin(u)*Math.sin(v),2*Math.cos(u)],f:p=>p[2]*p[2],U:[0,PI],V:[0,2*PI],rng:3},
+  {label:'cylinder,  f = z',tex:R`\langle 2\cos u,\,2\sin u,\,v\rangle`,fTex:R`f=z`,
+   r:(u,v)=>[2*Math.cos(u),2*Math.sin(u),v],f:p=>p[2],U:[0,2*PI],V:[0,3],rng:3.2},
+  {label:'plane,  f = x + y + z',tex:R`\langle u,\,v,\,3-u-v\rangle`,fTex:R`f=x+y+z`,
+   r:(u,v)=>[u,v,3-u-v],f:p=>p[0]+p[1]+p[2],U:[0,2],V:[0,2],rng:3.2}
+];
+(function(){
+  const scene=new Scene3D('#sScene',{range:3,azim:-58,elev:22});
+  let cur=0,u0=0,v0=0,frac=0.18,lo=0,hi=1;
+  const sel=$('#sSel');SSURF.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
+  function build(i){
+    cur=i;const P=SSURF[i];scene.o.range=P.rng;scene.o.zoom=1;
+    lo=Infinity;hi=-Infinity;
+    for(let a=0;a<=20;a++)for(let b=0;b<=20;b++){const w=P.f(P.r(P.U[0]+(P.U[1]-P.U[0])*a/20,P.V[0]+(P.V[1]-P.V[0])*b/20));if(w<lo)lo=w;if(w>hi)hi=w;}
+    if(hi-lo<1e-9)hi=lo+1;
+    u0=P.U[0]+(P.U[1]-P.U[0])*0.3;v0=P.V[0]+(P.V[1]-P.V[0])*0.25;
+    const box=$('#sSliders');box.innerHTML='';
+    sliderRow(box,{label:'u',min:P.U[0],max:P.U[1]-(P.U[1]-P.U[0])*frac,step:(P.U[1]-P.U[0])/60,value:u0,onInput:x=>{u0=x;draw();}});
+    sliderRow(box,{label:'v',min:P.V[0],max:P.V[1]-(P.V[1]-P.V[0])*frac,step:(P.V[1]-P.V[0])/60,value:v0,onInput:x=>{v0=x;draw();}});
+    draw();
+  }
+  const mixCol=(t,sh)=>{const c0=[59,91,219],c1=[217,119,6];const c=c0.map((x,k)=>x+(c1[k]-x)*clamp(t,0,1));
+    return `rgba(${c.map(x=>Math.round(x*sh+255*(1-sh)*0.45)).join(',')},0.85)`;};
+  function draw(){
+    const P=SSURF[cur],r=P.r;
+    const du=(P.U[1]-P.U[0])*frac,dv=(P.V[1]-P.V[0])*frac;
+    scene.clear();
+    scene.param(r,P.U,P.V,{n:30,m:30,colorFn:(p,sh)=>mixCol((P.f(p)-lo)/(hi-lo),sh),stroke:'rgba(30,40,80,.10)'});
+    const corners=[[u0,v0],[u0+du,v0],[u0+du,v0+dv],[u0,v0+dv],[u0,v0]];
+    scene.polyline(corners.map(([u,v])=>r(u,v)),{color:'#7c3aed',width:3.4});
+    const p=r(u0,v0),ru=RU(r,u0,v0),rv=RV(r,u0,v0),n=cross(ru,rv);
+    scene.vector(p,vadd(p,vscale(du,ru)),{color:'#d97706',width:3});
+    scene.vector(p,vadd(p,vscale(dv,rv)),{color:'#2563eb',width:3});
+    scene.point(p,{color:'#7c3aed',r:4});
+    scene.render();
+    const cell=du*dv,str=norm(n),patch=str*cell,fval=P.f(p);
+    $('#sOut').innerHTML=`Δu Δv = ${fmtDec(du,3)} × ${fmtDec(dv,3)} = <b>${fmtDec(cell,4)}</b> &nbsp;(flat parameter cell)<br>`+
+      `|r<sub>u</sub> × r<sub>v</sub>| = <b>${fmtDec(str,3)}</b> &nbsp;(stretch factor here)<br>`+
+      `patch area ≈ |r<sub>u</sub> × r<sub>v</sub>| Δu Δv = <b>${fmtDec(patch,4)}</b><br>`+
+      `f at this point = ${fmtDec(fval,3)} → contribution f·dS ≈ <b>${fmtDec(fval*patch,4)}</b><br>`+
+      `total ∫∫ f dS ≈ ${fmtDec(scalarNum(P.f,r,P.U,P.V),3)}, &nbsp; area ≈ ${fmtDec(areaNum(r,P.U,P.V),3)}`;
+  }
+  function scalarNum(f,r,U,V,n=40){let s=0;const du=(U[1]-U[0])/n,dv=(V[1]-V[0])/n;
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){const u=U[0]+(i+0.5)*du,v=V[0]+(j+0.5)*dv;const w=f(r(u,v))*norm(NRM(r,u,v));if(Number.isFinite(w))s+=w*du*dv;}return s;}
+  sel.onchange=()=>build(+sel.value);
+  build(0);
+  redrawOnShow('scalar',draw);
+  new Drill({mount:'#drill-scalar',section:'scalar',goal:5,
+    ...mixDrill([Q.scalarPlane,Q.scalarPlane,Q.scalarSphere,Q.scalarSphere,Q.scalarCylinder,Q.scalarMass])});
+})();
+
+/* ============================================================ chapter 3: walkthrough + flux explorer */
+makeWalk('w2',()=>{
+  const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);
+  const A=pick([1,2,-1]),B=pick([1,2,-1]),C=pick([1,2,3]);
+  const zz=texLin([a,b],['u','v'],{constant:c});
+  const val=fluxPlaneVal(a,b,c,p,q,A,B,C,[0,0,0]);
+  const integ=texLin([a*(C-A),b*(C-B)],['u','v'],{constant:C*c});
+  return {given:`Find the flux of ${M(R`\mathbf F=\langle ${texLin([A],['x'])},\,${texLin([B],['y'])},\,${texLin([C],['z'])}\rangle`)} through the part of ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} above ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}, oriented upward.`,
+    steps:[
+      {title:'Parametrize the surface.',
+       html:`<b>Parametrize.</b> ${M(R`\mathbf r(u,v)=\langle u,\,v,\,${zz}\rangle`)} over ${M(`0\\le u\\le ${p},\\; 0\\le v\\le ${q}`)}.`},
+      {title:'Find r_u × r_v and check which way it points.',
+       html:`<b>Normal.</b> ${M(R`\mathbf r_u=\langle 1,0,${a}\rangle`)} and ${M(R`\mathbf r_v=\langle 0,1,${b}\rangle`)}, so ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${-a},\,${-b},\,1\rangle`)}. Its ${M('z')}-component is ${M('+1')}, so it already points <b>upward</b>: keep it as is. (For the downward orientation you would negate it here.)`},
+      {title:'Evaluate F on the surface.',
+       html:`<b>Substitute.</b> Replace ${M('x,y,z')} by ${M(`u,\\;v,\\;${zz}`)}: ${M(R`\mathbf F(\mathbf r(u,v))=\langle ${texLin([A],['u'])},\,${texLin([B],['v'])},\,${C===1?`${zz}`:`${C}(${zz})`}\rangle`)}.`},
+      {title:'Dot F with the normal.',
+       html:`<b>Dot.</b> ${D(R`\mathbf F\cdot(\mathbf r_u\times\mathbf r_v)=(${-a})(${texLin([A],['u'])})+(${-b})(${texLin([B],['v'])})+${C===1?`(${zz})`:`${C}(${zz})`}=${integ}`)}`},
+      {title:'Integrate over the parameter rectangle.',
+       html:`<b>Integrate.</b> ${D(R`\iint_S\mathbf F\cdot d\mathbf S=\int_0^{${q}}\!\!\int_0^{${p}}\big(${integ}\big)\,du\,dv=${texNum(val)}`)}`}
+    ]};
+});
+
+const FSURF=[
+  {label:'plane piece',r:(u,v)=>[u,v,1.4-0.5*u+0.3*v],U:[-1.5,1.5],V:[-1.5,1.5],rng:3,pos:'upward',neg:'downward'},
+  {label:'hemisphere',r:(u,v)=>[1.8*Math.sin(u)*Math.cos(v),1.8*Math.sin(u)*Math.sin(v),1.8*Math.cos(u)],
+   U:[0.02,PI/2],V:[0,2*PI],rng:3,pos:'outward',neg:'inward'},
+  {label:'cylinder side',r:(u,v)=>[1.5*Math.cos(u),1.5*Math.sin(u),v],U:[0,2*PI],V:[-1.2,1.2],rng:3,pos:'outward',neg:'inward'},
+  {label:'paraboloid cap',r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),2-u*u],U:[0.02,Math.SQRT2],V:[0,2*PI],rng:3,pos:'upward',neg:'downward'}
+];
+const FFLD=[
+  {label:'F = ⟨x, y, z⟩',f:p=>[p[0],p[1],p[2]]},
+  {label:'F = ⟨0, 0, 1⟩',f:()=>[0,0,1]},
+  {label:'F = ⟨−y, x, 0⟩',f:p=>[-p[1],p[0],0]},
+  {label:'F = ⟨x, 0, 0⟩',f:p=>[p[0],0,0]}
+];
+(function(){
+  const scene=new Scene3D('#fScene',{range:3,azim:-56,elev:20});
+  let si=0,fi=0;
+  const sel=$('#fSel');FSURF.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
+  const fld=$('#fFld');FFLD.forEach((s,i)=>fld.appendChild(el('option',{value:String(i)},s.label)));
+  function draw(){
+    const S=FSURF[si],F=FFLD[fi].f,flip=$('#fFlip').checked,sg=flip?-1:1;
+    scene.o.range=S.rng;
+    scene.clear();
+    scene.param(S.r,S.U,S.V,{n:30,m:30,base:SURF.gray,alpha:0.2,stroke:'rgba(30,40,80,.12)'});
+    for(let i=1;i<=5;i++)for(let j=0;j<6;j++){
+      const u=S.U[0]+(S.U[1]-S.U[0])*i/6,v=S.V[0]+(S.V[1]-S.V[0])*(j+0.5)/6;
+      const p=S.r(u,v),n=vscale(sg,NRM(S.r,u,v));
+      if(norm(n)>1e-7)scene.vector(p,vadd(p,vscale(0.55/norm(n),n)),{color:'#16a34a',width:2});
+      const f=F(p);if(norm(f)>1e-7)scene.vector(p,vadd(p,vscale(0.32,f)),{color:'#d97706',width:2});
+    }
+    scene.render();
+    const flux=sg*fluxNum(F,S.r,S.U,S.V);
+    $('#fOut').innerHTML=`orientation: <b>${flip?S.neg:S.pos}</b><br>`+
+      `∫∫<sub>S</sub> F · dS ≈ <b>${fmtDec(flux,3)}</b>`+(Math.abs(flux)<1e-6?' &nbsp;(the field never crosses this surface, or crossings cancel)':'')+`<br>`+
+      `surface area ≈ ${fmtDec(areaNum(S.r,S.U,S.V),3)}`;
+  }
+  sel.onchange=()=>{si=+sel.value;draw();};fld.onchange=()=>{fi=+fld.value;draw();};$('#fFlip').onchange=draw;
+  draw();redrawOnShow('flux',draw);
+  new Drill({mount:'#drill-flux',section:'flux',goal:6,
+    ...mixDrill([Q.fluxPlane,Q.fluxPlane,Q.fluxSphere,Q.fluxCylinder,Q.fluxCube,Q.fluxOrient])});
+})();
+
+/* ============================================================ chapter 4: walkthrough + Stokes explorer */
+makeWalk('w3',()=>{
+  const it=pick(CCURL);const a=rint(1,3),c=rint(-2,3);const val=it.c[2]*PI*a*a;
+  return {given:`Compute ${M(R`\displaystyle\oint_C\mathbf F\cdot d\mathbf r`)} for ${M(R`\mathbf F=`+it.F)}, where ${M('C')} is the circle ${M(`x^2+y^2=${a*a}`)} in the plane ${M(`z=${c}`)}, counterclockwise seen from above.`,
+    steps:[
+      {title:'Choose a surface with boundary C.',
+       html:`<b>Choose a surface.</b> Stokes lets you use any surface with boundary ${M('C')}, so take the flat disk ${M('D')}: ${M(`x^2+y^2\\le ${a*a}`)} in the plane ${M(`z=${c}`)}. Flat is always the right choice when you have one.`},
+      {title:'Compute curl F.',
+       html:`<b>Curl.</b> ${M(R`\operatorname{curl}\mathbf F=\langle R_y-Q_z,\;P_z-R_x,\;Q_x-P_y\rangle=`+it.cT)}. It is a constant vector, which is what makes this quick.`},
+      {title:'Match the orientations.',
+       html:`<b>Orientation.</b> ${M('C')} runs counterclockwise seen from above, so by the right-hand rule the compatible normal is ${M(R`\mathbf n=\mathbf k`)} (upward).`},
+      {title:'Dot the curl with the normal.',
+       html:`<b>Dot.</b> ${M(R`\operatorname{curl}\mathbf F\cdot\mathbf n=${it.cT}\cdot\langle 0,0,1\rangle=${it.c[2]}`)}. Only the ${M('z')}-component of the curl survives, because the disk is horizontal.`},
+      {title:'Integrate over the disk.',
+       html:`<b>Integrate.</b> The integrand is constant, so ${D(R`\oint_C\mathbf F\cdot d\mathbf r=\iint_D ${it.c[2]}\,dS=${it.c[2]}\cdot\pi(${a})^2=${piTex(val)}\approx ${fmtDec(val,3)}`)}`}
+    ]};
+});
+
+const KA=1.5;
+const KSURF=[
+  {label:'hemisphere',r:(u,v)=>[KA*Math.sin(u)*Math.cos(v),KA*Math.sin(u)*Math.sin(v),KA*Math.cos(u)],U:[0.02,PI/2],V:[0,2*PI]},
+  {label:'paraboloid cap',r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),KA*KA-u*u],U:[0.02,KA],V:[0,2*PI]},
+  {label:'flat disk',r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),0],U:[0.02,KA],V:[0,2*PI]}
+];
+const KFLD=[
+  {label:'F = ⟨−y, x, z⟩',f:p=>[-p[1],p[0],p[2]],cT:'⟨0, 0, 2⟩'},
+  {label:'F = ⟨z, x, y⟩',f:p=>[p[2],p[0],p[1]],cT:'⟨1, 1, 1⟩'},
+  {label:'F = ⟨y, z, x⟩',f:p=>[p[1],p[2],p[0]],cT:'⟨−1, −1, −1⟩'},
+  {label:'F = ⟨2y, 3z, x⟩',f:p=>[2*p[1],3*p[2],p[0]],cT:'⟨−3, −1, −2⟩'}
+];
+(function(){
+  const scene=new Scene3D('#kScene',{range:3,azim:-58,elev:22});
+  let si=0,fi=0,phase=0;
+  const sel=$('#kSel');KSURF.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
+  const fld=$('#kFld');KFLD.forEach((s,i)=>fld.appendChild(el('option',{value:String(i)},s.label)));
+  function draw(){
+    const S=KSURF[si],F=KFLD[fi].f,flip=$('#kFlip').checked,sg=flip?-1:1;
+    scene.clear();
+    scene.param(S.r,S.U,S.V,{n:26,m:26,base:SURF.blue,alpha:0.18,stroke:'rgba(30,40,80,.12)'});
+    for(let i=1;i<=4;i++)for(let j=0;j<5;j++){
+      const u=S.U[0]+(S.U[1]-S.U[0])*i/5,v=S.V[0]+(S.V[1]-S.V[0])*(j+0.5)/5;
+      const p=S.r(u,v),cu=curlNum(F,p);
+      if(norm(cu)>1e-7)scene.vector(p,vadd(p,vscale(0.42/norm(cu),cu)),{color:'#16a34a',width:2});
+    }
+    const bnd=t=>[KA*Math.cos(sg*t),KA*Math.sin(sg*t),0];
+    scene.curve(bnd,0,2*PI,{color:'#7c3aed',width:3.4,n:120});
+    const td=phase*2*PI,pd=bnd(td),ph=bnd(td+0.12);
+    scene.vector(pd,ph,{color:'#7c3aed',width:4});
+    scene.point(pd,{color:'#7c3aed',r:6});
+    scene.render();
+    const line=lineNum(F,bnd,0,2*PI);
+    const fl=sg*fluxNum(p=>curlNum(F,p),S.r,S.U,S.V,34);
+    $('#kOut').innerHTML=`curl F = ${KFLD[fi].cT} &nbsp;(constant here)<br>`+
+      `∮<sub>C</sub> F · dr ≈ <b>${fmtDec(line,3)}</b> &nbsp;(${flip?'clockwise':'counterclockwise'} from above)<br>`+
+      `∫∫<sub>S</sub> curl F · dS ≈ <b>${fmtDec(fl,3)}</b> &nbsp;(normal ${flip?'down/inward':'up/outward'})<br>`+
+      `difference ≈ ${fmtDec(Math.abs(line-fl),4)} &nbsp;(numerical error only)`;
+  }
+  sel.onchange=()=>{si=+sel.value;draw();};fld.onchange=()=>{fi=+fld.value;draw();};$('#kFlip').onchange=draw;
+  draw();redrawOnShow('stokes',draw);
+  (function tick(){const s=$('section[data-id="stokes"]');
+    if(s&&s.classList.contains('active')){phase=(phase+0.012)%1;draw();}
+    setTimeout(tick,70);})();
+  new Drill({mount:'#drill-stokes',section:'stokes',goal:5,
+    ...mixDrill([Q.stokesLine,Q.stokesLine,Q.stokesSurf,Q.curlFlux,Q.stokesOrient])});
+})();
+
+/* ============================================================ chapter 5: divergence explorer */
+const DSOLID=[
+  {label:'box  −1 ≤ x, y, z ≤ 1',vol:8,rng:3,inside:p=>Math.abs(p[0])<=1&&Math.abs(p[1])<=1&&Math.abs(p[2])<=1,box:[[-1,1],[-1,1],[-1,1]],
+   patches:[{r:(u,v)=>[1,u,v],U:[-1,1],V:[-1,1]},{r:(u,v)=>[-1,v,u],U:[-1,1],V:[-1,1]},
+            {r:(u,v)=>[v,1,u],U:[-1,1],V:[-1,1]},{r:(u,v)=>[u,-1,v],U:[-1,1],V:[-1,1]},
+            {r:(u,v)=>[u,v,1],U:[-1,1],V:[-1,1]},{r:(u,v)=>[v,u,-1],U:[-1,1],V:[-1,1]}]},
+  {label:'ball of radius 1.5',vol:4*PI*1.5**3/3,rng:3,inside:p=>norm(p)<=1.5,box:[[-1.5,1.5],[-1.5,1.5],[-1.5,1.5]],
+   patches:[{r:(u,v)=>[1.5*Math.sin(u)*Math.cos(v),1.5*Math.sin(u)*Math.sin(v),1.5*Math.cos(u)],U:[0.01,PI-0.01],V:[0,2*PI]}]},
+  {label:'cylinder  r ≤ 1, −1 ≤ z ≤ 1',vol:2*PI,rng:3,inside:p=>Math.hypot(p[0],p[1])<=1&&Math.abs(p[2])<=1,box:[[-1,1],[-1,1],[-1,1]],
+   patches:[{r:(u,v)=>[Math.cos(u),Math.sin(u),v],U:[0,2*PI],V:[-1,1]},
+            {r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),1],U:[0.01,1],V:[0,2*PI]},
+            {r:(u,v)=>[u*Math.cos(v),-u*Math.sin(v),-1],U:[0.01,1],V:[0,2*PI]}]}
+];
+const DFLD=[
+  {label:'F = ⟨x, y, z⟩',f:p=>[p[0],p[1],p[2]],div:'3'},
+  {label:'F = ⟨x², 0, 0⟩',f:p=>[p[0]*p[0],0,0],div:'2x'},
+  {label:'F = ⟨−y, x, 0⟩',f:p=>[-p[1],p[0],0],div:'0'},
+  {label:'F = ⟨x, y, −2z⟩',f:p=>[p[0],p[1],-2*p[2]],div:'0'},
+  {label:'F = ⟨x³, 0, 0⟩',f:p=>[p[0]**3,0,0],div:'3x²'}
+];
+(function(){
+  const scene=new Scene3D('#dScene',{range:3,azim:-56,elev:20});
+  let si=0,fi=0;
+  const sel=$('#dSel');DSOLID.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
+  const fld=$('#dFld');DFLD.forEach((s,i)=>fld.appendChild(el('option',{value:String(i)},s.label)));
+  /* average of f over sample points inside E, times the exact volume: this keeps the
+     grid's rough boundary from leaking into the answer, which matters when the two
+     sides of the theorem are shown side by side */
+  function volInt(f,S,n=34){const [X,Y,Z]=S.box;let s=0,cnt=0;
+    const dx=(X[1]-X[0])/n,dy=(Y[1]-Y[0])/n,dz=(Z[1]-Z[0])/n;
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++)for(let k=0;k<n;k++){
+      const p=[X[0]+(i+0.5)*dx,Y[0]+(j+0.5)*dy,Z[0]+(k+0.5)*dz];
+      if(!S.inside(p))continue;cnt++;const w=f(p);if(Number.isFinite(w))s+=w;}
+    return {val:cnt?s/cnt*S.vol:0,vol:S.vol};}
+  function draw(){
+    const S=DSOLID[si],F=DFLD[fi].f;
+    scene.o.range=S.rng;scene.clear();
+    S.patches.forEach(pt=>scene.param(pt.r,pt.U,pt.V,{n:18,m:18,base:SURF.gray,alpha:0.14,stroke:'rgba(30,40,80,.10)'}));
+    S.patches.forEach(pt=>{for(let i=1;i<=3;i++)for(let j=0;j<4;j++){
+      const u=pt.U[0]+(pt.U[1]-pt.U[0])*i/4,v=pt.V[0]+(pt.V[1]-pt.V[0])*(j+0.5)/4;
+      const p=pt.r(u,v),n=NRM(pt.r,u,v);
+      if(norm(n)>1e-7)scene.vector(p,vadd(p,vscale(0.45/norm(n),n)),{color:'#16a34a',width:2});
+      const f=F(p);if(norm(f)>1e-7)scene.vector(p,vadd(p,vscale(0.3,f)),{color:'#d97706',width:1.8});}});
+    scene.render();
+    let flux=0;S.patches.forEach(pt=>{flux+=fluxNum(F,pt.r,pt.U,pt.V,30);});
+    const vi=volInt(p=>divNum(F,p),S);
+    $('#dOut').innerHTML=`div F = <b>${DFLD[fi].div}</b><br>`+
+      `volume of E = ${fmtDec(S.vol,3)}<br>`+
+      `∫∫∫<sub>E</sub> div F dV ≈ <b>${fmtDec(vi.val,3)}</b><br>`+
+      `∫∫<sub>S</sub> F · dS (outward) ≈ <b>${fmtDec(flux,3)}</b>`;
+  }
+  sel.onchange=()=>{si=+sel.value;draw();};fld.onchange=()=>{fi=+fld.value;draw();};
+  draw();redrawOnShow('div',draw);
+  new Drill({mount:'#drill-div',section:'div',goal:5,
+    ...mixDrill([Q.divBox,Q.divSphere,Q.divCylinder,Q.whichTheorem,Q.divZero])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.idSurface,Q.normalParam,Q.tangentPlane,Q.surfArea,Q.scalarPlane,Q.scalarSphere,
+  Q.fluxPlane,Q.fluxSphere,Q.stokesLine,Q.curlFlux,Q.divSphere,Q.whichTheorem]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'identify the surface':q=>({_btn:q.ai}),
+  'normal vector to a parametrized plane':q=>({n:'<'+q.n.join(',')+'>'}),
+  'cross product r_u x r_v':q=>({n:q.ans}),
+  'tangent plane to a parametric surface':q=>({p:q.ans}),
+  'surface area':q=>({a:String(q.val)}),
+  'choose the parametrization':q=>({_btn:q.ai}),
+  'surface integral over a plane piece':q=>({v:String(q.val)}),
+  'surface integral over a sphere':q=>({v:String(q.val)}),
+  'surface integral over a cylinder':q=>({v:String(q.val)}),
+  'mass of a thin sheet':q=>({m:String(q.val)}),
+  'flux through a plane piece':q=>({v:String(q.val)}),
+  'flux through a sphere':q=>({v:String(q.val)}),
+  'flux through a cylinder':q=>({v:String(q.val)}),
+  'flux through a cube':q=>({v:String(q.val)}),
+  'orientation and the sign of flux':q=>q.mode==='num'?{v:String(q.val)}:{_btn:q.ai},
+  'Stokes: a line integral from a flat surface':q=>({v:String(q.val)}),
+  'Stokes: a surface integral from the boundary':q=>({v:String(q.val)}),
+  'curl and its flux through a disk':q=>({c:q.it.ans,v:String(q.val)}),
+  'compatible orientation':q=>({_btn:q.ai}),
+  'divergence theorem: a box':q=>({v:String(q.val)}),
+  'divergence theorem: a sphere':q=>({v:String(q.val)}),
+  'divergence theorem: a cylinder':q=>({v:String(q.val)}),
+  'which theorem applies':q=>({_btn:q.ai}),
+  'what zero divergence means':q=>({_btn:q.ai})
+};
+
+initModule({key:'surfaces',title:'Surface Integrals, Stokes, Divergence Theorem',sub:'Module 11 · Stewart 16.6 to 16.9'});
+</script>
+</body>
+</html>

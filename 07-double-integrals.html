@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Double Integrals</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 7 · Stewart 15.1 to 15.4 and 15.9</p>
+  <h2>Double integrals</h2>
+  <p class="lead">One integral adds up strips. Two integrals add up columns. Everything in this module is the same move: turn a region into limits, then integrate twice, inside first.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or slide, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answers are exact unless a problem says otherwise. Type numbers like <code>32/3</code>, <code>pi/2</code>, <code>(e^2-1)/2</code>, <code>4sqrt(3)</code>, <code>3pi/2</code>, or a decimal when the problem asks for one. Integration limits are typed as expressions in the outer variable: <code>x^2</code>, <code>2x</code>, <code>sqrt(4-x^2)</code>, <code>y/2</code>, <code>2cos(theta)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the moving piece: a strip, a box, a sample cell</span>
+      <span><i class="dot" style="background:var(--b)"></i> the region of integration, the surface</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result: a value, a limit, a total</span>
+      <span><i class="dot" style="background:var(--d)"></i> boundary curves and marked points</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Read a double integral over a rectangle as a volume, estimate it with the midpoint rule, and evaluate it in either order.</li>
+      <li>Sketch a general region, write its type I and type II limits, and reverse the order of integration.</li>
+      <li>Convert an integral to polar coordinates, including the \(r\) in \(dA = r\,dr\,d\theta\), and use it for disks, annuli, sectors, and cardioids.</li>
+      <li>Find the mass, the moments, and the center of mass of a lamina, and the area of a piece of a surface.</li>
+      <li>Change variables with a Jacobian to turn an awkward region into a rectangle.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 RECTANGLES -->
+<section data-id="rect" data-title="Double integrals over rectangles" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 15.1</p>
+  <h2>Double integrals over rectangles</h2>
+  <p class="lead">Chop the rectangle into cells, multiply each cell's area by the height above it, add. That sum is the whole idea.</p>
+
+  <p>Let \(f(x,y)\ge 0\) on the rectangle \(R=[a,b]\times[c,d]\). Split \([a,b]\) into \(m\) pieces and \([c,d]\) into \(n\) pieces. Each small cell \(R_{ij}\) has area \(\Delta A=\Delta x\,\Delta y\). Pick a sample point \((x_{ij}^*,y_{ij}^*)\) in each cell and build a column of height \(f(x_{ij}^*,y_{ij}^*)\) over it. The total volume of the columns is a <b>double Riemann sum</b>, and the integral is its limit.</p>
+  <div class="formula">\(\displaystyle\iint_R f(x,y)\,dA=\lim_{m,n\to\infty}\sum_{i=1}^{m}\sum_{j=1}^{n} f(x_{ij}^*,y_{ij}^*)\,\Delta A\)<span class="cap">Read it as: height times cell area, summed. When \(f\ge 0\) this is the volume under the surface \(z=f(x,y)\) and above \(R\).</span></div>
+  <p>The <b>midpoint rule</b> takes the sample point at the center of each cell. It is the estimate you compute by hand:</p>
+  <div class="formula">\(\displaystyle\iint_R f\,dA\approx\sum_{i=1}^{m}\sum_{j=1}^{n} f(\bar x_i,\bar y_j)\,\Delta A,\qquad \Delta A=\frac{(b-a)(d-c)}{mn}\)<span class="cap">\(\bar x_i\) is the midpoint of the \(i\)th \(x\)-subinterval, \(\bar y_j\) the midpoint of the \(j\)th \(y\)-subinterval. With \(m=n=2\) there are four cells and four midpoints.</span></div>
+
+  <div class="card">
+    <h4>Explore: the Riemann sum becomes the integral</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="rsScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The blue sheet is \(z=f(x,y)\); the orange boxes are the midpoint columns over the rectangle.</p></div>
+      <div>
+        <div class="presets" id="rsPresets"></div>
+        <div class="sliders" id="rsSliders"></div>
+        <div class="readout" id="rsOut"></div>
+        <p class="hint">Push \(n\) from 1 to 8 and watch the error column shrink. With \(n=1\) you are estimating the whole volume with a single box of height \(f\) at the center of the rectangle, and it is often surprisingly good: the overshoot on one side cancels the undershoot on the other. Try the saddle \(z=xy+4\), where the cancellation is exact.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Fubini's theorem: integrate twice, inside first</h3>
+  <p>You never compute the limit. You compute an <b>iterated integral</b> instead, and Fubini's theorem says either order gives the same number.</p>
+  <div class="formula">\(\displaystyle\iint_R f(x,y)\,dA=\int_a^b\!\!\int_c^d f(x,y)\,dy\,dx=\int_c^d\!\!\int_a^b f(x,y)\,dx\,dy\)<span class="cap">The inner differential tells you which variable moves first. In \(\int_a^b\!\int_c^d f\,dy\,dx\) you integrate in \(y\) with \(x\) frozen, which leaves a function of \(x\), then you integrate that.</span></div>
+  <p>Freezing a variable is the whole trick. While you do the inner integral, the other variable is a constant and can be pulled out front exactly like a 5.</p>
+
+  <div class="card">
+    <h4>Step-by-step: an iterated integral over a rectangle</h4>
+    <div class="expr" id="wtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wtPrev">◀ Back</button>
+      <button class="btn primary" id="wtNext">Next step ▶</button>
+      <button class="btn" id="wtNew">New problem</button>
+      <span class="status" id="wtStatus"></span>
+    </div>
+    <p class="hint">Check yourself at step 2: the result of the inner integral must be a function of \(x\) alone. If a \(y\) is still there, you either forgot to substitute a limit or integrated the wrong variable.</p>
+  </div>
+
+  <div class="warn"><b>The inner answer has no inner variable left.</b> After \(\int_c^d f(x,y)\,dy\) you substitute \(y=d\) and \(y=c\), so every \(y\) disappears. A \(y\) surviving into the outer integral is the single most common slip in this chapter.</div>
+
+  <h3>A product of a function of x and a function of y</h3>
+  <p>If the integrand factors as \(f(x,y)=g(x)h(y)\) and the region is a rectangle, the double integral factors too:</p>
+  <div class="formula">\(\displaystyle\iint_R g(x)h(y)\,dA=\left(\int_a^b g(x)\,dx\right)\left(\int_c^d h(y)\,dy\right)\)<span class="cap">True only over a rectangle, and only when the integrand actually separates. \(\int_c^d g(x)h(y)\,dy=g(x)\int_c^d h(y)\,dy\) because \(g(x)\) is constant in \(y\), and that constant then comes out of the outer integral.</span></div>
+  <div class="note"><b>Pick the easier order.</b> Fubini gives you a free choice over a rectangle. \(\int_0^1\!\int_0^1 x e^{xy}\,dy\,dx\) is a one-line substitution in \(y\) and an unpleasant integration by parts in \(x\). Scan both orders before you start.</div>
+
+  <h3>Average value</h3>
+  <p>The <b>average value</b> of \(f\) over \(R\) is the total divided by the area, exactly as for one variable:</p>
+  <div class="formula">\(\displaystyle f_{\text{avg}}=\frac{1}{A(R)}\iint_R f(x,y)\,dA,\qquad A(R)=(b-a)(d-c)\)<span class="cap">It is the height of the flat box with the same volume over the same base.</span></div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-rect"></div>
+</section>
+
+<!-- ============================================================ 2 GENERAL REGIONS -->
+<section data-id="general" data-title="General regions and order of integration" data-goal="8">
+  <p class="eyebrow">Chapter 2 · Stewart 15.2</p>
+  <h2>General regions and order of integration</h2>
+  <p class="lead">Real regions are not rectangles. The fix: let the inner limits depend on the outer variable.</p>
+
+  <p>A <b>type I</b> region is trapped between two graphs over an interval of \(x\):</p>
+  <div class="formula">\(D=\{(x,y)\;:\;a\le x\le b,\;\; g_1(x)\le y\le g_2(x)\}\qquad\Longrightarrow\qquad \displaystyle\iint_D f\,dA=\int_a^b\!\!\int_{g_1(x)}^{g_2(x)} f(x,y)\,dy\,dx\)<span class="cap">Read it off a sketch: fix \(x\), slide a <b>vertical</b> line across. It enters the region at \(y=g_1(x)\) and leaves at \(y=g_2(x)\). Those are the inner limits. The outer limits are the smallest and largest \(x\) the region reaches.</span></div>
+  <p>A <b>type II</b> region is trapped between two graphs over an interval of \(y\):</p>
+  <div class="formula">\(D=\{(x,y)\;:\;c\le y\le d,\;\; h_1(y)\le x\le h_2(y)\}\qquad\Longrightarrow\qquad \displaystyle\iint_D f\,dA=\int_c^d\!\!\int_{h_1(y)}^{h_2(y)} f(x,y)\,dx\,dy\)<span class="cap">Same procedure with a <b>horizontal</b> line: it enters at \(x=h_1(y)\) and leaves at \(x=h_2(y)\).</span></div>
+  <p>To find the outer limits, find where the two boundary curves meet. For \(y=x^2\) and \(y=2x\), set \(x^2=2x\) to get \(x=0\) and \(x=2\).</p>
+
+  <div class="warn"><b>Outer limits are always constants.</b> The inner limits may contain the outer variable; the outer limits may not contain anything. If you end up with \(\int_{0}^{y}\!\int\cdots dx\,dy\) with a \(y\) outside, you have described the region wrong, and the answer would still contain \(y\), which is nonsense for a number.</div>
+
+  <div class="card">
+    <h4>Explore: one region, two orders</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="regPlot"></canvas><p class="plotcap">The purple curves bound the region. The orange strip is the inner integral at one value of the outer variable.</p></div>
+      <div>
+        <div class="presets" id="regPresets"></div>
+        <div class="presets" id="regOrder"></div>
+        <div class="sliders" id="regSliders"></div>
+        <div class="readout" id="regOut"></div>
+        <p class="hint">Sweep the strip from one end of the region to the other. Its two ends trace the inner limits, and the values of the outer variable where the strip exists are the outer limits. Switch the order and sweep again: on the triangle and on the region bounded by \(x=y^2\) and \(y=x-2\), one order needs two separate integrals and the other needs one.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Reversing the order</h3>
+  <p>An integral handed to you in one order sometimes cannot be done in that order. \(\int_0^1\!\int_x^1 e^{y^2}dy\,dx\) is hopeless as written, because \(e^{y^2}\) has no elementary antiderivative. Reversed it is easy.</p>
+  <ol>
+    <li>Read the limits as a description of the region and <b>sketch it</b>.</li>
+    <li>Describe the same region the other way: slide a horizontal line instead of a vertical one.</li>
+    <li>Write the new iterated integral. The integrand does not change at all.</li>
+  </ol>
+  <div class="note"><b>Reversing means redrawing.</b> You cannot swap the limits mechanically. \(\int_0^1\!\int_x^1\) does not become \(\int_x^1\!\int_0^1\). Sketch the region, then read the new limits off the sketch. If the region needs two pieces in the new order, write a sum of two integrals.</div>
+
+  <h3>Area as a double integral</h3>
+  <p>Take \(f=1\). Every column has height 1, so the volume equals the base area:</p>
+  <div class="formula">\(\displaystyle A(D)=\iint_D 1\,dA=\int_a^b\!\!\int_{g_1(x)}^{g_2(x)}1\,dy\,dx=\int_a^b\big(g_2(x)-g_1(x)\big)\,dx\)<span class="cap">The inner integral collapses to the height of the strip, and you are back to the area between two curves from first-year calculus.</span></div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-general"></div>
+</section>
+
+<!-- ============================================================ 3 POLAR -->
+<section data-id="polar" data-title="Polar coordinates" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 15.3</p>
+  <h2>Polar coordinates</h2>
+  <p class="lead">Circles are ugly in \(x\) and \(y\) and trivial in \(r\) and \(\theta\). The price is one extra factor of \(r\).</p>
+
+  <p>The conversion is the one from trigonometry:</p>
+  <div class="formula">\(x=r\cos\theta,\qquad y=r\sin\theta,\qquad x^2+y^2=r^2,\qquad \tan\theta=\frac{y}{x}\)<span class="cap">Substitute these into the integrand. Anything built from \(x^2+y^2\) collapses: \(\sqrt{x^2+y^2}=r\), and \(e^{-(x^2+y^2)}=e^{-r^2}\).</span></div>
+  <p>A <b>polar rectangle</b> is \(\{(r,\theta): a\le r\le b,\ \alpha\le\theta\le\beta\}\). It looks like a curved tile. Its area is not \(\Delta r\,\Delta\theta\). A circular sector of radius \(r\) and angle \(\Delta\theta\) has area \(\tfrac12 r^2\Delta\theta\), so the tile between radii \(r\) and \(r+\Delta r\) has area</p>
+  <div class="formula">\(\tfrac12\big[(r+\Delta r)^2-r^2\big]\Delta\theta=\tfrac12(2r\,\Delta r+\Delta r^2)\Delta\theta\approx r\,\Delta r\,\Delta\theta\)<span class="cap">The tile is \(\Delta r\) thick and about \(r\,\Delta\theta\) long, so its area grows with \(r\). That is the whole reason for the extra \(r\).</span></div>
+  <div class="formula">\(\displaystyle\iint_D f(x,y)\,dA=\int_\alpha^\beta\!\!\int_a^b f(r\cos\theta,r\sin\theta)\;r\,dr\,d\theta\)<span class="cap">Three changes at once: the integrand converts, the limits become \(r\) and \(\theta\) limits, and \(dA\) becomes \(r\,dr\,d\theta\).</span></div>
+
+  <div class="warn"><b>Never drop the \(r\).</b> Writing \(dr\,d\theta\) instead of \(r\,dr\,d\theta\) is the mistake in this chapter, and it is silent: the answer still looks reasonable. Check it on the unit disk. With the \(r\) you get \(\int_0^{2\pi}\!\int_0^1 r\,dr\,d\theta=\pi\), the correct area. Without it you get \(2\pi\).</div>
+
+  <div class="card">
+    <h4>Explore: polar rectangles and the area element</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="polPlot"></canvas><p class="plotcap">Faint circles are \(r=\) constant, faint rays are \(\theta=\) constant. The orange tile is one \(r\,\Delta r\,\Delta\theta\) cell.</p></div>
+      <div>
+        <div class="presets" id="polPresets"></div>
+        <div class="sliders" id="polSliders"></div>
+        <div class="readout" id="polOut"></div>
+        <p class="hint">Drag the orange cell outward with the \(r\) sliders while keeping \(\Delta r\) and \(\Delta\theta\) fixed: same \(\Delta r\,\Delta\theta\), visibly more area. That factor of \(r\) is what makes the tiles near the rim count more.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Which regions are polar regions</h3>
+  <ul>
+    <li><b>Disk</b> \(x^2+y^2\le a^2\): \(0\le r\le a\), \(0\le\theta\le2\pi\).</li>
+    <li><b>Annulus</b> \(a^2\le x^2+y^2\le b^2\): \(a\le r\le b\), \(0\le\theta\le2\pi\).</li>
+    <li><b>Sector</b> or a quarter disk: \(0\le r\le a\) with \(\theta\) between the two bounding rays.</li>
+    <li><b>Inside \(r=f(\theta)\)</b>: \(0\le r\le f(\theta)\), and \(\theta\) runs over the values where the curve is traced. The inner \(r\)-limit may depend on \(\theta\); the \(\theta\)-limits are constants.</li>
+  </ul>
+  <p>Two curves worth knowing. The <b>circle</b> \(r=2a\cos\theta\) is the circle of radius \(a\) centered at \((a,0)\): multiply by \(r\) to get \(x^2+y^2=2ax\). It is traced once for \(-\pi/2\le\theta\le\pi/2\). The <b>cardioid</b> \(r=a(1+\cos\theta)\) is traced once for \(0\le\theta\le2\pi\).</p>
+  <div class="formula">\(\displaystyle A=\iint_D 1\,dA=\int_\alpha^\beta\!\!\int_0^{f(\theta)} r\,dr\,d\theta=\int_\alpha^\beta \tfrac12 f(\theta)^2\,d\theta\)<span class="cap">The inner integral of \(r\,dr\) produces the \(\tfrac12 r^2\) in the polar area formula you saw in second-semester calculus. Same formula, one level down.</span></div>
+  <div class="note"><b>When to switch to polar.</b> Two signals: the region is a disk, annulus, sector, or is bounded by a circle, and the integrand contains \(x^2+y^2\). Either one alone is often enough.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-polar"></div>
+</section>
+
+<!-- ============================================================ 4 APPLICATIONS -->
+<section data-id="apps" data-title="Applications" data-goal="4">
+  <p class="eyebrow">Chapter 4 · Stewart 15.4 and 15.6</p>
+  <h2>Applications: mass, moments, center of mass</h2>
+  <p class="lead">Give the region a density and the same integral starts weighing things.</p>
+
+  <p>A <b>lamina</b> is a flat plate occupying a region \(D\) with density \(\rho(x,y)\) in mass per unit area. Mass is density times area, added up cell by cell:</p>
+  <div class="formula">\(\displaystyle m=\iint_D \rho(x,y)\,dA\)<span class="cap">Constant density makes this \(\rho\) times the area. Varying density is why you need the integral.</span></div>
+  <p>The <b>moments</b> measure how the mass is distributed about the axes:</p>
+  <div class="formula">\(\displaystyle M_x=\iint_D y\,\rho(x,y)\,dA,\qquad M_y=\iint_D x\,\rho(x,y)\,dA\)<span class="cap">Each bit of mass is weighted by its distance to an axis. The moment <b>about the \(x\)-axis</b> uses \(y\), because \(y\) is the distance to the \(x\)-axis.</span></div>
+  <div class="formula">\(\displaystyle \bar x=\frac{M_y}{m},\qquad \bar y=\frac{M_x}{m}\)<span class="cap">The <b>center of mass</b> \((\bar x,\bar y)\) is the density-weighted average position. The plate balances there.</span></div>
+  <div class="warn"><b>Do not cross the subscripts.</b> \(M_x\) integrates \(y\rho\) and lands in \(\bar y\); \(M_y\) integrates \(x\rho\) and lands in \(\bar x\). Also check plausibility: the center of mass always lies inside the convex hull of the plate, and it shifts toward the heavy side.</div>
+
+  <div class="card">
+    <h4>Explore: density and the balance point</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="lamPlot"></canvas><p class="plotcap">Darker orange is denser. The green dot is the center of mass; the cross marks the geometric center for comparison.</p></div>
+      <div>
+        <div class="presets" id="lamShape"></div>
+        <div class="presets" id="lamDens"></div>
+        <div class="readout" id="lamOut"></div>
+        <p class="hint">Switch from \(\rho=1\) to \(\rho=x\) and watch the balance point slide to the right of the centroid. With \(\rho=xy\) it moves diagonally. The center of mass equals the centroid exactly when the density is constant.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Surface area</h3>
+  <p>The piece of the surface \(z=f(x,y)\) lying above a region \(D\) has area</p>
+  <div class="formula">\(\displaystyle A(S)=\iint_D\sqrt{1+f_x^2+f_y^2}\;dA\)<span class="cap">The square root is the factor by which a flat cell \(dA\) stretches when it is tilted up onto the surface. For a plane \(z=ax+by+c\) the factor is the constant \(\sqrt{1+a^2+b^2}\), so the area is just that constant times the area of \(D\).</span></div>
+  <div class="note"><b>Tilt factor.</b> A plane with slopes \(a\) and \(b\) covers its shadow \(\sqrt{1+a^2+b^2}\) times over. A horizontal plane gives 1, and a steep plane gives a large number, which is the sanity check to run on any surface-area answer.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-apps"></div>
+</section>
+
+<!-- ============================================================ 5 CHANGE OF VARIABLES -->
+<section data-id="change" data-title="Change of variables" data-goal="5">
+  <p class="eyebrow">Chapter 5 · Stewart 15.9</p>
+  <h2>Change of variables</h2>
+  <p class="lead">Substitution, in two dimensions. You pick new coordinates that straighten the region, and pay for it with a Jacobian.</p>
+
+  <p>A <b>transformation</b> \(T\) takes a region \(S\) in the \(uv\)-plane to a region \(R\) in the \(xy\)-plane through \(x=x(u,v)\), \(y=y(u,v)\). A small rectangle in \(S\) maps to a small parallelogram in \(R\). The factor by which its area changes is the <b>Jacobian</b>:</p>
+  <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}\dfrac{\partial x}{\partial u}&\dfrac{\partial x}{\partial v}\\[6pt] \dfrac{\partial y}{\partial u}&\dfrac{\partial y}{\partial v}\end{vmatrix}=\frac{\partial x}{\partial u}\frac{\partial y}{\partial v}-\frac{\partial x}{\partial v}\frac{\partial y}{\partial u}\)<span class="cap">A \(2\times2\) determinant of partial derivatives. Top row is \(x\), bottom row is \(y\); first column is \(u\), second is \(v\).</span></div>
+  <div class="formula">\(\displaystyle\iint_R f(x,y)\,dA=\iint_S f\big(x(u,v),y(u,v)\big)\left|\frac{\partial(x,y)}{\partial(u,v)}\right|du\,dv\)<span class="cap">Three changes, same as polar: rewrite the integrand in \(u\) and \(v\), replace \(R\) by \(S\), and multiply by the absolute value of the Jacobian.</span></div>
+  <p>Polar coordinates are exactly this with \(u=r\), \(v=\theta\). From \(x=r\cos\theta\), \(y=r\sin\theta\):</p>
+  <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(r,\theta)}=\begin{vmatrix}\cos\theta&-r\sin\theta\\ \sin\theta&r\cos\theta\end{vmatrix}=r\cos^2\theta+r\sin^2\theta=r\)<span class="cap">The \(r\) in \(r\,dr\,d\theta\) was a Jacobian all along.</span></div>
+
+  <div class="card">
+    <h4>Explore: how a transformation bends the grid</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="cvPlot"></canvas><p class="plotcap">Faint blue: the images of the \(uv\)-grid lines. Orange: one small \(uv\)-cell and the quadrilateral it maps onto.</p></div>
+      <div>
+        <div class="presets" id="cvPresets"></div>
+        <div class="sliders" id="cvSliders"></div>
+        <div class="readout" id="cvOut"></div>
+        <p class="hint">Move the cell around with the two sliders and compare the last two lines of the readout. The area ratio of the image to the original cell tracks \(|J|\) at that point, and the agreement gets better as the cell shrinks. Under the polar map, watch \(|J|=u\) grow as you push the cell outward, and collapse to zero at the origin.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Choosing the substitution</h3>
+  <p>Two things can go wrong with an integral, and either one can motivate the change:</p>
+  <ol>
+    <li><b>The region is awkward.</b> Pick \(u\) and \(v\) so that the bounding curves become \(u=\) constant and \(v=\) constant. A region bounded by \(x-y=0\), \(x-y=2\), \(x+y=0\), \(x+y=3\) begs for \(u=x-y\), \(v=x+y\); then \(S\) is the rectangle \([0,2]\times[0,3]\).</li>
+    <li><b>The integrand is awkward.</b> Pick \(u\) and \(v\) so that the ugly combination becomes a single variable, as with \(e^{(x+y)/(x-y)}\).</li>
+  </ol>
+  <p>When you define \(u\) and \(v\) in terms of \(x\) and \(y\), the easy determinant to compute is \(\partial(u,v)/\partial(x,y)\). It is the reciprocal of the one you need:</p>
+  <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(u,v)}=\left(\frac{\partial(u,v)}{\partial(x,y)}\right)^{-1}\)<span class="cap">For \(u=x-y\), \(v=x+y\) the determinant \(\partial(u,v)/\partial(x,y)=2\), so \(\partial(x,y)/\partial(u,v)=\tfrac12\) and \(dA=\tfrac12\,du\,dv\).</span></div>
+  <div class="warn"><b>Absolute value, and the right way up.</b> The formula uses \(\left|\partial(x,y)/\partial(u,v)\right|\). A negative Jacobian only means the map flips orientation; areas stay positive. And the Jacobian rides with \(du\,dv\), never with \(dx\,dy\).</div>
+  <div class="note"><b>Why the determinant.</b> The image of the cell is the parallelogram spanned by \(\mathbf{r}_u\,du\) and \(\mathbf{r}_v\,dv\). The area of a parallelogram spanned by two vectors is the absolute value of the \(2\times2\) determinant of their components, which is exactly \(|J|\,du\,dv\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-change"></div>
+</section>
+
+<!-- ============================================================ 6 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 6</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions, one from every kind of problem in the module. Score 10 or more to complete it.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+
+/* exact rational arithmetic: a fraction is [numerator, denominator] with denominator > 0 */
+const fr=(n,d=1)=>{if(d<0){n=-n;d=-d;}const g=gcd(n,d)||1;return [n/g,d/g];};
+const frA=(a,b)=>fr(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const frS=(a,b)=>fr(a[0]*b[1]-b[0]*a[1],a[1]*b[1]);
+const frM=(a,b)=>fr(a[0]*b[0],a[1]*b[1]);
+const frD=(a,b)=>fr(a[0]*b[1],a[1]*b[0]);
+const frV=a=>a[0]/a[1];
+const frStr=a=>a[1]===1?String(a[0]):`${a[0]}/${a[1]}`;
+const frTex=a=>a[1]===1?String(a[0]):(a[0]<0?'-':'')+`\\tfrac{${Math.abs(a[0])}}{${a[1]}}`;
+const APX=v=>Number.isInteger(v)?'':`\\approx ${fmtDec(v,4)}`;
+const texPi=f=>f[1]===1?(f[0]===1?'\\pi':`${f[0]}\\pi`):(f[0]<0?'-':'')+`\\tfrac{${Math.abs(f[0])===1?'':Math.abs(f[0])}\\pi}{${f[1]}}`;
+const frPow=(a,k)=>{let v=fr(1);for(let i=0;i<k;i++)v=frM(v,a);return v;};
+const ipow=(n,k)=>{let v=1;for(let i=0;i<k;i++)v*=n;return v;};
+
+/* polynomial display: a term is {c:fraction, v:[['x',i],['y',j]]} */
+function monoTex(c,vs){
+  const body=vs.filter(v=>v[1]>0).map(([n,k])=>k===1?n:`${n}^{${k}}`).join('');
+  const n=Math.abs(c[0]),d=c[1];
+  if(!body)return d===1?String(n):`\\tfrac{${n}}{${d}}`;
+  return ((n===1&&d===1)?'':(d===1?String(n):`\\tfrac{${n}}{${d}}`))+body;
+}
+function polyTex(ts){let s='';ts.forEach(t=>{if(t.c[0]===0)return;const b=monoTex(t.c,t.v);s+=(s===''?(t.c[0]<0?'-':''):(t.c[0]<0?' - ':' + '))+b;});return s||'0';}
+/* numeric value of a term list at (x,y) */
+const polyVal=(ts,x,y)=>ts.reduce((s,t)=>{let p=frV(t.c);t.v.forEach(([n,k])=>{p*=Math.pow(n==='x'?x:y,k);});return s+p;},0);
+/* exact value of a term list at rational x,y */
+const polyValFr=(ts,x,y)=>ts.reduce((s,t)=>{let p=t.c;t.v.forEach(([n,k])=>{p=frM(p,frPow(n==='x'?x:y,k));});return frA(s,p);},fr(0));
+
+/* angles as multiples of pi/12 */
+function texAng(k){if(k===0)return '0';const [n,d]=fr(k,12);const s=n<0?'-':'';const an=Math.abs(n);
+  if(d===1)return s+(an===1?'\\pi':`${an}\\pi`);return s+`\\tfrac{${an===1?'':an}\\pi}{${d}}`;}
+function angStr(k){if(k===0)return '0';const [n,d]=fr(k,12);const s=n<0?'-':'';const an=Math.abs(n);
+  return s+(an===1?'\u03c0':an+'\u03c0')+(d===1?'':'/'+d);}
+function angAns(k){if(k===0)return '0';const [n,d]=fr(k,12);return `${n}pi${d===1?'':'/'+d}`;}
+const angVal=k=>k*PI/12;
+
+/* iterated integral of a polynomial over a rectangle, done exactly, one step at a time.
+   terms: [{k:coef, i:power of x, j:power of y}]; inner is 'x' or 'y'. */
+function iterParts(terms,x0,x1,y0,y1,inner){
+  const ov=inner==='y'?'x':'y';
+  const ip=t=>inner==='y'?t.j:t.i, op=t=>inner==='y'?t.i:t.j;
+  const lo=inner==='y'?y0:x0, hi=inner==='y'?y1:x1;
+  const olo=inner==='y'?x0:y0, ohi=inner==='y'?x1:y1;
+  const anti=terms.map(t=>({c:frD(fr(t.k),fr(ip(t)+1)),v:inner==='y'?[['x',t.i],['y',t.j+1]]:[['x',t.i+1],['y',t.j]]}));
+  const map=new Map();
+  terms.forEach(t=>{const c=frM(frD(fr(t.k),fr(ip(t)+1)),fr(ipow(hi,ip(t)+1)-ipow(lo,ip(t)+1)));const p=op(t);map.set(p,frA(map.get(p)||fr(0),c));});
+  const mid=[...map.entries()].sort((a,b)=>b[0]-a[0]).map(([p,c])=>({c,v:[[ov,p]]}));
+  const oanti=mid.map(t=>({c:frD(t.c,fr(t.v[0][1]+1)),v:[[ov,t.v[0][1]+1]]}));
+  let val=fr(0);mid.forEach(t=>{const p=t.v[0][1];val=frA(val,frM(frD(t.c,fr(p+1)),fr(ipow(ohi,p+1)-ipow(olo,p+1))));});
+  return {inner,ov,lo,hi,olo,ohi,anti,mid,oanti,val,
+    fTex:polyTex(terms.map(t=>({c:fr(t.k),v:[['x',t.i],['y',t.j]]}))),
+    antiTex:polyTex(anti),midTex:polyTex(mid),oantiTex:polyTex(oanti)};
+}
+const iintTex=(olo,ohi,lo,hi,f,iv,ov)=>R`\int_{${olo}}^{${ohi}}\!\!\int_{${lo}}^{${hi}} ${f}\;d${iv}\,d${ov}`;
+/* a random polynomial integrand: n terms c x^i y^j */
+function randTerms(n,maxP){
+  const pool=[];for(let i=0;i<=maxP;i++)for(let j=0;j<=maxP;j++)if(i+j>0)pool.push([i,j]);
+  return shuffle(pool).slice(0,n).map(([i,j])=>({k:(Math.random()<0.25?-1:1)*rint(1,6),i,j}));
+}
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1: rectangles ---------- */
+Q.rectPoly={name:'iterated integral over a rectangle',
+  gen(){
+    const x0=rint(0,1),x1=x0+rint(1,2),y0=rint(0,1),y1=y0+rint(1,2);
+    const terms=randTerms(rint(2,3),2);
+    const inner=pick(['y','x']);
+    const P=iterParts(terms,x0,x1,y0,y1,inner);
+    return {x0,x1,y0,y1,terms,inner,P,val:frV(P.val),ansStr:frStr(P.val)};
+  },
+  render(q,el){
+    const iv=q.inner,ov=q.P.ov;
+    el.innerHTML=`<p class="prompt">Evaluate the iterated integral. Give an exact value; fractions like <code>32/3</code> are fine.</p>
+      ${D(iintTex(q.P.olo,q.P.ohi,q.P.lo,q.P.hi,q.P.fTex,iv,ov))}`;
+    numIn(el,'v','Value =',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Inner integral first, with ${M(q.P.ov)} held constant: `+M(R`\int_{${q.P.lo}}^{${q.P.hi}}\left(${q.P.fTex}\right)d${q.inner}=\Big[\,${q.P.antiTex}\,\Big]_{${q.inner}=${q.P.lo}}^{${q.inner}=${q.P.hi}}=${q.P.midTex}`);},
+  solution(q){const P=q.P;
+    return `Hold ${M(P.ov)} constant and integrate in ${M(q.inner)}: `+
+      D(R`\int_{${P.lo}}^{${P.hi}}\left(${P.fTex}\right)d${q.inner}=\Big[\,${P.antiTex}\,\Big]_{${q.inner}=${P.lo}}^{${q.inner}=${P.hi}}=${P.midTex}`)+
+      `Now the outer integral: `+
+      D(R`\int_{${P.olo}}^{${P.ohi}}\left(${P.midTex}\right)d${P.ov}=\Big[\,${P.oantiTex}\,\Big]_{${P.olo}}^{${P.ohi}}=${frTex(P.val)}`);}
+};
+
+const FACT=[
+  {t:v=>v,lo:0,hi:2,loT:'0',hiT:'2',val:2,valT:'2',valS:'2',F:v=>`\\tfrac{${v}^2}{2}`},
+  {t:v=>`${v}^2`,lo:0,hi:1,loT:'0',hiT:'1',val:1/3,valT:'\\tfrac13',valS:'1/3',F:v=>`\\tfrac{${v}^3}{3}`},
+  {t:v=>`${v}^3`,lo:0,hi:2,loT:'0',hiT:'2',val:4,valT:'4',valS:'4',F:v=>`\\tfrac{${v}^4}{4}`},
+  {t:v=>`e^{${v}}`,lo:0,hi:1,loT:'0',hiT:'1',val:Math.E-1,valT:'e-1',valS:'e-1',F:v=>`e^{${v}}`},
+  {t:v=>`\\sin ${v}`,lo:0,hi:PI/2,loT:'0',hiT:'\\pi/2',val:1,valT:'1',valS:'1',F:v=>`-\\cos ${v}`},
+  {t:v=>`\\cos ${v}`,lo:0,hi:PI/2,loT:'0',hiT:'\\pi/2',val:1,valT:'1',valS:'1',F:v=>`\\sin ${v}`},
+  {t:v=>`\\sin ${v}`,lo:0,hi:PI,loT:'0',hiT:'\\pi',val:2,valT:'2',valS:'2',F:v=>`-\\cos ${v}`},
+  {t:v=>`\\frac{1}{1+${v}^2}`,lo:0,hi:1,loT:'0',hiT:'1',val:PI/4,valT:'\\tfrac{\\pi}{4}',valS:'pi/4',F:v=>`\\arctan ${v}`},
+  {t:v=>`\\frac{1}{${v}}`,lo:1,hi:2,loT:'1',hiT:'2',val:Math.LN2,valT:'\\ln 2',valS:'ln(2)',F:v=>`\\ln ${v}`}
+];
+Q.rectProduct={name:'product integral over a rectangle',
+  gen(){
+    const idx=shuffle(FACT.map((f,i)=>i)).slice(0,2);
+    const f=FACT[idx[0]],g=FACT[idx[1]];
+    const val=f.val*g.val;
+    return {f,g,val,ansStr:`(${f.valS})*(${g.valS})`};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The integrand is a function of ${M('x')} times a function of ${M('y')}, and the region is a rectangle. Evaluate it. Exact answers like <code>(e-1)*2</code>, <code>pi/4</code>, or <code>ln(2)</code> are expected.</p>
+      ${D(R`\iint_R ${q.f.t('x')}\cdot ${q.g.t('y')}\;dA,\qquad R=[${q.f.loT},${q.f.hiT}]\times[${q.g.loT},${q.g.hiT}]`)}`;
+    numIn(el,'v','Value =',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-5}));},
+  solution(q){
+    return `Over a rectangle a product splits into two single integrals: `+
+      D(R`\iint_R ${q.f.t('x')}\,${q.g.t('y')}\,dA=\left(\int_{${q.f.loT}}^{${q.f.hiT}}${q.f.t('x')}\,dx\right)\left(\int_{${q.g.loT}}^{${q.g.hiT}}${q.g.t('y')}\,dy\right)`)+
+      D(R`=\Big[${q.f.F('x')}\Big]_{${q.f.loT}}^{${q.f.hiT}}\cdot\Big[${q.g.F('y')}\Big]_{${q.g.loT}}^{${q.g.hiT}}=\left(${q.f.valT}\right)\left(${q.g.valT}\right)\approx ${fmtDec(q.val,4)}`);}
+};
+
+Q.midpointRule={name:'midpoint rule estimate',
+  gen(){
+    const x0=rint(0,2),x1=x0+2,y0=rint(0,2),y1=y0+2;
+    const terms=randTerms(2,2).map(t=>({...t,k:Math.abs(t.k)}));
+    const dx=fr(x1-x0,2),dy=fr(y1-y0,2);
+    const mx=[frA(fr(x0),frD(dx,fr(2))),frA(fr(x0),frM(fr(3),frD(dx,fr(2))))];
+    const my=[frA(fr(y0),frD(dy,fr(2))),frA(fr(y0),frM(fr(3),frD(dy,fr(2))))];
+    const tl=terms.map(t=>({c:fr(t.k),v:[['x',t.i],['y',t.j]]}));
+    const cells=[];let S=fr(0);
+    mx.forEach(a=>my.forEach(b=>{const v=polyValFr(tl,a,b);cells.push({x:a,y:b,v});S=frA(S,v);}));
+    const dA=frM(dx,dy);
+    const est=frM(S,dA);
+    return {x0,x1,y0,y1,terms,tl,mx,my,cells,dA,S,est,val:frV(est),ansStr:frStr(est),fTex:polyTex(tl)};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Estimate the integral with the midpoint rule using ${M('m=n=2')} (four cells). Give the exact value of the estimate.</p>
+      ${D(R`\iint_R ${q.fTex}\;dA,\qquad R=[${q.x0},${q.x1}]\times[${q.y0},${q.y1}]`)}`;
+    numIn(el,'v','Estimate =',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{tol:1e-6}));},
+  solution(q){
+    const pts=q.cells.map(c=>`${M(R`f(${frTex(c.x)},${frTex(c.y)})=${frTex(c.v)}`)}`).join(', ');
+    return `Each subinterval has length ${M(R`\Delta x=${frTex(fr(q.x1-q.x0,2))}`)} and ${M(R`\Delta y=${frTex(fr(q.y1-q.y0,2))}`)}, so ${M(R`\Delta A=${frTex(q.dA)}`)}. The four midpoints give ${pts}. Adding them and multiplying by ${M(R`\Delta A`)}: `+
+      D(R`\iint_R f\,dA\approx\left(${frTex(q.S)}\right)\left(${frTex(q.dA)}\right)=${frTex(q.est)}${APX(q.val)}`);}
+};
+
+Q.avgValue={name:'average value over a rectangle',
+  gen(){
+    const x0=rint(0,1),x1=x0+rint(1,2),y0=rint(0,1),y1=y0+rint(1,2);
+    const terms=randTerms(2,2);
+    const P=iterParts(terms,x0,x1,y0,y1,'y');
+    const area=fr((x1-x0)*(y1-y0));
+    const avg=frD(P.val,area);
+    return {x0,x1,y0,y1,terms,P,area,avg,val:frV(avg),ansStr:frStr(avg)};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the average value of ${M(`f(x,y)=${q.P.fTex}`)} over the rectangle ${M(R`R=[${q.x0},${q.x1}]\times[${q.y0},${q.y1}]`)}. Exact value, fractions are fine.</p>`;
+    numIn(el,'v',M(R`f_{\text{avg}}=`),{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  solution(q){const P=q.P;
+    return `First the integral, inner in ${M('y')}: `+
+      D(R`\int_{${P.olo}}^{${P.ohi}}\Big[\,${P.antiTex}\,\Big]_{y=${P.lo}}^{y=${P.hi}}dx=\int_{${P.olo}}^{${P.ohi}}\left(${P.midTex}\right)dx=${frTex(P.val)}`)+
+      `The rectangle has area ${M(frTex(q.area))}, so `+
+      D(R`f_{\text{avg}}=\frac{1}{${frTex(q.area)}}\cdot ${frTex(P.val)}=${frTex(q.avg)}${APX(q.val)}`);}
+};
+
+/* ---------- chapter 2: general regions ---------- */
+/* every region descriptor carries both orders: numeric bounds, checker strings, and TeX */
+function regPara(a){return {key:'para',a,
+  desc:`the region bounded by ${M('y=x^2')} and ${M(`y=${a}x`)}`,
+  I:{a:0,b:a,aT:'0',bT:String(a),lo:'x^2',hi:`${a}*x`,loT:'x^2',hiT:`${a}x`},
+  II:{a:0,b:a*a,aT:'0',bT:String(a*a),lo:`y/${a}`,hi:'sqrt(y)',loT:`\\tfrac{y}{${a}}`,hiT:'\\sqrt{y}'}};}
+function regTri(a){return {key:'tri',a,
+  desc:`the triangle bounded by ${M('y=x')}, ${M(`y=${a}`)}, and the ${M('y')}-axis`,
+  I:{a:0,b:a,aT:'0',bT:String(a),lo:'x',hi:String(a),loT:'x',hiT:String(a)},
+  II:{a:0,b:a,aT:'0',bT:String(a),lo:'0',hi:'y',loT:'0',hiT:'y'}};}
+function regQdisk(a){return {key:'qdisk',a,
+  desc:`the quarter disk ${M(`x^2+y^2\\le ${a*a}`)} lying in the first quadrant`,
+  I:{a:0,b:a,aT:'0',bT:String(a),lo:'0',hi:`sqrt(${a*a}-x^2)`,loT:'0',hiT:`\\sqrt{${a*a}-x^2}`},
+  II:{a:0,b:a,aT:'0',bT:String(a),lo:'0',hi:`sqrt(${a*a}-y^2)`,loT:'0',hiT:`\\sqrt{${a*a}-y^2}`}};}
+function regSqrt(a){const s=Math.round(Math.sqrt(a));return {key:'sqrt',a,s,
+  desc:`the region bounded by ${M('y=\\sqrt{x}')}, ${M('y=0')}, and ${M(`x=${a}`)}`,
+  I:{a:0,b:a,aT:'0',bT:String(a),lo:'0',hi:'sqrt(x)',loT:'0',hiT:'\\sqrt{x}'},
+  II:{a:0,b:s,aT:'0',bT:String(s),lo:'y^2',hi:String(a),loT:'y^2',hiT:String(a)}};}
+function regBox(a){return {key:'box',a,
+  desc:`the region in the first quadrant bounded by ${M('y=x^2')}, ${M(`y=${a*a}`)}, and the ${M('y')}-axis`,
+  I:{a:0,b:a,aT:'0',bT:String(a),lo:'x^2',hi:String(a*a),loT:'x^2',hiT:String(a*a)},
+  II:{a:0,b:a*a,aT:'0',bT:String(a*a),lo:'0',hi:'sqrt(y)',loT:'0',hiT:'\\sqrt{y}'}};}
+const randReg=()=>pick([()=>regPara(rint(2,4)),()=>regTri(rint(2,5)),()=>regQdisk(rint(2,5)),()=>regSqrt(pick([4,9])),()=>regBox(rint(2,3))])();
+
+function setupInputs(el,outer,inner){
+  numIn(el,'oa',`${outer} from`);
+  numIn(el,'ob',`${outer} to`);
+  numIn(el,'il',`${inner} from`,{wide:true,placeholder:`expression in ${outer}`});
+  numIn(el,'ih',`${inner} to`,{wide:true,placeholder:`expression in ${outer}`});
+}
+function setupCheck(q,el,part,outer,inner){
+  return Gall(el,[
+    ['oa',checkNumber($('[data-k=oa]',el).value,part.a)],
+    ['ob',checkNumber($('[data-k=ob]',el).value,part.b)],
+    ['il',checkExpr($('[data-k=il]',el).value,part.lo,[outer],{domain:{[outer]:[part.a,part.b]}})],
+    ['ih',checkExpr($('[data-k=ih]',el).value,part.hi,[outer],{domain:{[outer]:[part.a,part.b]}})]]);
+}
+const setupSol=(part,iv,ov)=>D(iintTex(part.aT,part.bT,part.loT,part.hiT,'f(x,y)',iv,ov));
+
+Q.setupI={name:'set up as a type I integral',
+  gen(){const reg=randReg();return {reg,ansStr:[reg.I.aT,reg.I.bT,reg.I.lo,reg.I.hi]};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Let ${M('D')} be ${q.reg.desc}. Write ${M(R`\iint_D f(x,y)\,dA`)} as a <b>type I</b> iterated integral, in the order ${M('dy\\,dx')}. The outer limits are numbers; the inner limits are expressions in ${M('x')}, like <code>x^2</code> or <code>sqrt(4-x^2)</code>.</p>`;
+    setupInputs(el,'x','y');},
+  check(q,el){return setupCheck(q,el,q.reg.I,'x','y');},
+  solution(q){return `Slide a vertical line across ${M('D')}. It first appears at ${M(`x=${q.reg.I.aT}`)} and last at ${M(`x=${q.reg.I.bT}`)}; at each ${M('x')} it enters the region at ${M(`y=${q.reg.I.loT}`)} and leaves at ${M(`y=${q.reg.I.hiT}`)}.`+setupSol(q.reg.I,'y','x');}
+};
+Q.setupII={name:'set up as a type II integral',
+  gen(){const reg=randReg();return {reg,ansStr:[reg.II.aT,reg.II.bT,reg.II.lo,reg.II.hi]};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Let ${M('D')} be ${q.reg.desc}. Write ${M(R`\iint_D f(x,y)\,dA`)} as a <b>type II</b> iterated integral, in the order ${M('dx\\,dy')}. The outer limits are numbers; the inner limits are expressions in ${M('y')}.</p>`;
+    setupInputs(el,'y','x');},
+  check(q,el){return setupCheck(q,el,q.reg.II,'y','x');},
+  solution(q){return `Slide a horizontal line across ${M('D')}. It exists for ${M(`${q.reg.II.aT}\\le y\\le ${q.reg.II.bT}`)}, entering at ${M(`x=${q.reg.II.loT}`)} and leaving at ${M(`x=${q.reg.II.hiT}`)}.`+setupSol(q.reg.II,'x','y');}
+};
+Q.reverse={name:'reverse the order of integration',
+  gen(){
+    const reg=pick([()=>regPara(rint(2,4)),()=>regTri(rint(2,5)),()=>regQdisk(rint(2,5)),()=>regSqrt(pick([4,9]))])();
+    const fromI=Math.random()<0.5;
+    const given=fromI?reg.I:reg.II, want=fromI?reg.II:reg.I;
+    return {reg,fromI,given,want,ansStr:[want.aT,want.bT,want.lo,want.hi]};},
+  render(q,el){
+    const iv=q.fromI?'y':'x',ov=q.fromI?'x':'y';
+    el.innerHTML=`<p class="prompt">Sketch the region, then reverse the order of integration. The integrand does not change; give the four new limits.</p>
+      ${D(iintTex(q.given.aT,q.given.bT,q.given.loT,q.given.hiT,'f(x,y)',iv,ov))}`;
+    setupInputs(el,q.fromI?'y':'x',q.fromI?'x':'y');},
+  check(q,el){return setupCheck(q,el,q.want,q.fromI?'y':'x',q.fromI?'x':'y');},
+  solution(q){
+    const iv=q.fromI?'y':'x',ov=q.fromI?'x':'y';
+    const niv=q.fromI?'x':'y',nov=q.fromI?'y':'x';
+    return `The limits describe ${q.reg.desc}. Turning the strip ${q.fromI?'from vertical to horizontal':'from horizontal to vertical'}: ${M(`${q.want.aT}\\le ${nov}\\le ${q.want.bT}`)} and ${M(`${q.want.loT}\\le ${niv}\\le ${q.want.hiT}`)}.`+
+      D(iintTex(q.given.aT,q.given.bT,q.given.loT,q.given.hiT,'f(x,y)',iv,ov)+R`=`+iintTex(q.want.aT,q.want.bT,q.want.loT,q.want.hiT,'f(x,y)',niv,nov));}
+};
+
+/* evaluation over a general region: each case is worked out in closed form */
+const EVCASES=[
+  ()=>{const a=rint(2,4),reg=regPara(a);return {reg,fTex:'x',
+    innerA:'xy',innerT:`${a}x^2 - x^3`,outerA:`\\tfrac{${a}}{3}x^3-\\tfrac{x^4}{4}`,
+    ans:fr(ipow(a,4),12)};},
+  ()=>{const a=rint(2,4),reg=regPara(a);return {reg,fTex:'y',
+    innerA:'\\tfrac{y^2}{2}',innerT:`\\tfrac12\\left(${a*a}x^2-x^4\\right)`,outerA:`\\tfrac12\\left(\\tfrac{${a*a}}{3}x^3-\\tfrac{x^5}{5}\\right)`,
+    ans:fr(ipow(a,5),15)};},
+  ()=>{const a=rint(2,5),reg=regTri(a);return {reg,fTex:'x',
+    innerA:'xy',innerT:`${a}x-x^2`,outerA:`\\tfrac{${a}}{2}x^2-\\tfrac{x^3}{3}`,
+    ans:fr(ipow(a,3),6)};},
+  ()=>{const a=rint(2,5),reg=regTri(a);return {reg,fTex:'y',
+    innerA:'\\tfrac{y^2}{2}',innerT:`\\tfrac12\\left(${a*a}-x^2\\right)`,outerA:`\\tfrac12\\left(${a*a}x-\\tfrac{x^3}{3}\\right)`,
+    ans:fr(ipow(a,3),3)};},
+  ()=>{const a=rint(2,5),reg=regTri(a);return {reg,fTex:'xy',
+    innerA:'\\tfrac{xy^2}{2}',innerT:`\\tfrac12\\left(${a*a}x-x^3\\right)`,outerA:`\\tfrac12\\left(\\tfrac{${a*a}}{2}x^2-\\tfrac{x^4}{4}\\right)`,
+    ans:fr(ipow(a,4),8)};},
+  ()=>{const a=pick([4,9]),reg=regSqrt(a);return {reg,fTex:'y',
+    innerA:'\\tfrac{y^2}{2}',innerT:'\\tfrac{x}{2}',outerA:'\\tfrac{x^2}{4}',
+    ans:fr(a*a,4)};},
+  ()=>{const a=rint(2,3),reg=regBox(a);return {reg,fTex:'x',
+    innerA:'xy',innerT:`${a*a}x-x^3`,outerA:`\\tfrac{${a*a}}{2}x^2-\\tfrac{x^4}{4}`,
+    ans:fr(ipow(a,4),4)};}
+];
+Q.evalRegion={name:'evaluate over a general region',
+  gen(){const c=pick(EVCASES)();return {...c,val:frV(c.ans),ansStr:frStr(c.ans)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate ${M(R`\iint_D ${q.fTex}\,dA`)} where ${M('D')} is ${q.reg.desc}. Exact value; fractions are fine.</p>`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  solution(q){const I=q.reg.I;
+    return `As a type I region, ${M(`${I.aT}\\le x\\le ${I.bT}`)} and ${M(`${I.loT}\\le y\\le ${I.hiT}`)}:`+
+      D(iintTex(I.aT,I.bT,I.loT,I.hiT,q.fTex,'y','x')+R`=\int_{${I.aT}}^{${I.bT}}\Big[\,${q.innerA}\,\Big]_{y=${I.loT}}^{y=${I.hiT}}dx=\int_{${I.aT}}^{${I.bT}}\left(${q.innerT}\right)dx`)+
+      D(R`=\Big[\,${q.outerA}\,\Big]_{${I.aT}}^{${I.bT}}=${frTex(q.ans)}${APX(q.val)}`);}
+};
+
+const ARCASES=[
+  ()=>{const a=rint(2,4),reg=regPara(a);return {reg,innerT:`${a}x-x^2`,outerA:`\\tfrac{${a}}{2}x^2-\\tfrac{x^3}{3}`,ans:fr(ipow(a,3),6),val:ipow(a,3)/6,ansStr:frStr(fr(ipow(a,3),6))};},
+  ()=>{const a=rint(2,5),reg=regTri(a);return {reg,innerT:`${a}-x`,outerA:`${a}x-\\tfrac{x^2}{2}`,ans:fr(a*a,2),val:a*a/2,ansStr:frStr(fr(a*a,2))};},
+  ()=>{const a=pick([4,9]),reg=regSqrt(a);return {reg,innerT:'\\sqrt{x}',outerA:'\\tfrac{2}{3}x^{3/2}',ans:fr(2*Math.round(Math.pow(a,1.5)),3),val:2*Math.pow(a,1.5)/3,ansStr:frStr(fr(2*Math.round(Math.pow(a,1.5)),3))};},
+  ()=>{const a=rint(2,3),reg=regBox(a);return {reg,innerT:`${a*a}-x^2`,outerA:`${a*a}x-\\tfrac{x^3}{3}`,ans:fr(2*ipow(a,3),3),val:2*ipow(a,3)/3,ansStr:frStr(fr(2*ipow(a,3),3))};},
+  ()=>{const a=rint(2,5),reg=regQdisk(a);return {reg,innerT:`\\sqrt{${a*a}-x^2}`,outerA:`\\tfrac{x}{2}\\sqrt{${a*a}-x^2}+\\tfrac{${a*a}}{2}\\arcsin\\tfrac{x}{${a}}`,ans:null,val:PI*a*a/4,ansStr:`pi*${a*a}/4`,tex:texPi(fr(a*a,4))};}
+];
+Q.areaRegion={name:'area of a region',
+  gen(){return pick(ARCASES)();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Use a double integral to find the area of ${q.reg.desc}. Exact value.</p>`;
+    numIn(el,'v','Area =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  solution(q){const I=q.reg.I;
+    return `Area is ${M(R`\iint_D 1\,dA`)}, and the inner integral collapses to the height of the strip:`+
+      D(iintTex(I.aT,I.bT,I.loT,I.hiT,'1','y','x')+R`=\int_{${I.aT}}^{${I.bT}}\left(${q.innerT}\right)dx=\Big[\,${q.outerA}\,\Big]_{${I.aT}}^{${I.bT}}=${q.tex||frTex(q.ans)}${APX(q.val)}`);}
+};
+
+/* ---------- chapter 3: polar ---------- */
+const POLCASES=[
+  ()=>{const a=rint(1,3);return {
+    fTex:'x^2+y^2',reg:`the disk ${M(`x^2+y^2\\le ${a*a}`)}`,
+    rT:['0',String(a)],thT:['0','2\\pi'],conv:'r^2\\cdot r',
+    innerA:'\\tfrac{r^4}{4}',innerV:`\\tfrac{${ipow(a,4)}}{4}`,
+    ansV:PI*ipow(a,4)/2,ansStr:`pi*${ipow(a,4)}/2`,ansT:texPi(fr(ipow(a,4),2))};},
+  ()=>{const a=rint(1,3);return {
+    fTex:`e^{-(x^2+y^2)}`,reg:`the disk ${M(`x^2+y^2\\le ${a*a}`)}`,
+    rT:['0',String(a)],thT:['0','2\\pi'],conv:'e^{-r^2}\\cdot r',
+    innerA:'-\\tfrac12 e^{-r^2}',innerV:`\\tfrac12\\left(1-e^{-${a*a}}\\right)`,
+    ansV:PI*(1-Math.exp(-a*a)),ansStr:`pi*(1-e^(-${a*a}))`,ansT:`\\pi\\left(1-e^{-${a*a}}\\right)`};},
+  ()=>{const a=rint(2,4);return {
+    fTex:'x',reg:`the right half of the disk ${M(`x^2+y^2\\le ${a*a}`)} (where ${M('x\\ge 0')})`,
+    rT:['0',String(a)],thT:['-\\tfrac{\\pi}{2}','\\tfrac{\\pi}{2}'],conv:'(r\\cos\\theta)\\cdot r',
+    innerA:'\\tfrac{r^3}{3}\\cos\\theta',innerV:`\\tfrac{${ipow(a,3)}}{3}\\cos\\theta`,
+    ansV:2*ipow(a,3)/3,ansStr:`2*${ipow(a,3)}/3`,ansT:frTex(fr(2*ipow(a,3),3))};},
+  ()=>{const a=rint(1,3),b=a+rint(1,2);return {
+    fTex:'\\sqrt{x^2+y^2}',reg:`the annulus ${M(`${a*a}\\le x^2+y^2\\le ${b*b}`)}`,
+    rT:[String(a),String(b)],thT:['0','2\\pi'],conv:'r\\cdot r',
+    innerA:'\\tfrac{r^3}{3}',innerV:`\\tfrac{${ipow(b,3)-ipow(a,3)}}{3}`,
+    ansV:2*PI*(ipow(b,3)-ipow(a,3))/3,ansStr:`2*pi*${ipow(b,3)-ipow(a,3)}/3`,ansT:texPi(fr(2*(ipow(b,3)-ipow(a,3)),3))};},
+  ()=>{const a=rint(2,4);return {
+    fTex:'y',reg:`the upper half of the disk ${M(`x^2+y^2\\le ${a*a}`)} (where ${M('y\\ge 0')})`,
+    rT:['0',String(a)],thT:['0','\\pi'],conv:'(r\\sin\\theta)\\cdot r',
+    innerA:'\\tfrac{r^3}{3}\\sin\\theta',innerV:`\\tfrac{${ipow(a,3)}}{3}\\sin\\theta`,
+    ansV:2*ipow(a,3)/3,ansStr:`2*${ipow(a,3)}/3`,ansT:frTex(fr(2*ipow(a,3),3))};},
+  ()=>{const a=rint(2,4),k=pick([2,3,4,6,8]);return {
+    fTex:'1',reg:`the sector ${M(`0\\le r\\le ${a}`)}, ${M(`0\\le\\theta\\le ${texAng(24/k)}`)}`,
+    rT:['0',String(a)],thT:['0',texAng(24/k)],conv:'1\\cdot r',
+    innerA:'\\tfrac{r^2}{2}',innerV:`\\tfrac{${a*a}}{2}`,
+    ansV:a*a*PI/k,ansStr:`${a*a}*pi/${k}`,ansT:texPi(fr(a*a,k))};}
+];
+Q.polarEval={name:'convert to polar and evaluate',
+  gen(){return pick(POLCASES)();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate ${M(R`\iint_D ${q.fTex}\,dA`)} where ${M('D')} is ${q.reg}. Convert to polar coordinates. Exact answers with <code>pi</code> and <code>e</code> are expected, like <code>pi*8/3</code> or <code>pi*(1-e^(-4))</code>.</p>`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ansV,{rel:1e-5}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`With ${M('dA=r\\,dr\\,d\\theta')} the integral becomes `+M(iintTex(q.thT[0],q.thT[1],q.rT[0],q.rT[1],q.conv,'r','\\theta'));},
+  solution(q){
+    return `In polar the region is ${M(`${q.rT[0]}\\le r\\le ${q.rT[1]}`)}, ${M(`${q.thT[0]}\\le\\theta\\le ${q.thT[1]}`)}, and ${M('dA=r\\,dr\\,d\\theta')}:`+
+      D(iintTex(q.thT[0],q.thT[1],q.rT[0],q.rT[1],q.conv,'r','\\theta')+R`=\int_{${q.thT[0]}}^{${q.thT[1]}}\Big[\,${q.innerA}\,\Big]_{r=${q.rT[0]}}^{r=${q.rT[1]}}d\theta=\int_{${q.thT[0]}}^{${q.thT[1]}}${q.innerV}\;d\theta=${q.ansT}\approx ${fmtDec(q.ansV,4)}`);}
+};
+
+const PLIMS=[
+  ()=>{const a=rint(2,5);return {desc:`the disk ${M(`x^2+y^2\\le ${a*a}`)}`,note:'Use \\(0\\le\\theta\\le 2\\pi\\).',
+    rlo:'0',rhi:String(a),rloT:'0',rhiT:String(a),th:[0,24],why:`Every ray from the origin enters the disk at ${M('r=0')} and leaves at ${M(`r=${a}`)}, and all directions occur.`};},
+  ()=>{const a=rint(1,3),b=a+rint(1,3);return {desc:`the annulus ${M(`${a*a}\\le x^2+y^2\\le ${b*b}`)}`,note:'Use \\(0\\le\\theta\\le 2\\pi\\).',
+    rlo:String(a),rhi:String(b),rloT:String(a),rhiT:String(b),th:[0,24],why:`The ray enters at the inner circle ${M(`r=${a}`)} and leaves at the outer circle ${M(`r=${b}`)}.`};},
+  ()=>{const a=rint(2,4),k=rint(1,4);const qn=['first','second','third','fourth'][k-1];
+    return {desc:`the quarter of the disk ${M(`x^2+y^2\\le ${a*a}`)} lying in the ${qn} quadrant`,note:'Use \\(0\\le\\theta\\le 2\\pi\\).',
+    rlo:'0',rhi:String(a),rloT:'0',rhiT:String(a),th:[6*(k-1),6*k],why:`The ${qn} quadrant is ${M(`${texAng(6*(k-1))}\\le\\theta\\le ${texAng(6*k)}`)}, and ${M('r')} still runs from the origin to the circle.`};},
+  ()=>{const a=rint(1,3);return {desc:`the region inside the circle ${M(`r=${2*a}\\cos\\theta`)}`,note:'Take the \\(\\theta\\)-interval centered at \\(\\theta=0\\) on which the circle is traced exactly once.',
+    rlo:'0',rhi:`${2*a}*cos(theta)`,rloT:'0',rhiT:`${2*a}\\cos\\theta`,th:[-6,6],
+    why:`This is the circle of radius ${M(String(a))} centered at ${M(`(${a},0)`)}. A ray leaves the origin and exits the circle at ${M(`r=${2*a}\\cos\\theta`)}; the whole circle is swept once for ${M('-\\pi/2\\le\\theta\\le\\pi/2')}.`};},
+  ()=>{const a=rint(1,3);return {desc:`the region inside the cardioid ${M(`r=${a===1?'':a}(1+\\cos\\theta)`)}`,note:'Use \\(0\\le\\theta\\le 2\\pi\\).',
+    rlo:'0',rhi:`${a}*(1+cos(theta))`,rloT:'0',rhiT:`${a===1?'':a}(1+\\cos\\theta)`,th:[0,24],
+    why:`The cardioid is traced once as ${M('\\theta')} goes around, and the region is everything between the origin and the curve.`};}
+];
+Q.polarLimits={name:'polar limits for a region',
+  gen(){const c=pick(PLIMS)();return {...c,thLo:angVal(c.th[0]),thHi:angVal(c.th[1]),
+    ansStr:[c.rlo,c.rhi,angAns(c.th[0]),angAns(c.th[1])]};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Describe ${q.desc} in polar coordinates for the integral ${M(R`\int\!\!\int f\;r\,dr\,d\theta`)}. ${q.note} The ${M('r')}-limits may be expressions in <code>theta</code>; the ${M('\\theta')}-limits are numbers like <code>pi/2</code> or <code>2pi</code>.</p>`;
+    numIn(el,'rl','r from',{wide:true,placeholder:'number or expression in theta'});
+    numIn(el,'rh','r to',{wide:true,placeholder:'number or expression in theta'});
+    numIn(el,'tl',M('\\theta')+' from');
+    numIn(el,'th',M('\\theta')+' to');},
+  check(q,el){return Gall(el,[
+    ['rl',checkExpr($('[data-k=rl]',el).value,q.rlo,['theta'],{domain:{theta:[q.thLo,q.thHi]}})],
+    ['rh',checkExpr($('[data-k=rh]',el).value,q.rhi,['theta'],{domain:{theta:[q.thLo,q.thHi]}})],
+    ['tl',checkNumber($('[data-k=tl]',el).value,q.thLo,{tol:1e-4})],
+    ['th',checkNumber($('[data-k=th]',el).value,q.thHi,{tol:1e-4})]]);},
+  solution(q){return q.why+D(iintTex(texAng(q.th[0]),texAng(q.th[1]),q.rloT,q.rhiT,'f\\;r','r','\\theta'));}
+};
+
+const PAREA=[
+  ()=>{const a=rint(1,4);return {curve:`r=${a===1?'':a}(1+\\cos\\theta)`,what:`the cardioid ${M(`r=${a===1?'':a}(1+\\cos\\theta)`)}`,
+    thT:['0','2\\pi'],sq:`${a===1?'':a*a}(1+\\cos\\theta)^2`,
+    mid:`\\tfrac{${a*a}}{2}\\int_0^{2\\pi}\\left(1+2\\cos\\theta+\\cos^2\\theta\\right)d\\theta=\\tfrac{${a*a}}{2}\\left(2\\pi+0+\\pi\\right)`,
+    ansV:3*PI*a*a/2,ansStr:`3*pi*${a*a}/2`,ansT:texPi(fr(3*a*a,2))};},
+  ()=>{const a=rint(1,4);return {curve:`r=${2*a}\\cos\\theta`,what:`the circle ${M(`r=${2*a}\\cos\\theta`)}`,
+    thT:['-\\tfrac{\\pi}{2}','\\tfrac{\\pi}{2}'],sq:`${4*a*a}\\cos^2\\theta`,
+    mid:`\\tfrac{${4*a*a}}{2}\\int_{-\\pi/2}^{\\pi/2}\\tfrac{1+\\cos 2\\theta}{2}\\,d\\theta=${2*a*a}\\cdot\\tfrac{\\pi}{2}`,
+    ansV:PI*a*a,ansStr:`pi*${a*a}`,ansT:texPi(fr(a*a))};},
+  ()=>{const a=rint(1,4);return {curve:`r=${a===1?'':a}\\cos 2\\theta`,what:`one petal of the four-petaled rose ${M(`r=${a===1?'':a}\\cos 2\\theta`)}`,
+    thT:['-\\tfrac{\\pi}{4}','\\tfrac{\\pi}{4}'],sq:`${a===1?'':a*a}\\cos^2 2\\theta`,
+    mid:`\\tfrac{${a*a}}{2}\\int_{-\\pi/4}^{\\pi/4}\\tfrac{1+\\cos 4\\theta}{2}\\,d\\theta=\\tfrac{${a*a}}{2}\\cdot\\tfrac{\\pi}{4}`,
+    ansV:PI*a*a/8,ansStr:`pi*${a*a}/8`,ansT:texPi(fr(a*a,8))};},
+  ()=>{const a=rint(1,4);return {curve:`r=${a===1?'':a}(1+\\sin\\theta)`,what:`the cardioid ${M(`r=${a===1?'':a}(1+\\sin\\theta)`)}`,
+    thT:['0','2\\pi'],sq:`${a===1?'':a*a}(1+\\sin\\theta)^2`,
+    mid:`\\tfrac{${a*a}}{2}\\int_0^{2\\pi}\\left(1+2\\sin\\theta+\\sin^2\\theta\\right)d\\theta=\\tfrac{${a*a}}{2}\\left(2\\pi+0+\\pi\\right)`,
+    ansV:3*PI*a*a/2,ansStr:`3*pi*${a*a}/2`,ansT:texPi(fr(3*a*a,2))};}
+];
+Q.polarArea={name:'area of a polar region',
+  gen(){return pick(PAREA)();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the area enclosed by ${q.what}. Exact value with <code>pi</code>.</p>`;
+    numIn(el,'v','Area =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ansV,{rel:1e-5}));},
+  solution(q){
+    return `Set ${M('f=1')}. The inner integral ${M(R`\int_0^{r=\text{curve}} r\,dr`)} gives ${M(R`\tfrac12 r^2`)} evaluated on the curve:`+
+      D(R`A=\int_{${q.thT[0]}}^{${q.thT[1]}}\!\!\int_0^{${q.curve.replace('r=','')}} r\,dr\,d\theta=\tfrac12\int_{${q.thT[0]}}^{${q.thT[1]}}${q.sq}\,d\theta`)+
+      D(R`=${q.mid}=${q.ansT}\approx ${fmtDec(q.ansV,4)}`);}
+};
+
+const PVOL=[
+  ()=>{const a=rint(1,3);return {desc:`the solid under ${M(`z=x^2+y^2`)} and above the disk ${M(`x^2+y^2\\le ${a*a}`)}`,
+    integ:'r^2\\cdot r',thT:['0','2\\pi'],rT:['0',String(a)],innerA:'\\tfrac{r^4}{4}',innerV:`\\tfrac{${ipow(a,4)}}{4}`,
+    ansV:PI*ipow(a,4)/2,ansStr:`pi*${ipow(a,4)}/2`,ansT:texPi(fr(ipow(a,4),2))};},
+  ()=>{const c=rint(2,6);return {desc:`the solid bounded by the paraboloid ${M(`z=${c}-x^2-y^2`)} and the plane ${M('z=0')}`,
+    integ:`(${c}-r^2)\\,r`,thT:['0','2\\pi'],rT:['0',`\\sqrt{${c}}`],innerA:`\\tfrac{${c}r^2}{2}-\\tfrac{r^4}{4}`,innerV:`\\tfrac{${c*c}}{4}`,
+    ansV:PI*c*c/2,ansStr:`pi*${c*c}/2`,ansT:texPi(fr(c*c,2))};},
+  ()=>{const a=rint(1,4);return {desc:`the solid under the cone ${M('z=\\sqrt{x^2+y^2}')} and above the disk ${M(`x^2+y^2\\le ${a*a}`)}`,
+    integ:'r\\cdot r',thT:['0','2\\pi'],rT:['0',String(a)],innerA:'\\tfrac{r^3}{3}',innerV:`\\tfrac{${ipow(a,3)}}{3}`,
+    ansV:2*PI*ipow(a,3)/3,ansStr:`2*pi*${ipow(a,3)}/3`,ansT:texPi(fr(2*ipow(a,3),3))};},
+  ()=>{const a=rint(1,4);return {desc:`the solid below the plane ${M(`z=${a}`)} and above the cone ${M('z=\\sqrt{x^2+y^2}')}`,
+    integ:`(${a}-r)\\,r`,thT:['0','2\\pi'],rT:['0',String(a)],innerA:`\\tfrac{${a}r^2}{2}-\\tfrac{r^3}{3}`,innerV:`\\tfrac{${ipow(a,3)}}{6}`,
+    ansV:PI*ipow(a,3)/3,ansStr:`pi*${ipow(a,3)}/3`,ansT:texPi(fr(ipow(a,3),3))};}
+];
+Q.polarVolume={name:'volume with polar coordinates',
+  gen(){return pick(PVOL)();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the volume of ${q.desc}. Exact value with <code>pi</code>.</p>`;
+    numIn(el,'v','Volume =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ansV,{rel:1e-5}));},
+  solution(q){
+    return `The height of the solid at a point is the top surface minus the bottom, and the shadow is a disk, so switch to polar:`+
+      D(iintTex(q.thT[0],q.thT[1],q.rT[0],q.rT[1],q.integ,'r','\\theta')+R`=\int_{${q.thT[0]}}^{${q.thT[1]}}\Big[\,${q.innerA}\,\Big]_{r=${q.rT[0]}}^{r=${q.rT[1]}}d\theta=\int_0^{2\pi}${q.innerV}\,d\theta=${q.ansT}\approx ${fmtDec(q.ansV,4)}`);}
+};
+
+/* ---------- chapter 4: applications ---------- */
+const DENS=[
+  {t:(k,x,y)=>`${k===1?'':k}xy`,tex:k=>`${k===1?'':k}xy`,
+   m:(k,a,b)=>frM(fr(k),fr(a*a*b*b,4)),
+   mT:(k,a,b)=>`${k===1?'':k}\\cdot\\tfrac{${a*a}}{2}\\cdot\\tfrac{${b*b}}{2}`,
+   inner:(k,a,b)=>`${k===1?'':k}x\\cdot\\tfrac{${b*b}}{2}`,
+   cm:(a,b)=>[fr(2*a,3),fr(2*b,3)]},
+  {t:(k,x,y)=>`${k===1?'':k}(x+y)`,tex:k=>`${k===1?'':k}(x+y)`,
+   m:(k,a,b)=>frM(fr(k),fr(a*b*(a+b),2)),
+   mT:(k,a,b)=>`${k===1?'':k}\\left(\\tfrac{${a*a*b}}{2}+\\tfrac{${a*b*b}}{2}\\right)`,
+   inner:(k,a,b)=>`${k===1?'':k}\\left(${b===1?'':b}x+\\tfrac{${b*b}}{2}\\right)`,
+   cm:(a,b)=>[fr(a*(4*a+3*b),6*(a+b)),fr(b*(3*a+4*b),6*(a+b))]},
+  {t:(k,x,y)=>`${k===1?'':k}x^2`,tex:k=>`${k===1?'':k}x^2`,
+   m:(k,a,b)=>frM(fr(k),fr(ipow(a,3)*b,3)),
+   mT:(k,a,b)=>`${k===1?'':k}\\cdot\\tfrac{${ipow(a,3)}}{3}\\cdot ${b}`,
+   inner:(k,a,b)=>`${k*b===1?'':k*b}x^2`,
+   cm:(a,b)=>[fr(3*a,4),fr(b,2)]}
+];
+Q.massRect={name:'mass of a rectangular lamina',
+  gen(){const a=rint(1,4),b=rint(1,4),k=pick([1,1,2,3]),d=rint(0,2);const D=DENS[d];
+    const m=D.m(k,a,b);return {a,b,k,d,D,m,val:frV(m),ansStr:frStr(m)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">A lamina occupies the rectangle ${M(R`[0,${q.a}]\times[0,${q.b}]`)} with density ${M(`\\rho(x,y)=${q.D.tex(q.k)}`)}. Find its mass. Exact value; fractions are fine.</p>`;
+    numIn(el,'m','m =',{wide:true});},
+  check(q,el){return G(el,'m',checkNumber($('[data-k=m]',el).value,q.val));},
+  solution(q){
+    return `Mass is the integral of the density:`+
+      D(R`m=\int_0^{${q.a}}\!\!\int_0^{${q.b}}${q.D.tex(q.k)}\;dy\,dx=\int_0^{${q.a}}${q.D.inner(q.k,q.a,q.b)}\,dx=${q.D.mT(q.k,q.a,q.b)}=${frTex(q.m)}`);}
+};
+Q.comRect={name:'center of mass of a rectangular lamina',
+  gen(){const a=rint(1,4),b=rint(1,4),k=pick([1,1,2,3]),d=rint(0,2);const D=DENS[d];
+    const m=D.m(k,a,b);const c=D.cm(a,b);
+    return {a,b,k,d,D,m,c,cv:[frV(c[0]),frV(c[1])],ansStr:`(${frStr(c[0])}, ${frStr(c[1])})`};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">A lamina occupies the rectangle ${M(R`[0,${q.a}]\times[0,${q.b}]`)} with density ${M(`\\rho(x,y)=${q.D.tex(q.k)}`)}. Find its center of mass. Type it as a point, like <code>(3/4, 1/2)</code>.</p>`;
+    numIn(el,'c',M(R`(\bar x,\bar y)=`),{wide:true,placeholder:'(a, b)'});},
+  check(q,el){return G(el,'c',checkVector($('[data-k=c]',el).value,q.cv));},
+  solution(q){
+    const my=frM(q.m,q.c[0]),mx=frM(q.m,q.c[1]);
+    return `The mass is ${M(R`m=${frTex(q.m)}`)}. The moments are ${M(R`M_y=\iint x\rho\,dA=${frTex(my)}`)} and ${M(R`M_x=\iint y\rho\,dA=${frTex(mx)}`)}, so`+
+      D(R`\bar x=\frac{M_y}{m}=${frTex(q.c[0])},\qquad \bar y=\frac{M_x}{m}=${frTex(q.c[1])}`)+
+      `Sanity check: the geometric center is ${M(`(${frTex(fr(q.a,2))},${frTex(fr(q.b,2))})`)}, and the denser side pulls the balance point away from it.`;}
+};
+Q.massTri={name:'mass of a triangular lamina',
+  gen(){const a=rint(1,4),b=rint(1,4),k=pick([1,1,2,3]),vx=Math.random()<0.5;
+    const m=vx?frM(fr(k),fr(a*a*b,6)):frM(fr(k),fr(a*b*b,6));
+    return {a,b,k,vx,m,val:frV(m),ansStr:frStr(m)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">A lamina occupies the triangle with vertices ${M('(0,0)')}, ${M(`(${q.a},0)`)}, and ${M(`(0,${q.b})`)}, with density ${M(`\\rho(x,y)=${q.k===1?'':q.k}${q.vx?'x':'y'}`)}. Find its mass. Exact value.</p>`;
+    numIn(el,'m','m =',{wide:true});},
+  check(q,el){return G(el,'m',checkNumber($('[data-k=m]',el).value,q.val));},
+  solution(q){
+    const slope=q.a===1?'1-x':`1-\\tfrac{x}{${q.a}}`;
+    const hyp=`${q.b===1?'':q.b}\\left(${slope}\\right)`;
+    const kb=q.k*q.b,kb2=q.k*q.b*q.b;
+    return `The hypotenuse is ${M(`${q.a===1?'x':`\\tfrac{x}{${q.a}}`}+${q.b===1?'y':`\\tfrac{y}{${q.b}}`}=1`)}, so for ${M(`0\\le x\\le ${q.a}`)} the strip runs from ${M('y=0')} to ${M(`y=${hyp}`)}:`+
+      (q.vx?
+        D(R`m=\int_0^{${q.a}}\!\!\int_0^{${hyp}}${q.k===1?'':q.k}x\;dy\,dx=${kb===1?'':kb}\int_0^{${q.a}}x\left(${slope}\right)dx=${kb===1?'':kb}\left(\tfrac{${q.a*q.a}}{2}-\tfrac{${q.a*q.a}}{3}\right)=${frTex(q.m)}`):
+        D(R`m=\int_0^{${q.a}}\!\!\int_0^{${hyp}}${q.k===1?'':q.k}y\;dy\,dx=\tfrac{${kb2}}{2}\int_0^{${q.a}}\left(${slope}\right)^2dx=\tfrac{${kb2}}{2}\cdot\tfrac{${q.a}}{3}=${frTex(q.m)}`));}
+};
+Q.planeArea={name:'surface area of a plane',
+  gen(){const [p,q2]=pick([[2,2],[1,2],[2,3],[4,0],[2,-1],[3,4],[1,1],[2,-2]]);
+    const c=rint(-3,3),w=rint(1,4),h=rint(1,4);
+    const s=1+p*p+q2*q2;
+    return {p,q2,c,w,h,s,area:w*h,val:Math.sqrt(s)*w*h,ansStr:`${w*h}*sqrt(${s})`};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the area of the part of the plane ${M(`z=${texLin([q.p,q.q2],['x','y'],{constant:q.c})}`)} that lies above the rectangle ${M(R`[0,${q.w}]\times[0,${q.h}]`)}. Exact value, like <code>6sqrt(14)</code>.</p>`;
+    numIn(el,'a','Area =',{wide:true});},
+  check(q,el){return G(el,'a',checkNumber($('[data-k=a]',el).value,q.val,{rel:1e-5}));},
+  solution(q){
+    return `Here ${M(`f_x=${q.p}`)} and ${M(`f_y=${q.q2}`)}, both constant, so the tilt factor is constant:`+
+      D(R`A(S)=\iint_D\sqrt{1+${q.p}^2+(${q.q2})^2}\;dA=\sqrt{${q.s}}\iint_D dA=\sqrt{${q.s}}\cdot ${q.w}\cdot ${q.h}=${Number.isInteger(Math.sqrt(q.s))?String(q.w*q.h*Math.sqrt(q.s)):`${q.w*q.h===1?'':q.w*q.h}\sqrt{${q.s}}`}${APX(q.val)}`);}
+};
+
+/* ---------- chapter 5: change of variables ---------- */
+const JACS=[
+  ()=>{let A,B,C,E,J;do{A=rnz(-3,3);B=rnz(-3,3);C=rnz(-3,3);E=rnz(-3,3);J=A*E-B*C;}while(J===0);
+    return {xT:texLin([A,B],['u','v']),yT:texLin([C,E],['u','v']),
+      xu:String(A),xv:String(B),yu:String(C),yv:String(E),
+      JT:`(${A})(${E})-(${B})(${C})=${J}`,ansT:String(J),ansStr:String(J)};},
+  ()=>({xT:'u^2',yT:'v^2',xu:'2u',xv:'0',yu:'0',yv:'2v',JT:'(2u)(2v)-(0)(0)',ansT:'4uv',ansStr:'4*u*v'}),
+  ()=>({xT:'uv',yT:'\\tfrac{u}{v}',xu:'v',xv:'u',yu:'\\tfrac{1}{v}',yv:'-\\tfrac{u}{v^2}',
+    JT:'(v)\\left(-\\tfrac{u}{v^2}\\right)-(u)\\left(\\tfrac{1}{v}\\right)=-\\tfrac{u}{v}-\\tfrac{u}{v}',ansT:'-\\tfrac{2u}{v}',ansStr:'-2*u/v'}),
+  ()=>({xT:'e^{u}\\cos v',yT:'e^{u}\\sin v',xu:'e^{u}\\cos v',xv:'-e^{u}\\sin v',yu:'e^{u}\\sin v',yv:'e^{u}\\cos v',
+    JT:'e^{2u}\\cos^2 v+e^{2u}\\sin^2 v',ansT:'e^{2u}',ansStr:'e^(2u)'}),
+  ()=>({xT:'u+v^2',yT:'v',xu:'1',xv:'2v',yu:'0',yv:'1',JT:'(1)(1)-(2v)(0)',ansT:'1',ansStr:'1'}),
+  ()=>({xT:'u\\cos v',yT:'u\\sin v',xu:'\\cos v',xv:'-u\\sin v',yu:'\\sin v',yv:'u\\cos v',
+    JT:'u\\cos^2 v+u\\sin^2 v',ansT:'u',ansStr:'u'})
+];
+Q.jacobian={name:'the Jacobian of a transformation',
+  gen(){return JACS[rint(0,JACS.length-1)]();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the Jacobian ${M(R`\dfrac{\partial(x,y)}{\partial(u,v)}`)} of the transformation. Your answer may contain <code>u</code> and <code>v</code>.</p>
+      ${D(R`x=${q.xT},\qquad y=${q.yT}`)}`;
+    numIn(el,'j',M(R`\frac{\partial(x,y)}{\partial(u,v)}=`),{wide:true});},
+  check(q,el){return G(el,'j',checkExpr($('[data-k=j]',el).value,q.ansStr,['u','v'],{domain:{u:[1,2],v:[1,2]}}));},
+  solution(q){
+    return D(R`\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}${q.xu}&${q.xv}\\ ${q.yu}&${q.yv}\end{vmatrix}=${q.JT}=${q.ansT}`);}
+};
+
+Q.changeEval={name:'evaluate with a given transformation',
+  gen(){
+    let A,B,C,E,J;do{A=rint(1,3);B=rint(-2,3);C=rint(-2,3);E=rint(1,3);J=A*E-B*C;}while(Math.abs(J)<1);
+    const p=pick([1,1,2]),q2=pick([1,1,2]);
+    const which=pick(['x+y','x','y']);
+    let ca=which==='x+y'?A+C:which==='x'?A:C;
+    let cb=which==='x+y'?B+E:which==='x'?B:E;
+    if(ca===0&&cb===0)return Q.changeEval.gen();
+    const val=frM(fr(Math.abs(J)),frA(fr(ca*p*p*q2,2),fr(cb*p*q2*q2,2)));
+    const V=[[0,0],[A*p,C*p],[A*p+B*q2,C*p+E*q2],[B*q2,E*q2]];
+    return {A,B,C,E,J,p,q:q2,which,ca,cb,V,val,v:frV(val),ansStr:frStr(val)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">${M('R')} is the parallelogram with vertices ${M(q.V.map(v=>`(${v[0]},${v[1]})`).join(',\\;'))}. The transformation ${M(`x=${texLin([q.A,q.B],['u','v'])}`)}, ${M(`y=${texLin([q.C,q.E],['u','v'])}`)} maps the rectangle ${M(R`S=[0,${q.p}]\times[0,${q.q}]`)} in the ${M('uv')}-plane onto ${M('R')}. Use it to evaluate the integral. Exact value.</p>
+      ${D(R`\iint_R (${q.which})\,dA`)}`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    return `The Jacobian is `+M(R`\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}${q.A}&${q.B}\\ ${q.C}&${q.E}\end{vmatrix}=${q.J}`)+`, so ${M(R`dA=${Math.abs(q.J)===1?'':Math.abs(q.J)}\,du\,dv`)}. The integrand becomes ${M(`${q.which}=${texLin([q.ca,q.cb],['u','v'])}`)}, and the region is a rectangle:`+
+      D(R`\iint_R(${q.which})dA=${Math.abs(q.J)===1?'':Math.abs(q.J)}\int_0^{${q.p}}\!\!\int_0^{${q.q}}\left(${texLin([q.ca,q.cb],['u','v'])}\right)dv\,du=${frTex(q.val)}`);}
+};
+
+const ptsKey=V=>V.map(p=>p.join(',')).sort().join(';');
+Q.imageSquare={name:'image of the unit square',
+  gen(){
+    let A,B,C,E,opts,correct;
+    for(;;){
+      A=rnz(-3,3);B=rnz(-3,3);C=rnz(-3,3);E=rnz(-3,3);
+      if(A*E-B*C===0)continue;
+      correct=[[0,0],[A,C],[A+B,C+E],[B,E]];
+      const d1=[[0,0],[A,B],[A+C,B+E],[C,E]];
+      const d2=[[0,0],[A,C],[A-B,C-E],[-B,-E]];
+      const d3=[[0,0],[A,C],[A+B,C-E],[B,-E]];
+      const keys=[correct,d1,d2,d3].map(ptsKey);
+      if(new Set(keys).size===4){opts=[correct,d1,d2,d3];break;}
+    }
+    const order=shuffle([0,1,2,3]);
+    const shown=order.map(i=>opts[i]);
+    return {A,B,C,E,opts:shown,idx:order.indexOf(0)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The transformation ${M(`x=${texLin([q.A,q.B],['u','v'])}`)}, ${M(`y=${texLin([q.C,q.E],['u','v'])}`)} is applied to the unit square ${M(R`S=[0,1]\times[0,1]`)} in the ${M('uv')}-plane. Which parallelogram is the image ${M('R')}? Vertices are listed in the order ${M('(0,0)')}, image of ${M('(1,0)')}, image of ${M('(1,1)')}, image of ${M('(0,1)')}.</p>`;
+    q.get=choiceButtons(el,q.opts.map((o,i)=>({label:M(o.map(v=>`(${v[0]},${v[1]})`).join(',\\;')),value:i})));},
+  check(q,el){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.idx,msg:v===q.idx?'':'Map the corners one at a time: substitute each \\((u,v)\\) into both formulas.'};},
+  solution(q){
+    return `Substitute the four corners. ${M(`(u,v)=(1,0)`)} gives ${M(`(x,y)=(${q.A},${q.C})`)}, ${M('(1,1)')} gives ${M(`(${q.A+q.B},${q.C+q.E})`)}, and ${M('(0,1)')} gives ${M(`(${q.B},${q.E})`)}. Because the transformation is linear, the straight edges of the square stay straight, so the image is the parallelogram ${M(q.opts[q.idx].map(v=>`(${v[0]},${v[1]})`).join(',\\;'))}.`;}
+};
+
+Q.uvRegion={name:'change of variables with u = x - y, v = x + y',
+  gen(){
+    const A=rint(1,3),B=rint(1,4);
+    const which=pick(['u','v','u2','one']);
+    const fTex={u:'(x-y)',v:'(x+y)',u2:'(x-y)^2',one:'1'}[which];
+    const gTex={u:'u',v:'v',u2:'u^2',one:'1'}[which];
+    const val={u:fr(A*A*B,4),v:fr(A*B*B,4),u2:fr(ipow(A,3)*B,6),one:fr(A*B,2)}[which];
+    const innerA={u:'\\tfrac{u^2}{2}',v:'uv',u2:'\\tfrac{u^3}{3}',one:'u'}[which];
+    const innerV={u:`\\tfrac{${A*A}}{2}`,v:`${A===1?'':A}v`,u2:`\\tfrac{${ipow(A,3)}}{3}`,one:String(A)}[which];
+    return {A,B,which,fTex,gTex,val,v:frV(val),ansStr:frStr(val),innerA,innerV};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">${M('R')} is the region bounded by the lines ${M('x-y=0')}, ${M(`x-y=${q.A}`)}, ${M('x+y=0')}, and ${M(`x+y=${q.B}`)}. Use the substitution ${M('u=x-y')}, ${M('v=x+y')} to evaluate the integral. Exact value.</p>
+      ${D(R`\iint_R ${q.fTex}\;dA`)}`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    return `The four lines become ${M(`u=0`)}, ${M(`u=${q.A}`)}, ${M('v=0')}, ${M(`v=${q.B}`)}, so ${M('S')} is a rectangle. Since ${M(R`\frac{\partial(u,v)}{\partial(x,y)}=\begin{vmatrix}1&-1\\ 1&1\end{vmatrix}=2`)}, the Jacobian you need is its reciprocal, ${M(R`\frac{\partial(x,y)}{\partial(u,v)}=\tfrac12`)}:`+
+      D(R`\iint_R ${q.fTex}\,dA=\int_0^{${q.B}}\!\!\int_0^{${q.A}} ${q.gTex}\cdot\tfrac12\;du\,dv=\tfrac12\int_0^{${q.B}}\Big[\,${q.innerA}\,\Big]_0^{${q.A}}dv=\tfrac12\int_0^{${q.B}}${q.innerV}\,dv=${frTex(q.val)}`);}
+};
+
+/* ============================================================ chapter 1: Riemann boxes + walkthrough */
+(function(){
+  const scene=new Scene3D('#rsScene',{range:2.4,azim:-58,elev:26});
+  const PR=[
+    {n:'z = x² + y²',f:(x,y)=>x*x+y*y,X:[0,1],Y:[0,1],range:1.6},
+    {n:'z = 4 − x² − y², clipped',f:(x,y)=>Math.max(0,4-x*x-y*y),X:[-2,2],Y:[-2,2],range:3.2},
+    {n:'z = xy + 4',f:(x,y)=>x*y+4,X:[-1,1],Y:[-1,1],range:4},
+    {n:'z = sin x + 2',f:(x,y)=>Math.sin(x)+2,X:[0,PI],Y:[0,2],range:3.4},
+    {n:'z = 3e^(−x²−y²)',f:(x,y)=>3*Math.exp(-x*x-y*y),X:[-1.5,1.5],Y:[-1.5,1.5],range:2.8}
+  ];
+  const exactOf=p=>{const N=200,dx=(p.X[1]-p.X[0])/N,dy=(p.Y[1]-p.Y[0])/N;let s=0;
+    for(let i=0;i<N;i++)for(let j=0;j<N;j++)s+=p.f(p.X[0]+(i+0.5)*dx,p.Y[0]+(j+0.5)*dy);return s*dx*dy;};
+  let cur=PR[0],n=2,exact=exactOf(PR[0]);
+  const box=$('#rsPresets');
+  PR.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);b.onclick=()=>{cur=pr;exact=exactOf(pr);
+    $$('.btn',box).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};box.appendChild(b);});
+  $$('.btn',box)[0].classList.add('on');
+  sliderRow($('#rsSliders'),{label:'n (cells per side)',min:1,max:8,step:1,value:2,fmt:v=>String(v),onInput:v=>{n=v;draw();}});
+  function draw(){
+    scene.o.range=cur.range;scene.clear();
+    scene.polygon([[cur.X[0],cur.Y[0],0],[cur.X[1],cur.Y[0],0],[cur.X[1],cur.Y[1],0],[cur.X[0],cur.Y[1],0]],
+      {fill:'rgba(37,99,235,.10)',stroke:'#2563eb'});
+    scene.surface(cur.f,cur.X,cur.Y,{n:20,base:SURF.blue,alpha:0.5,stroke:'rgba(30,40,80,.12)'});
+    const dx=(cur.X[1]-cur.X[0])/n,dy=(cur.Y[1]-cur.Y[0])/n;let S=0;
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+      const a0=cur.X[0]+i*dx,a1=a0+dx,b0=cur.Y[0]+j*dy,b1=b0+dy;
+      const h=cur.f(a0+dx/2,b0+dy/2);S+=h;
+      const c=[[a0,b0],[a1,b0],[a1,b1],[a0,b1]];
+      for(let k=0;k<4;k++){const u=c[k],w=c[(k+1)%4];
+        scene.polygon([[u[0],u[1],0],[w[0],w[1],0],[w[0],w[1],h],[u[0],u[1],h]],
+          {fill:'rgba(217,119,6,.13)',stroke:'rgba(217,119,6,.45)'});}
+      scene.polygon(c.map(pt=>[pt[0],pt[1],h]),{fill:'rgba(217,119,6,.26)',stroke:'rgba(217,119,6,.6)'});
+    }
+    scene.render();
+    const dA=dx*dy,sum=S*dA,err=sum-exact;
+    $('#rsOut').innerHTML=`n = ${n} &rarr; ${n*n} cell${n>1?'s':''}, ΔA = ${fmtDec(dA,4)}<br>`+
+      `midpoint sum = <b>${fmtDec(sum,4)}</b><br>exact integral = ${fmtDec(exact,4)}<br>`+
+      `error = ${fmtDec(err,4)} (${fmtDec(100*Math.abs(err)/Math.abs(exact||1),2)}%)`;
+  }
+  redrawOnShow('rect',draw);draw();
+
+  /* walkthrough */
+  let terms,P,step=0;
+  function newQ(){
+    const x0=rint(0,1),x1=x0+rint(1,2),y0=rint(0,1),y1=y0+rint(1,2);
+    terms=randTerms(rint(2,3),2);P=iterParts(terms,x0,x1,y0,y1,'y');step=0;drawW();
+  }
+  function drawW(){
+    const L=[];
+    L.push(`<span class="t b">${M(iintTex(P.olo,P.ohi,P.lo,P.hi,P.fTex,'y','x'))}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}">= <span class="t ${step===1?'now':''} a">${M(R`\int_{${P.olo}}^{${P.ohi}}\Big[\,${P.antiTex}\,\Big]_{y=${P.lo}}^{y=${P.hi}}dx`)}</span></span>`);
+    L.push(`<span class="${step>=2?'':'faint'}">= <span class="t ${step===2?'now':''} a">${M(R`\int_{${P.olo}}^{${P.ohi}}\left(${P.midTex}\right)dx`)}</span></span>`);
+    L.push(`<span class="${step>=3?'':'faint'}">= <span class="t ${step===3?'now':''} b">${M(R`\Big[\,${P.oantiTex}\,\Big]_{${P.olo}}^{${P.ohi}}`)}</span></span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">= <span class="t ${step===4?'now':''} c">${M(frTex(P.val))}</span></span>`);
+    $('#wtExpr').innerHTML=L.join('<br>');
+    const st=['The inner differential is dy, so y moves first and x is frozen. Press Next.',
+      'Antiderivative in y, term by term. Every x is carried along as a constant.',
+      'Substitute y at both limits and subtract. Only x survives.',
+      'Now the outer integral: antiderivative in x.',
+      'Substitute the x limits and subtract. That number is the double integral.'];
+    $('#wtStatus').textContent=st[step];
+    $('#wtPrev').disabled=step===0;$('#wtNext').disabled=step===4;
+    typeset($('#wtExpr'));
+  }
+  $('#wtNext').onclick=()=>{step=Math.min(4,step+1);drawW();};
+  $('#wtPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#wtNew').onclick=newQ;
+  newQ();
+
+  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.rectPoly,Q.rectPoly,Q.rectProduct,Q.rectProduct,Q.midpointRule,Q.avgValue])});
+})();
+
+/* ============================================================ chapter 2: region explorer */
+(function(){
+  const p=new Plot2D('#regPlot',{xmin:-1,xmax:3,ymin:-1,ymax:5});
+  const PRE=[
+    {n:'y = x² and y = 2x',win:{xmin:-0.8,xmax:2.8,ymin:-0.8,ymax:4.6},
+     I:[{a:0,b:2,aT:'0',bT:'2',lo:x=>x*x,hi:x=>2*x,loT:'x^2',hiT:'2x'}],
+     II:[{a:0,b:4,aT:'0',bT:'4',lo:y=>y/2,hi:y=>Math.sqrt(y),loT:'\\tfrac{y}{2}',hiT:'\\sqrt{y}'}]},
+    {n:'triangle (0,0), (1,1), (2,0)',win:{xmin:-0.6,xmax:2.6,ymin:-0.8,ymax:2.4},
+     I:[{a:0,b:1,aT:'0',bT:'1',lo:x=>0,hi:x=>x,loT:'0',hiT:'x'},
+        {a:1,b:2,aT:'1',bT:'2',lo:x=>0,hi:x=>2-x,loT:'0',hiT:'2-x'}],
+     II:[{a:0,b:1,aT:'0',bT:'1',lo:y=>y,hi:y=>2-y,loT:'y',hiT:'2-y'}]},
+    {n:'y = x and y = x³, x ≥ 0',win:{xmin:-0.4,xmax:1.6,ymin:-0.4,ymax:1.6},
+     I:[{a:0,b:1,aT:'0',bT:'1',lo:x=>x*x*x,hi:x=>x,loT:'x^3',hiT:'x'}],
+     II:[{a:0,b:1,aT:'0',bT:'1',lo:y=>y,hi:y=>Math.cbrt(y),loT:'y',hiT:'\\sqrt[3]{y}'}]},
+    {n:'x = y² and y = x − 2',win:{xmin:-1.2,xmax:4.8,ymin:-2.6,ymax:3.4},
+     I:[{a:0,b:1,aT:'0',bT:'1',lo:x=>-Math.sqrt(x),hi:x=>Math.sqrt(x),loT:'-\\sqrt{x}',hiT:'\\sqrt{x}'},
+        {a:1,b:4,aT:'1',bT:'4',lo:x=>x-2,hi:x=>Math.sqrt(x),loT:'x-2',hiT:'\\sqrt{x}'}],
+     II:[{a:-1,b:2,aT:'-1',bT:'2',lo:y=>y*y,hi:y=>y+2,loT:'y^2',hiT:'y+2'}]},
+    {n:'quarter disk x² + y² ≤ 4',win:{xmin:-0.6,xmax:2.6,ymin:-0.6,ymax:2.6},
+     I:[{a:0,b:2,aT:'0',bT:'2',lo:x=>0,hi:x=>Math.sqrt(Math.max(0,4-x*x)),loT:'0',hiT:'\\sqrt{4-x^2}'}],
+     II:[{a:0,b:2,aT:'0',bT:'2',lo:y=>0,hi:y=>Math.sqrt(Math.max(0,4-y*y)),loT:'0',hiT:'\\sqrt{4-y^2}'}]},
+    {n:'under y = √x, 0 ≤ x ≤ 4',win:{xmin:-0.8,xmax:4.8,ymin:-1.4,ymax:4.2},
+     I:[{a:0,b:4,aT:'0',bT:'4',lo:x=>0,hi:x=>Math.sqrt(x),loT:'0',hiT:'\\sqrt{x}'}],
+     II:[{a:0,b:2,aT:'0',bT:'2',lo:y=>y*y,hi:y=>4,loT:'y^2',hiT:'4'}]}
+  ];
+  let cur=PRE[0],order='I',s=1,slider=null;
+  const pbox=$('#regPresets'),obox=$('#regOrder'),sbox=$('#regSliders');
+  PRE.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);b.onclick=()=>{cur=pr;
+    $$('.btn',pbox).forEach(x=>x.classList.remove('on'));b.classList.add('on');buildSlider();draw();};pbox.appendChild(b);});
+  $$('.btn',pbox)[0].classList.add('on');
+  [['I','dy dx  (type I, vertical strips)'],['II','dx dy  (type II, horizontal strips)']].forEach(([k,lab])=>{
+    const b=el('button',{class:'btn small'},lab);b.onclick=()=>{order=k;
+      $$('.btn',obox).forEach(x=>x.classList.remove('on'));b.classList.add('on');buildSlider();draw();};obox.appendChild(b);});
+  $$('.btn',obox)[0].classList.add('on');
+  function buildSlider(){
+    sbox.innerHTML='';
+    const pieces=order==='I'?cur.I:cur.II;
+    const lo=Math.min(...pieces.map(z=>z.a)),hi=Math.max(...pieces.map(z=>z.b));
+    s=lo+(hi-lo)*0.45;
+    slider=sliderRow(sbox,{label:order==='I'?'strip at x':'strip at y',min:lo,max:hi,step:(hi-lo)/120,value:s,onInput:v=>{s=v;draw();}});
+  }
+  function draw(){
+    Object.assign(p.o,cur.win);p.begin();
+    cur.I.forEach(z=>p.region(z.a,z.b,z.lo,z.hi,{fill:'rgba(37,99,235,.13)',stroke:'rgba(37,99,235,.3)'}));
+    cur.I.forEach(z=>{p.fn(z.lo,{color:'#7c3aed',width:2,xmin:z.a,xmax:z.b});p.fn(z.hi,{color:'#7c3aed',width:2,xmin:z.a,xmax:z.b});});
+    const pieces=order==='I'?cur.I:cur.II;
+    const z=pieces.find(t=>s>=t.a&&s<=t.b)||pieces[pieces.length-1];
+    const lo=z.lo(s),hi=z.hi(s);
+    const w=(order==='I'?(p.o.xmax-p.o.xmin):(p.o.ymax-p.o.ymin))*0.009;
+    const quad=order==='I'?[[s-w,lo],[s+w,lo],[s+w,hi],[s-w,hi]]:[[lo,s-w],[lo,s+w],[hi,s+w],[hi,s-w]];
+    p.poly(quad,{fill:'rgba(217,119,6,.85)',stroke:'#d97706',width:1});
+    p.point(order==='I'?[s,lo]:[lo,s],{color:'#d97706',r:4});
+    p.point(order==='I'?[s,hi]:[hi,s],{color:'#d97706',r:4});
+    const iv=order==='I'?'y':'x',ov=order==='I'?'x':'y';
+    const tex=pieces.map(t=>iintTex(t.aT,t.bT,t.loT,t.hiT,'f(x,y)',iv,ov)).join('\\;+\\;');
+    $('#regOut').innerHTML=D(R`\iint_D f\,dA=`+tex)+
+      `strip at ${ov} = ${fmtDec(s,2)}: ${iv} from ${fmtDec(lo,2)} to ${fmtDec(hi,2)}, length ${fmtDec(hi-lo,2)}`+
+      (pieces.length>1?`<br><b>this order needs ${pieces.length} integrals</b>`:'');
+    typeset($('#regOut'));
+  }
+  buildSlider();redrawOnShow('general',draw);draw();
+  new Drill({mount:'#drill-general',section:'general',goal:8,...mixDrill([Q.setupI,Q.setupI,Q.setupII,Q.reverse,Q.reverse,Q.evalRegion,Q.evalRegion,Q.areaRegion])});
+})();
+
+/* ============================================================ chapter 3: polar explorer */
+(function(){
+  const p=new Plot2D('#polPlot',{xmin:-2.8,xmax:2.8,ymin:-2.8,ymax:2.8,grid:false});
+  let rmin=0.5,rmax=2,tmin=0,tmax=8,mode='rect',curve=null,S=[];
+  const sb=$('#polSliders');
+  S.push(sliderRow(sb,{label:'r min',min:0,max:2.5,step:0.25,value:rmin,onInput:v=>{rmin=Math.min(v,rmax);S[0].set(rmin);mode='rect';draw();}}));
+  S.push(sliderRow(sb,{label:'r max',min:0,max:2.5,step:0.25,value:rmax,onInput:v=>{rmax=Math.max(v,rmin);S[1].set(rmax);mode='rect';draw();}}));
+  S.push(sliderRow(sb,{label:'θ min',min:-12,max:24,step:1,value:tmin,fmt:angStr,onInput:v=>{tmin=Math.min(v,tmax);S[2].set(tmin);mode='rect';draw();}}));
+  S.push(sliderRow(sb,{label:'θ max',min:-12,max:24,step:1,value:tmax,fmt:angStr,onInput:v=>{tmax=Math.max(v,tmin);S[3].set(tmax);mode='rect';draw();}}));
+  const CURVES={
+    cardioid:{f:t=>1+Math.cos(t),t0:0,t1:2*PI,tc:PI/3,tex:'r=1+\\cos\\theta',areaT:'\\tfrac{3\\pi}{2}',area:3*PI/2,
+      setup:R`A=\int_0^{2\pi}\!\!\int_0^{1+\cos\theta} r\,dr\,d\theta=\tfrac12\int_0^{2\pi}(1+\cos\theta)^2d\theta`},
+    circ:{f:t=>2*Math.cos(t),t0:-PI/2,t1:PI/2,tc:PI/5,tex:'r=2\\cos\\theta',areaT:'\\pi',area:PI,
+      setup:R`A=\int_{-\pi/2}^{\pi/2}\!\!\int_0^{2\cos\theta} r\,dr\,d\theta=\tfrac12\int_{-\pi/2}^{\pi/2}4\cos^2\theta\,d\theta`}
+  };
+  const pb=$('#polPresets');
+  const PRESETS=[['disk r ≤ 2',()=>{rmin=0;rmax=2;tmin=0;tmax=24;mode='rect';}],
+    ['annulus 1 ≤ r ≤ 2',()=>{rmin=1;rmax=2;tmin=0;tmax=24;mode='rect';}],
+    ['right half disk',()=>{rmin=0;rmax=2;tmin=-6;tmax=6;mode='rect';}],
+    ['quarter disk',()=>{rmin=0;rmax=2;tmin=0;tmax=6;mode='rect';}],
+    ['cardioid r = 1 + cos θ',()=>{mode='curve';curve=CURVES.cardioid;}],
+    ['circle r = 2 cos θ',()=>{mode='curve';curve=CURVES.circ;}]];
+  PRESETS.forEach(([n,fn])=>{const b=el('button',{class:'btn small'},n);
+    b.onclick=()=>{fn();$$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      S[0].set(rmin);S[1].set(rmax);S[2].set(tmin);S[3].set(tmax);draw();};pb.appendChild(b);});
+  function cell(r0,r1,t0,t1){
+    const pts=[];const N=16;
+    for(let i=0;i<=N;i++){const t=t0+(t1-t0)*i/N;pts.push([r1*Math.cos(t),r1*Math.sin(t)]);}
+    for(let i=N;i>=0;i--){const t=t0+(t1-t0)*i/N;pts.push([r0*Math.cos(t),r0*Math.sin(t)]);}
+    p.poly(pts,{fill:'rgba(217,119,6,.75)',stroke:'#d97706',width:1.2});
+  }
+  function draw(){
+    p.begin();
+    for(let k=1;k<=5;k++)p.param(t=>[0.5*k*Math.cos(t),0.5*k*Math.sin(t)],0,2*PI,{color:'#eeece6',width:1});
+    for(let k=0;k<12;k++){const a=k*PI/6;p.param(t=>[t*Math.cos(a),t*Math.sin(a)],0,2.7,{color:'#eeece6',width:1});}
+    let out='';
+    if(mode==='rect'){
+      const a0=angVal(tmin),a1=angVal(tmax);
+      const pts=[];const N=120;
+      for(let i=0;i<=N;i++){const t=a0+(a1-a0)*i/N;pts.push([rmax*Math.cos(t),rmax*Math.sin(t)]);}
+      for(let i=N;i>=0;i--){const t=a0+(a1-a0)*i/N;pts.push([rmin*Math.cos(t),rmin*Math.sin(t)]);}
+      p.poly(pts,{fill:'rgba(37,99,235,.14)',stroke:'#2563eb',width:1.6});
+      const dr=Math.max(0.15,(rmax-rmin)*0.2),dt=Math.max(0.13,(a1-a0)*0.09);
+      const rc=rmin+(rmax-rmin)*0.5-dr/2,tc=(a0+a1)/2-dt/2;
+      if(rmax>rmin&&a1>a0)cell(rc,rc+dr,tc,tc+dt);
+      const area=0.5*(rmax*rmax-rmin*rmin)*(a1-a0);
+      const approx=rc*dr*dt,exactCell=0.5*((rc+dr)*(rc+dr)-rc*rc)*dt;
+      out=D(iintTex(texAng(tmin),texAng(tmax),fmtDec(rmin,2),fmtDec(rmax,2),'r','r','\\theta')+R`=\tfrac12\left(${fmtDec(rmax,2)}^2-${fmtDec(rmin,2)}^2\right)\left(${texAng(tmax)}-${texAng(tmin)}\right)`)+
+        `shaded area = <b>${fmtDec(area,4)}</b><br>`+
+        `orange cell: r = ${fmtDec(rc,2)}, Δr = ${fmtDec(dr,2)}, Δθ = ${fmtDec(dt,3)}<br>`+
+        `r ΔrΔθ = ${fmtDec(approx,4)} vs true cell area ${fmtDec(exactCell,4)}`;
+    }else{
+      const pts=[];const N=300;
+      for(let i=0;i<=N;i++){const t=curve.t0+(curve.t1-curve.t0)*i/N;pts.push([curve.f(t)*Math.cos(t),curve.f(t)*Math.sin(t)]);}
+      p.poly(pts,{fill:'rgba(37,99,235,.14)',stroke:'#7c3aed',width:2});
+      const tc=curve.tc,rc=0.5*curve.f(tc);
+      cell(rc,rc+0.22,tc,tc+PI/12);
+      out=D(curve.setup+`=${curve.areaT}`)+
+        `this region is <b>not</b> a polar rectangle: the outer ${M('r')}-limit is the function ${M(curve.tex.replace('r=',''))}<br>`+
+        `enclosed area = <b>${fmtDec(curve.area,4)}</b>`;
+    }
+    $('#polOut').innerHTML=out;typeset($('#polOut'));
+  }
+  redrawOnShow('polar',draw);draw();
+  new Drill({mount:'#drill-polar',section:'polar',goal:6,...mixDrill([Q.polarEval,Q.polarEval,Q.polarLimits,Q.polarLimits,Q.polarArea,Q.polarVolume])});
+})();
+
+/* ============================================================ chapter 4: lamina explorer */
+(function(){
+  const p=new Plot2D('#lamPlot',{xmin:-0.5,xmax:2.7,ymin:-0.5,ymax:2.7});
+  const SHAPES=[
+    {n:'rectangle [0,2] × [0,1.5]',inside:(x,y)=>x>=0&&x<=2&&y>=0&&y<=1.5,outline:[[0,0],[2,0],[2,1.5],[0,1.5]],X:[0,2],Y:[0,1.5]},
+    {n:'triangle (0,0), (2,0), (0,2)',inside:(x,y)=>x>=0&&y>=0&&x+y<=2,outline:[[0,0],[2,0],[0,2]],X:[0,2],Y:[0,2]}
+  ];
+  const DN=[{n:'ρ = 1',f:()=>1},{n:'ρ = x',f:(x,y)=>x},{n:'ρ = y',f:(x,y)=>y},{n:'ρ = xy',f:(x,y)=>x*y},{n:'ρ = x + y',f:(x,y)=>x+y}];
+  let sh=SHAPES[0],dn=DN[1];
+  const sbox=$('#lamShape'),dbox=$('#lamDens');
+  SHAPES.forEach(s=>{const b=el('button',{class:'btn small'},s.n);b.onclick=()=>{sh=s;
+    $$('.btn',sbox).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};sbox.appendChild(b);});
+  $$('.btn',sbox)[0].classList.add('on');
+  DN.forEach(d=>{const b=el('button',{class:'btn small'},d.n);b.onclick=()=>{dn=d;
+    $$('.btn',dbox).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};dbox.appendChild(b);});
+  $$('.btn',dbox)[1].classList.add('on');
+  function stats(){
+    const N=220,dx=(sh.X[1]-sh.X[0])/N,dy=(sh.Y[1]-sh.Y[0])/N;
+    let m=0,mx=0,my=0,A=0,cx=0,cy=0,maxd=0;
+    for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+      const x=sh.X[0]+(i+0.5)*dx,y=sh.Y[0]+(j+0.5)*dy;
+      if(!sh.inside(x,y))continue;
+      const r=dn.f(x,y);if(r>maxd)maxd=r;
+      const dA=dx*dy;m+=r*dA;my+=x*r*dA;mx+=y*r*dA;A+=dA;cx+=x*dA;cy+=y*dA;
+    }
+    return {m,mx,my,A,cx:cx/A,cy:cy/A,xb:my/m,yb:mx/m,maxd};
+  }
+  function draw(){
+    const st=stats();
+    p.begin();
+    p.heat((x,y)=>sh.inside(x,y)?dn.f(x,y):NaN,{n:90,colorFn:v=>`rgba(217,119,6,${(0.10+0.55*(st.maxd?v/st.maxd:0)).toFixed(3)})`});
+    p.poly(sh.outline,{fill:null,stroke:'#7c3aed',width:2});
+    p.point([st.cx,st.cy],{color:'#8b877e',r:5,ring:true,label:'centroid'});
+    p.point([st.xb,st.yb],{color:'#16a34a',r:6,label:'center of mass'});
+    $('#lamOut').innerHTML=`density ${dn.n.replace('ρ','ρ')} on the ${sh.n.split(' ')[0]}<br>`+
+      `m = ∫∫ ρ dA = <b>${fmtDec(st.m,3)}</b><br>`+
+      `M<sub>y</sub> = ∫∫ xρ dA = ${fmtDec(st.my,3)}, M<sub>x</sub> = ∫∫ yρ dA = ${fmtDec(st.mx,3)}<br>`+
+      `center of mass = (<b>${fmtDec(st.xb,3)}</b>, <b>${fmtDec(st.yb,3)}</b>)<br>`+
+      `centroid (ρ = 1) = (${fmtDec(st.cx,3)}, ${fmtDec(st.cy,3)})`;
+  }
+  redrawOnShow('apps',draw);draw();
+  new Drill({mount:'#drill-apps',section:'apps',goal:4,...mixDrill([Q.massRect,Q.massRect,Q.comRect,Q.comRect,Q.massTri,Q.planeArea])});
+})();
+
+/* ============================================================ chapter 5: transformation explorer */
+(function(){
+  const p=new Plot2D('#cvPlot',{xmin:-3,xmax:3,ymin:-3,ymax:3});
+  const CVP=[
+    {n:'polar: x = u cos v, y = u sin v',T:(u,v)=>[u*Math.cos(v),u*Math.sin(v)],U:[0,2.2],V:[0,2*PI],
+     J:(u,v)=>u,JT:'|J| = u',win:{xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:2.6}},
+    {n:'x = u + v, y = u − v',T:(u,v)=>[u+v,u-v],U:[-1.4,1.4],V:[-1.4,1.4],
+     J:()=>-2,JT:'|J| = 2',win:{xmin:-3,xmax:3,ymin:-3,ymax:3}},
+    {n:'x = u², y = v',T:(u,v)=>[u*u,v],U:[0,1.7],V:[-1.7,1.7],
+     J:(u,v)=>2*u,JT:'|J| = 2u',win:{xmin:-0.6,xmax:3,ymin:-1.8,ymax:1.8}},
+    {n:'x = u, y = uv',T:(u,v)=>[u,u*v],U:[0,2],V:[-1.5,1.5],
+     J:(u,v)=>u,JT:'|J| = u',win:{xmin:-0.5,xmax:2.4,ymin:-3,ymax:3}}
+  ];
+  let cur=CVP[0],u0=0.8,v0=1,sl=[];
+  const pb=$('#cvPresets'),sb=$('#cvSliders');
+  CVP.forEach(c=>{const b=el('button',{class:'btn small'},c.n);b.onclick=()=>{cur=c;
+    $$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');build();draw();};pb.appendChild(b);});
+  $$('.btn',pb)[0].classList.add('on');
+  const hOf=()=>(cur.U[1]-cur.U[0])/8, kOf=()=>(cur.V[1]-cur.V[0])/8;
+  function build(){
+    sb.innerHTML='';
+    u0=cur.U[0]+(cur.U[1]-cur.U[0])*0.4;v0=cur.V[0]+(cur.V[1]-cur.V[0])*0.35;
+    sl=[sliderRow(sb,{label:'u',min:cur.U[0],max:cur.U[1]-hOf(),step:(cur.U[1]-cur.U[0])/40,value:u0,onInput:v=>{u0=v;draw();}}),
+        sliderRow(sb,{label:'v',min:cur.V[0],max:cur.V[1]-kOf(),step:(cur.V[1]-cur.V[0])/40,value:v0,onInput:v=>{v0=v;draw();}})];
+  }
+  const shoe=pts=>{let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=a[0]*b[1]-b[0]*a[1];}return Math.abs(s)/2;};
+  function draw(){
+    Object.assign(p.o,cur.win);p.begin();
+    const NL=9;
+    for(let i=0;i<=NL;i++){const u=cur.U[0]+(cur.U[1]-cur.U[0])*i/NL;
+      p.param(v=>cur.T(u,v),cur.V[0],cur.V[1],{color:'#cbd8f5',width:1.2});}
+    for(let j=0;j<=NL;j++){const v=cur.V[0]+(cur.V[1]-cur.V[0])*j/NL;
+      p.param(u=>cur.T(u,v),cur.U[0],cur.U[1],{color:'#cbd8f5',width:1.2});}
+    const h=hOf(),k=kOf();
+    const edge=[];const N=10;
+    for(let i=0;i<=N;i++)edge.push(cur.T(u0+h*i/N,v0));
+    for(let i=0;i<=N;i++)edge.push(cur.T(u0+h,v0+k*i/N));
+    for(let i=N;i>=0;i--)edge.push(cur.T(u0+h*i/N,v0+k));
+    for(let i=N;i>=0;i--)edge.push(cur.T(u0,v0+k*i/N));
+    p.poly(edge,{fill:'rgba(217,119,6,.45)',stroke:'#d97706',width:1.6});
+    const c=cur.T(u0+h/2,v0+k/2);p.point(c,{color:'#d97706',r:3});
+    const J=Math.abs(cur.J(u0,v0)),cellA=h*k,imgA=shoe(edge);
+    $('#cvOut').innerHTML=`cell corner (u, v) = (${fmtDec(u0,2)}, ${fmtDec(v0,2)}), Δu = ${fmtDec(h,2)}, Δv = ${fmtDec(k,2)}<br>`+
+      `${cur.JT} = <b>${fmtDec(J,3)}</b><br>`+
+      `cell area ΔuΔv = ${fmtDec(cellA,4)}<br>`+
+      `image area = ${fmtDec(imgA,4)}<br>`+
+      `ratio image / cell = <b>${fmtDec(cellA?imgA/cellA:0,3)}</b>`;
+  }
+  build();redrawOnShow('change',draw);draw();
+  new Drill({mount:'#drill-change',section:'change',goal:5,...mixDrill([Q.jacobian,Q.jacobian,Q.changeEval,Q.imageSquare,Q.uvRegion,Q.uvRegion])});
+})();
+
+/* ============================================================ quiz */
+/* twelve types, one draw each: every attempt covers all five chapters */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.rectPoly,Q.rectProduct,
+  Q.setupI,Q.reverse,Q.evalRegion,
+  Q.polarEval,Q.polarLimits,Q.polarArea,
+  Q.massRect,Q.comRect,
+  Q.jacobian,Q.changeEval]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'iterated integral over a rectangle':q=>({v:q.ansStr}),
+  'product integral over a rectangle':q=>({v:q.ansStr}),
+  'midpoint rule estimate':q=>({v:q.ansStr}),
+  'average value over a rectangle':q=>({v:q.ansStr}),
+  'set up as a type I integral':q=>({oa:q.reg.I.aT,ob:q.reg.I.bT,il:q.reg.I.lo,ih:q.reg.I.hi}),
+  'set up as a type II integral':q=>({oa:q.reg.II.aT,ob:q.reg.II.bT,il:q.reg.II.lo,ih:q.reg.II.hi}),
+  'reverse the order of integration':q=>({oa:q.want.aT,ob:q.want.bT,il:q.want.lo,ih:q.want.hi}),
+  'evaluate over a general region':q=>({v:q.ansStr}),
+  'area of a region':q=>({v:q.ansStr}),
+  'convert to polar and evaluate':q=>({v:q.ansStr}),
+  'polar limits for a region':q=>({rl:q.ansStr[0],rh:q.ansStr[1],tl:q.ansStr[2],th:q.ansStr[3]}),
+  'area of a polar region':q=>({v:q.ansStr}),
+  'volume with polar coordinates':q=>({v:q.ansStr}),
+  'mass of a rectangular lamina':q=>({m:q.ansStr}),
+  'center of mass of a rectangular lamina':q=>({c:q.ansStr}),
+  'mass of a triangular lamina':q=>({m:q.ansStr}),
+  'surface area of a plane':q=>({a:q.ansStr}),
+  'the Jacobian of a transformation':q=>({j:q.ansStr}),
+  'evaluate with a given transformation':q=>({v:q.ansStr}),
+  'image of the unit square':q=>({_btn:q.idx}),
+  'change of variables with u = x - y, v = x + y':q=>({v:q.ansStr})
+};
+
+initModule({key:'double-integrals',title:'Double Integrals',sub:'Module 7 · Stewart 15.1 to 15.4 and 15.9'});
+</script>
+</body>
+</html>

@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Triple Integrals</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 8 · Stewart 15.6 to 15.8</p>
+  <h2>Triple integrals</h2>
+  <p class="lead">A triple integral adds up a density over a solid. The formula is never the hard part. Finding the limits is, and picking the right coordinate system is how you make the limits easy.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you a solid to spin around, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats: numbers can be exact, like <code>4pi/3</code>, <code>27/8</code>, <code>sqrt(2)/2</code>, or <code>4*pi*(e-1)/3</code>. Angles can be typed as <code>pi/4</code>, <code>7pi/4</code>, or a decimal. Limits of integration that depend on another variable are typed as expressions, like <code>4 - r^2</code>, <code>3(1 - x/2 - y/5)</code>, or <code>sqrt(9-y^2)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the slice, the radius, the moving part</span>
+      <span><i class="dot" style="background:var(--b)"></i> the solid and its angles</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result</span>
+      <span><i class="dot" style="background:var(--d)"></i> points</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Evaluate an iterated triple integral over a box in any of the six orders.</li>
+      <li>Describe a solid as a type 1 region, project it onto the \(xy\)-plane, and write the three pairs of limits in order.</li>
+      <li>Find volumes and masses with \(\iiint_E 1\,dV\) and \(\iiint_E \rho\,dV\).</li>
+      <li>Convert points and surfaces between rectangular, cylindrical, and spherical coordinates.</li>
+      <li>Write \(dV\) correctly in each system: \(dx\,dy\,dz\), \(r\,dz\,dr\,d\theta\), \(\rho^2\sin\phi\,d\rho\,d\theta\,d\phi\).</li>
+      <li>Look at a solid and say within a few seconds which coordinate system makes it easy.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 RECTANGULAR -->
+<section data-id="rect" data-title="Triple integrals in rectangular coordinates" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 15.6</p>
+  <h2>Triple integrals in rectangular coordinates</h2>
+  <p class="lead">One more integral sign, one more variable, one more pair of limits. Everything that is hard here is bookkeeping about the limits.</p>
+
+  <p>Over a <b>rectangular box</b> \(B=[a,b]\times[c,d]\times[r,s]\), Fubini's theorem says the triple integral is an iterated integral and the order does not matter:</p>
+  <div class="formula">\(\displaystyle\iiint_B f\,dV=\int_r^s\!\!\int_c^d\!\!\int_a^b f(x,y,z)\,dx\,dy\,dz\)<span class="cap">The innermost differential goes with the innermost integral sign. Over a box there are <b>six</b> orders and all six give the same number, because every limit is a constant.</span></div>
+
+  <p>Over a <b>general solid</b> the order matters, because the limits stop being constants. The workhorse description is a <b>type 1</b> solid: the solid sits between two surfaces, a floor and a ceiling, over a flat shadow \(D\) in the \(xy\)-plane.</p>
+  <div class="formula">\(\displaystyle E=\{(x,y,z)\;:\;(x,y)\in D,\; u_1(x,y)\le z\le u_2(x,y)\}\)<br>\(\displaystyle\iiint_E f\,dV=\iint_D\left[\int_{u_1(x,y)}^{u_2(x,y)} f(x,y,z)\,dz\right]dA\)<span class="cap">Do the \(z\) integral first, holding \(x\) and \(y\) fixed. What is left is an ordinary double integral over the shadow \(D\).</span></div>
+
+  <p>Then \(D\) itself is type I or type II, exactly as in double integrals, which fixes the last two pairs of limits. For a type I shadow you get the order \(dz\,dy\,dx\):</p>
+  <div class="formula">\(\displaystyle\iiint_E f\,dV=\int_a^b\!\!\int_{g_1(x)}^{g_2(x)}\!\!\int_{u_1(x,y)}^{u_2(x,y)} f(x,y,z)\,dz\,dy\,dx\)<span class="cap">Read it inside out: \(z\) may depend on \(x\) and \(y\); \(y\) may depend on \(x\); \(x\) is trapped between two numbers.</span></div>
+
+  <p><b>The rule that never breaks.</b> The outermost limits are always constants. Each limit may only use variables that are still to be integrated, that is, variables sitting further out.</p>
+
+  <p>A solid can be projected onto any of the three coordinate planes, giving a <b>type 2</b> description (project onto the \(yz\)-plane, integrate \(x\) first) or a <b>type 3</b> description (project onto the \(xz\)-plane, integrate \(y\) first). Pick whichever projection has the simplest shadow and whichever inner integral you can actually do.</p>
+
+  <div class="formula">\(\displaystyle V(E)=\iiint_E 1\,dV\qquad\qquad m=\iiint_E \rho(x,y,z)\,dV\)<span class="cap">Volume is the triple integral of 1. Mass is the triple integral of the density. Same limits, different integrand.</span></div>
+
+  <div class="card">
+    <h4>Step-by-step: setting up \(\iiint_E z\,dV\) over a tetrahedron</h4>
+    <p class="small muted">\(E\) is bounded by the plane \(x+y+z=a\) and the three coordinate planes. Order: \(dz\,dy\,dx\).</p>
+    <ol class="steps" id="tetSteps"></ol>
+    <div class="expr" id="tetExpr"></div>
+    <div class="controls">
+      <button class="btn" id="tetPrev">◀ Back</button>
+      <button class="btn primary" id="tetNext">Next step ▶</button>
+      <button class="btn" id="tetNew">New \(a\)</button>
+      <span class="status" id="tetStatus"></span>
+    </div>
+    <p class="hint">Every type 1 setup is these same four moves: ceiling minus floor for \(z\), set \(z\) to the floor to find the shadow, slice the shadow for \(y\), then read off the two numbers for \(x\).</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: slice a solid</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="rectScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The orange polygon is the cross-section of the solid at the chosen \(x\).</p></div>
+      <div>
+        <div class="presets" id="rectPresets"></div>
+        <div class="sliders" id="rectSliders"></div>
+        <div id="rectLims" style="margin-top:10px;font-size:15px"></div>
+        <div class="readout" id="rectOut"></div>
+        <p class="hint">Sweep \(x\) from one end to the other and watch the orange slice. Its left and right edges are the \(y\) limits, its bottom and top edges are the \(z\) limits, and the two \(x\) values where the slice vanishes are the \(x\) limits. That is the whole setup, drawn.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Which order.</b> Integrating \(z\) first works whenever the solid has a single floor surface and a single ceiling surface. If a vertical line enters and leaves the solid more than once, split the solid, or project onto a different plane instead.</div>
+  <div class="warn"><b>Constants on the outside.</b> An answer like \(\int_0^{1-y}\!\int_0^1 \cdots\,dx\,dy\) is wrong no matter what the solid is: the outer limits contain \(y\), the very variable being integrated there. If a variable survives to the end, you have made a mistake.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-rect"></div>
+</section>
+
+<!-- ============================================================ 2 CYLINDRICAL -->
+<section data-id="cyl" data-title="Cylindrical coordinates" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 15.7</p>
+  <h2>Cylindrical coordinates</h2>
+  <p class="lead">Polar coordinates in the \(xy\)-plane, with \(z\) left alone. Use them whenever the solid has an axis of symmetry along \(z\).</p>
+
+  <div class="formula">\(x=r\cos\theta\qquad y=r\sin\theta\qquad z=z\)<br>\(r^2=x^2+y^2\qquad \tan\theta=\dfrac{y}{x}\qquad z=z\)<span class="cap">Left: cylindrical to rectangular, always safe. Right: rectangular to cylindrical. Take \(r\ge 0\) and read \(\theta\) from the quadrant of \((x,y)\).</span></div>
+
+  <p>The point \((r,\theta,z)\) is "go out a distance \(r\) from the \(z\)-axis in the direction \(\theta\), then rise to height \(z\)". Nothing about \(z\) changes.</p>
+
+  <div class="formula">\(dV=r\,dz\,dr\,d\theta\)<span class="cap">The extra \(r\) is the polar area element \(r\,dr\,d\theta\) with \(dz\) along for the ride. A little box has sides \(dr\), \(r\,d\theta\), and \(dz\).</span></div>
+
+  <div class="formula">\(\displaystyle\iiint_E f\,dV=\int_{\alpha}^{\beta}\!\!\int_{h_1(\theta)}^{h_2(\theta)}\!\!\int_{u_1(r,\theta)}^{u_2(r,\theta)} f(r\cos\theta,\,r\sin\theta,\,z)\;r\,dz\,dr\,d\theta\)<span class="cap">The same three-layer structure as before, with \(r,\theta\) replacing \(x,y\) and one extra factor of \(r\).</span></div>
+
+  <h3>The surfaces you should recognize on sight</h3>
+  <table class="simple">
+    <tr><th>Equation</th><th>Surface</th><th>Why</th></tr>
+    <tr><td>\(r=a\)</td><td>circular cylinder of radius \(a\)</td><td>every point at distance \(a\) from the \(z\)-axis</td></tr>
+    <tr><td>\(\theta=c\)</td><td>half-plane hinged on the \(z\)-axis</td><td>one fixed direction, all \(r\ge0\) and all \(z\)</td></tr>
+    <tr><td>\(z=r\)</td><td>cone</td><td>height equals distance from the axis, a \(45^\circ\) slope</td></tr>
+    <tr><td>\(z=r^2\)</td><td>paraboloid</td><td>\(z=x^2+y^2\) written in polar</td></tr>
+    <tr><td>\(z=c\)</td><td>horizontal plane</td><td>\(r,\theta\) free</td></tr>
+    <tr><td>\(r^2+z^2=a^2\)</td><td>sphere of radius \(a\)</td><td>\(x^2+y^2+z^2=a^2\)</td></tr>
+    <tr><td>\(r=2a\cos\theta\)</td><td>off-center cylinder</td><td>multiply by \(r\): \(x^2+y^2=2ax\), the circle \((x-a)^2+y^2=a^2\) swept vertically</td></tr>
+  </table>
+
+  <div class="card">
+    <h4>Explore: the point \((r,\theta,z)\)</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="cylScene"></canvas><p class="plotcap">Orange: the radius \(r\) in the \(xy\)-plane. Blue: the angle \(\theta\), swept from the positive \(x\)-axis. Green: the rise \(z\).</p></div>
+      <div>
+        <div class="sliders three" id="cylSliders"></div>
+        <div class="presets" id="cylPresets"></div>
+        <div class="readout" id="cylOut"></div>
+        <p class="hint">Set \(\theta\) and then sweep \(r\): the point traces a ray. Set \(r\) and sweep \(\theta\): a circle. Turn on a preset solid and notice that each one is described by holding one of \(r,\theta,z\) between constants, which is exactly why the limits come out clean.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Do the \(z\) integral first, then polar.</b> A cylindrical setup is a type 1 setup whose shadow \(D\) you describe in polar coordinates. Find the floor and ceiling in terms of \(r\) and \(\theta\), then sweep the shadow.</div>
+  <div class="warn"><b>Two standing mistakes.</b> First, the missing \(r\): \(dV=r\,dz\,dr\,d\theta\), not \(dz\,dr\,d\theta\). Second, the quadrant: \(\tan\theta=y/x\) has two solutions in \([0,2\pi)\) and your calculator only ever returns one of them. For \((-1,-1)\) the answer is \(5\pi/4\), not \(\pi/4\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-cyl"></div>
+</section>
+
+<!-- ============================================================ 3 SPHERICAL -->
+<section data-id="sph" data-title="Spherical coordinates" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 15.8</p>
+  <h2>Spherical coordinates</h2>
+  <p class="lead">Locate a point by how far out it is and by two angles. Balls, cones through the origin, and anything built from \(x^2+y^2+z^2\) become trivial.</p>
+
+  <p>The three coordinates are \(\rho\ge 0\), the distance from the origin; \(\theta\), the same angle as in cylindrical coordinates, measured in the \(xy\)-plane from the positive \(x\)-axis; and \(\phi\), the angle down from the positive \(z\)-axis, with \(0\le\phi\le\pi\).</p>
+
+  <div class="formula">\(x=\rho\sin\phi\cos\theta\qquad y=\rho\sin\phi\sin\theta\qquad z=\rho\cos\phi\)<br>\(\rho^2=x^2+y^2+z^2\)<span class="cap">Read them as two steps. First drop to the \(xy\)-plane: the shadow has radius \(r=\rho\sin\phi\). Then \(x=r\cos\theta\), \(y=r\sin\theta\) as always, and the height is \(z=\rho\cos\phi\).</span></div>
+
+  <p>So cylindrical and spherical are linked by \(r=\rho\sin\phi\) and \(z=\rho\cos\phi\), which is just polar coordinates in the \(rz\)-half-plane.</p>
+
+  <div class="formula">\(dV=\rho^2\sin\phi\;d\rho\,d\theta\,d\phi\)<span class="cap">The little box has sides \(d\rho\) outward, \(\rho\,d\phi\) along a meridian, and \(\rho\sin\phi\,d\theta\) along a parallel of latitude, because that circle has radius \(\rho\sin\phi\). Multiply: \(\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\).</span></div>
+
+  <div class="formula">\(\displaystyle\iiint_E f\,dV=\int_{c}^{d}\!\!\int_{\alpha}^{\beta}\!\!\int_{g_1(\theta,\phi)}^{g_2(\theta,\phi)} f\;\rho^2\sin\phi\;d\rho\,d\theta\,d\phi\)<span class="cap">For a ball, a hemisphere, a shell, or an ice-cream cone every one of these six limits is a constant.</span></div>
+
+  <h3>The surfaces you should recognize on sight</h3>
+  <table class="simple">
+    <tr><th>Equation</th><th>Surface</th><th>Why</th></tr>
+    <tr><td>\(\rho=a\)</td><td>sphere of radius \(a\) centered at the origin</td><td>constant distance from the origin</td></tr>
+    <tr><td>\(\phi=c\), \(c\ne\pi/2\)</td><td>cone with vertex at the origin</td><td>constant angle from the \(z\)-axis; \(\phi=\pi/4\) is \(z=\sqrt{x^2+y^2}\)</td></tr>
+    <tr><td>\(\phi=\pi/2\)</td><td>the \(xy\)-plane</td><td>the degenerate cone: the whole plane \(z=0\)</td></tr>
+    <tr><td>\(\theta=c\)</td><td>half-plane</td><td>same as in cylindrical</td></tr>
+    <tr><td>\(\rho=2a\cos\phi\)</td><td>sphere of radius \(a\) through the origin</td><td>multiply by \(\rho\): \(x^2+y^2+z^2=2az\), so \(x^2+y^2+(z-a)^2=a^2\)</td></tr>
+    <tr><td>\(\rho\sin\phi=a\)</td><td>circular cylinder \(r=a\)</td><td>\(\rho\sin\phi\) is exactly the cylindrical \(r\)</td></tr>
+    <tr><td>\(\rho\cos\phi=c\)</td><td>horizontal plane \(z=c\)</td><td>\(\rho\cos\phi\) is exactly \(z\)</td></tr>
+  </table>
+
+  <div class="card">
+    <h4>Explore: the point \((\rho,\theta,\phi)\) and the volume element</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="sphScene"></canvas><p class="plotcap">Orange: the segment of length \(\rho\) from the origin. Blue: \(\phi\), swept down from the \(z\)-axis. Green: \(\theta\), swept in the \(xy\)-plane. The shaded patch is one curved face of the volume element.</p></div>
+      <div>
+        <div class="sliders three" id="sphSliders"></div>
+        <div class="readout" id="sphOut"></div>
+        <p class="hint">Hold \(\rho\) and \(\theta\) fixed and slide \(\phi\) from \(0\) to \(\pi\): the point runs down a meridian from the north pole to the south pole. Now watch the patch: near the poles it shrinks to nothing, and that shrinking is the \(\sin\phi\) in \(dV\). Near \(\phi=\pi/2\) the patch is at its widest.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>The same \(\theta\).</b> \(\theta\) means exactly the same thing in cylindrical and in spherical coordinates: the angle in the \(xy\)-plane, measured from the positive \(x\)-axis. Everything you know about finding \(\theta\), including the quadrant trap, carries over unchanged.</div>
+  <div class="warn"><b>\(\phi\) is measured from the positive \(z\)-axis</b>, not from the \(xy\)-plane. The north pole is \(\phi=0\), the equator is \(\phi=\pi/2\), the south pole is \(\phi=\pi\). An upper hemisphere is \(0\le\phi\le\pi/2\), never \(0\le\phi\le\pi\) with \(z\ge 0\) tacked on.</div>
+  <div class="warn"><b>Never drop \(\rho^2\sin\phi\).</b> It is the single most common lost point on this material. Write \(dV=\rho^2\sin\phi\,d\rho\,d\theta\,d\phi\) first, before you write a single limit, and the rest of the problem is arithmetic.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-sph"></div>
+</section>
+
+<!-- ============================================================ 4 CHOOSING -->
+<section data-id="choose" data-title="Choosing coordinates" data-goal="6">
+  <p class="eyebrow">Chapter 4 · Stewart 15.6 to 15.8</p>
+  <h2>Choosing coordinates</h2>
+  <p class="lead">Three systems, one decision. Read the boundary first, the integrand second, then commit.</p>
+
+  <table class="simple">
+    <tr><th>Use</th><th>When the solid is</th><th>Give-aways in the integrand</th><th>\(dV\)</th></tr>
+    <tr><td><b>rectangular</b></td><td>a box, a tetrahedron, anything cut out by planes</td><td>polynomials in \(x,y,z\) with no \(x^2+y^2\) grouping</td><td>\(dx\,dy\,dz\)</td></tr>
+    <tr><td><b>cylindrical</b></td><td>a cylinder, a cone, a paraboloid, anything with an axis of symmetry along \(z\)</td><td>\(x^2+y^2\) appears, with \(z\) sitting separately</td><td>\(r\,dz\,dr\,d\theta\)</td></tr>
+    <tr><td><b>spherical</b></td><td>a ball, a hemisphere, a shell, a cone through the origin, an ice-cream cone</td><td>\(x^2+y^2+z^2\) appears as a block, or \(\sqrt{x^2+y^2+z^2}\)</td><td>\(\rho^2\sin\phi\,d\rho\,d\theta\,d\phi\)</td></tr>
+  </table>
+
+  <p>The boundary surfaces usually decide it. A sphere plus a cone through the origin is spherical, every time. A cylinder plus two planes is cylindrical. Planes only is rectangular. The tie-breaker, when a solid could go either way, is which choice makes all six limits constants.</p>
+
+  <p>The factors \(r\) and \(\rho^2\sin\phi\) are <b>Jacobians</b>: they measure how much a little box in the new coordinates gets stretched when it is mapped into space. That is why they cannot be left out, and why they carry a length and a length-squared respectively.</p>
+
+  <div class="card">
+    <h4>Explore: each system's natural grid</h4>
+    <div class="minis" id="gridMinis">
+      <div><canvas class="scene" id="gridBox"></canvas><p class="cap">Rectangular: three families of flat sheets \(x=c\), \(y=c\), \(z=c\). The natural solid is a box.</p></div>
+      <div><canvas class="scene" id="gridCyl"></canvas><p class="cap">Cylindrical: nested cylinders \(r=c\), half-planes \(\theta=c\), horizontal planes \(z=c\). The natural solid is a can.</p></div>
+      <div><canvas class="scene" id="gridSph"></canvas><p class="cap">Spherical: nested spheres \(\rho=c\), cones \(\phi=c\) (the parallels), half-planes \(\theta=c\) (the meridians). The natural solid is a ball.</p></div>
+    </div>
+    <p class="hint">Drag any of the three. Ask yourself, for each solid you meet in the drill: can I build its boundary out of these sheets alone? If yes, every limit will be a constant and the integral will be short.</p>
+  </div>
+
+  <div class="note"><b>Constant limits are the scoreboard.</b> The right coordinate system is usually the one in which the most limits are plain numbers. A ball in rectangular coordinates needs \(\sqrt{a^2-x^2-y^2}\) twice; in spherical it needs \(0\le\rho\le a\), \(0\le\phi\le\pi\), \(0\le\theta\le 2\pi\), and nothing else.</div>
+  <div class="warn"><b>Do not mix the systems up in the integrand.</b> \(x^2+y^2+z^2\) is \(\rho^2\) in spherical but \(r^2+z^2\) in cylindrical, not \(r^2\). And \(x^2+y^2\) is \(r^2\) in cylindrical but \(\rho^2\sin^2\phi\) in spherical, not \(\rho^2\). Convert the integrand deliberately, one term at a time.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-choose"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const exIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{wide:true,placeholder:ph}));
+const val=(el,k)=>$(`[data-k=${k}]`,el).value;
+const limRows=(el,rows)=>rows.forEach(([lab,k,opts])=>el.appendChild(ansLine(lab,k,opts||{})));
+const hintBox=(el,html)=>{let h=$('.hintbox',el);if(!h){h=document.createElement('div');h.className='hintbox note';el.appendChild(h);}h.innerHTML=html;};
+
+/* exact numbers of the form (n/d)*sqrt(rad) -------------------------------- */
+function simpEx(n,d,rad){
+  let a=1;for(let k=2;k*k<=rad;k++){while(rad%(k*k)===0){rad/=k*k;a*=k;}}
+  n*=a;if(d<0){n=-n;d=-d;}
+  if(n===0)return [0,1,1];
+  const g=gcd(n,d)||1;return [n/g,d/g,rad];
+}
+const mulEx=(A,B)=>simpEx(A[0]*B[0],A[1]*B[1],A[2]*B[2]);
+const scaleEx=(k,A)=>simpEx(k*A[0],A[1],A[2]);
+const valEx=A=>A[0]/A[1]*Math.sqrt(A[2]);
+function texEx(A){
+  const [n,d,rad]=A;if(n===0)return '0';
+  const s=n<0?'-':'',N=Math.abs(n);
+  if(rad===1)return d===1?s+N:`${s}\\tfrac{${N}}{${d}}`;
+  const num=(N===1?'':String(N))+`\\sqrt{${rad}}`;
+  return d===1?s+num:`${s}\\tfrac{${num}}{${d}}`;
+}
+function strEx(A){
+  const [n,d,rad]=A;if(n===0)return '0';
+  const s=n<0?'-':'',N=Math.abs(n);
+  let t=rad===1?String(N):((N===1?'':N+'*')+'sqrt('+rad+')');
+  if(d!==1)t+='/'+d;
+  return s+t;
+}
+/* exact rationals ---------------------------------------------------------- */
+const ratRed=(n,d)=>{if(d<0){n=-n;d=-d;}const g=gcd(n,d)||1;return [n/g,d/g];};
+const texRat=([n,d])=>d===1?String(n):`${n<0?'-':''}\\tfrac{${Math.abs(n)}}{${d}}`;
+const strRat=([n,d])=>d===1?String(n):`${n}/${d}`;
+
+/* the sixteen standard angles, with exact cosine and sine ------------------ */
+const ANGS=[
+  {u:0,    tex:'0',                    s:'0',      cos:[1,1,1],  sin:[0,1,1]},
+  {u:1/6,  tex:R`\tfrac{\pi}{6}`,      s:'pi/6',   cos:[1,2,3],  sin:[1,2,1]},
+  {u:1/4,  tex:R`\tfrac{\pi}{4}`,      s:'pi/4',   cos:[1,2,2],  sin:[1,2,2]},
+  {u:1/3,  tex:R`\tfrac{\pi}{3}`,      s:'pi/3',   cos:[1,2,1],  sin:[1,2,3]},
+  {u:1/2,  tex:R`\tfrac{\pi}{2}`,      s:'pi/2',   cos:[0,1,1],  sin:[1,1,1]},
+  {u:2/3,  tex:R`\tfrac{2\pi}{3}`,     s:'2pi/3',  cos:[-1,2,1], sin:[1,2,3]},
+  {u:3/4,  tex:R`\tfrac{3\pi}{4}`,     s:'3pi/4',  cos:[-1,2,2], sin:[1,2,2]},
+  {u:5/6,  tex:R`\tfrac{5\pi}{6}`,     s:'5pi/6',  cos:[-1,2,3], sin:[1,2,1]},
+  {u:1,    tex:R`\pi`,                 s:'pi',     cos:[-1,1,1], sin:[0,1,1]},
+  {u:7/6,  tex:R`\tfrac{7\pi}{6}`,     s:'7pi/6',  cos:[-1,2,3], sin:[-1,2,1]},
+  {u:5/4,  tex:R`\tfrac{5\pi}{4}`,     s:'5pi/4',  cos:[-1,2,2], sin:[-1,2,2]},
+  {u:4/3,  tex:R`\tfrac{4\pi}{3}`,     s:'4pi/3',  cos:[-1,2,1], sin:[-1,2,3]},
+  {u:3/2,  tex:R`\tfrac{3\pi}{2}`,     s:'3pi/2',  cos:[0,1,1],  sin:[-1,1,1]},
+  {u:5/3,  tex:R`\tfrac{5\pi}{3}`,     s:'5pi/3',  cos:[1,2,1],  sin:[-1,2,3]},
+  {u:7/4,  tex:R`\tfrac{7\pi}{4}`,     s:'7pi/4',  cos:[1,2,2],  sin:[-1,2,2]},
+  {u:11/6, tex:R`\tfrac{11\pi}{6}`,    s:'11pi/6', cos:[1,2,3],  sin:[-1,2,1]},
+];
+ANGS.forEach(a=>a.val=a.u*Math.PI);
+const PHI_IX=[1,2,3,4,5,6];               /* pi/6 .. 3pi/4, never 0 or pi */
+const texPt3=(A,B,C)=>R`\left(${texEx(A)},\;${texEx(B)},\;${texEx(C)}\right)`;
+const over=(v,d)=>d===1?v:`\\tfrac{${v}}{${d}}`;
+const pm=x=>x<0?`- ${-x}`:`+ ${x}`;
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- 1 rectangular ------------------------------------------------- */
+Q.boxIterated={name:'triple integral over a box',
+  gen(){
+    let p,qq,rr;do{p=rint(0,2);qq=rint(0,2);rr=rint(0,2);}while(p+qq+rr===0);
+    const lo=()=>pick([0,0,0,1]);
+    const x0=lo(),x1=x0+rint(1,2),y0=lo(),y1=y0+rint(1,2),z0=lo(),z1=z0+rint(1,2);
+    const k=pick([1,1,2,3,4,6]);
+    const I=(a,b,n)=>[Math.pow(b,n+1)-Math.pow(a,n+1),n+1];
+    const Ix=I(x0,x1,p),Iy=I(y0,y1,qq),Iz=I(z0,z1,rr);
+    const ans=ratRed(k*Ix[0]*Iy[0]*Iz[0],Ix[1]*Iy[1]*Iz[1]);
+    const ord=shuffle(['x','y','z']);
+    const L={x:x0,y:y0,z:z0},U={x:x1,y:y1,z:z1},E={x:p,y:qq,z:rr};
+    const mono=(()=>{let s=k===1?'':String(k);['x','y','z'].forEach(v=>{if(E[v]===1)s+=v;else if(E[v]>1)s+=`${v}^{${E[v]}}`;});return s;})();
+    const tex=R`\int_{${L[ord[2]]}}^{${U[ord[2]]}}\!\!\int_{${L[ord[1]]}}^{${U[ord[1]]}}\!\!\int_{${L[ord[0]]}}^{${U[ord[0]]}} ${mono}\;d${ord[0]}\,d${ord[1]}\,d${ord[2]}`;
+    return {p,q1:qq,r1:rr,x0,x1,y0,y1,z0,z1,k,Ix,Iy,Iz,ans,val:ans[0]/ans[1],mono,tex,L,U,E};
+  },
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate the iterated integral. Give the exact value; a fraction like <code>15/4</code> is fine.</p>${D(q.tex)}`;numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber(val(el,'v'),q.val));},
+  solution(q){
+    const one=(v,I,e,a,b)=>R`\int_{${a}}^{${b}} ${v}^{${e}}\,d${v}=\tfrac{${b}^{${e+1}}-${a}^{${e+1}}}{${e+1}}=${texRat(ratRed(I[0],I[1]))}`;
+    return `The limits are all constants and the integrand is a product of a function of ${M('x')}, one of ${M('y')}, and one of ${M('z')}, so the triple integral factors into three separate one-variable integrals. `+
+      D(one('x',q.Ix,q.p,q.x0,q.x1))+D(one('y',q.Iy,q.q1,q.y0,q.y1))+D(one('z',q.Iz,q.r1,q.z0,q.z1))+
+      `Multiply them together${q.k===1?'':` and by the constant ${M(String(q.k))}`}: ${M(R`\;${texRat(q.ans)}`)}.`;
+  }
+};
+
+Q.tetLimits={name:'set up the limits over a tetrahedron',
+  gen(){
+    const a=rint(1,5),b=rint(1,5),c=rint(1,5);
+    const zu=`${c}*(1 - x/${a} - y/${b})`,yu=`${b}*(1 - x/${a})`;
+    return {a,b,c,zu,yu};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">${M('E')} is the tetrahedron bounded by the three coordinate planes and the plane ${M(R`${over('x',q.a)}+${over('y',q.b)}+${over('z',q.c)}=1`)}. Write ${M(R`\iiint_E f\,dV`)} as an iterated integral in the order ${M(R`dz\,dy\,dx`)} by filling in the six limits. Upper limits may be expressions, like <code>${q.c===1?'':q.c}(1 - ${q.a===1?'x':'x/'+q.a} - ${q.b===1?'y':'y/'+q.b})</code> or its expanded form.</p>`;
+    limRows(el,[
+      [M(R`z`)+' lower limit:','zl',{placeholder:'number'}],
+      [M(R`z`)+' upper limit:','zu',{wide:true,placeholder:'expression in x and y'}],
+      [M(R`y`)+' lower limit:','yl',{placeholder:'number'}],
+      [M(R`y`)+' upper limit:','yu',{wide:true,placeholder:'expression in x'}],
+      [M(R`x`)+' lower limit:','xl',{placeholder:'number'}],
+      [M(R`x`)+' upper limit:','xu',{placeholder:'number'}]]);
+  },
+  check(q,el){return Gall(el,[
+    ['zl',checkNumber(val(el,'zl'),0)],
+    ['zu',checkExpr(val(el,'zu'),q.zu,['x','y'])],
+    ['yl',checkNumber(val(el,'yl'),0)],
+    ['yu',checkExpr(val(el,'yu'),q.yu,['x'])],
+    ['xl',checkNumber(val(el,'xl'),0)],
+    ['xu',checkNumber(val(el,'xu'),q.a)]]);},
+  hint(q,el){hintBox(el,`Solve the plane equation for ${M('z')}: ${M(R`z=${q.c}\left(1-${over('x',q.a)}-${over('y',q.b)}\right)`)}. That is the ceiling; the floor is ${M('z=0')}. Now set ${M('z=0')} to get the shadow.`);},
+  solution(q){
+    return `Solve the plane for ${M('z')}: the ceiling is ${M(R`z=${q.c}\left(1-${over('x',q.a)}-${over('y',q.b)}\right)`)} and the floor is the plane ${M('z=0')}, so ${M(R`0\le z\le ${q.c}\left(1-${over('x',q.a)}-${over('y',q.b)}\right)`)}. `+
+      `Setting ${M('z=0')} gives the shadow ${M(R`D`)}, the triangle ${M(R`${over('x',q.a)}+${over('y',q.b)}\le 1`)} in the first quadrant, with vertices ${M(R`(0,0)`)}, ${M(R`(${q.a},0)`)}, ${M(R`(0,${q.b})`)}. Slicing it vertically gives ${M(R`0\le y\le ${q.b}\left(1-${over('x',q.a)}\right)`)} and ${M(R`0\le x\le ${q.a}`)}. Altogether `+
+      D(R`\int_0^{${q.a}}\!\!\int_0^{${q.b}\left(1-${over('x',q.a)}\right)}\!\!\int_0^{${q.c}\left(1-${over('x',q.a)}-${over('y',q.b)}\right)} f\;dz\,dy\,dx`);
+  }
+};
+
+Q.volSolid={name:'volume of a solid',
+  gen(){
+    const kind=pick(['tet','parab','wedge']);
+    if(kind==='tet'){const a=rint(1,6),b=rint(1,6),c=rint(1,6);
+      return {kind,a,b,c,v:a*b*c/6,ansStr:`${a*b*c}/6`};}
+    if(kind==='parab'){const a=pick([1,4,9]),b=rint(1,5);const a32=Math.round(Math.pow(a,1.5));
+      return {kind,a,b,a32,v:4*a32*b/3,ansStr:`4*${a32}*${b}/3`};}
+    const a=rint(1,4),b=rint(1,4),c=rint(1,4);
+    return {kind,a,b,c,v:a*b*b*c/2,ansStr:`${a*b*b*c}/2`};
+  },
+  render(q,el){
+    const txt=q.kind==='tet'
+      ? `the tetrahedron with vertices ${M(R`(0,0,0)`)}, ${M(R`(${q.a},0,0)`)}, ${M(R`(0,${q.b},0)`)}, and ${M(R`(0,0,${q.c})`)}`
+      : q.kind==='parab'
+      ? `the solid bounded by the parabolic cylinder ${M(R`z=${q.a}-x^2`)} and the planes ${M('z=0')}, ${M('y=0')}, ${M(`y=${q.b}`)}`
+      : `the solid in the first octant bounded above by the plane ${M(R`z=${q.a===1?'':q.a}y`)}, below by the ${M('xy')}-plane, and on the sides by the planes ${M(`y=${q.b}`)}, ${M('x=0')}, and ${M(`x=${q.c}`)}`;
+    el.innerHTML=`<p class="prompt">Find the volume of ${txt}. Give the exact value.</p>`;numIn(el,'v','Volume =');},
+  check(q,el){return G(el,'v',checkNumber(val(el,'v'),q.v));},
+  solution(q){
+    if(q.kind==='tet')return `The bounding plane is ${M(R`${over('x',q.a)}+${over('y',q.b)}+${over('z',q.c)}=1`)}, so `+
+      D(R`V=\int_0^{${q.a}}\!\!\int_0^{${q.b}\left(1-${over('x',q.a)}\right)}\!\!\int_0^{${q.c}\left(1-${over('x',q.a)}-${over('y',q.b)}\right)}\!\!dz\,dy\,dx=\frac{(${q.a})(${q.b})(${q.c})}{6}=${texRat(ratRed(q.a*q.b*q.c,6))}`)+
+      `A tetrahedron cut off the corner of the first octant always has volume ${M(R`\tfrac{abc}{6}`)}, one sixth of the box with the same three edges.`;
+    if(q.kind==='parab')return `The ceiling ${M(R`z=${q.a}-x^2`)} meets the floor ${M('z=0')} where ${M(R`x=\pm${Math.round(Math.sqrt(q.a))}`)}, and ${M('y')} runs freely from ${M('0')} to ${M(String(q.b))}. So `+
+      D(R`V=\int_{-${Math.round(Math.sqrt(q.a))}}^{${Math.round(Math.sqrt(q.a))}}\!\!\int_0^{${q.b}}\!\!\int_0^{${q.a}-x^2}\!\!dz\,dy\,dx=${q.b}\int_{-${Math.round(Math.sqrt(q.a))}}^{${Math.round(Math.sqrt(q.a))}}(${q.a}-x^2)\,dx=${q.b}\cdot\tfrac{4}{3}(${q.a})^{3/2}=${texRat(ratRed(4*q.a32*q.b,3))}`);
+    return `Over the rectangle ${M(R`0\le x\le ${q.c}`)}, ${M(R`0\le y\le ${q.b}`)} the solid runs from ${M('z=0')} up to ${M(R`z=${q.a===1?'':q.a}y`)}, so `+
+      D(R`V=\int_0^{${q.c}}\!\!\int_0^{${q.b}}\!\!\int_0^{${q.a===1?'':q.a}y}\!\!dz\,dy\,dx=\int_0^{${q.c}}\!\!\int_0^{${q.b}}${q.a===1?'':q.a}y\;dy\,dx=${q.c}\cdot\frac{(${q.a})(${q.b})^2}{2}=${texRat(ratRed(q.a*q.b*q.b*q.c,2))}`);
+  }
+};
+
+Q.tetIntegral={name:'integral over a tetrahedron',
+  gen(){const a=rint(1,4),f=pick(['x','y','z']);return {a,f,v:Math.pow(a,4)/24,ansStr:`${Math.pow(a,4)}/24`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iiint_E ${q.f}\,dV`)} where ${M('E')} is the tetrahedron bounded by the three coordinate planes and the plane ${M(`x+y+z=${q.a}`)}. Give the exact value.</p>`;numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber(val(el,'v'),q.v));},
+  solution(q){const a=q.a,f=q.f;
+    const other=f==='x'?'y+z':(f==='y'?'x+z':'x+y');
+    return `Slice perpendicular to the ${M(f)}-axis. At a fixed ${M(f)} the cross-section is the triangle cut off by ${M(R`${other}\le ${a}-${f}`)} in the first quadrant, whose area is ${M(R`\tfrac12(${a}-${f})^2`)}. So `+
+      D(R`\iiint_E ${f}\,dV=\int_0^{${a}} ${f}\cdot\tfrac12\left(${a}-${f}\right)^2\,d${f}`)+
+      `Substitute ${M(R`u=${a}-${f}`)}, so ${M(R`${f}=${a}-u`)} and the limits flip back: `+
+      D(R`\tfrac12\int_0^{${a}}(${a}-u)\,u^2\,du=\tfrac12\left[\frac{${a}u^3}{3}-\frac{u^4}{4}\right]_0^{${a}}=\tfrac12\left(\frac{${a}^4}{3}-\frac{${a}^4}{4}\right)=\tfrac12\cdot\frac{${a}^4}{12}=\frac{${a}^4}{24}=${texRat(ratRed(Math.pow(a,4),24))}`)+
+      `By symmetry ${M(R`\iiint_E x\,dV=\iiint_E y\,dV=\iiint_E z\,dV`)}, so the same number answers all three versions.`;
+  }
+};
+
+Q.changeOrder={name:'change the order of integration',
+  pool:[
+    {given:R`\int_0^1\!\!\int_0^{1-x}\!\!\int_0^{x+y} f\,dz\,dy\,dx`,
+     D:R`0\le x\le 1,\ 0\le y\le 1-x`,DD:R`0\le y\le 1,\ 0\le x\le 1-y`,
+     right:R`\int_0^1\!\!\int_0^{1-y}\!\!\int_0^{x+y} f\,dz\,dx\,dy`,
+     wrong:[R`\int_0^1\!\!\int_0^{1-x}\!\!\int_0^{x+y} f\,dz\,dx\,dy`,
+            R`\int_0^{1-y}\!\!\int_0^{1}\!\!\int_0^{x+y} f\,dz\,dx\,dy`,
+            R`\int_0^1\!\!\int_{1-y}^{1}\!\!\int_0^{x+y} f\,dz\,dx\,dy`],
+     why:R`D`+' is the triangle with vertices (0,0), (1,0), (0,1). Slicing it horizontally instead of vertically gives \\(0\\le y\\le 1\\) on the outside and \\(0\\le x\\le 1-y\\) inside.'},
+    {given:R`\int_0^2\!\!\int_0^{x}\!\!\int_0^{4-x^2} f\,dz\,dy\,dx`,
+     D:R`0\le x\le 2,\ 0\le y\le x`,DD:R`0\le y\le 2,\ y\le x\le 2`,
+     right:R`\int_0^2\!\!\int_y^2\!\!\int_0^{4-x^2} f\,dz\,dx\,dy`,
+     wrong:[R`\int_0^2\!\!\int_0^y\!\!\int_0^{4-x^2} f\,dz\,dx\,dy`,
+            R`\int_0^2\!\!\int_0^2\!\!\int_0^{4-x^2} f\,dz\,dx\,dy`,
+            R`\int_0^x\!\!\int_0^2\!\!\int_0^{4-x^2} f\,dz\,dx\,dy`],
+     why:'\\(D\\) is the triangle with vertices (0,0), (2,0), (2,2), the half of the square below the line \\(y=x\\). A horizontal slice at height \\(y\\) runs from the line \\(x=y\\) across to \\(x=2\\).'},
+    {given:R`\int_0^1\!\!\int_{x^2}^1\!\!\int_0^{y} f\,dz\,dy\,dx`,
+     D:R`0\le x\le 1,\ x^2\le y\le 1`,DD:R`0\le y\le 1,\ 0\le x\le \sqrt{y}`,
+     right:R`\int_0^1\!\!\int_0^{\sqrt{y}}\!\!\int_0^{y} f\,dz\,dx\,dy`,
+     wrong:[R`\int_0^1\!\!\int_{\sqrt{y}}^1\!\!\int_0^{y} f\,dz\,dx\,dy`,
+            R`\int_0^1\!\!\int_{y^2}^1\!\!\int_0^{y} f\,dz\,dx\,dy`,
+            R`\int_0^1\!\!\int_0^{y^2}\!\!\int_0^{y} f\,dz\,dx\,dy`],
+     why:'\\(D\\) is the region above the parabola \\(y=x^2\\) and below \\(y=1\\). Solving \\(y=x^2\\) for \\(x\\ge 0\\) gives \\(x=\\sqrt{y}\\), and a horizontal slice runs from \\(x=0\\) out to that curve.'},
+    {given:R`\int_0^1\!\!\int_0^{x^2}\!\!\int_0^{1-x} f\,dz\,dy\,dx`,
+     D:R`0\le x\le 1,\ 0\le y\le x^2`,DD:R`0\le y\le 1,\ \sqrt{y}\le x\le 1`,
+     right:R`\int_0^1\!\!\int_{\sqrt{y}}^1\!\!\int_0^{1-x} f\,dz\,dx\,dy`,
+     wrong:[R`\int_0^1\!\!\int_0^{\sqrt{y}}\!\!\int_0^{1-x} f\,dz\,dx\,dy`,
+            R`\int_0^1\!\!\int_{y^2}^1\!\!\int_0^{1-x} f\,dz\,dx\,dy`,
+            R`\int_0^{x^2}\!\!\int_0^1\!\!\int_0^{1-x} f\,dz\,dx\,dy`],
+     why:'\\(D\\) is the region <i>below</i> the parabola \\(y=x^2\\) inside the unit square. A horizontal slice at height \\(y\\) starts at the curve \\(x=\\sqrt{y}\\) and runs right to \\(x=1\\).'},
+    {given:R`\int_0^2\!\!\int_0^{\sqrt{4-x^2}}\!\!\int_0^{x+y} f\,dz\,dy\,dx`,
+     D:R`0\le x\le 2,\ 0\le y\le \sqrt{4-x^2}`,DD:R`0\le y\le 2,\ 0\le x\le \sqrt{4-y^2}`,
+     right:R`\int_0^2\!\!\int_0^{\sqrt{4-y^2}}\!\!\int_0^{x+y} f\,dz\,dx\,dy`,
+     wrong:[R`\int_0^2\!\!\int_0^{\sqrt{4-x^2}}\!\!\int_0^{x+y} f\,dz\,dx\,dy`,
+            R`\int_0^{\sqrt{4-y^2}}\!\!\int_0^2\!\!\int_0^{x+y} f\,dz\,dx\,dy`,
+            R`\int_0^2\!\!\int_{\sqrt{4-y^2}}^2\!\!\int_0^{x+y} f\,dz\,dx\,dy`],
+     why:'\\(D\\) is the quarter disk of radius 2 in the first quadrant. It is symmetric in \\(x\\) and \\(y\\), so the description just swaps the letters: \\(0\\le y\\le 2\\), \\(0\\le x\\le\\sqrt{4-y^2}\\).'},
+  ],
+  gen(){const e=pick(Q.changeOrder.pool);const opts=shuffle([e.right,...e.wrong]);
+    return {e,opts,ansIdx:opts.indexOf(e.right)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The iterated integral below describes a type 1 solid ${M('E')} whose shadow in the ${M('xy')}-plane is ${M(q.e.D)}. Which iterated integral gives the same value in the order ${M(R`dz\,dx\,dy`)}?</p>${D(q.e.given)}`;
+    q.get=choiceButtons(el,q.opts.map(o=>({label:M(o),value:o})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.e.right,msg:v===q.e.right?'':'The inner \\(z\\) limits never change. Only the description of the shadow does.'};},
+  hint(q,el){hintBox(el,`The shadow is ${M(q.e.D)}. Re-describe it with ${M('y')} on the outside: ${M(q.e.DD)}.`);},
+  solution(q){return `The ${M('z')} limits are untouched. Only the shadow gets re-described: ${M(q.e.D)} becomes ${M(q.e.DD)}. ${q.e.why} So the answer is `+D(q.e.right);}
+};
+
+/* ---------- 2 cylindrical -------------------------------------------------- */
+Q.rectToCyl={name:'rectangular to cylindrical',
+  gen(){const r=rint(1,4),ti=rint(0,15),z=rnz(-4,4);const a=ANGS[ti];
+    return {r,ti,z,X:scaleEx(r,a.cos),Y:scaleEx(r,a.sin),th:a.val,thStr:a.s,thTex:a.tex};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Convert the point ${M(texPt3(q.X,q.Y,[q.z,1,1]))} from rectangular to cylindrical coordinates. Take ${M(R`r\ge 0`)} and ${M(R`0\le\theta<2\pi`)}.</p>`;
+    numIn(el,'r',M('r='));numIn(el,'th',M(R`\theta=`));numIn(el,'z',M('z='));},
+  check(q,el){return Gall(el,[['r',checkNumber(val(el,'r'),q.r)],['th',checkAngle(val(el,'th'),q.th)],['z',checkNumber(val(el,'z'),q.z)]]);},
+  solution(q){
+    return `${M(R`r=\sqrt{x^2+y^2}=${q.r}`)}, and ${M('z')} is copied straight across: ${M(`z=${q.z}`)}. For the angle, `+
+      `${M(R`\cos\theta=\frac{x}{r}=${texEx(simpEx(q.X[0],q.X[1]*q.r,q.X[2]))}`)} and ${M(R`\sin\theta=\frac{y}{r}=${texEx(simpEx(q.Y[0],q.Y[1]*q.r,q.Y[2]))}`)}, `+
+      `which pins ${M(R`\theta=${q.thTex}`)} (the signs of ${M('x')} and ${M('y')} choose the quadrant). So the point is ${M(R`\left(${q.r},\;${q.thTex},\;${q.z}\right)`)}.`;}
+};
+
+Q.cylToRect={name:'cylindrical to rectangular',
+  gen(){const r=rint(1,4),ti=rint(0,15),z=rnz(-4,4);const a=ANGS[ti];
+    const X=scaleEx(r,a.cos),Y=scaleEx(r,a.sin);
+    return {r,ti,z,X,Y,thTex:a.tex,v:[valEx(X),valEx(Y),z],ansStr:`<${strEx(X)}, ${strEx(Y)}, ${z}>`};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The point ${M(R`\left(r,\theta,z\right)=\left(${q.r},\;${q.thTex},\;${q.z}\right)`)} is given in cylindrical coordinates. Find its rectangular coordinates. Exact values with square roots are expected, like <code>(-3sqrt(3), 3, 2)</code>.</p>`;
+    el.appendChild(ansLine(M(R`(x,y,z)=`),'p',{wide:true,placeholder:'(x, y, z)'}));},
+  check(q,el){return G(el,'p',checkVector(val(el,'p'),q.v));},
+  solution(q){return `${M(R`x=r\cos\theta=${q.r}\cos ${q.thTex}=${texEx(q.X)}`)}, ${M(R`y=r\sin\theta=${q.r}\sin ${q.thTex}=${texEx(q.Y)}`)}, and ${M(`z=${q.z}`)} unchanged. The point is ${M(texPt3(q.X,q.Y,[q.z,1,1]))}.`;}
+};
+
+Q.cylSurface={name:'identify a cylindrical surface',
+  opts:['circular cylinder','half-plane','cone','paraboloid','sphere','plane'],
+  pool:[
+    {eq:a=>R`r=${a}`,rng:[2,5],ans:'circular cylinder',why:a=>`Every point at distance ${a} from the ${M('z')}-axis, with ${M('z')} free: the cylinder ${M(`x^2+y^2=${a*a}`)}.`},
+    {eq:()=>R`\theta=\tfrac{\pi}{4}`,ans:'half-plane',why:()=>`One fixed direction, all ${M(R`r\ge0`)} and all ${M('z')}: the half-plane ${M('y=x')} with ${M(R`x\ge0`)}, hinged on the ${M('z')}-axis.`},
+    {eq:()=>R`\theta=\tfrac{2\pi}{3}`,ans:'half-plane',why:()=>`A fixed angle means a half-plane hinged on the ${M('z')}-axis, not a full plane: only ${M(R`r\ge 0`)} is allowed.`},
+    {eq:()=>R`z=r`,ans:'cone',why:()=>`Height equals distance from the axis, so ${M(R`z=\sqrt{x^2+y^2}`)}: the upper half of a ${M(R`45^\circ`)} cone with vertex at the origin.`},
+    {eq:a=>R`z=${a}r`,rng:[2,3],ans:'cone',why:a=>`${M(R`z=${a}\sqrt{x^2+y^2}`)} is still a cone, just a steeper one.`},
+    {eq:()=>R`z=r^2`,ans:'paraboloid',why:()=>`${M(R`z=x^2+y^2`)}: a circular paraboloid opening upward.`},
+    {eq:a=>R`z=${a}`,rng:[1,4],ans:'plane',why:a=>`${M('r')} and ${M(R`\theta`)} are free, so this is the whole horizontal plane ${M(`z=${a}`)}.`},
+    {eq:a=>R`r^2+z^2=${a*a}`,rng:[2,4],ans:'sphere',why:a=>`${M(R`r^2=x^2+y^2`)}, so this is ${M(`x^2+y^2+z^2=${a*a}`)}: the sphere of radius ${a} centered at the origin.`},
+    {eq:a=>R`r=${2*a}\cos\theta`,rng:[1,3],ans:'circular cylinder',why:a=>`Multiply by ${M('r')}: ${M(R`r^2=${2*a}r\cos\theta`)}, that is ${M(`x^2+y^2=${2*a}x`)}, or ${M(R`(x-${a})^2+y^2=${a*a}`)}. A circle of radius ${a} centered at ${M(`(${a},0)`)}, swept vertically: an off-center cylinder.`},
+  ],
+  gen(){const e=pick(Q.cylSurface.pool);const a=e.rng?rint(e.rng[0],e.rng[1]):null;
+    return {e,a,eq:e.eq(a),ans:e.ans,ansIdx:Q.cylSurface.opts.indexOf(e.ans),why:e.why(a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">In cylindrical coordinates, what surface is described by ${M(q.eq)}?</p>`;
+    q.get=choiceButtons(el,Q.cylSurface.opts.map(o=>({label:o,value:o})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ans,msg:v===q.ans?'':'Convert to rectangular coordinates and look again.'};},
+  solution(q){return `<b>${q.ans}.</b> ${q.why}`;}
+};
+
+Q.cylEvaluate={name:'evaluate in cylindrical coordinates',
+  pool:[
+    {mk:(a,h)=>({prompt:`Evaluate ${M(R`\displaystyle\iiint_E (x^2+y^2)\,dV`)} where ${M('E')} is the solid cylinder ${M(`x^2+y^2\\le ${a*a}`)}, ${M(`0\\le z\\le ${h}`)}.`,
+      v:Math.PI*Math.pow(a,4)*h/2,ansStr:`pi*${Math.pow(a,4)*h}/2`,
+      sol:R`\int_0^{2\pi}\!\!\int_0^{${a}}\!\!\int_0^{${h}} r^2\cdot r\;dz\,dr\,d\theta=2\pi\cdot ${h}\cdot\frac{${a}^4}{4}=\frac{${Math.pow(a,4)*h}\pi}{2}`,
+      note:`The integrand ${M('x^2+y^2')} is ${M('r^2')}, and ${M(R`dV=r\,dz\,dr\,d\theta`)} supplies one more factor of ${M('r')}, so the ${M('r')} integral is ${M(R`\int_0^{${a}} r^3\,dr`)}.`})},
+    {mk:(a,h)=>({prompt:`Evaluate ${M(R`\displaystyle\iiint_E z\,dV`)} where ${M('E')} is the solid cylinder ${M(`x^2+y^2\\le ${a*a}`)}, ${M(`0\\le z\\le ${h}`)}.`,
+      v:Math.PI*a*a*h*h/2,ansStr:`pi*${a*a*h*h}/2`,
+      sol:R`\int_0^{2\pi}\!\!\int_0^{${a}}\!\!\int_0^{${h}} z\,r\;dz\,dr\,d\theta=2\pi\cdot\frac{${a}^2}{2}\cdot\frac{${h}^2}{2}=\frac{${a*a*h*h}\pi}{2}`,
+      note:`All three limits are constants and the integrand splits, so the triple integral is a product of three easy pieces.`})},
+    {mk:(a,h)=>({prompt:`Find the volume of the solid that lies inside the cone ${M(R`z=\sqrt{x^2+y^2}`)} and below the plane ${M(`z=${h}`)}.`,
+      v:Math.PI*Math.pow(h,3)/3,ansStr:`pi*${Math.pow(h,3)}/3`,
+      sol:R`V=\int_0^{2\pi}\!\!\int_0^{${h}}\!\!\int_r^{${h}} r\;dz\,dr\,d\theta=2\pi\int_0^{${h}}(${h}-r)r\,dr=2\pi\left(\frac{${h}^3}{2}-\frac{${h}^3}{3}\right)=\frac{${Math.pow(h,3)}\pi}{3}`,
+      note:`The cone is the floor ${M('z=r')} and the plane is the ceiling. They meet where ${M(`r=${h}`)}, which sets the outer radius.`})},
+    {mk:(a,h)=>({prompt:`Find the volume of the solid under the paraboloid ${M(`z=${a*a}-x^2-y^2`)} and above the ${M('xy')}-plane.`,
+      v:Math.PI*Math.pow(a,4)/2,ansStr:`pi*${Math.pow(a,4)}/2`,
+      sol:R`V=\int_0^{2\pi}\!\!\int_0^{${a}}\!\!\int_0^{${a*a}-r^2} r\;dz\,dr\,d\theta=2\pi\int_0^{${a}}(${a*a}-r^2)r\,dr=2\pi\left(\frac{${a*a}\cdot${a*a}}{2}-\frac{${a*a*a*a}}{4}\right)=\frac{${Math.pow(a,4)}\pi}{2}`,
+      note:`The paraboloid meets ${M('z=0')} where ${M(`r=${a}`)}. In general the volume under ${M('z=c-r^2')} is ${M(R`\pi c^2/2`)}.`})},
+    {mk:(a,h)=>({prompt:`Find the volume of the solid bounded below by the paraboloid ${M('z=x^2+y^2')} and above by the plane ${M(`z=${a*a}`)}.`,
+      v:Math.PI*Math.pow(a,4)/2,ansStr:`pi*${Math.pow(a,4)}/2`,
+      sol:R`V=\int_0^{2\pi}\!\!\int_0^{${a}}\!\!\int_{r^2}^{${a*a}} r\;dz\,dr\,d\theta=2\pi\int_0^{${a}}(${a*a}-r^2)r\,dr=\frac{${Math.pow(a,4)}\pi}{2}`,
+      note:`Ceiling minus floor is ${M(`${a*a}-r^2`)}, the same integrand as the bowl turned the other way up, so the volume is the same ${M(R`\pi c^2/2`)}.`})},
+    {mk:(a,h)=>({prompt:`Find the mass of the solid cylinder ${M(`x^2+y^2\\le ${a*a}`)}, ${M(`0\\le z\\le ${h}`)}, whose density at a point is its distance from the ${M('xy')}-plane.`,
+      v:Math.PI*a*a*h*h/2,ansStr:`pi*${a*a*h*h}/2`,
+      sol:R`m=\int_0^{2\pi}\!\!\int_0^{${a}}\!\!\int_0^{${h}} z\,r\;dz\,dr\,d\theta=2\pi\cdot\frac{${a}^2}{2}\cdot\frac{${h}^2}{2}=\frac{${a*a*h*h}\pi}{2}`,
+      note:`Distance from the ${M('xy')}-plane is ${M('z')}, so the density is ${M(R`\rho=z`)}.`})},
+    {mk:(a,h)=>({prompt:`Find the mass of the solid cylinder ${M(`x^2+y^2\\le ${a*a}`)}, ${M(`0\\le z\\le ${h}`)}, whose density at a point is its distance from the ${M('z')}-axis.`,
+      v:2*Math.PI*Math.pow(a,3)*h/3,ansStr:`2*pi*${Math.pow(a,3)*h}/3`,
+      sol:R`m=\int_0^{2\pi}\!\!\int_0^{${a}}\!\!\int_0^{${h}} r\cdot r\;dz\,dr\,d\theta=2\pi\cdot ${h}\cdot\frac{${a}^3}{3}=\frac{2\pi\cdot ${Math.pow(a,3)*h}}{3}`,
+      note:`Distance from the ${M('z')}-axis is exactly ${M('r')}, so the density is ${M(R`\rho=r`)} and the ${M('r')} integral is ${M(R`\int_0^{${a}} r^2\,dr`)}.`})},
+  ],
+  gen(){const e=pick(Q.cylEvaluate.pool);const a=rint(1,4),h=rint(1,4);const d=e.mk(a,h);return {a,h,...d};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt} Give the exact value; <code>pi</code> is accepted.</p>`;numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber(val(el,'v'),q.v));},
+  solution(q){return q.note+' '+D(q.sol);}
+};
+
+Q.cylLimits={name:'set up limits in cylindrical',
+  pool:[
+    a=>({desc:`the solid cylinder ${M(`x^2+y^2\\le ${a.a*a.a}`)}, ${M(`0\\le z\\le ${a.h}`)}`,
+      zl:'0',zu:String(a.h),rl:0,ru:a.a,tl:0,tu:2*Math.PI,tlS:'0',tuS:'2pi',
+      why:`Floor and ceiling are the horizontal planes ${M('z=0')} and ${M(`z=${a.h}`)}. The shadow is the full disk of radius ${a.a}, so ${M('r')} runs ${M(`0`)} to ${M(String(a.a))} and ${M(R`\theta`)} goes all the way around.`}),
+    a=>({desc:`the solid under the paraboloid ${M(`z=${a.pa}-x^2-y^2`)} and above the ${M('xy')}-plane`,
+      zl:'0',zu:`${a.pa}-r^2`,rl:0,ru:Math.sqrt(a.pa),tl:0,tu:2*Math.PI,tlS:'0',tuS:'2pi',
+      why:`The ceiling is ${M(`z=${a.pa}-r^2`)} and the floor is ${M('z=0')}. They meet where ${M(`r^2=${a.pa}`)}, that is ${M(`r=${Math.round(Math.sqrt(a.pa))}`)}, which is the outer edge of the shadow.`}),
+    a=>({desc:`the solid between the paraboloid ${M('z=x^2+y^2')} and the plane ${M(`z=${a.pa}`)}`,
+      zl:'r^2',zu:String(a.pa),rl:0,ru:Math.sqrt(a.pa),tl:0,tu:2*Math.PI,tlS:'0',tuS:'2pi',
+      why:`Here the paraboloid is the floor, ${M('z=r^2')}, and the plane is the ceiling. They meet where ${M(`r=${Math.round(Math.sqrt(a.pa))}`)}.`}),
+    a=>({desc:`the solid inside the cone ${M(R`z=\sqrt{x^2+y^2}`)} and below the plane ${M(`z=${a.h}`)}`,
+      zl:'r',zu:String(a.h),rl:0,ru:a.h,tl:0,tu:2*Math.PI,tlS:'0',tuS:'2pi',
+      why:`Inside the cone means above it, so the floor is ${M('z=r')} and the ceiling is ${M(`z=${a.h}`)}. They meet where ${M(`r=${a.h}`)}.`}),
+    a=>({desc:`the part of the solid cylinder ${M(`x^2+y^2\\le ${a.a*a.a}`)}, ${M(`0\\le z\\le ${a.h}`)}, that lies in the first octant`,
+      zl:'0',zu:String(a.h),rl:0,ru:a.a,tl:0,tu:Math.PI/2,tlS:'0',tuS:'pi/2',
+      why:`Only ${M(R`\theta`)} changes: the first octant is the quarter ${M(R`0\le\theta\le\pi/2`)} of the disk, with ${M(R`z\ge 0`)} already true.`}),
+  ],
+  gen(){const a={a:rint(1,4),h:rint(1,4),pa:pick([1,4,9])};const e=pick(Q.cylLimits.pool)(a);
+    return {...e,ruS:String(e.ru),rlS:String(e.rl),tuTex:e.tuS==='2pi'?'2\\pi':'\\pi/2'};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Set up ${M(R`\iiint_E f\,dV`)} in cylindrical coordinates, order ${M(R`dz\,dr\,d\theta`)}, for ${q.desc}. The ${M('z')} limits may be expressions in ${M('r')}; the rest are numbers (<code>pi</code> accepted).</p>`;
+    limRows(el,[
+      [M('z')+' from:','zl',{wide:true,placeholder:'expression in r'}],
+      [M('z')+' to:','zu',{wide:true,placeholder:'expression in r'}],
+      [M('r')+' from:','rl',{}],[M('r')+' to:','ru',{}],
+      [M(R`\theta`)+' from:','tl',{}],[M(R`\theta`)+' to:','tu',{}]]);},
+  check(q,el){return Gall(el,[
+    ['zl',checkExpr(val(el,'zl'),q.zl,['r'])],
+    ['zu',checkExpr(val(el,'zu'),q.zu,['r'])],
+    ['rl',checkNumber(val(el,'rl'),q.rl,{tol:1e-4})],
+    ['ru',checkNumber(val(el,'ru'),q.ru,{tol:1e-4})],
+    ['tl',checkNumber(val(el,'tl'),q.tl,{tol:1e-4})],
+    ['tu',checkNumber(val(el,'tu'),q.tu,{tol:1e-4})]]);},
+  hint(q,el){hintBox(el,`Find the floor and the ceiling first. Then project: the shadow is a disk or a sector, which gives the ${M('r')} and ${M(R`\theta`)} limits.`);},
+  solution(q){return q.why+' '+D(R`\int_{0}^{${q.tuTex}}\!\!\int_{0}^{${fmt(q.ru)}}\!\!\int_{${q.zl}}^{${q.zu}} f\;r\,dz\,dr\,d\theta`)+` Do not lose the factor ${M('r')} from ${M(R`dV=r\,dz\,dr\,d\theta`)}.`;}
+};
+
+/* ---------- 3 spherical ---------------------------------------------------- */
+Q.rectToSph={name:'rectangular to spherical',
+  gen(){const rho=rint(1,4),ti=rint(0,15),fi=pick(PHI_IX);const t=ANGS[ti],f=ANGS[fi];
+    const X=scaleEx(rho,mulEx(f.sin,t.cos)),Y=scaleEx(rho,mulEx(f.sin,t.sin)),Z=scaleEx(rho,f.cos);
+    return {rho,ti,fi,X,Y,Z,th:t.val,thStr:t.s,thTex:t.tex,ph:f.val,phStr:f.s,phTex:f.tex};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Convert the point ${M(texPt3(q.X,q.Y,q.Z))} from rectangular to spherical coordinates. Take ${M(R`\rho\ge0`)}, ${M(R`0\le\theta<2\pi`)}, ${M(R`0\le\phi\le\pi`)}.</p>`;
+    numIn(el,'rho',M(R`\rho=`));numIn(el,'th',M(R`\theta=`));numIn(el,'ph',M(R`\phi=`));},
+  check(q,el){return Gall(el,[['rho',checkNumber(val(el,'rho'),q.rho)],['th',checkAngle(val(el,'th'),q.th)],['ph',checkNumber(val(el,'ph'),q.ph,{tol:1e-4})]]);},
+  solution(q){
+    return `${M(R`\rho=\sqrt{x^2+y^2+z^2}=${q.rho}`)}. Then ${M(R`\cos\phi=\dfrac{z}{\rho}=${texEx(simpEx(q.Z[0],q.Z[1]*q.rho,q.Z[2]))}`)} gives ${M(R`\phi=${q.phTex}`)} (remember ${M(R`\phi`)} is measured down from the positive ${M('z')}-axis, so ${M(R`0\le\phi\le\pi`)} makes it unique). `+
+      `Finally the shadow radius is ${M(R`r=\rho\sin\phi=${fmtDec(q.rho*Math.sin(q.ph),3)}`)}, and ${M(R`\cos\theta=x/r`)}, ${M(R`\sin\theta=y/r`)} give ${M(R`\theta=${q.thTex}`)}. The point is ${M(R`\left(${q.rho},\;${q.thTex},\;${q.phTex}\right)`)}.`;}
+};
+
+Q.sphToRect={name:'spherical to rectangular',
+  gen(){const rho=rint(1,4),ti=rint(0,15),fi=pick(PHI_IX);const t=ANGS[ti],f=ANGS[fi];
+    const X=scaleEx(rho,mulEx(f.sin,t.cos)),Y=scaleEx(rho,mulEx(f.sin,t.sin)),Z=scaleEx(rho,f.cos);
+    return {rho,X,Y,Z,thTex:t.tex,phTex:f.tex,v:[valEx(X),valEx(Y),valEx(Z)],ansStr:`<${strEx(X)}, ${strEx(Y)}, ${strEx(Z)}>`};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The point ${M(R`\left(\rho,\theta,\phi\right)=\left(${q.rho},\;${q.thTex},\;${q.phTex}\right)`)} is given in spherical coordinates. Find its rectangular coordinates. Exact values with square roots are expected.</p>`;
+    el.appendChild(ansLine(M(R`(x,y,z)=`),'p',{wide:true,placeholder:'(x, y, z)'}));},
+  check(q,el){return G(el,'p',checkVector(val(el,'p'),q.v));},
+  solution(q){return `Apply the three formulas. ${M(R`x=\rho\sin\phi\cos\theta=${q.rho}\sin ${q.phTex}\cos ${q.thTex}=${texEx(q.X)}`)}, ${M(R`y=\rho\sin\phi\sin\theta=${texEx(q.Y)}`)}, ${M(R`z=\rho\cos\phi=${q.rho}\cos ${q.phTex}=${texEx(q.Z)}`)}. The point is ${M(texPt3(q.X,q.Y,q.Z))}.`;}
+};
+
+Q.sphSurface={name:'identify a spherical surface',
+  opts:['sphere centered at the origin','sphere through the origin','cone','half-plane','circular cylinder','horizontal plane'],
+  pool:[
+    {eq:a=>R`\rho=${a}`,rng:[1,4],ans:'sphere centered at the origin',why:a=>`Constant distance ${a} from the origin: ${M(`x^2+y^2+z^2=${a*a}`)}.`},
+    {eq:()=>R`\phi=\tfrac{\pi}{4}`,ans:'cone',why:()=>`A constant angle from the ${M('z')}-axis. Since ${M(R`\tan\phi=r/z`)}, this is ${M(R`z=\sqrt{x^2+y^2}`)}: a cone with vertex at the origin.`},
+    {eq:()=>R`\phi=\tfrac{\pi}{3}`,ans:'cone',why:()=>`Constant ${M(R`\phi`)} other than ${M(R`\pi/2`)} always gives a cone with vertex at the origin, here a wider one than ${M(R`\phi=\pi/4`)}.`},
+    {eq:()=>R`\phi=\tfrac{\pi}{2}`,ans:'horizontal plane',why:()=>`${M(R`\phi=\pi/2`)} means ${M(R`z=\rho\cos\phi=0`)}: the degenerate cone flattens into the whole ${M('xy')}-plane.`},
+    {eq:()=>R`\theta=\tfrac{\pi}{3}`,ans:'half-plane',why:()=>`${M(R`\theta`)} means the same thing as in cylindrical coordinates, so this is a half-plane hinged on the ${M('z')}-axis.`},
+    {eq:a=>R`\rho=${2*a}\cos\phi`,rng:[1,3],ans:'sphere through the origin',why:a=>`Multiply by ${M(R`\rho`)}: ${M(R`\rho^2=${2*a}\rho\cos\phi`)} is ${M(`x^2+y^2+z^2=${2*a}z`)}, that is ${M(`x^2+y^2+(z-${a})^2=${a*a}`)}. A sphere of radius ${a} centered at ${M(`(0,0,${a})`)}, tangent to the ${M('xy')}-plane at the origin.`},
+    {eq:a=>R`\rho\sin\phi=${a}`,rng:[2,4],ans:'circular cylinder',why:a=>`${M(R`\rho\sin\phi`)} is exactly the cylindrical ${M('r')}, so this is ${M(`r=${a}`)}, the cylinder ${M(`x^2+y^2=${a*a}`)}.`},
+    {eq:a=>R`\rho\cos\phi=${a}`,rng:[2,4],ans:'horizontal plane',why:a=>`${M(R`\rho\cos\phi`)} is exactly ${M('z')}, so this is the plane ${M(`z=${a}`)}.`},
+  ],
+  gen(){const e=pick(Q.sphSurface.pool);const a=e.rng?rint(e.rng[0],e.rng[1]):null;
+    return {e,a,eq:e.eq(a),ans:e.ans,ansIdx:Q.sphSurface.opts.indexOf(e.ans),why:e.why(a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">In spherical coordinates, what surface is described by ${M(q.eq)}?</p>`;
+    q.get=choiceButtons(el,Q.sphSurface.opts.map(o=>({label:o,value:o})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ans,msg:v===q.ans?'':'Multiply through by \\(\\rho\\) if you can, then convert to \\(x,y,z\\).'};},
+  solution(q){return `<b>${q.ans}.</b> ${q.why}`;}
+};
+
+Q.sphEvaluate={name:'evaluate in spherical coordinates',
+  pool:[
+    {mk:v=>({prompt:`Evaluate ${M(R`\displaystyle\iiint_E (x^2+y^2+z^2)\,dV`)} where ${M('E')} is the ball ${M(`x^2+y^2+z^2\\le ${v.a*v.a}`)}.`,
+      val:4*Math.PI*Math.pow(v.a,5)/5,ansStr:`4*pi*${Math.pow(v.a,5)}/5`,
+      sol:R`\int_0^{\pi}\!\!\int_0^{2\pi}\!\!\int_0^{${v.a}} \rho^2\cdot\rho^2\sin\phi\;d\rho\,d\theta\,d\phi=\frac{${v.a}^5}{5}\cdot 2\pi\cdot\int_0^\pi\sin\phi\,d\phi=\frac{${v.a}^5}{5}\cdot 2\pi\cdot 2=\frac{4\pi\cdot ${Math.pow(v.a,5)}}{5}`,
+      note:`The integrand is ${M(R`\rho^2`)}, so with the Jacobian the ${M(R`\rho`)} integrand is ${M(R`\rho^4`)}. Note ${M(R`\int_0^\pi\sin\phi\,d\phi=2`)}.`})},
+    {mk:v=>({prompt:`Use spherical coordinates to find the volume of the ball ${M(`x^2+y^2+z^2\\le ${v.a*v.a}`)}.`,
+      val:4*Math.PI*Math.pow(v.a,3)/3,ansStr:`4*pi*${Math.pow(v.a,3)}/3`,
+      sol:R`V=\int_0^{\pi}\!\!\int_0^{2\pi}\!\!\int_0^{${v.a}} \rho^2\sin\phi\;d\rho\,d\theta\,d\phi=\frac{${v.a}^3}{3}\cdot 2\pi\cdot 2=\frac{4\pi\cdot ${Math.pow(v.a,3)}}{3}`,
+      note:`Every limit is a constant, so the integral is a product of three one-variable integrals.`})},
+    {mk:v=>({prompt:`Find the volume of the ice-cream cone: the solid inside the sphere ${M(R`\rho=${v.a}`)} and above the cone ${M(R`\phi=${v.cTex}`)}.`,
+      val:(2*Math.PI*Math.pow(v.a,3)/3)*(1-v.cCos),ansStr:`(2*pi*${Math.pow(v.a,3)}/3)*(1-${v.cCosStr})`,
+      sol:R`V=\int_0^{${v.cTex}}\!\!\int_0^{2\pi}\!\!\int_0^{${v.a}} \rho^2\sin\phi\;d\rho\,d\theta\,d\phi=\frac{${v.a}^3}{3}\cdot 2\pi\cdot\big[-\cos\phi\big]_0^{${v.cTex}}=\frac{2\pi\cdot ${Math.pow(v.a,3)}}{3}\left(1-${v.cCosTex}\right)`,
+      note:`"Above the cone" means ${M(R`0\le\phi\le ${v.cTex}`)}, a cap of directions around the north pole. The general answer is ${M(R`\tfrac{2\pi a^3}{3}(1-\cos c)`)}.`})},
+    {mk:v=>({prompt:`Evaluate ${M(R`\displaystyle\iiint_E z\,dV`)} where ${M('E')} is the upper half of the ball ${M(`x^2+y^2+z^2\\le ${v.a*v.a}`)}, ${M(R`z\ge 0`)}.`,
+      val:Math.PI*Math.pow(v.a,4)/4,ansStr:`pi*${Math.pow(v.a,4)}/4`,
+      sol:R`\int_0^{\pi/2}\!\!\int_0^{2\pi}\!\!\int_0^{${v.a}} (\rho\cos\phi)\,\rho^2\sin\phi\;d\rho\,d\theta\,d\phi=\frac{${v.a}^4}{4}\cdot 2\pi\cdot\int_0^{\pi/2}\!\sin\phi\cos\phi\,d\phi=\frac{${v.a}^4}{4}\cdot 2\pi\cdot\tfrac12=\frac{\pi\cdot ${Math.pow(v.a,4)}}{4}`,
+      note:`Upper half means ${M(R`0\le\phi\le\pi/2`)}, and ${M('z')} becomes ${M(R`\rho\cos\phi`)}. The ${M(R`\phi`)} integral is ${M(R`\int_0^{\pi/2}\sin\phi\cos\phi\,d\phi=\tfrac12`)}.`})},
+    {mk:v=>({prompt:`Find the volume of the solid between the spheres of radius ${M(String(v.a))} and ${M(String(v.b))} centered at the origin.`,
+      val:4*Math.PI*(Math.pow(v.b,3)-Math.pow(v.a,3))/3,ansStr:`4*pi*${Math.pow(v.b,3)-Math.pow(v.a,3)}/3`,
+      sol:R`V=\int_0^{\pi}\!\!\int_0^{2\pi}\!\!\int_{${v.a}}^{${v.b}} \rho^2\sin\phi\;d\rho\,d\theta\,d\phi=\frac{${v.b}^3-${v.a}^3}{3}\cdot 2\pi\cdot 2=\frac{4\pi(${Math.pow(v.b,3)}-${Math.pow(v.a,3)})}{3}`,
+      note:`Only the ${M(R`\rho`)} limits change: the shell is ${M(`${v.a}\\le\\rho\\le ${v.b}`)} with all directions allowed.`})},
+    {mk:v=>({prompt:`Evaluate ${M(R`\displaystyle\iiint_E e^{(x^2+y^2+z^2)^{3/2}}\,dV`)} where ${M('E')} is the unit ball ${M(R`x^2+y^2+z^2\le 1`)}.`,
+      val:4*Math.PI*(Math.E-1)/3,ansStr:`4*pi*(e-1)/3`,
+      sol:R`\int_0^{\pi}\!\!\int_0^{2\pi}\!\!\int_0^{1} e^{\rho^3}\rho^2\sin\phi\;d\rho\,d\theta\,d\phi=2\pi\cdot 2\cdot\int_0^1 e^{\rho^3}\rho^2\,d\rho=4\pi\left[\tfrac{1}{3}e^{\rho^3}\right]_0^1=\frac{4\pi(e-1)}{3}`,
+      note:`${M(R`(x^2+y^2+z^2)^{3/2}=\rho^3`)}. The Jacobian's ${M(R`\rho^2`)} is exactly the ${M(R`du`)} you need for ${M(R`u=\rho^3`)}: this integral is impossible in rectangular coordinates and one line in spherical.`})},
+  ],
+  gen(){
+    const a=rint(1,3);let b=a+rint(1,2);
+    const cIx=pick([0,1,2]);
+    const cTex=[R`\tfrac{\pi}{6}`,R`\tfrac{\pi}{4}`,R`\tfrac{\pi}{3}`][cIx];
+    const cCos=[Math.sqrt(3)/2,Math.SQRT2/2,0.5][cIx];
+    const cCosStr=['sqrt(3)/2','sqrt(2)/2','1/2'][cIx];
+    const cCosTex=[R`\tfrac{\sqrt3}{2}`,R`\tfrac{\sqrt2}{2}`,R`\tfrac12`][cIx];
+    const v={a,b,cTex,cCos,cCosStr,cCosTex};
+    const e=pick(Q.sphEvaluate.pool);return {...v,...e.mk(v)};
+  },
+  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt} Give the exact value; <code>pi</code>, <code>e</code>, and <code>sqrt</code> are accepted.</p>`;numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber(val(el,'v'),q.val,{tol:1e-7}));},
+  solution(q){return q.note+' '+D(q.sol);}
+};
+
+Q.sphLimits={name:'set up limits in spherical',
+  gen(){
+    const a=rint(1,4);let b=a+rint(1,2);
+    const cIx=pick([0,1,2]);
+    const cTex=[R`\tfrac{\pi}{6}`,R`\tfrac{\pi}{4}`,R`\tfrac{\pi}{3}`][cIx];
+    const cVal=[Math.PI/6,Math.PI/4,Math.PI/3][cIx];
+    const cStr=['pi/6','pi/4','pi/3'][cIx];
+    const kind=pick(['ball','hemi','cone','shell','oct']);
+    const base={rl:0,rlS:'0',ru:a,ruS:String(a),fl:0,flS:'0',fu:Math.PI,fuS:'pi',tl:0,tlS:'0',tu:2*Math.PI,tuS:'2pi'};
+    if(kind==='ball')return {kind,...base,desc:`the ball ${M(`x^2+y^2+z^2\\le ${a*a}`)}`,fuTex:R`\pi`,tuTex:R`2\pi`,ruTex:String(a),
+      why:`All directions are used, so ${M(R`\phi`)} sweeps the full ${M(R`0`)} to ${M(R`\pi`)} and ${M(R`\theta`)} the full ${M(R`0`)} to ${M(R`2\pi`)}, while ${M(R`\rho`)} runs from the center out to the surface.`};
+    if(kind==='hemi')return {kind,...base,fu:Math.PI/2,fuS:'pi/2',fuTex:R`\pi/2`,tuTex:R`2\pi`,ruTex:String(a),
+      desc:`the upper half of the ball ${M(`x^2+y^2+z^2\\le ${a*a}`)}, ${M(R`z\ge0`)}`,
+      why:`${M(R`z\ge 0`)} is ${M(R`\cos\phi\ge0`)}, that is ${M(R`0\le\phi\le\pi/2`)}: from the north pole down to the equator. Nothing else changes.`};
+    if(kind==='cone')return {kind,...base,fu:cVal,fuS:cStr,fuTex:cTex,tuTex:R`2\pi`,ruTex:String(a),
+      desc:`the ice-cream cone: the solid inside the sphere ${M(R`\rho=${a}`)} and above the cone ${M(R`\phi=${cTex}`)}`,
+      why:`"Above the cone" is the cap of directions ${M(R`0\le\phi\le ${cTex}`)} around the north pole; the sphere caps ${M(R`\rho`)} at ${M(String(a))}.`};
+    if(kind==='shell')return {kind,...base,rl:a,rlS:String(a),ru:b,ruS:String(b),ruTex:String(b),fuTex:R`\pi`,tuTex:R`2\pi`,
+      desc:`the spherical shell between the spheres ${M(R`\rho=${a}`)} and ${M(R`\rho=${b}`)}`,
+      why:`Only ${M(R`\rho`)} is restricted: ${M(`${a}\\le\\rho\\le ${b}`)}. Every direction is still present, so the two angles keep their full ranges.`};
+    return {kind,...base,fu:Math.PI/2,fuS:'pi/2',fuTex:R`\pi/2`,tu:Math.PI/2,tuS:'pi/2',tuTex:R`\pi/2`,ruTex:String(a),
+      desc:`the part of the ball ${M(`x^2+y^2+z^2\\le ${a*a}`)} that lies in the first octant`,
+      why:`First octant means ${M(R`x,y,z\ge 0`)}. ${M(R`z\ge0`)} gives ${M(R`0\le\phi\le\pi/2`)}, and ${M(R`x,y\ge0`)} restricts the shadow to the first quadrant, ${M(R`0\le\theta\le\pi/2`)}.`};
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Set up ${M(R`\iiint_E f\,dV`)} in spherical coordinates for ${q.desc}. All six limits are numbers here (<code>pi</code> accepted). Remember ${M(R`dV=\rho^2\sin\phi\,d\rho\,d\theta\,d\phi`)}.</p>`;
+    limRows(el,[
+      [M(R`\rho`)+' from:','rl',{}],[M(R`\rho`)+' to:','ru',{}],
+      [M(R`\phi`)+' from:','fl',{}],[M(R`\phi`)+' to:','fu',{}],
+      [M(R`\theta`)+' from:','tl',{}],[M(R`\theta`)+' to:','tu',{}]]);},
+  check(q,el){return Gall(el,[
+    ['rl',checkNumber(val(el,'rl'),q.rl,{tol:1e-4})],
+    ['ru',checkNumber(val(el,'ru'),q.ru,{tol:1e-4})],
+    ['fl',checkNumber(val(el,'fl'),q.fl,{tol:1e-4})],
+    ['fu',checkNumber(val(el,'fu'),q.fu,{tol:1e-4})],
+    ['tl',checkNumber(val(el,'tl'),q.tl,{tol:1e-4})],
+    ['tu',checkNumber(val(el,'tu'),q.tu,{tol:1e-4})]]);},
+  hint(q,el){hintBox(el,`Ask three questions in order. How far out does the solid reach (that is ${M(R`\rho`)})? Which directions down from the ${M('z')}-axis are used (that is ${M(R`\phi`)})? How far around (that is ${M(R`\theta`)})?`);},
+  solution(q){return q.why+' '+D(R`\int_{0}^{${q.fuTex}}\!\!\int_{0}^{${q.tuTex}}\!\!\int_{${q.rlS}}^{${q.ruTex}} f\;\rho^2\sin\phi\;d\rho\,d\theta\,d\phi`);}
+};
+
+/* ---------- 4 choosing coordinates ---------------------------------------- */
+Q.whichSystem={name:'which coordinate system',
+  opts:['rectangular','cylindrical','spherical'],
+  pool:[
+    {d:R`the solid above the cone \(z=\sqrt{x^2+y^2}\) and below the sphere \(x^2+y^2+z^2=8\)`,a:'spherical',
+     why:R`A sphere centered at the origin plus a cone with its vertex at the origin is the signature ice-cream cone. In spherical it is \(0\le\rho\le 2\sqrt2\), \(0\le\phi\le\pi/4\), \(0\le\theta\le 2\pi\): six constants.`},
+    {d:R`the solid inside the cylinder \(x^2+y^2=4\) between the planes \(z=0\) and \(z=x+5\)`,a:'cylindrical',
+     why:R`The boundary is a cylinder about the \(z\)-axis with two planes for a floor and a ceiling. In cylindrical: \(0\le z\le r\cos\theta+5\), \(0\le r\le 2\), \(0\le\theta\le 2\pi\).`},
+    {d:R`the tetrahedron with vertices \((0,0,0)\), \((2,0,0)\), \((0,3,0)\), \((0,0,4)\)`,a:'rectangular',
+     why:R`Every boundary is a plane, and no circles appear anywhere. Planes are exactly what rectangular coordinates describe with linear limits.`},
+    {d:R`the solid bounded by the paraboloid \(z=x^2+y^2\) and the plane \(z=9\)`,a:'cylindrical',
+     why:R`\(x^2+y^2\) appears as a block with \(z\) sitting separately, which is the cylindrical give-away. The paraboloid becomes \(z=r^2\) and the plane stays \(z=9\).`},
+    {d:R`the region between the concentric spheres \(x^2+y^2+z^2=1\) and \(x^2+y^2+z^2=4\)`,a:'spherical',
+     why:R`A shell is \(1\le\rho\le 2\) with every direction allowed. Nothing else is even close.`},
+    {d:R`the box \(0\le x\le 1\), \(0\le y\le 2\), \(0\le z\le 3\)`,a:'rectangular',
+     why:R`Six constant limits already, in rectangular coordinates. Changing systems could only make it worse.`},
+    {d:R`the solid bounded by the plane \(x+2y+z=4\) and the three coordinate planes`,a:'rectangular',
+     why:R`Planes only, so the limits are linear. This is a tetrahedron, the standard rectangular set-up.`},
+    {d:R`the part of the ball \(x^2+y^2+z^2\le 9\) that lies in the first octant`,a:'spherical',
+     why:R`A ball is \(\rho\le 3\); the first octant just cuts the two angles down to \(0\le\phi\le\pi/2\), \(0\le\theta\le\pi/2\). Still all constants.`},
+    {d:R`the solid cylinder \(x^2+y^2\le 1\), \(0\le z\le 5\), with density proportional to the distance from the \(z\)-axis`,a:'cylindrical',
+     why:R`The solid is a can and the density is \(r\), which is a single letter in cylindrical coordinates and an ugly square root in rectangular ones.`},
+    {d:R`the solid enclosed by the cone \(z=\sqrt{x^2+y^2}\) and the plane \(z=2\)`,a:'cylindrical',
+     why:R`A cone with a flat lid. Spherical handles the cone but the flat plane \(z=2\) becomes \(\rho=2\sec\phi\), a non-constant \(\rho\) limit. Cylindrical keeps everything simple: \(r\le z\le 2\).`},
+  ],
+  gen(){const e=pick(Q.whichSystem.pool);return {e,ans:e.a,ansIdx:Q.whichSystem.opts.indexOf(e.a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Which coordinate system is the natural one for a triple integral over ${q.e.d}?</p>`;
+    q.get=choiceButtons(el,Q.whichSystem.opts.map(o=>({label:o,value:o})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ans,msg:v===q.ans?'':'Look at the boundary surfaces first. Which system turns them into constant limits?'};},
+  solution(q){return `<b>${q.ans}.</b> ${q.e.why}`;}
+};
+
+Q.volumeElement={name:'the volume element',
+  pool:[
+    {sys:'rectangular',right:R`dx\,dy\,dz`,
+     wrong:[R`r\,dz\,dr\,d\theta`,R`\rho^2\sin\phi\,d\rho\,d\theta\,d\phi`,R`r^2\,dz\,dr\,d\theta`],
+     why:R`Rectangular coordinates need no correction factor at all: the little box really is a box with sides \(dx\), \(dy\), \(dz\). The Jacobian is 1.`},
+    {sys:'cylindrical',right:R`r\,dz\,dr\,d\theta`,
+     wrong:[R`r^2\,dz\,dr\,d\theta`,R`dz\,dr\,d\theta`,R`\rho^2\sin\phi\,d\rho\,d\theta\,d\phi`],
+     why:R`The little box has sides \(dr\), \(r\,d\theta\) (arc length at radius \(r\)), and \(dz\). Multiply: \(r\,dz\,dr\,d\theta\).`},
+    {sys:'spherical',right:R`\rho^2\sin\phi\,d\rho\,d\theta\,d\phi`,
+     wrong:[R`\rho\sin\phi\,d\rho\,d\theta\,d\phi`,R`\rho^2\sin\theta\,d\rho\,d\theta\,d\phi`,R`\rho^2\,d\rho\,d\theta\,d\phi`],
+     why:R`The sides are \(d\rho\), \(\rho\,d\phi\) along a meridian, and \(\rho\sin\phi\,d\theta\) along a parallel of latitude. Their product is \(\rho^2\sin\phi\,d\rho\,d\theta\,d\phi\). It is \(\sin\phi\), never \(\sin\theta\), and the power is 2.`},
+  ],
+  gen(){const e=pick(Q.volumeElement.pool);const opts=shuffle([e.right,...e.wrong]);
+    return {e,opts,ansIdx:opts.indexOf(e.right)};},
+  render(q,el){el.innerHTML=`<p class="prompt">In <b>${q.e.sys}</b> coordinates, which expression is ${M('dV')}?</p>`;
+    q.get=choiceButtons(el,q.opts.map(o=>({label:M(o),value:o})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.e.right,msg:v===q.e.right?'':'Build the little box out of its three side lengths and multiply them.'};},
+  solution(q){return `${M(R`dV=${q.e.right}`)}. ${q.e.why}`;}
+};
+
+Q.integrandConvert={name:'convert the integrand',
+  pool:[
+    {f:R`x^2+y^2`,sys:'cylindrical',right:R`r^2`,wrong:[R`r`,R`r^2+z^2`,R`r^2\cos^2\theta`],
+     why:R`\(x^2+y^2=r^2\cos^2\theta+r^2\sin^2\theta=r^2\). This is the whole reason cylindrical coordinates exist.`},
+    {f:R`x^2+y^2`,sys:'spherical',right:R`\rho^2\sin^2\phi`,wrong:[R`\rho^2`,R`\rho^2\cos^2\phi`,R`\rho\sin\phi`],
+     why:R`\(x^2+y^2=r^2\) and \(r=\rho\sin\phi\), so \(x^2+y^2=\rho^2\sin^2\phi\). It is \(\rho^2\) only when the \(z^2\) is there too.`},
+    {f:R`x^2+y^2+z^2`,sys:'spherical',right:R`\rho^2`,wrong:[R`\rho`,R`\rho^2\sin^2\phi`,R`\rho^2\sin\phi`],
+     why:R`\(\rho\) is defined as the distance from the origin, so \(\rho^2=x^2+y^2+z^2\) by the distance formula. Do not confuse this with the \(\rho^2\sin\phi\) in \(dV\).`},
+    {f:R`x^2+y^2+z^2`,sys:'cylindrical',right:R`r^2+z^2`,wrong:[R`r^2`,R`r^2z^2`,R`r^2+z`],
+     why:R`Only \(x^2+y^2\) collapses to \(r^2\); the \(z^2\) is untouched, because \(z\) is the same coordinate in both systems.`},
+    {f:R`z`,sys:'spherical',right:R`\rho\cos\phi`,wrong:[R`\rho\sin\phi`,R`\rho\cos\theta`,R`\rho^2\cos\phi`],
+     why:R`Height is the adjacent side of the angle \(\phi\) measured from the \(z\)-axis: \(z=\rho\cos\phi\). \(\rho\sin\phi\) is the shadow radius \(r\).`},
+    {f:R`\sqrt{x^2+y^2}`,sys:'cylindrical',right:R`r`,wrong:[R`r^2`,R`\sqrt{r}`,R`r+z`],
+     why:R`\(\sqrt{x^2+y^2}\) is the distance from the \(z\)-axis, which is exactly \(r\) (and \(r\ge0\), so no absolute value is needed).`},
+    {f:R`\sqrt{x^2+y^2}`,sys:'spherical',right:R`\rho\sin\phi`,wrong:[R`\rho`,R`\rho\cos\phi`,R`\rho\sin\theta`],
+     why:R`That distance is the cylindrical \(r\), and \(r=\rho\sin\phi\).`},
+    {f:R`x`,sys:'spherical',right:R`\rho\sin\phi\cos\theta`,wrong:[R`\rho\cos\phi\cos\theta`,R`\rho\sin\phi\sin\theta`,R`\rho\sin\theta\cos\phi`],
+     why:R`Drop to the \(xy\)-plane first: the shadow has radius \(r=\rho\sin\phi\), and then \(x=r\cos\theta\).`},
+    {f:R`x`,sys:'cylindrical',right:R`r\cos\theta`,wrong:[R`r\sin\theta`,R`r`,R`r\cos\phi`],
+     why:R`Straight from the definition \(x=r\cos\theta\). Cosine goes with \(x\), sine with \(y\).`},
+  ],
+  gen(){const e=pick(Q.integrandConvert.pool);const opts=shuffle([e.right,...e.wrong]);
+    return {e,opts,ansIdx:opts.indexOf(e.right)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Rewrite ${M(q.e.f)} in <b>${q.e.sys}</b> coordinates.</p>`;
+    q.get=choiceButtons(el,q.opts.map(o=>({label:M(o),value:o})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.e.right,msg:v===q.e.right?'':'Substitute the defining formulas one term at a time.'};},
+  solution(q){return `${M(R`${q.e.f}=${q.e.right}`)}. ${q.e.why}`;}
+};
+
+/* ============================================================ chapter 1 widgets */
+(function(){
+  /* --- the tetrahedron walkthrough --- */
+  let a=3,step=0;
+  const TXT=()=>[
+    `<b>The solid.</b> ${M('E')} is cut off the first octant by the plane ${M(`x+y+z=${a}`)}, so ${M(R`x\ge0`)}, ${M(R`y\ge0`)}, ${M(R`z\ge0`)}, ${M(`x+y+z\\le ${a}`)}.`,
+    `<b>\\(z\\) limits.</b> Fix a point ${M('(x,y)')} in the shadow and look straight up. You enter through the floor ${M('z=0')} and leave through the plane, which solved for ${M('z')} is ${M(`z=${a}-x-y`)}. So ${M(`0\\le z\\le ${a}-x-y`)}.`,
+    `<b>Project.</b> The shadow ${M('D')} is what is left when ${M('z=0')}: the triangle ${M(`x+y\\le ${a}`)} in the first quadrant, with vertices ${M('(0,0)')}, ${M(`(${a},0)`)}, ${M(`(0,${a})`)}.`,
+    `<b>\\(y\\) limits.</b> Slice ${M('D')} vertically at a fixed ${M('x')}. The slice runs from ${M('y=0')} up to the line ${M(`y=${a}-x`)}. So ${M(`0\\le y\\le ${a}-x`)}.`,
+    `<b>\\(x\\) limits.</b> The slices exist for ${M('x')} between the two extreme values, ${M('0')} and ${M(String(a))}. These are constants, as the outermost limits must be.`,
+    `<b>Assemble and evaluate.</b> Work from the inside out. Each integral is a power rule.`,
+  ];
+  const EXPR=()=>[
+    M(R`\iiint_E z\,dV`),
+    M(R`\iint_D\left[\int_0^{${a}-x-y} z\,dz\right]dA`),
+    M(R`\int\!\!\!\int_D\int_0^{${a}-x-y} z\;dz\,dA,\qquad D:\;x\ge0,\ y\ge0,\ x+y\le ${a}`),
+    M(R`\int_{?}^{?}\!\!\int_0^{${a}-x}\!\!\int_0^{${a}-x-y} z\;dz\,dy\,dx`),
+    M(R`\int_0^{${a}}\!\!\int_0^{${a}-x}\!\!\int_0^{${a}-x-y} z\;dz\,dy\,dx`),
+    M(R`\int_0^{${a}}\!\!\int_0^{${a}-x}\frac{(${a}-x-y)^2}{2}\,dy\,dx=\int_0^{${a}}\frac{(${a}-x)^3}{6}\,dx=\frac{${a}^4}{24}=${texRat(ratRed(Math.pow(a,4),24))}`),
+  ];
+  const ST=['Read the solid.','Ceiling minus floor.','Set z = 0 to get the shadow.','Slice the shadow.','Two constants close it off.','Inside out, one power rule at a time.'];
+  function draw(){
+    const ol=$('#tetSteps');
+    ol.innerHTML=TXT().map((t,i)=>`<li class="${i===step?'now':(i>step?'dim':'')}">${t}</li>`).join('');
+    $('#tetExpr').innerHTML=EXPR()[step];
+    $('#tetStatus').textContent=ST[step];
+    $('#tetPrev').disabled=step===0;$('#tetNext').disabled=step===5;
+    typeset(ol);typeset($('#tetExpr'));
+  }
+  $('#tetNext').onclick=()=>{step=Math.min(5,step+1);draw();};
+  $('#tetPrev').onclick=()=>{step=Math.max(0,step-1);draw();};
+  $('#tetNew').onclick=()=>{let n;do{n=rint(1,5);}while(n===a);a=n;step=0;draw();};
+  draw();
+
+  /* --- the slicing explorer --- */
+  const RECTS=[
+    {name:'tetrahedron',range:2.9,x0:0,x1:2,ylo:()=>0,yhi:x=>2-x,zlo:()=>0,zhi:(x,y)=>2-x-y,
+     lims:[R`0\le z\le 2-x-y`,R`0\le y\le 2-x`,R`0\le x\le 2`],
+     itex:R`\int_0^2\!\!\int_0^{2-x}\!\!\int_0^{2-x-y} f\;dz\,dy\,dx`,
+     desc:'x + y + z \u2264 2 in the first octant'},
+    {name:'under a paraboloid',range:4.6,x0:-1,x1:1,ylo:()=>-1,yhi:()=>1,zlo:()=>0,zhi:(x,y)=>4-x*x-y*y,
+     lims:[R`0\le z\le 4-x^2-y^2`,R`-1\le y\le 1`,R`-1\le x\le 1`],
+     itex:R`\int_{-1}^{1}\!\!\int_{-1}^{1}\!\!\int_0^{4-x^2-y^2} f\;dz\,dy\,dx`,
+     desc:'under z = 4 \u2212 x\u00b2 \u2212 y\u00b2 over the square'},
+    {name:'slab over a triangle',range:1.8,x0:0,x1:1,ylo:()=>0,yhi:x=>1-x,zlo:()=>0,zhi:x=>1-x,
+     lims:[R`0\le z\le 1-x`,R`0\le y\le 1-x`,R`0\le x\le 1`],
+     itex:R`\int_0^1\!\!\int_0^{1-x}\!\!\int_0^{1-x} f\;dz\,dy\,dx`,
+     desc:'between z = 0 and z = 1 \u2212 x over the triangle'},
+    {name:'box',range:2.6,x0:0,x1:2,ylo:()=>0,yhi:()=>1,zlo:()=>0,zhi:()=>1,
+     lims:[R`0\le z\le 1`,R`0\le y\le 1`,R`0\le x\le 2`],
+     itex:R`\int_0^2\!\!\int_0^{1}\!\!\int_0^{1} f\;dz\,dy\,dx`,
+     desc:'the box 0 \u2264 x \u2264 2, 0 \u2264 y \u2264 1, 0 \u2264 z \u2264 1'},
+  ];
+  const scene=new Scene3D('#rectScene',{range:2.9});
+  let P=RECTS[0],t=0.5;
+  const NS=26;
+  const Xof=u=>P.x0+(P.x1-P.x0)*u, Yof=(x,v)=>P.ylo(x)+(P.yhi(x)-P.ylo(x))*v;
+  const samp=f=>Array.from({length:NS+1},(_,i)=>f(i/NS));
+  function drawScene(){
+    scene.o.range=P.range;scene.clear();
+    const face=(r,o)=>scene.param(r,[0,1],[0,1],{n:18,m:18,...o});
+    face((u,v)=>{const x=Xof(u),y=Yof(x,v);return [x,y,P.zhi(x,y)];},{base:SURF.blue,alpha:0.3});
+    face((u,v)=>{const x=Xof(u),y=Yof(x,v);return [x,y,P.zlo(x,y)];},{base:SURF.gray,alpha:0.22});
+    face((u,w)=>{const x=Xof(u),y=P.ylo(x),lo=P.zlo(x,y),hi=P.zhi(x,y);return [x,y,lo+(hi-lo)*w];},{base:SURF.blue,alpha:0.16});
+    face((u,w)=>{const x=Xof(u),y=P.yhi(x),lo=P.zlo(x,y),hi=P.zhi(x,y);return [x,y,lo+(hi-lo)*w];},{base:SURF.blue,alpha:0.16});
+    face((v,w)=>{const x=P.x0,y=Yof(x,v),lo=P.zlo(x,y),hi=P.zhi(x,y);return [x,y,lo+(hi-lo)*w];},{base:SURF.blue,alpha:0.16});
+    face((v,w)=>{const x=P.x1,y=Yof(x,v),lo=P.zlo(x,y),hi=P.zhi(x,y);return [x,y,lo+(hi-lo)*w];},{base:SURF.blue,alpha:0.16});
+    const E='#2563eb';
+    [P.ylo,P.yhi].forEach(g=>{
+      scene.polyline(samp(u=>{const x=Xof(u),y=g(x);return [x,y,P.zlo(x,y)];}),{color:E,width:1.5});
+      scene.polyline(samp(u=>{const x=Xof(u),y=g(x);return [x,y,P.zhi(x,y)];}),{color:E,width:1.5});
+    });
+    [P.x0,P.x1].forEach(x=>{
+      scene.polyline(samp(v=>{const y=Yof(x,v);return [x,y,P.zlo(x,y)];}),{color:E,width:1.5});
+      scene.polyline(samp(v=>{const y=Yof(x,v);return [x,y,P.zhi(x,y)];}),{color:E,width:1.5});
+      [0,1].forEach(v=>{const y=Yof(x,v);scene.polyline([[x,y,P.zlo(x,y)],[x,y,P.zhi(x,y)]],{color:E,width:1.5});});
+    });
+    const x=Xof(t),pts=[];
+    for(let i=0;i<=NS;i++){const y=Yof(x,i/NS);pts.push([x,y,P.zlo(x,y)]);}
+    for(let i=NS;i>=0;i--){const y=Yof(x,i/NS);pts.push([x,y,P.zhi(x,y)]);}
+    scene.polygon(pts,{fill:'rgba(217,119,6,.34)',stroke:'#d97706'});
+    scene.render();
+    const y0=P.ylo(x),y1=P.yhi(x);
+    const zA=Math.min(P.zlo(x,y0),P.zlo(x,y1)),zB=Math.max(P.zhi(x,y0),P.zhi(x,y1));
+    $('#rectOut').innerHTML=`slice at x = <b>${fmtDec(x,2)}</b><br>y from ${fmtDec(y0,2)} to ${fmtDec(y1,2)}<br>z from ${fmtDec(zA,2)} up to ${fmtDec(zB,2)}`;
+  }
+  function setLims(){
+    $('#rectLims').innerHTML=`<div class="muted small" style="margin-bottom:4px">${P.desc}</div>`+
+      P.lims.map(l=>M(l)).join('<br>')+D(P.itex);
+    typeset($('#rectLims'));
+  }
+  const sw=sliderRow($('#rectSliders'),{label:'x',min:0,max:1,step:0.01,value:t,fmt:v=>fmtDec(P.x0+(P.x1-P.x0)*v,2),onInput:v=>{t=v;drawScene();}});
+  RECTS.forEach(p=>{const b=el('button',{class:'btn small'},p.name);
+    b.onclick=()=>{P=p;t=0.5;sw.set(0.5);setLims();drawScene();};$('#rectPresets').appendChild(b);});
+  setLims();drawScene();
+  redrawOnShow('rect',drawScene);
+  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.boxIterated,Q.tetLimits,Q.tetLimits,Q.volSolid,Q.volSolid,Q.tetIntegral,Q.changeOrder,Q.changeOrder])});
+})();
+
+/* ============================================================ chapter 2 widget */
+(function(){
+  const scene=new Scene3D('#cylScene',{range:3.6});
+  let r=2,th=Math.PI/3,z=1.5,solid='none';
+  const SOL={
+    none:{range:3.6,tex:'',draw(){}},
+    cylinder:{range:3.8,tex:R`r\le 2,\;0\le z\le 3`,draw(s){
+      s.param((v,w)=>[2*Math.cos(v),2*Math.sin(v),3*w],[0,2*Math.PI],[0,1],{n:36,m:6,base:SURF.blue,alpha:0.16});
+      s.param((u,v)=>[u*Math.cos(v),u*Math.sin(v),3],[0,2],[0,2*Math.PI],{n:6,m:36,base:SURF.blue,alpha:0.2});}},
+    cone:{range:3.2,tex:R`z=r,\;0\le z\le 2`,draw(s){
+      s.param((u,v)=>[u*Math.cos(v),u*Math.sin(v),u],[0,2],[0,2*Math.PI],{n:8,m:36,base:SURF.purple,alpha:0.18});
+      s.param((u,v)=>[u*Math.cos(v),u*Math.sin(v),2],[0,2],[0,2*Math.PI],{n:6,m:36,base:SURF.purple,alpha:0.22});}},
+    paraboloid:{range:5,tex:R`r^2\le z\le 4`,draw(s){
+      s.param((u,v)=>[u*Math.cos(v),u*Math.sin(v),u*u],[0,2],[0,2*Math.PI],{n:10,m:36,base:SURF.green,alpha:0.18});
+      s.param((u,v)=>[u*Math.cos(v),u*Math.sin(v),4],[0,2],[0,2*Math.PI],{n:6,m:36,base:SURF.green,alpha:0.22});}},
+  };
+  function draw(){
+    const S=SOL[solid];scene.o.range=S.range;scene.clear();S.draw(scene);
+    const x=r*Math.cos(th),y=r*Math.sin(th),Pt=[x,y,z],Qp=[x,y,0];
+    scene.vector([0,0,0],Qp,{color:'#d97706',label:'r',width:3});
+    const ar=Math.min(1.1,Math.max(0.35,r*0.5));
+    scene.polyline(Array.from({length:49},(_,i)=>{const t=th*i/48;return [ar*Math.cos(t),ar*Math.sin(t),0];}),{color:'#2563eb',width:2.4});
+    scene.polyline([Qp,Pt],{color:'#16a34a',width:2.6});
+    scene.point(Qp,{color:'#b9b5ab',r:4});
+    scene.point(Pt,{color:'#7c3aed',r:6,label:'P'});
+    scene.render();
+    $('#cylOut').innerHTML=`(r, θ, z) = (${fmtDec(r,2)}, ${fmtDec(th,2)} rad = ${fmtDec(th*180/Math.PI,1)}°, ${fmtDec(z,2)})<br>`+
+      `x = r cos θ = ${fmtDec(r,2)}·${fmtDec(Math.cos(th),3)} = <b>${fmtDec(x,3)}</b><br>`+
+      `y = r sin θ = ${fmtDec(r,2)}·${fmtDec(Math.sin(th),3)} = <b>${fmtDec(y,3)}</b><br>`+
+      `z = <b>${fmtDec(z,2)}</b>`+(S.tex?`<br>solid: ${M(S.tex)}`:'');
+    if(S.tex)typeset($('#cylOut'));
+  }
+  const sl=$('#cylSliders');
+  sliderRow(sl,{label:'r',min:0,max:3,step:0.05,value:r,onInput:v=>{r=v;draw();}});
+  sliderRow(sl,{label:'θ',min:0,max:6.2832,step:0.02,value:th,onInput:v=>{th=v;draw();}});
+  sliderRow(sl,{label:'z',min:-2,max:2,step:0.05,value:z,onInput:v=>{z=v;draw();}});
+  [['no solid','none'],['cylinder r ≤ 2','cylinder'],['cone z = r','cone'],['between z = r² and z = 4','paraboloid']]
+    .forEach(([n,k])=>{const b=el('button',{class:'btn small'},n);b.onclick=()=>{solid=k;draw();};$('#cylPresets').appendChild(b);});
+  draw();redrawOnShow('cyl',draw);
+  new Drill({mount:'#drill-cyl',section:'cyl',goal:6,...mixDrill([Q.rectToCyl,Q.rectToCyl,Q.cylToRect,Q.cylSurface,Q.cylSurface,Q.cylEvaluate,Q.cylEvaluate,Q.cylLimits])});
+})();
+
+/* ============================================================ chapter 3 widget */
+(function(){
+  const scene=new Scene3D('#sphScene',{range:3.4});
+  let rho=2.4,th=Math.PI/3,ph=Math.PI/3;
+  const dd=0.2;
+  function draw(){
+    scene.clear();
+    const sp=(R0,t,f)=>[R0*Math.sin(f)*Math.cos(t),R0*Math.sin(f)*Math.sin(t),R0*Math.cos(f)];
+    const Pt=sp(rho,th,ph),Qp=[Pt[0],Pt[1],0];
+    scene.param((t,f)=>sp(rho,t,f),[th,th+dd],[ph,ph+dd],{n:8,m:8,base:SURF.orange,alpha:0.55});
+    [[th,ph],[th+dd,ph],[th,ph+dd],[th+dd,ph+dd]].forEach(([t,f])=>
+      scene.polyline([sp(rho,t,f),sp(rho+dd,t,f)],{color:'#d97706',width:1.4}));
+    scene.param((t,f)=>sp(rho+dd,t,f),[th,th+dd],[ph,ph+dd],{n:8,m:8,base:SURF.orange,alpha:0.3});
+    scene.vector([0,0,0],Pt,{color:'#d97706',width:3});
+    const fr=Math.min(1.3,rho*0.55);
+    scene.polyline(Array.from({length:49},(_,i)=>sp(fr,th,ph*i/48)),{color:'#2563eb',width:2.4});
+    const tr=Math.min(1.05,Math.max(0.3,rho*Math.sin(ph)*0.5));
+    scene.polyline(Array.from({length:49},(_,i)=>{const t=th*i/48;return [tr*Math.cos(t),tr*Math.sin(t),0];}),{color:'#16a34a',width:2.4});
+    scene.polyline([Pt,Qp],{color:'#b9b5ab',width:1.4,dash:[4,3]});
+    scene.point(Qp,{color:'#b9b5ab',r:4});
+    scene.point(Pt,{color:'#7c3aed',r:6,label:'P'});
+    scene.render();
+    const sPh=Math.sin(ph);
+    $('#sphOut').innerHTML=`(ρ, θ, φ) = (${fmtDec(rho,2)}, ${fmtDec(th,2)}, ${fmtDec(ph,2)}) &nbsp; φ = ${fmtDec(ph*180/Math.PI,1)}° from the z-axis<br>`+
+      `x = ρ sin φ cos θ = <b>${fmtDec(rho*sPh*Math.cos(th),3)}</b><br>`+
+      `y = ρ sin φ sin θ = <b>${fmtDec(rho*sPh*Math.sin(th),3)}</b><br>`+
+      `z = ρ cos φ = <b>${fmtDec(rho*Math.cos(ph),3)}</b><br>`+
+      `<span style="color:var(--muted)">volume element with dρ = dθ = dφ = 0.2</span><br>`+
+      `outward dρ = ${fmtDec(dd,2)}<br>`+
+      `along a meridian ρ dφ = ${fmtDec(rho,2)}·${fmtDec(dd,2)} = ${fmtDec(rho*dd,3)}<br>`+
+      `along a parallel ρ sin φ dθ = ${fmtDec(rho,2)}·${fmtDec(sPh,3)}·${fmtDec(dd,2)} = ${fmtDec(rho*sPh*dd,3)}<br>`+
+      `product ≈ ρ² sin φ dρ dθ dφ = <b>${fmtDec(rho*rho*sPh*dd*dd*dd,4)}</b>`;
+  }
+  const sl=$('#sphSliders');
+  sliderRow(sl,{label:'ρ',min:0.4,max:3,step:0.05,value:rho,onInput:v=>{rho=v;draw();}});
+  sliderRow(sl,{label:'θ',min:0,max:6.2832,step:0.02,value:th,onInput:v=>{th=v;draw();}});
+  sliderRow(sl,{label:'φ',min:0,max:3.1416,step:0.02,value:ph,onInput:v=>{ph=v;draw();}});
+  draw();redrawOnShow('sph',draw);
+  new Drill({mount:'#drill-sph',section:'sph',goal:6,...mixDrill([Q.rectToSph,Q.rectToSph,Q.sphToRect,Q.sphSurface,Q.sphSurface,Q.sphEvaluate,Q.sphEvaluate,Q.sphLimits])});
+})();
+
+/* ============================================================ chapter 4 widget */
+(function(){
+  const B=new Scene3D('#gridBox',{range:2.4,azim:-58,elev:22});
+  const C=new Scene3D('#gridCyl',{range:3.2,azim:-58,elev:22});
+  const S=new Scene3D('#gridSph',{range:2.7,azim:-58,elev:22});
+  function drawAll(){
+    B.clear();
+    const X=[0,2],Y=[0,1.5],Z=[0,1.2],o={n:4,m:4,base:SURF.blue,alpha:0.16,stroke:'#8494cf'};
+    B.param((u,v)=>[X[0],Y[0]+(Y[1]-Y[0])*u,Z[0]+(Z[1]-Z[0])*v],[0,1],[0,1],o);
+    B.param((u,v)=>[X[1],Y[0]+(Y[1]-Y[0])*u,Z[0]+(Z[1]-Z[0])*v],[0,1],[0,1],o);
+    B.param((u,v)=>[X[0]+(X[1]-X[0])*u,Y[0],Z[0]+(Z[1]-Z[0])*v],[0,1],[0,1],o);
+    B.param((u,v)=>[X[0]+(X[1]-X[0])*u,Y[1],Z[0]+(Z[1]-Z[0])*v],[0,1],[0,1],o);
+    B.param((u,v)=>[X[0]+(X[1]-X[0])*u,Y[0]+(Y[1]-Y[0])*v,Z[0]],[0,1],[0,1],o);
+    B.param((u,v)=>[X[0]+(X[1]-X[0])*u,Y[0]+(Y[1]-Y[0])*v,Z[1]],[0,1],[0,1],o);
+    B.render();
+
+    C.clear();
+    const a=1.8,H=3;
+    C.param((v,w)=>[a*Math.cos(v),a*Math.sin(v),H*w],[0,2*Math.PI],[0,1],{n:36,m:6,base:SURF.blue,alpha:0.14});
+    C.param((u,v)=>[u*Math.cos(v),u*Math.sin(v),H],[0,a],[0,2*Math.PI],{n:6,m:36,base:SURF.blue,alpha:0.18});
+    [0,1,2,3].forEach(k=>C.polyline(Array.from({length:73},(_,i)=>{const t=2*Math.PI*i/72;return [a*Math.cos(t),a*Math.sin(t),k];}),{color:'#d97706',width:1.6}));
+    for(let k=0;k<8;k++){const t=k*Math.PI/4;
+      C.polyline([[a*Math.cos(t),a*Math.sin(t),0],[a*Math.cos(t),a*Math.sin(t),H]],{color:'#2563eb',width:1.4});
+      C.polyline([[0,0,H],[a*Math.cos(t),a*Math.sin(t),H]],{color:'#2563eb',width:1.2});}
+    C.render();
+
+    S.clear();
+    const R0=2;
+    S.param((f,t)=>[R0*Math.sin(f)*Math.cos(t),R0*Math.sin(f)*Math.sin(t),R0*Math.cos(f)],[0,Math.PI],[0,2*Math.PI],{n:16,m:32,base:SURF.purple,alpha:0.13});
+    for(let k=0;k<6;k++){const t=k*Math.PI/3;
+      S.polyline(Array.from({length:49},(_,i)=>{const f=Math.PI*i/48;return [R0*1.01*Math.sin(f)*Math.cos(t),R0*1.01*Math.sin(f)*Math.sin(t),R0*1.01*Math.cos(f)];}),{color:'#2563eb',width:1.4});}
+    for(let k=1;k<=5;k++){const f=k*Math.PI/6,rr=R0*1.01*Math.sin(f),zz=R0*1.01*Math.cos(f);
+      S.polyline(Array.from({length:73},(_,i)=>{const t=2*Math.PI*i/72;return [rr*Math.cos(t),rr*Math.sin(t),zz];}),{color:'#d97706',width:1.5});}
+    S.render();
+  }
+  drawAll();redrawOnShow('choose',drawAll);
+  new Drill({mount:'#drill-choose',section:'choose',goal:6,...mixDrill([Q.whichSystem,Q.whichSystem,Q.volumeElement,Q.integrandConvert,Q.integrandConvert,Q.cylLimits,Q.sphLimits])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.boxIterated,Q.tetLimits,Q.volSolid,Q.tetIntegral,Q.changeOrder,
+  Q.rectToCyl,Q.cylToRect,Q.cylSurface,Q.cylEvaluate,Q.cylLimits,
+  Q.rectToSph,Q.sphToRect,Q.sphSurface,Q.sphEvaluate,Q.sphLimits,
+  Q.whichSystem,Q.volumeElement,Q.integrandConvert]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'triple integral over a box':q=>({v:strRat(q.ans)}),
+  'set up the limits over a tetrahedron':q=>({zl:'0',zu:q.zu,yl:'0',yu:q.yu,xl:'0',xu:String(q.a)}),
+  'volume of a solid':q=>({v:q.ansStr}),
+  'integral over a tetrahedron':q=>({v:q.ansStr}),
+  'change the order of integration':q=>({_btn:q.ansIdx}),
+  'rectangular to cylindrical':q=>({r:String(q.r),th:q.thStr,z:String(q.z)}),
+  'cylindrical to rectangular':q=>({p:q.ansStr}),
+  'identify a cylindrical surface':q=>({_btn:q.ansIdx}),
+  'evaluate in cylindrical coordinates':q=>({v:q.ansStr}),
+  'set up limits in cylindrical':q=>({zl:q.zl,zu:q.zu,rl:q.rlS,ru:q.ruS,tl:q.tlS,tu:q.tuS}),
+  'rectangular to spherical':q=>({rho:String(q.rho),th:q.thStr,ph:q.phStr}),
+  'spherical to rectangular':q=>({p:q.ansStr}),
+  'identify a spherical surface':q=>({_btn:q.ansIdx}),
+  'evaluate in spherical coordinates':q=>({v:q.ansStr}),
+  'set up limits in spherical':q=>({rl:q.rlS,ru:q.ruS,fl:q.flS,fu:q.fuS,tl:q.tlS,tu:q.tuS}),
+  'which coordinate system':q=>({_btn:q.ansIdx}),
+  'the volume element':q=>({_btn:q.ansIdx}),
+  'convert the integrand':q=>({_btn:q.ansIdx}),
+};
+
+initModule({key:'triple-integrals',title:'Triple Integrals',sub:'Module 8 · Stewart 15.6 to 15.8'});
+</script>
+</body>
+</html>

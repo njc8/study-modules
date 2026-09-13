@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Green's Theorem, Curl, and Divergence</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 10 · Stewart 16.4 to 16.5</p>
+  <h2>Green's theorem, curl, and divergence</h2>
+  <p class="lead">One theorem trades a loop integral for an area integral. Two derivatives, curl and divergence, say what a vector field does to a tiny paddle wheel and to a tiny balloon.</p>
+
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or hover over, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats are flexible. Vectors of expressions can be typed as <code>&lt;0, 0, 2&gt;</code>, <code>(-z, 0, y)</code>, or <code>-z i + y k</code>. Exact numbers can be written <code>8pi</code>, <code>9pi/4</code>, <code>3/2</code>, or as a decimal when the problem says so. Expressions accept implicit multiplication: <code>2xy</code>, <code>x^2y</code>, <code>e^x sin y</code>, <code>-y sin(xy)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the vector field <b>F</b> = ⟨P, Q⟩</span>
+      <span><i class="dot" style="background:var(--b)"></i> positive curl or divergence</span>
+      <span><i class="dot" style="background:var(--c)"></i> the value of the integral</span>
+      <span><i class="dot" style="background:var(--d)"></i> the curve C and its orientation</span>
+    </div>
+  </div>
+
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>State Green's theorem, check its hypotheses, and use it to turn \(\oint_C P\,dx+Q\,dy\) into a double integral.</li>
+      <li>Evaluate those double integrals over rectangles, disks, triangles, and regions between curves.</li>
+      <li>Compute an area from its boundary curve with \(A=\tfrac12\oint_C x\,dy-y\,dx\).</li>
+      <li>Expand \(\operatorname{curl}\mathbf{F}=\nabla\times\mathbf{F}\) from the determinant without losing the middle sign, and compute \(\operatorname{div}\mathbf{F}=\nabla\cdot\mathbf{F}\).</li>
+      <li>Read rotation and expansion off a picture of a field, and test a 3D field for conservativeness with \(\operatorname{curl}\mathbf{F}=\mathbf{0}\).</li>
+      <li>Use the identities \(\operatorname{curl}(\nabla f)=\mathbf{0}\) and \(\operatorname{div}(\operatorname{curl}\mathbf{F})=0\), and say which combinations are meaningless.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 GREEN -->
+<section data-id="green" data-title="Green's theorem" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 16.4</p>
+  <h2>Green's theorem</h2>
+  <p class="lead">A line integral around a closed curve equals a double integral over the region the curve encloses. Ugly boundary, nice region: use the region.</p>
+
+  <p>Let \(C\) be a <b>positively oriented</b>, piecewise-smooth, <b>simple closed</b> curve in the plane, and let \(D\) be the region it bounds. If \(P\) and \(Q\) have continuous partial derivatives on an open set containing \(D\), then:</p>
+
+  <div class="formula">\(\displaystyle\oint_C P\,dx+Q\,dy=\iint_D\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)dA\)<span class="cap">Read it right to left too: the double integral of \(Q_x-P_y\) over a region equals the loop integral around its edge. Both sides are written \(\oint_C \mathbf{F}\cdot d\mathbf{r}\) when \(\mathbf{F}=\langle P,Q\rangle\).</span></div>
+
+  <p><b>Positive orientation</b> means counterclockwise: as you walk along \(C\), the region \(D\) stays on your <b>left</b>. <b>Simple</b> means the curve does not cross itself. <b>Closed</b> means it ends where it started. Stewart writes \(\oint\) for a line integral around a positively oriented closed curve.</p>
+
+  <h3>When to reach for it</h3>
+  <ul>
+    <li>The boundary is made of several pieces (three sides of a triangle, an arc plus a segment) but the region is a single easy double integral.</li>
+    <li>\(Q_x-P_y\) collapses to something simple: a constant, or \(x^2+y^2\), which polar coordinates eat instantly.</li>
+    <li>You want an <b>area</b> and you only know the boundary curve.</li>
+  </ul>
+
+  <p>That last one comes from choosing \(P\) and \(Q\) so that \(Q_x-P_y=1\). Three standard choices give three formulas for the same number:</p>
+  <div class="formula">\(A=\oint_C x\,dy=-\oint_C y\,dx=\tfrac12\oint_C x\,dy-y\,dx\)<span class="cap">Take \(\langle P,Q\rangle=\langle 0,x\rangle\), then \(\langle -y,0\rangle\), then the average of the two. The symmetric third form is the one to use on a parametrized curve.</span></div>
+
+  <p>On a curve given by \(x=x(t)\), \(y=y(t)\) for \(a\le t\le b\), that last formula reads \(A=\tfrac12\int_a^b\left(x\,y'-y\,x'\right)dt\).</p>
+
+  <h3>Orientation and holes</h3>
+  <p>Reversing the direction of travel reverses the sign of every line integral: if \(C\) is positively oriented and \(-C\) is the same curve clockwise, then \(\oint_{-C}\mathbf{F}\cdot d\mathbf{r}=-\oint_{C}\mathbf{F}\cdot d\mathbf{r}\). So a clockwise problem is a counterclockwise problem with a minus sign in front.</p>
+  <p>If \(D\) has a hole, the full boundary is the outer curve <b>counterclockwise</b> plus each inner curve <b>clockwise</b>, so that the region is on your left the whole way around. Green's theorem still holds with that combined boundary, which is how you handle \(\mathbf{F}=\left\langle \frac{-y}{x^2+y^2},\frac{x}{x^2+y^2}\right\rangle\): cut out a small circle about the origin and compare the two loops.</p>
+
+  <div class="warn"><b>Check the hypotheses first.</b> Green's theorem needs a <b>closed</b> curve with <b>positive</b> orientation, and \(P,Q\) must have continuous partials on all of \(D\), holes included. An open arc gets no \(\oint\). A clockwise loop needs a minus sign. A field that blows up inside \(D\) (like \(1/(x^2+y^2)\) at the origin) is not covered until you cut the bad point out.</div>
+
+  <div class="card">
+    <h4>Step by step: Green's theorem on a rectangle</h4>
+    <div class="expr" id="gwHead"></div>
+    <ol class="steps" id="gwSteps"></ol>
+    <div class="controls">
+      <button class="btn" id="gwPrev">◀ Back</button>
+      <button class="btn primary" id="gwNext">Next step ▶</button>
+      <button class="btn" id="gwNew">New problem</button>
+      <span class="status" id="gwStatus"></span>
+    </div>
+    <p class="hint">Notice how much of \(P\) and \(Q\) never matters. Any term of \(P\) with no \(y\) in it dies under \(\partial/\partial y\), and any term of \(Q\) with no \(x\) in it dies under \(\partial/\partial x\). Those terms are free.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: both sides of the equation</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene" id="gCanvas"></canvas>
+        <p class="plotcap">The shaded color is \(Q_x-P_y\) inside \(D\) only: <span style="color:var(--b)"><b>blue</b></span> where it is positive, <span style="color:var(--a)"><b>orange</b></span> where it is negative. Gray arrows are \(\mathbf{F}\). The purple dot walks the boundary.</p>
+      </div>
+      <div>
+        <div class="given"><b>Region D</b></div>
+        <div class="presets" id="gRegions"></div>
+        <div class="given"><b>Field F</b></div>
+        <div class="presets" id="gFields"></div>
+        <div class="controls"><label class="chk"><input type="checkbox" id="gCW"> traverse C clockwise</label></div>
+        <div class="readout" id="gOut"></div>
+        <p class="hint">Try every region with \(\mathbf{F}=\langle -y,x\rangle\): the integrand is the constant 2, so the loop integral is always twice the area. Then switch to \(\langle x^2,y^2\rangle\), where \(Q_x-P_y=0\): the shading vanishes and both sides read zero for every region. Tick <b>clockwise</b> and watch only the left side flip sign.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>The shortcut worth memorizing.</b> If \(Q_x-P_y\) is a constant \(k\), you do not need to integrate anything: \(\oint_C P\,dx+Q\,dy=k\cdot\operatorname{area}(D)\). The field \(\langle -y,x\rangle\) has \(k=2\), which is why \(\oint_C -y\,dx+x\,dy\) is always twice the enclosed area.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-green"></div>
+</section>
+
+<!-- ============================================================ 2 CURL AND DIV -->
+<section data-id="curl" data-title="Curl and divergence" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 16.5</p>
+  <h2>Curl and divergence</h2>
+  <p class="lead">Two derivatives of a vector field. One is a vector and measures spin. One is a number and measures spreading.</p>
+
+  <p>Treat \(\nabla\) as a vector of operators, \(\nabla=\left\langle \dfrac{\partial}{\partial x},\dfrac{\partial}{\partial y},\dfrac{\partial}{\partial z}\right\rangle\). Applied to a scalar function it gives the gradient \(\nabla f\). Crossed into a vector field it gives the curl. Dotted into a vector field it gives the divergence.</p>
+
+  <p>For \(\mathbf{F}=P\,\mathbf{i}+Q\,\mathbf{j}+R\,\mathbf{k}\):</p>
+  <div class="formula">\(\operatorname{curl}\mathbf{F}=\nabla\times\mathbf{F}=\begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\[2pt] \dfrac{\partial}{\partial x}&\dfrac{\partial}{\partial y}&\dfrac{\partial}{\partial z}\\[4pt] P&Q&R\end{vmatrix}=\left\langle \frac{\partial R}{\partial y}-\frac{\partial Q}{\partial z},\;\frac{\partial P}{\partial z}-\frac{\partial R}{\partial x},\;\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right\rangle\)<span class="cap">Same determinant as a cross product, with the middle row replaced by derivative operators. Each component skips its own letter: the \(\mathbf{i}\) slot uses only \(y\) and \(z\) derivatives, the \(\mathbf{j}\) slot only \(z\) and \(x\), the \(\mathbf{k}\) slot only \(x\) and \(y\).</span></div>
+  <div class="formula">\(\operatorname{div}\mathbf{F}=\nabla\cdot\mathbf{F}=\frac{\partial P}{\partial x}+\frac{\partial Q}{\partial y}+\frac{\partial R}{\partial z}\)<span class="cap">Each component differentiated by its own variable, then added. The output is a scalar function, not a vector.</span></div>
+
+  <div class="warn"><b>The middle component is the one people lose.</b> Expanding the determinant along the top row puts a minus in front of the \(\mathbf{j}\) term, so the middle slot is \(-\left(R_x-P_z\right)=P_z-R_x\), with the derivative of \(P\) written <b>first</b>. The \(\mathbf{i}\) and \(\mathbf{k}\) slots run in the order \(R_y-Q_z\) and \(Q_x-P_y\); only the middle one is reversed. If your \(\mathbf{j}\) component came out as \(R_x-P_z\), you dropped the sign.</div>
+
+  <h3>What they mean</h3>
+  <ul>
+    <li><b>Curl is rotation.</b> Drop a tiny paddle wheel into the flow at a point. It spins about the axis \(\operatorname{curl}\mathbf{F}\), with angular speed \(|\operatorname{curl}\mathbf{F}|/2\), in the right-hand sense about that axis. Where \(\operatorname{curl}\mathbf{F}=\mathbf{0}\) the field is called <b>irrotational</b>: the wheel drifts without turning.</li>
+    <li><b>Divergence is expansion.</b> Put a tiny balloon at a point. Positive divergence means more flow out than in, a <b>source</b>; negative means a <b>sink</b>. Where \(\operatorname{div}\mathbf{F}=0\) the field is <b>incompressible</b>: whatever enters leaves.</li>
+  </ul>
+
+  <h3>Two identities</h3>
+  <div class="formula">\(\operatorname{curl}(\nabla f)=\mathbf{0}\qquad\qquad \operatorname{div}(\operatorname{curl}\mathbf{F})=0\)<span class="cap">Both are just Clairaut's theorem: the mixed second partials cancel in pairs. The first output is the zero <b>vector</b>, the second is the <b>number</b> zero.</span></div>
+  <p>The first identity gives the <b>curl test</b>: if \(\mathbf{F}\) is conservative then \(\operatorname{curl}\mathbf{F}=\mathbf{0}\). The converse needs a condition on the domain: if \(\mathbf{F}\) has continuous partials on all of \(\mathbb{R}^3\) and \(\operatorname{curl}\mathbf{F}=\mathbf{0}\), then \(\mathbf{F}\) <b>is</b> conservative, so a potential \(f\) with \(\nabla f=\mathbf{F}\) exists.</p>
+  <p>Not every combination is legal. \(\operatorname{div}\mathbf{F}\) is a scalar, so \(\operatorname{curl}(\operatorname{div}\mathbf{F})\) is meaningless. \(\operatorname{curl}\mathbf{F}\) is a vector, so \(\operatorname{div}(\operatorname{curl}\mathbf{F})\) is fine. And \(\operatorname{div}(\nabla f)=f_{xx}+f_{yy}+f_{zz}\) is the Laplacian \(\nabla^2 f\), not zero.</p>
+
+  <div class="note"><b>Curl of a gradient is always zero.</b> \(\operatorname{curl}(\nabla f)=\langle f_{zy}-f_{yz},\,f_{xz}-f_{zx},\,f_{yx}-f_{xy}\rangle=\mathbf{0}\) whenever the second partials are continuous. So the fastest conservative test in 3D is: compute the curl, and if any component survives, the field is not conservative and no potential exists.</div>
+
+  <h3>Back to the plane</h3>
+  <p>A plane field \(\langle P,Q\rangle\) becomes \(\langle P,Q,0\rangle\) in space. Its curl has only one surviving slot:</p>
+  <div class="formula">\(\operatorname{curl}\langle P,Q,0\rangle=\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\mathbf{k}\)<span class="cap">The Green's theorem integrand is exactly the \(\mathbf{k}\)-component of the curl. It is called the <b>scalar curl</b> of the plane field.</span></div>
+  <p>That rewrites Green's theorem twice. The <b>circulation</b> form and the <b>flux</b> form:</p>
+  <div class="formula">\(\displaystyle\oint_C\mathbf{F}\cdot d\mathbf{r}=\iint_D(\operatorname{curl}\mathbf{F})\cdot\mathbf{k}\,dA\qquad\qquad \oint_C\mathbf{F}\cdot\mathbf{n}\,ds=\iint_D\operatorname{div}\mathbf{F}\,dA\)<span class="cap">Left: circulation around the edge equals total spin inside. This is Stokes' theorem in the plane. Right: flux out through the edge equals total expansion inside. This is the divergence theorem in the plane. Here \(\mathbf{n}\) is the outward unit normal.</span></div>
+
+  <div class="card">
+    <h4>Step by step: expanding the curl determinant</h4>
+    <div class="row" id="clMats"></div>
+    <div class="expr" id="clExpr"></div>
+    <div class="controls">
+      <button class="btn" id="clPrev">◀ Back</button>
+      <button class="btn primary" id="clNext">Next step ▶</button>
+      <button class="btn" id="clNew">New field</button>
+      <span class="status" id="clStatus"></span>
+    </div>
+    <p class="hint">Cover the column of the basis vector you are computing. What is left is a 2×2 determinant of operators over functions: down-right minus up-right. The signs across the top row go \(+,-,+\), which is what reverses the middle component.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: the paddle wheel</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene" id="cdCanvas"></canvas>
+        <p class="plotcap">Move the pointer over the field. The purple wheel shows which way a tiny paddle wheel at that point would turn.</p>
+      </div>
+      <div>
+        <div class="presets" id="cdFields"></div>
+        <div class="readout" id="cdOut"></div>
+        <p class="hint">Compare \(\langle x,y\rangle\) and \(\langle -y,x\rangle\): one has divergence everywhere and no spin, the other has spin everywhere and no divergence. Then try \(\langle y,0\rangle\), a pure shear with perfectly parallel arrows: it still has nonzero curl, because the arrows above the point are longer than the ones below. Rotation does not require curved arrows.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-curl"></div>
+</section>
+
+<!-- ============================================================ 3 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 3</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from both chapters. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const exprIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+const fact=n=>{let r=1;for(let k=2;k<=n;k++)r*=k;return r;};
+const texPi=k=>{if(Math.abs(k)<1e-12)return '0';if(Math.abs(k-1)<1e-12)return R`\pi`;if(Math.abs(k+1)<1e-12)return R`-\pi`;return texNum(k)+R`\pi`;};
+const ORANGE='#d97706',BLUE='#2563eb',GREEN='#16a34a',PURPLE='#7c3aed',GRAY='#a8a49a';
+
+/* ---- polynomials in x,y as lists of [coef, i, j] meaning coef*x^i*y^j ---- */
+const mon2=(i,j)=>(i?('x'+(i>1?`^{${i}}`:'')):'')+(j?('y'+(j>1?`^{${j}}`:'')):'');
+const P2={
+  clean(A){const m=new Map();A.forEach(([c,i,j])=>{const k=i+'|'+j;m.set(k,(m.get(k)||0)+c);});
+    const out=[];m.forEach((c,k)=>{if(Math.abs(c)>1e-12){const [i,j]=k.split('|').map(Number);out.push([c,i,j]);}});
+    out.sort((u,v)=>(v[1]+v[2])-(u[1]+u[2])||v[1]-u[1]);return out;},
+  dx(A){return P2.clean(A.filter(t=>t[1]>0).map(([c,i,j])=>[c*i,i-1,j]));},
+  dy(A){return P2.clean(A.filter(t=>t[2]>0).map(([c,i,j])=>[c*j,i,j-1]));},
+  sub(A,B){return P2.clean(A.concat(B.map(([c,i,j])=>[-c,i,j])));},
+  tex(A){if(!A.length)return '0';return A.map(([c,i,j],n)=>{const m=mon2(i,j);const g=Math.abs(c);
+      const co=(Math.abs(g-1)<1e-12&&m)?'':texNum(g);
+      return (n===0?(c<0?'-':''):(c<0?' - ':' + '))+co+m;}).join('');},
+  str(A){if(!A.length)return '0';return A.map(([c,i,j])=>{let s='('+c+')';if(i)s+='*x^'+i;if(j)s+='*y^'+j;return s;}).join('+');},
+  rect(A,a,b){return A.reduce((s,[c,i,j])=>s+c*Math.pow(a,i+1)/(i+1)*Math.pow(b,j+1)/(j+1),0);},
+  tri(A,a,b){return A.reduce((s,[c,i,j])=>s+c*Math.pow(a,i+1)*Math.pow(b,j+1)*fact(i)*fact(j)/fact(i+j+2),0);},
+  intY(A,b){return P2.clean(A.map(([c,i,j])=>[c*Math.pow(b,j+1)/(j+1),i,0]));},
+  co(A,i,j){const t=A.find(u=>u[1]===i&&u[2]===j);return t?t[0]:0;}
+};
+/* degree <= 2 in P and Q, so Qx - Py is linear */
+function genPQlin(){
+  const mons=[[1,0],[0,1],[2,0],[1,1],[0,2]];
+  const T=()=>P2.clean(shuffle(mons).slice(0,rint(2,3)).map(([i,j])=>[rnz(-3,3),i,j]));
+  let P,Q,g,n=0;
+  do{P=T();Q=T();g=P2.sub(P2.dx(Q),P2.dy(P));n++;}while(g.length===0&&n<60);
+  if(Math.random()<0.35)P=P2.clean(P.concat([[rnz(-4,4),0,0]]));
+  if(Math.random()<0.35)Q=P2.clean(Q.concat([[rnz(-4,4),0,0]]));
+  return {P,Q,g};
+}
+/* degree <= 3, integrand may be quadratic */
+function genPQany(){
+  const mons=[[1,0],[0,1],[2,0],[1,1],[0,2],[3,0],[2,1],[1,2],[0,3]];
+  const T=()=>P2.clean(shuffle(mons).slice(0,rint(2,3)).map(([i,j])=>[rnz(-3,3),i,j]));
+  let P,Q,g,n=0;
+  do{P=T();Q=T();g=P2.sub(P2.dx(Q),P2.dy(P));n++;}while(g.length===0&&n<60);
+  return {P,Q,g};
+}
+
+/* ---- polynomials in x,y,z as lists of [coef, i, j, k] ---- */
+const mon3=(i,j,k)=>(i?('x'+(i>1?`^{${i}}`:'')):'')+(j?('y'+(j>1?`^{${j}}`:'')):'')+(k?('z'+(k>1?`^{${k}}`:'')):'');
+const P3={
+  clean(A){const m=new Map();A.forEach(([c,i,j,k])=>{const key=i+'|'+j+'|'+k;m.set(key,(m.get(key)||0)+c);});
+    const out=[];m.forEach((c,key)=>{if(Math.abs(c)>1e-12){const [i,j,k]=key.split('|').map(Number);out.push([c,i,j,k]);}});
+    out.sort((u,v)=>(v[1]+v[2]+v[3])-(u[1]+u[2]+u[3])||v[1]-u[1]||v[2]-u[2]);return out;},
+  d(A,v){const q={x:1,y:2,z:3}[v];return P3.clean(A.filter(t=>t[q]>0).map(t=>{const u=t.slice();u[0]=t[0]*t[q];u[q]=t[q]-1;return u;}));},
+  sub(A,B){return P3.clean(A.concat(B.map(t=>[-t[0],t[1],t[2],t[3]])));},
+  add(A,B){return P3.clean(A.concat(B));},
+  tex(A){if(!A.length)return '0';return A.map(([c,i,j,k],n)=>{const m=mon3(i,j,k);const g=Math.abs(c);
+      const co=(Math.abs(g-1)<1e-12&&m)?'':texNum(g);
+      return (n===0?(c<0?'-':''):(c<0?' - ':' + '))+co+m;}).join('');},
+  str(A){if(!A.length)return '0';return A.map(([c,i,j,k])=>{let s='('+c+')';if(i)s+='*x^'+i;if(j)s+='*y^'+j;if(k)s+='*z^'+k;return s;}).join('+');}
+};
+const MONS3=[[1,0,0],[0,1,0],[0,0,1],[2,0,0],[0,2,0],[0,0,2],[1,1,0],[0,1,1],[1,0,1],[1,1,1],[2,1,0],[0,2,1],[1,0,2],[2,0,1]];
+const randComp3=(maxTerms=2)=>P3.clean(shuffle(MONS3).slice(0,rint(1,maxTerms)).map(m=>[rnz(-3,3),m[0],m[1],m[2]]));
+
+/* build every quantity a curl / divergence question needs from a polynomial field */
+function polyField3(maxTerms){
+  let P,Q,Rr,c0,c1,c2,n=0;
+  do{
+    P=randComp3(maxTerms);Q=randComp3(maxTerms);Rr=randComp3(maxTerms);
+    c0=P3.sub(P3.d(Rr,'y'),P3.d(Q,'z'));
+    c1=P3.sub(P3.d(P,'z'),P3.d(Rr,'x'));
+    c2=P3.sub(P3.d(Q,'x'),P3.d(P,'y'));
+    n++;
+  }while(!c0.length&&!c1.length&&!c2.length&&n<40);
+  const dv=P3.clean(P3.d(P,'x').concat(P3.d(Q,'y'),P3.d(Rr,'z')));
+  return {
+    Ftex:[P3.tex(P),P3.tex(Q),P3.tex(Rr)],
+    curlTex:[P3.tex(c0),P3.tex(c1),P3.tex(c2)],
+    curlStr:[P3.str(c0),P3.str(c1),P3.str(c2)],
+    divTex:P3.tex(dv),divStr:P3.str(dv),
+    pd:[P3.tex(P3.d(Rr,'y')),P3.tex(P3.d(Q,'z')),P3.tex(P3.d(P,'z')),P3.tex(P3.d(Rr,'x')),P3.tex(P3.d(Q,'x')),P3.tex(P3.d(P,'y'))],
+    dd:[P3.tex(P3.d(P,'x')),P3.tex(P3.d(Q,'y')),P3.tex(P3.d(Rr,'z'))],
+    dom:null
+  };
+}
+/* hand-checked non-polynomial fields. pd = [R_y, Q_z, P_z, R_x, Q_x, P_y], dd = [P_x, Q_y, R_z] */
+const POOL3=[
+  {Ftex:[R`xyz`,'0',R`-x^2y`],curlTex:[R`-x^2`,R`3xy`,R`-xz`],curlStr:['-x^2','3*x*y','-x*z'],
+   divTex:R`yz`,divStr:'y*z',pd:[R`-x^2`,'0',R`xy`,R`-2xy`,'0',R`xz`],dd:[R`yz`,'0','0']},
+  {Ftex:[R`e^{x}\sin y`,R`e^{x}\cos y`,'z'],curlTex:['0','0','0'],curlStr:['0','0','0'],
+   divTex:'1',divStr:'1',pd:['0','0','0','0',R`e^{x}\cos y`,R`e^{x}\cos y`],dd:[R`e^{x}\sin y`,R`-e^{x}\sin y`,'1']},
+  {Ftex:[R`x^2y`,R`y^2z`,R`z^2x`],curlTex:[R`-y^2`,R`-z^2`,R`-x^2`],curlStr:['-y^2','-z^2','-x^2'],
+   divTex:R`2xy+2yz+2zx`,divStr:'2*x*y+2*y*z+2*z*x',pd:['0',R`y^2`,'0',R`z^2`,'0',R`x^2`],dd:[R`2xy`,R`2yz`,R`2zx`]},
+  {Ftex:['y','z','x'],curlTex:['-1','-1','-1'],curlStr:['-1','-1','-1'],
+   divTex:'0',divStr:'0',pd:['0','1','0','1','0','1'],dd:['0','0','0']},
+  {Ftex:[R`z\cos y`,R`x\sin z`,R`ye^{x}`],curlTex:[R`e^{x}-x\cos z`,R`\cos y-ye^{x}`,R`\sin z+z\sin y`],
+   curlStr:['exp(x)-x*cos(z)','cos(y)-y*exp(x)','sin(z)+z*sin(y)'],
+   divTex:'0',divStr:'0',pd:[R`e^{x}`,R`x\cos z`,R`\cos y`,R`ye^{x}`,R`\sin z`,R`-z\sin y`],dd:['0','0','0'],
+   dom:{x:[-1.4,1.4],y:[-1.4,1.4],z:[-1.4,1.4]}},
+  {Ftex:[R`xy^2`,R`yz^2`,R`zx^2`],curlTex:[R`-2yz`,R`-2zx`,R`-2xy`],curlStr:['-2*y*z','-2*z*x','-2*x*y'],
+   divTex:R`y^2+z^2+x^2`,divStr:'y^2+z^2+x^2',pd:['0',R`2yz`,'0',R`2zx`,'0',R`2xy`],dd:[R`y^2`,R`z^2`,R`x^2`]}
+];
+const genField3=()=>Math.random()<0.5?polyField3(2):{...pick(POOL3)};
+const texF3=f=>R`\mathbf{F}=\langle `+f.Ftex.join(',\\; ')+R` \rangle`;
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---- (a) Green over a rectangle ---- */
+Q.greenRect={name:'Green over a rectangle',
+  gen(){const a=rint(1,3),b=rint(1,3);const {P,Q:Qp,g}=genPQlin();
+    return {a,b,P,Q:Qp,g,inner:P2.intY(g,b),val:P2.rect(g,a,b)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use Green's theorem to evaluate ${M(R`\oint_C \left(${P2.tex(q.P)}\right)dx+\left(${P2.tex(q.Q)}\right)dy`)}, where ${M('C')} is the boundary of the rectangle ${M(R`0\le x\le ${q.a},\; 0\le y\le ${q.b}`)} traversed counterclockwise. Fractions like <code>27/2</code> are fine.</p>`;
+    numIn(el,'v',M(R`\oint_C \mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`\frac{\partial Q}{\partial x}=${P2.tex(P2.dx(q.Q))}`)+' and '+M(R`\frac{\partial P}{\partial y}=${P2.tex(P2.dy(q.P))}`);},
+  solution(q){return `${M(R`Q_x=${P2.tex(P2.dx(q.Q))}`)} and ${M(R`P_y=${P2.tex(P2.dy(q.P))}`)}, so the integrand is ${M(R`Q_x-P_y=${P2.tex(q.g)}`)}. Green's theorem gives `
+    +D(R`\int_0^{${q.a}}\!\!\int_0^{${q.b}}\left(${P2.tex(q.g)}\right)dy\,dx=\int_0^{${q.a}}\left(${P2.tex(q.inner)}\right)dx=${texNum(q.val)}`)
+    +`The inner integral runs in ${M('y')} with ${M('x')} held fixed, which is why every ${M('y')} disappears after the first step.`;}
+};
+
+/* ---- (b) Green over a disk ---- */
+Q.greenDisk={name:'Green over a disk',
+  gen(){
+    if(Math.random()<0.5){
+      const a=rint(1,3);const k1=rint(-4,4),k2=rint(-4,4),m1=rint(-4,4),m2=rint(-4,4);
+      const kk=m1-k1;
+      const P=P2.clean([[k1,0,1],[k2,1,0]]),Qp=P2.clean([[m1,1,0],[m2,0,1]]);
+      return {mode:'lin',a,P,Q:Qp,g:P2.clean([[kk,0,0]]),kk,val:kk*Math.PI*a*a};
+    }
+    const a=pick([1,2,2]);const c=rnz(-3,3),d=rnz(-3,3),e=rint(-3,3),f=rint(-3,3);
+    const P=P2.clean([[-c,0,3],[e,2,0]]),Qp=P2.clean([[d,3,0],[f,0,2]]);
+    const g=P2.clean([[3*d,2,0],[3*c,0,2]]);
+    return {mode:'quad',a,c,d,P,Q:Qp,g,kc:3*(c+d)*Math.pow(a,4)/4,val:3*(c+d)*Math.PI*Math.pow(a,4)/4};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use Green's theorem to evaluate ${M(R`\oint_C \left(${P2.tex(q.P)}\right)dx+\left(${P2.tex(q.Q)}\right)dy`)}, where ${M('C')} is the circle ${M(R`x^2+y^2=${q.a*q.a}`)} traversed counterclockwise. Give an exact value such as <code>8pi</code> or <code>9pi/4</code>.</p>`;
+    numIn(el,'v',M(R`\oint_C \mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`Q_x-P_y=${P2.tex(q.g)}`)+(q.mode==='lin'?' (a constant, so multiply by the area)':' (use polar, or the symmetry facts below)');},
+  solution(q){const head=`${M(R`Q_x=${P2.tex(P2.dx(q.Q))}`)} and ${M(R`P_y=${P2.tex(P2.dy(q.P))}`)}, so ${M(R`Q_x-P_y=${P2.tex(q.g)}`)}. `;
+    if(q.mode==='lin')return head+`The integrand is the constant ${M(texNum(q.kk))}, so the double integral is that constant times the area of the disk: `+D(R`${texNum(q.kk)}\cdot\pi(${q.a})^2=${texPi(q.kk*q.a*q.a)}`);
+    return head+`Over a disk of radius ${M(String(q.a))}, polar coordinates give ${M(R`\iint_D (x^2+y^2)\,dA=\int_0^{2\pi}\!\!\int_0^{${q.a}} r^2\cdot r\,dr\,d\theta=\frac{\pi(${q.a})^4}{2}`)}, and by symmetry ${M(R`\iint_D x^2\,dA=\iint_D y^2\,dA=\frac{\pi(${q.a})^4}{4}=${texPi(Math.pow(q.a,4)/4)}`)}. So `
+      +D(R`\iint_D\left(${P2.tex(q.g)}\right)dA=(${3*q.d})\cdot${texPi(Math.pow(q.a,4)/4)}+(${3*q.c})\cdot${texPi(Math.pow(q.a,4)/4)}=${texPi(q.kc)}`);}
+};
+
+/* ---- (c) Green over a triangle ---- */
+Q.greenTri={name:'Green over a triangle',
+  gen(){const a=rint(1,3),b=rint(1,3);const {P,Q:Qp,g}=genPQlin();
+    return {a,b,P,Q:Qp,g,A:P2.co(g,1,0),B:P2.co(g,0,1),C:P2.co(g,0,0),val:P2.tri(g,a,b)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use Green's theorem to evaluate ${M(R`\oint_C \left(${P2.tex(q.P)}\right)dx+\left(${P2.tex(q.Q)}\right)dy`)}, where ${M('C')} is the triangle with vertices ${M(R`(0,0)`)}, ${M(R`(${q.a},0)`)}, ${M(R`(0,${q.b})`)} traversed counterclockwise. Fractions are fine.</p>`;
+    numIn(el,'v',M(R`\oint_C \mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`Q_x-P_y=${P2.tex(q.g)}`)+'; the hypotenuse is '+M(R`y=${q.b}\left(1-\frac{x}{${q.a}}\right)`);},
+  solution(q){const {a,b,A,B,C}=q;
+    return `${M(R`Q_x=${P2.tex(P2.dx(q.Q))}`)} and ${M(R`P_y=${P2.tex(P2.dy(q.P))}`)}, so ${M(R`Q_x-P_y=${P2.tex(q.g)}`)}. `
+    +`For the right triangle with legs ${M(R`a=${a}`)} along ${M('x')} and ${M(R`b=${b}`)} along ${M('y')}, `
+    +`${M(R`\iint_T dA=\tfrac{ab}{2}=${texNum(a*b/2)}`)}, ${M(R`\iint_T x\,dA=\tfrac{a^2b}{6}=${texNum(a*a*b/6)}`)}, ${M(R`\iint_T y\,dA=\tfrac{ab^2}{6}=${texNum(a*b*b/6)}`)}. Combining, `
+    +D(R`(${texNum(A)})\!\left(${texNum(a*a*b/6)}\right)+(${texNum(B)})\!\left(${texNum(a*b*b/6)}\right)+(${texNum(C)})\!\left(${texNum(a*b/2)}\right)=${texNum(q.val)}`);}
+};
+
+/* ---- (d) area from a parametrized boundary ---- */
+Q.greenArea={name:'area from a parametrized boundary',
+  gen(){
+    const kind=pick(['ellipse','ellipse','astroid','loop']);
+    if(kind==='ellipse'){let a=rint(1,5),b=rint(1,5);return {kind,a,b,
+      curve:R`x=${a===1?'':a}\cos t,\quad y=${b===1?'':b}\sin t,\quad 0\le t\le 2\pi`,area:Math.PI*a*b};}
+    if(kind==='astroid'){const a=rint(1,3);return {kind,a,
+      curve:R`x=${a===1?'':a}\cos^3 t,\quad y=${a===1?'':a}\sin^3 t,\quad 0\le t\le 2\pi`,area:3*Math.PI*a*a/8};}
+    return {kind,curve:R`x=t^2-1,\quad y=t^3-t,\quad -1\le t\le 1`,area:8/15};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use ${M(R`A=\tfrac12\oint_C x\,dy-y\,dx`)} to find the area enclosed by ${q.kind==='loop'?'the loop of the curve':'the curve'} `+D(q.curve)+`<span class="muted">Exact answers such as <code>6pi</code>, <code>3pi/2</code>, or <code>8/15</code>.</span></p>`;
+    numIn(el,'ar','Area =');},
+  check(q,el){return G(el,'ar',checkNumber($('[data-k=ar]',el).value,q.area));},
+  solution(q){
+    if(q.kind==='ellipse')return `${M(R`x\,y'-y\,x'=(${q.a}\cos t)(${q.b}\cos t)-(${q.b}\sin t)(-${q.a}\sin t)=${q.a*q.b===1?'':q.a*q.b}(\cos^2t+\sin^2t)=${q.a*q.b}`)}, a constant. So `
+      +D(R`A=\tfrac12\int_0^{2\pi}${q.a*q.b}\,dt=\tfrac12\cdot ${q.a*q.b}\cdot 2\pi=${texPi(q.a*q.b)}`)+`Every ellipse has area ${M(R`\pi ab`)}.`;
+    if(q.kind==='astroid')return `${M(R`x'=-3${q.a===1?'':q.a}\cos^2t\sin t`)} and ${M(R`y'=3${q.a===1?'':q.a}\sin^2t\cos t`)}, so ${M(R`x\,y'-y\,x'=3(${q.a})^2\sin^2t\cos^2t(\cos^2t+\sin^2t)=\tfrac{3(${q.a})^2}{4}\sin^2 2t`)}. Then `
+      +D(R`A=\tfrac12\cdot\tfrac{3(${q.a})^2}{4}\int_0^{2\pi}\sin^2 2t\,dt=\tfrac12\cdot\tfrac{3(${q.a})^2}{4}\cdot\pi=${texPi(3*q.a*q.a/8)}`);
+    return `${M(R`x'=2t`)} and ${M(R`y'=3t^2-1`)}, so ${M(R`x\,y'-y\,x'=(t^2-1)(3t^2-1)-(t^3-t)(2t)=t^4-2t^2+1=(t^2-1)^2`)}. Then `
+      +D(R`A=\tfrac12\int_{-1}^{1}(t^2-1)^2dt=\tfrac12\left[\tfrac{t^5}{5}-\tfrac{2t^3}{3}+t\right]_{-1}^{1}=\tfrac12\cdot\tfrac{16}{15}=\tfrac{8}{15}`)
+      +`The answer came out positive, which confirms the parametrization runs counterclockwise.`;}
+};
+
+/* ---- (e) reversing the orientation ---- */
+Q.greenOrient={name:'reversing the orientation',
+  gen(){const kind=pick(['pi','int','int']);const k=rnz(-12,12);
+    const W=kind==='pi'?k*Math.PI:k;const Wtex=kind==='pi'?texPi(k):String(k);
+    const flip=Math.random()<0.5;
+    return {kind,k,W,Wtex,flip,ans:-W,ansTex:kind==='pi'?texPi(-k):String(-k)};},
+  render(q,el){
+    el.innerHTML=q.flip
+      ? `<p class="prompt">${M('C')} is a piecewise-smooth simple closed curve, and the field ${M(R`\mathbf{F}=\langle P,Q\rangle`)} has continuous partials on the region ${M('D')} it bounds. Traversed <b>clockwise</b>, ${M(R`\int_C P\,dx+Q\,dy=${q.Wtex}`)}. What is ${M(R`\iint_D (Q_x-P_y)\,dA`)}?</p>`
+      : `<p class="prompt">${M('C')} is a positively oriented piecewise-smooth simple closed curve and ${M(R`\oint_C P\,dx+Q\,dy=${q.Wtex}`)}. What is the value of ${M(R`\int_{-C} P\,dx+Q\,dy`)}, the same integral with ${M('C')} traversed <b>clockwise</b>?</p>`;
+    numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ans));},
+  solution(q){return `Reversing the direction of travel negates every line integral, because ${M(R`d\mathbf{r}`)} flips sign while the field does not. `
+    +(q.flip
+      ? `Green's theorem applies to the <b>positively oriented</b> curve, whose integral is ${M(R`-\left(${q.Wtex}\right)=${q.ansTex}`)}. That is the value of the double integral: <b>${M(q.ansTex)}</b>.`
+      : `So the clockwise value is ${M(R`-\left(${q.Wtex}\right)=${q.ansTex}`)}. <b>${M(q.ansTex)}</b>.`);}
+};
+
+/* ---- (f) identify the Green integrand ---- */
+const SPECIAL2=[
+  {Ptex:R`e^{x}\sin y`,Qtex:R`e^{x}\cos y`,gtex:'0',gstr:'0',
+   why:R`Q_x=e^{x}\cos y`,why2:R`P_y=e^{x}\cos y`},
+  {Ptex:R`y\cos x`,Qtex:R`x\sin y`,gtex:R`\sin y-\cos x`,gstr:'sin(y)-cos(x)',
+   why:R`Q_x=\sin y`,why2:R`P_y=\cos x`},
+  {Ptex:R`xe^{y}`,Qtex:R`ye^{x}`,gtex:R`ye^{x}-xe^{y}`,gstr:'y*exp(x)-x*exp(y)',
+   why:R`Q_x=ye^{x}`,why2:R`P_y=xe^{y}`},
+  {Ptex:R`\sin(xy)`,Qtex:R`\cos(xy)`,gtex:R`-y\sin(xy)-x\cos(xy)`,gstr:'-y*sin(x*y)-x*cos(x*y)',
+   why:R`Q_x=-y\sin(xy)`,why2:R`P_y=x\cos(xy)`},
+  {Ptex:R`x^2\cos y`,Qtex:R`y^2\sin x`,gtex:R`y^2\cos x+x^2\sin y`,gstr:'y^2*cos(x)+x^2*sin(y)',
+   why:R`Q_x=y^2\cos x`,why2:R`P_y=-x^2\sin y`}
+];
+function genIntegrand2(){
+  if(Math.random()<0.6){const {P,Q:Qp,g}=genPQany();
+    return {Ptex:P2.tex(P),Qtex:P2.tex(Qp),gtex:P2.tex(g),gstr:P2.str(g),
+      why:R`Q_x=${P2.tex(P2.dx(Qp))}`,why2:R`P_y=${P2.tex(P2.dy(P))}`};}
+  return {...pick(SPECIAL2)};
+}
+Q.greenIntegrand={name:'the Green integrand',
+  gen(){return genIntegrand2();},
+  render(q,el){el.innerHTML=`<p class="prompt">A line integral ${M(R`\oint_C P\,dx+Q\,dy`)} has ${M(R`P=${q.Ptex}`)} and ${M(R`Q=${q.Qtex}`)}. Write the integrand that Green's theorem puts inside the double integral.</p>`;
+    exprIn(el,'g',M(R`Q_x-P_y=`),'an expression in x and y');},
+  check(q,el){return G(el,'g',checkExpr($('[data-k=g]',el).value,q.gstr,['x','y']));},
+  solution(q){return `${M(q.why)} and ${M(q.why2)}, so `+D(R`\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}=${q.gtex}`)
+    +`Differentiate ${M('Q')} by ${M('x')} only, and ${M('P')} by ${M('y')} only. The other two partials never appear.`;}
+};
+
+/* ---- curl of a 3D field ---- */
+Q.curlCompute={name:'curl of a vector field',
+  gen(){return genField3();},
+  render(q,el){el.innerHTML=`<p class="prompt">Compute ${M(R`\operatorname{curl}\mathbf{F}`)} for `+D(texF3(q))+`</p>`;
+    exprIn(el,'cu',M(R`\operatorname{curl}\mathbf{F}=`),'<..., ..., ...>');},
+  check(q,el){return G(el,'cu',checkExprVector($('[data-k=cu]',el).value,q.curlStr,['x','y','z'],q.dom?{domain:q.dom}:{}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`R_y=${q.pd[0]},\quad Q_z=${q.pd[1]},\quad P_z=${q.pd[2]},\quad R_x=${q.pd[3]},\quad Q_x=${q.pd[4]},\quad P_y=${q.pd[5]}`);},
+  solution(q){return `Expand the determinant along the top row:`
+    +D(R`\operatorname{curl}\mathbf{F}=\left\langle R_y-Q_z,\;P_z-R_x,\;Q_x-P_y\right\rangle`)
+    +`Here ${M(R`R_y=${q.pd[0]}`)}, ${M(R`Q_z=${q.pd[1]}`)}, ${M(R`P_z=${q.pd[2]}`)}, ${M(R`R_x=${q.pd[3]}`)}, ${M(R`Q_x=${q.pd[4]}`)}, ${M(R`P_y=${q.pd[5]}`)}. Substituting, `
+    +D(R`\operatorname{curl}\mathbf{F}=\left\langle \left(${q.pd[0]}\right)-\left(${q.pd[1]}\right),\;\left(${q.pd[2]}\right)-\left(${q.pd[3]}\right),\;\left(${q.pd[4]}\right)-\left(${q.pd[5]}\right)\right\rangle=\left\langle ${q.curlTex.join(',\\; ')}\right\rangle`)
+    +`Remember the middle slot is ${M(R`P_z-R_x`)}, not ${M(R`R_x-P_z`)}.`;}
+};
+
+/* ---- divergence of a 3D field ---- */
+Q.divCompute={name:'divergence of a vector field',
+  gen(){return genField3();},
+  render(q,el){el.innerHTML=`<p class="prompt">Compute ${M(R`\operatorname{div}\mathbf{F}`)} for `+D(texF3(q))+`</p>`;
+    exprIn(el,'dv',M(R`\operatorname{div}\mathbf{F}=`),'an expression in x, y, z');},
+  check(q,el){return G(el,'dv',checkExpr($('[data-k=dv]',el).value,q.divStr,['x','y','z'],q.dom?{domain:q.dom}:{}));},
+  solution(q){return `Differentiate each component by its own variable and add: ${M(R`P_x=${q.dd[0]}`)}, ${M(R`Q_y=${q.dd[1]}`)}, ${M(R`R_z=${q.dd[2]}`)}. So `
+    +D(R`\operatorname{div}\mathbf{F}=\left(${q.dd[0]}\right)+\left(${q.dd[1]}\right)+\left(${q.dd[2]}\right)=${q.divTex}`)
+    +`The result is a scalar function, not a vector.`;}
+};
+
+/* ---- conservative by the curl test ---- */
+const CONS=[
+  {F:[R`yz`,R`xz`,R`xy`],f:R`xyz`},
+  {F:['2x','2y','2z'],f:R`x^2+y^2+z^2`},
+  {F:[R`e^{y}`,R`xe^{y}`,'1'],f:R`xe^{y}+z`},
+  {F:[R`\cos x\cos y`,R`-\sin x\sin y`,'2z'],f:R`\sin x\cos y+z^2`},
+  {F:['1','z','y'],f:R`yz+x`},
+  {F:['2xy',R`x^2`,R`3z^2`],f:R`x^2y+z^3`},
+  {F:['y+z','x+z','x+y'],f:R`xy+yz+zx`}
+];
+const NOTCONS=[
+  {F:['-y','x','0'],c:R`\langle 0,\,0,\,2\rangle`,slot:R`Q_x-P_y=1-(-1)=2`},
+  {F:['z','x','y'],c:R`\langle 1,\,1,\,1\rangle`,slot:R`R_y-Q_z=1-0=1`},
+  {F:[R`y^2`,'0','0'],c:R`\langle 0,\,0,\,-2y\rangle`,slot:R`Q_x-P_y=0-2y=-2y`},
+  {F:['0',R`xz`,'0'],c:R`\langle -x,\,0,\,z\rangle`,slot:R`R_y-Q_z=0-x=-x`},
+  {F:[R`xy`,R`yz`,R`zx`],c:R`\langle -y,\,-z,\,-x\rangle`,slot:R`R_y-Q_z=0-y=-y`},
+  {F:[R`\sin z`,'0','0'],c:R`\langle 0,\,\cos z,\,0\rangle`,slot:R`P_z-R_x=\cos z-0=\cos z`}
+];
+Q.conservative={name:'conservative by the curl test',
+  gen(){const yes=Math.random()<0.5;const s=pick(yes?CONS:NOTCONS);return {yes,...s};},
+  render(q,el){el.innerHTML=`<p class="prompt">Is `+D(R`\mathbf{F}=\langle ${q.F.join(',\\; ')} \rangle`)+` conservative on ${M(R`\mathbb{R}^3`)}? Use the curl test.</p>`;
+    q.get=choiceButtons(el,[{label:'yes, conservative',value:true},{label:'no, not conservative',value:false}]);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.yes,msg:v===q.yes?'':(q.yes?'Every component of the curl works out to zero here.':'At least one component of the curl is not zero.')};},
+  solution(q){return q.yes
+    ? `Computing the curl gives ${M(R`\mathbf{0}`)}, and ${M(R`\mathbf{F}`)} has continuous partials on all of ${M(R`\mathbb{R}^3`)}, so ${M(R`\mathbf{F}`)} <b>is conservative</b>. A potential function is ${M(R`f=${q.f}`)}: check that ${M(R`\nabla f=\mathbf{F}`)}.`
+    : `The curl is ${M(R`\operatorname{curl}\mathbf{F}=${q.c}`)}, not the zero vector (for instance ${M(q.slot)}). Since a conservative field must have zero curl, ${M(R`\mathbf{F}`)} is <b>not conservative</b>.`;}
+};
+
+/* ---- signs of curl and divergence from a picture ---- */
+const SIGNF=[
+  {tex:R`\langle -y,\;x\rangle`,F:(x,y)=>[-y,x],cs:1,ds:0,say:'pure counterclockwise rotation'},
+  {tex:R`\langle y,\;-x\rangle`,F:(x,y)=>[y,-x],cs:-1,ds:0,say:'pure clockwise rotation'},
+  {tex:R`\langle x,\;y\rangle`,F:(x,y)=>[x,y],cs:0,ds:1,say:'a radial source'},
+  {tex:R`\langle -x,\;-y\rangle`,F:(x,y)=>[-x,-y],cs:0,ds:-1,say:'a radial sink'},
+  {tex:R`\langle y,\;0\rangle`,F:(x,y)=>[y,0],cs:-1,ds:0,say:'a horizontal shear'},
+  {tex:R`\langle 0,\;x\rangle`,F:(x,y)=>[0,x],cs:1,ds:0,say:'a vertical shear'},
+  {tex:R`\langle x,\;-y\rangle`,F:(x,y)=>[x,-y],cs:0,ds:0,say:'a saddle flow: in along one axis, out along the other'},
+  {tex:R`\langle x-y,\;x+y\rangle`,F:(x,y)=>[x-y,x+y],cs:1,ds:1,say:'a counterclockwise spiral flowing outward'},
+  {tex:R`\langle -x-y,\;x-y\rangle`,F:(x,y)=>[-x-y,x-y],cs:1,ds:-1,say:'a counterclockwise spiral flowing inward'},
+  {tex:R`\langle x+y,\;y-x\rangle`,F:(x,y)=>[x+y,y-x],cs:-1,ds:1,say:'a clockwise spiral flowing outward'},
+  {tex:R`\langle y-x,\;-x-y\rangle`,F:(x,y)=>[y-x,-x-y],cs:-1,ds:-1,say:'a clockwise spiral flowing inward'},
+  {tex:R`\langle y,\;x\rangle`,F:(x,y)=>[y,x],cs:0,ds:0,say:'the gradient of xy, which neither spins nor spreads'}
+];
+const SIGNIDX=s=>s>0?0:(s<0?1:2);
+let __signN=0;
+Q.signPicture={name:'curl and divergence signs from a picture',
+  gen(){const f=pick(SIGNF);return {...f,ci:SIGNIDX(f.cs),di:SIGNIDX(f.ds),id:'signPlot'+(++__signN)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The plane vector field below is sketched near the origin. Decide the sign of the scalar curl ${M(R`Q_x-P_y`)} and of the divergence ${M(R`P_x+Q_y`)} <b>at the origin</b>.</p>
+      <canvas class="scene short" style="max-width:380px" id="${q.id}"></canvas>
+      <p class="muted" style="margin:10px 0 2px">Scalar curl at the origin is</p>`;
+    q.getC=choiceButtons(el,[{label:'positive',value:0},{label:'negative',value:1},{label:'zero',value:2}]);
+    el.appendChild(el2('p','muted','Divergence at the origin is'));
+    q.getD=choiceButtons(el,[{label:'positive',value:0},{label:'negative',value:1},{label:'zero',value:2}]);
+    const cv=$('#'+q.id,el);const p=new Plot2D(cv,{xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:2.6,labels:false});
+    const drawIt=()=>{if(!cv.isConnected)return;p.begin().field(q.F,{step:0.5,scale:0.22,color:GRAY,width:1.3});
+      p.point([0,0],{color:PURPLE,r:5,ring:true});};
+    drawIt();setTimeout(drawIt,50);},
+  check(q){const a=q.getC(),b=q.getD();
+    if(a===null||b===null)return {ok:false,msg:'Pick an answer in both rows.'};
+    if(a!==q.ci)return {ok:false,msg:'The curl answer is not right. Imagine a paddle wheel at the origin: does the flow on one side push harder than on the other?'};
+    if(b!==q.di)return {ok:false,msg:'The divergence answer is not right. Imagine a small circle at the origin: is more arrow leaving it than entering?'};
+    return {ok:true,msg:'This is '+q.say+'.'};},
+  solution(q){const w=['positive','negative','zero'];
+    return `The field is ${M(q.tex)}, so ${M(R`Q_x-P_y`)} is <b>${w[q.ci]}</b> and ${M(R`P_x+Q_y`)} is <b>${w[q.di]}</b> at the origin. It is ${q.say}. Curl is about arrows on opposite sides pushing in opposite tangential directions; divergence is about net arrow leaving a small circle.`;}
+};
+const el2=(tag,cls,txt)=>{const e=document.createElement(tag);e.className=cls;e.textContent=txt;e.style.margin='10px 0 2px';return e;};
+
+/* ---- 2D scalar curl ---- */
+Q.curl2D={name:'scalar curl in the plane',
+  gen(){return genIntegrand2();},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`\mathbf{F}=\langle ${q.Ptex},\; ${q.Qtex}\rangle`)} be a plane field. Find its scalar curl, the ${M(R`\mathbf{k}`)}-component of ${M(R`\operatorname{curl}\langle P,Q,0\rangle`)}.</p>`;
+    exprIn(el,'g',M(R`Q_x-P_y=`),'an expression in x and y');},
+  check(q,el){return G(el,'g',checkExpr($('[data-k=g]',el).value,q.gstr,['x','y']));},
+  solution(q){return `With ${M('R=0')} the ${M(R`\mathbf{i}`)} and ${M(R`\mathbf{j}`)} slots of the curl vanish, leaving only ${M(R`Q_x-P_y`)}. Here ${M(q.why)} and ${M(q.why2)}, so `
+    +D(R`\operatorname{curl}\mathbf{F}=\left(${q.gtex}\right)\mathbf{k}`)
+    +`This scalar is exactly what Green's theorem integrates over ${M('D')}.`;}
+};
+
+/* ---- identities ---- */
+const IDS=[
+  {q:`For every vector field ${M(R`\mathbf{F}`)} whose components have continuous second partial derivatives, ${M(R`\operatorname{div}(\operatorname{curl}\mathbf{F})`)} equals:`,
+   opts:[[M('0'),true],[M(R`\operatorname{curl}(\operatorname{div}\mathbf{F})`),false],[M(R`\nabla f`),false],[M(R`|\mathbf{F}|^2`),false]],
+   why:`Writing it out, ${M(R`\operatorname{div}(\operatorname{curl}\mathbf{F})=R_{yx}-Q_{zx}+P_{zy}-R_{xy}+Q_{xz}-P_{yz}`)}. Clairaut's theorem pairs the terms and every pair cancels, so the answer is the number 0.`},
+  {q:`For every scalar function ${M('f')} with continuous second partial derivatives, ${M(R`\operatorname{curl}(\nabla f)`)} equals:`,
+   opts:[[M(R`\mathbf{0}`),true],[M(R`\nabla f`),false],[M(R`f_{xx}+f_{yy}+f_{zz}`),false],[M('f'),false]],
+   why:`Each component is a difference of equal mixed partials, for instance ${M(R`f_{zy}-f_{yz}=0`)}. The result is the zero <b>vector</b>. This is exactly why a conservative field must have zero curl.`},
+  {q:`${M(R`\operatorname{div}(\nabla f)`)} equals:`,
+   opts:[[M(R`f_{xx}+f_{yy}+f_{zz}`),true],[M('0'),false],[M(R`\mathbf{0}`),false],[M(R`\nabla f`),false]],
+   why:`Dotting ${M(R`\nabla`)} into ${M(R`\nabla f=\langle f_x,f_y,f_z\rangle`)} gives ${M(R`f_{xx}+f_{yy}+f_{zz}`)}, the Laplacian ${M(R`\nabla^2 f`)}. It is not automatically zero; functions where it is zero are called harmonic.`},
+  {q:`Which of these expressions is <b>meaningless</b>?`,
+   opts:[[M(R`\operatorname{curl}(\operatorname{div}\mathbf{F})`),true],[M(R`\operatorname{div}(\operatorname{curl}\mathbf{F})`),false],[M(R`\operatorname{curl}(\nabla f)`),false],[M(R`\nabla(\operatorname{div}\mathbf{F})`),false]],
+   why:`${M(R`\operatorname{div}\mathbf{F}`)} is a scalar function, and curl only accepts a vector field, so ${M(R`\operatorname{curl}(\operatorname{div}\mathbf{F})`)} is not defined. The other three are all legal: curl of a field, curl of a gradient, gradient of a scalar.`},
+  {q:`If ${M(R`\operatorname{curl}\mathbf{F}=\mathbf{0}`)} everywhere and the components of ${M(R`\mathbf{F}`)} have continuous partials on all of ${M(R`\mathbb{R}^3`)}, then ${M(R`\mathbf{F}`)} is:`,
+   opts:[['conservative',true],['incompressible',false],['the zero field',false],['not determined by this information',false]],
+   why:`On a domain with no holes, zero curl is enough: ${M(R`\mathbf{F}=\nabla f`)} for some potential ${M('f')}. The hypothesis about all of ${M(R`\mathbb{R}^3`)} is what makes the converse of ${M(R`\operatorname{curl}(\nabla f)=\mathbf{0}`)} true.`},
+  {q:`A vector field with ${M(R`\operatorname{div}\mathbf{F}=0`)} is called:`,
+   opts:[['incompressible',true],['conservative',false],['irrotational',false],['constant',false]],
+   why:`Zero divergence means nothing is created or destroyed: the field is <b>incompressible</b>. Zero <b>curl</b> is the one called irrotational, and conservative means ${M(R`\mathbf{F}=\nabla f`)}.`},
+  {q:`${M(R`\operatorname{curl}\mathbf{F}`)} and ${M(R`\operatorname{div}\mathbf{F}`)} are, respectively:`,
+   opts:[['a vector field and a scalar function',true],['a scalar function and a vector field',false],['both vector fields',false],['both scalar functions',false]],
+   why:`Curl comes from a cross product, so it is a vector field. Divergence comes from a dot product, so it is a scalar function. Getting this backwards is what produces meaningless expressions.`},
+  {q:`For a plane field ${M(R`\mathbf{F}=\langle P,Q\rangle`)}, the quantity ${M(R`Q_x-P_y`)} is:`,
+   opts:[[`the ${M(R`\mathbf{k}`)}-component of ${M(R`\operatorname{curl}\langle P,Q,0\rangle`)}`,true],[M(R`\operatorname{div}\mathbf{F}`),false],[`the ${M(R`\mathbf{i}`)}-component of ${M(R`\operatorname{curl}\langle P,Q,0\rangle`)}`,false],['always zero',false]],
+   why:`Padding with a zero third component kills the ${M(R`\mathbf{i}`)} and ${M(R`\mathbf{j}`)} slots and leaves ${M(R`(Q_x-P_y)\mathbf{k}`)}. That is why Green's theorem can be written ${M(R`\oint_C\mathbf{F}\cdot d\mathbf{r}=\iint_D(\operatorname{curl}\mathbf{F})\cdot\mathbf{k}\,dA`)}.`}
+];
+Q.identity={name:'vector identities',
+  gen(){const s=pick(IDS);const opts=shuffle(s.opts);return {text:s.q,opts,why:s.why,ansIdx:opts.findIndex(o=>o[1])};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.text}</p>`;
+    q.get=choiceButtons(el,q.opts.map((o,i)=>({label:o[0],value:i})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ansIdx,msg:v===q.ansIdx?'':'Not that one. Check whether each side is a scalar or a vector first.'};},
+  solution(q){return `The correct choice is ${q.opts[q.ansIdx][0]}. ${q.why}`;}
+};
+
+/* ============================================================ chapter 1 widgets */
+(function(){
+  /* ---------- walkthrough: Green on a rectangle ---------- */
+  let W=null,step=0;
+  function newProb(){
+    const a=rint(1,3),b=rint(1,3);const {P,Q:Qp,g}=genPQlin();
+    W={a,b,P,Q:Qp,g,Qx:P2.dx(Qp),Py:P2.dy(P),inner:P2.intY(g,b),val:P2.rect(g,a,b)};
+    step=0;drawW();
+  }
+  function drawW(){
+    const {a,b,P,Q:Qp,g,Qx,Py,inner,val}=W;
+    $('#gwHead').innerHTML=M(R`\oint_C\left(${P2.tex(P)}\right)dx+\left(${P2.tex(Qp)}\right)dy`)
+      +`<span class="muted" style="font-size:14px"> &nbsp;over the boundary of &nbsp;</span>`+M(R`0\le x\le ${a},\; 0\le y\le ${b}`);
+    const items=[
+      ['Differentiate Q by x.',M(R`\frac{\partial Q}{\partial x}=\frac{\partial}{\partial x}\left(${P2.tex(Qp)}\right)=${P2.tex(Qx)}`)],
+      ['Differentiate P by y.',M(R`\frac{\partial P}{\partial y}=\frac{\partial}{\partial y}\left(${P2.tex(P)}\right)=${P2.tex(Py)}`)],
+      ['Subtract, in that order.',M(R`Q_x-P_y=\left(${P2.tex(Qx)}\right)-\left(${P2.tex(Py)}\right)=${P2.tex(g)}`)],
+      ['Set up the double integral over the rectangle.',M(R`\iint_D\left(${P2.tex(g)}\right)dA=\int_0^{${a}}\!\!\int_0^{${b}}\left(${P2.tex(g)}\right)dy\,dx`)],
+      ['Integrate in y, then in x.',M(R`\int_0^{${a}}\left(${P2.tex(inner)}\right)dx=${texNum(val)}`)]
+    ];
+    $('#gwSteps').innerHTML=items.map(([t,body],i)=>{
+      const on=i<step,now=i===step-1;
+      return `<li class="${now?'now':(on?'':'dim')}"><b>${t}</b>${on?`<div style="margin-top:6px">${body}</div>`:''}</li>`;}).join('');
+    const st=['Two partial derivatives, one subtraction, one double integral. Start with Q.',
+      'That is the first half of the integrand.','Now the other half, from P.',
+      'Order matters: Q by x minus P by y.','The region is a rectangle, so both limits are constants.',
+      `Done: the loop integral equals ${fmt(val)}.`];
+    $('#gwStatus').textContent=st[step];
+    $('#gwPrev').disabled=step===0;$('#gwNext').disabled=step===5;
+    typeset($('#gwSteps'));typeset($('#gwHead'));
+  }
+  $('#gwNext').onclick=()=>{step=Math.min(5,step+1);drawW();};
+  $('#gwPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#gwNew').onclick=newProb;
+  newProb();
+
+  /* ---------- explore: both sides of Green's theorem ---------- */
+  const bdPoly=pts=>{const segs=[];let tot=0;
+    for(let i=0;i<pts.length;i++){const A=pts[i],B=pts[(i+1)%pts.length];const L=Math.hypot(B[0]-A[0],B[1]-A[1]);segs.push([A,B,L]);tot+=L;}
+    return s=>{let t=(((s%1)+1)%1)*tot;
+      for(const [A,B,L] of segs){if(t<=L){const u=L?t/L:0;return [A[0]+(B[0]-A[0])*u,A[1]+(B[1]-A[1])*u];}t-=L;}
+      return pts[0].slice();};};
+  const REGIONS=[
+    {name:'rectangle',tex:R`-1.6\le x\le 1.6,\;-1.1\le y\le 1.1`,xa:-1.6,xb:1.6,
+     lo:()=>-1.1,hi:()=>1.1,inside:(x,y)=>x>=-1.6&&x<=1.6&&y>=-1.1&&y<=1.1,
+     bd:bdPoly([[-1.6,-1.1],[1.6,-1.1],[1.6,1.1],[-1.6,1.1]])},
+    {name:'disk',tex:R`x^2+y^2\le 1.8^2`,xa:-1.8,xb:1.8,
+     lo:x=>-Math.sqrt(Math.max(0,3.24-x*x)),hi:x=>Math.sqrt(Math.max(0,3.24-x*x)),
+     inside:(x,y)=>x*x+y*y<=3.24,bd:s=>[1.8*Math.cos(2*Math.PI*s),1.8*Math.sin(2*Math.PI*s)]},
+    {name:'triangle',tex:R`(0,0),\,(2,0),\,(0,1.8)`,xa:0,xb:2,
+     lo:()=>0,hi:x=>1.8*(1-x/2),inside:(x,y)=>x>=0&&y>=0&&(x/2+y/1.8)<=1,
+     bd:bdPoly([[0,0],[2,0],[0,1.8]])},
+    {name:'between y = x² and y = 1',tex:R`x^2\le y\le 1`,xa:-1,xb:1,
+     lo:x=>x*x,hi:()=>1,inside:(x,y)=>x>=-1&&x<=1&&y>=x*x&&y<=1,
+     bd:s=>{const u=(((s%1)+1)%1);if(u<=0.5){const x=-1+4*u;return [x,x*x];}const x=1-4*(u-0.5);return [x,1];}}
+  ];
+  const FIELDS=[
+    {tex:R`\langle -y,\;x\rangle`,F:(x,y)=>[-y,x],g:()=>2,gtex:'2'},
+    {tex:R`\langle xy,\;x^2\rangle`,F:(x,y)=>[x*y,x*x],g:x=>x,gtex:'x'},
+    {tex:R`\langle -y^3,\;x^3\rangle`,F:(x,y)=>[-y*y*y,x*x*x],g:(x,y)=>3*x*x+3*y*y,gtex:R`3x^2+3y^2`},
+    {tex:R`\langle \sin y,\;\cos x\rangle`,F:(x,y)=>[Math.sin(y),Math.cos(x)],g:(x,y)=>-Math.sin(x)-Math.cos(y),gtex:R`-\sin x-\cos y`},
+    {tex:R`\langle x^2,\;y^2\rangle`,F:(x,y)=>[x*x,y*y],g:()=>0,gtex:'0'}
+  ];
+  const p=new Plot2D('#gCanvas',{xmin:-2.4,xmax:2.4,ymin:-2.4,ymax:2.4});
+  const sec=$('section[data-id="green"]');
+  let ri=1,fi=0,cw=false,snap=null,sPos=0,lineVal=0,areaVal=0,hmax=1;
+
+  function lineInt(bd,F,N=1440){let s=0,prev=bd(0);
+    for(let n=1;n<=N;n++){const cur=bd(n/N);const dx=cur[0]-prev[0],dy=cur[1]-prev[1];
+      const v=F((cur[0]+prev[0])/2,(cur[1]+prev[1])/2);s+=v[0]*dx+v[1]*dy;prev=cur;}
+    return s;}
+  function dblInt(g,r,N=600,Mn=400){let s=0;const dx=(r.xb-r.xa)/N;
+    for(let i=0;i<N;i++){const x=r.xa+(i+0.5)*dx;const y0=r.lo(x),y1=r.hi(x);const dy=(y1-y0)/Mn;let t=0;
+      for(let j=0;j<Mn;j++)t+=g(x,y0+(j+0.5)*dy);
+      s+=t*dy*dx;}
+    return s;}
+
+  function drawStatic(){
+    const r=REGIONS[ri],f=FIELDS[fi];
+    p.begin();
+    p.heat((x,y)=>r.inside(x,y)?f.g(x,y):NaN,{n:70,colorFn:v=>{
+      const t=clamp(Math.abs(v)/(hmax||1),0,1);
+      return v>=0?`rgba(37,99,235,${(0.07+0.42*t).toFixed(3)})`:`rgba(217,119,6,${(0.07+0.42*t).toFixed(3)})`;}});
+    p.field(f.F,{step:0.4,scale:0.13,color:'#c3bfb5',width:1.1});
+    p.param(s=>r.bd(s),0,1,{color:PURPLE,width:2.4,n:420});
+    try{snap=p.ctx.getImageData(0,0,p.c.width,p.c.height);}catch(e){snap=null;}
+  }
+  function marker(){
+    const r=REGIONS[ri];const t=cw?1-sPos:sPos;const eps=cw?-0.004:0.004;
+    const A=r.bd(t),B=r.bd(t+eps);
+    const d=[B[0]-A[0],B[1]-A[1]];const n=Math.hypot(d[0],d[1])||1;const L=0.42;
+    p.vector(A,[A[0]+d[0]/n*L,A[1]+d[1]/n*L],{color:PURPLE,width:3.2});
+    p.point(A,{color:PURPLE,r:6,ring:true});
+  }
+  function recompute(){
+    const r=REGIONS[ri],f=FIELDS[fi];
+    hmax=0;
+    for(let i=0;i<60;i++){const x=r.xa+(i+0.5)*(r.xb-r.xa)/60;const y0=r.lo(x),y1=r.hi(x);
+      for(let j=0;j<60;j++){const v=Math.abs(f.g(x,y0+(j+0.5)*(y1-y0)/60));if(Number.isFinite(v)&&v>hmax)hmax=v;}}
+    if(hmax<1e-9)hmax=1;
+    lineVal=lineInt(r.bd,f.F)*(cw?-1:1);
+    areaVal=dblInt(f.g,r);
+    drawStatic();report();
+  }
+  function report(){
+    const r=REGIONS[ri],f=FIELDS[fi];
+    $('#gOut').innerHTML=
+      `D = ${r.name} &nbsp;·&nbsp; F = ⟨P, Q⟩<br>`
+     +`Q<sub>x</sub> − P<sub>y</sub> = <b>${f.gtex.replace(/\\langle|\\rangle|\\/g,'').replace(/\^\{?(\d)\}?/g,'<sup>$1</sup>')}</b><br>`
+     +`<span style="color:${cw?ORANGE:PURPLE}">∮<sub>C</sub> P dx + Q dy = <b>${fmtDec(lineVal,3)}</b></span> &nbsp;(${cw?'clockwise':'counterclockwise'})<br>`
+     +`<span style="color:${GREEN}">∬<sub>D</sub> (Q<sub>x</sub> − P<sub>y</sub>) dA = <b>${fmtDec(areaVal,3)}</b></span><br>`
+     +(cw?`The two differ by a sign: Green's theorem applies to the counterclockwise loop, which is ${fmtDec(-lineVal,3)}.`
+         :`numerical difference = ${fmtDec(lineVal-areaVal,5)}`);
+  }
+  const rBox=$('#gRegions'),fBox=$('#gFields');
+  REGIONS.forEach((r,i)=>{const b=el('button',{class:'btn small'},r.name);b.onclick=()=>{ri=i;mark();recompute();};rBox.appendChild(b);});
+  FIELDS.forEach((f,i)=>{const b=el('button',{class:'btn small'},M(f.tex));b.onclick=()=>{fi=i;mark();recompute();};fBox.appendChild(b);});
+  function mark(){$$('.btn',rBox).forEach((b,i)=>b.classList.toggle('on',i===ri));$$('.btn',fBox).forEach((b,i)=>b.classList.toggle('on',i===fi));}
+  $('#gCW').onchange=e=>{cw=e.target.checked;recompute();};
+  mark();typeset(fBox);
+  recompute();
+  redrawOnShow('green',()=>{recompute();});
+  (function loop(){
+    if(snap&&sec.classList.contains('active')&&p.c.isConnected){
+      sPos=(sPos+0.0022)%1;
+      try{p.ctx.putImageData(snap,0,0);marker();}catch(e){}
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  new Drill({mount:'#drill-green',section:'green',goal:6,
+    ...mixDrill([Q.greenRect,Q.greenRect,Q.greenDisk,Q.greenDisk,Q.greenTri,Q.greenArea,Q.greenOrient,Q.greenIntegrand])});
+})();
+
+/* ============================================================ chapter 2 widgets */
+(function(){
+  /* ---------- walkthrough: the curl determinant ---------- */
+  let F3=null,step=0;
+  function newF(){
+    let f,n=0;
+    do{f=polyField3(Math.random()<0.65?1:2);n++;}while(f.curlTex.every(t=>t==='0')&&n<20);
+    F3=f;step=0;drawC();
+  }
+  function drawC(){
+    const box=$('#clMats');box.innerHTML='';
+    const col=step>=1&&step<=3?step-1:-1;
+    const rows=[[R`\mathbf{i}`,R`\mathbf{j}`,R`\mathbf{k}`],
+      [R`\dfrac{\partial}{\partial x}`,R`\dfrac{\partial}{\partial y}`,R`\dfrac{\partial}{\partial z}`],
+      F3.Ftex];
+    const mat=renderMat(rows,{cls:'det',fmt:v=>M(v),
+      cellClass:(i,j)=>{if(col<0)return '';if(j===col)return i===0?'hl-cell':'dim';return i===0?'':(i===1?'hl-row':'hl-col');}});
+    box.appendChild(opRow([M(R`\operatorname{curl}\mathbf{F}=`),mat]));
+    const head=[R`\left(\frac{\partial R}{\partial y}-\frac{\partial Q}{\partial z}\right)\mathbf{i}`,
+      R`\left(\frac{\partial P}{\partial z}-\frac{\partial R}{\partial x}\right)\mathbf{j}`,
+      R`\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\mathbf{k}`];
+    const basis=[R`\mathbf{i}`,R`\mathbf{j}`,R`\mathbf{k}`];
+    const pairs=[[F3.pd[0],F3.pd[1]],[F3.pd[2],F3.pd[3]],[F3.pd[4],F3.pd[5]]];
+    const lines=head.map((h,i)=>{
+      const on=step>=i+1;const sign=i===0?'':'+';
+      const body=on?` = ${M(R`\left(${pairs[i][0]}\right)-\left(${pairs[i][1]}\right)`)} = ${M(R`\left(${F3.curlTex[i]}\right)${basis[i]}`)}`:'';
+      return `<span class="${on?'':'faint'}">${sign} <span class="t ${i===step-1?'now':''} ${i===0?'a':i===1?'b':'c'}">${M(h)}</span>${body}</span>`;});
+    $('#clExpr').innerHTML=lines.join('<br>')
+      +(step>=4?`<br><span class="t c now">${M(R`\operatorname{curl}\mathbf{F}=\left\langle ${F3.curlTex.join(',\\; ')}\right\rangle`)}</span>`:'');
+    const st=['Cover one basis vector’s column at a time. Start with i.',
+      'i-component: cover the i column. What is left is R_y − Q_z.',
+      'j-component: cover the j column. The top-row sign is minus, which flips this one to P_z − R_x.',
+      'k-component: cover the k column. Plus sign again, so Q_x − P_y.',
+      'Collect the three components.'];
+    $('#clStatus').textContent=st[step];
+    $('#clPrev').disabled=step===0;$('#clNext').disabled=step===4;
+    typeset(box);typeset($('#clExpr'));
+  }
+  $('#clNext').onclick=()=>{step=Math.min(4,step+1);drawC();};
+  $('#clPrev').onclick=()=>{step=Math.max(0,step-1);drawC();};
+  $('#clNew').onclick=newF;
+  newF();
+
+  /* ---------- explore: the paddle wheel ---------- */
+  const CF=[
+    {tex:R`\langle -y,\;x\rangle`,F:(x,y)=>[-y,x]},
+    {tex:R`\langle x,\;y\rangle`,F:(x,y)=>[x,y]},
+    {tex:R`\langle -x,\;-y\rangle`,F:(x,y)=>[-x,-y]},
+    {tex:R`\langle y,\;0\rangle`,F:(x,y)=>[y,0]},
+    {tex:R`\langle x,\;-y\rangle`,F:(x,y)=>[x,-y]},
+    {tex:R`\langle x-y,\;x+y\rangle`,F:(x,y)=>[x-y,x+y]},
+    {tex:R`\langle \sin y,\;\cos x\rangle`,F:(x,y)=>[Math.sin(y),Math.cos(x)]}
+  ];
+  const p=new Plot2D('#cdCanvas',{xmin:-3,xmax:3,ymin:-3,ymax:3});
+  let ci=0,pt=[1.2,0.8];
+  const H=1e-4;
+  const curl2=(F,x,y)=>((F(x+H,y)[1]-F(x-H,y)[1])-(F(x,y+H)[0]-F(x,y-H)[0]))/(2*H);
+  const div2=(F,x,y)=>((F(x+H,y)[0]-F(x-H,y)[0])+(F(x,y+H)[1]-F(x,y-H)[1]))/(2*H);
+
+  function paddle(x,y,c){
+    const ctx=p.ctx;const [cx,cy]=p.px(x,y);const Rr=27;
+    ctx.save();ctx.setLineDash([]);
+    ctx.strokeStyle='rgba(124,58,237,.35)';ctx.lineWidth=1.4;
+    for(let k=0;k<4;k++){const a=k*Math.PI/2+0.4;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Rr*Math.cos(a),cy+Rr*Math.sin(a));ctx.stroke();}
+    ctx.strokeStyle=PURPLE;ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,Rr,0,Math.PI*2);ctx.stroke();
+    if(Math.abs(c)>1e-6){
+      const r2=Rr*0.62;const sweep=Math.PI*(0.6+0.7*clamp(Math.abs(c)/3,0,1));
+      const ccw=c>0;                          /* world counterclockwise */
+      const phi0=-0.6,phi1=phi0+(ccw?-sweep:sweep);   /* canvas y points down, so angles run the other way */
+      ctx.strokeStyle=ccw?BLUE:ORANGE;ctx.lineWidth=2.6;
+      ctx.beginPath();ctx.arc(cx,cy,r2,phi0,phi1,ccw);ctx.stroke();
+      const e=phi1+(ccw?-0.001:0.001);
+      p._head(cx+r2*Math.cos(phi1),cy+r2*Math.sin(phi1),cx+r2*Math.cos(e+(ccw?-0.18:0.18)),cy+r2*Math.sin(e+(ccw?-0.18:0.18)),ccw?BLUE:ORANGE,9);
+    }
+    ctx.restore();
+  }
+  function draw(){
+    const f=CF[ci];
+    p.begin();
+    p.field(f.F,{step:0.45,scale:0.2,color:GRAY,width:1.2});
+    const c=curl2(f.F,pt[0],pt[1]),d=div2(f.F,pt[0],pt[1]);
+    paddle(pt[0],pt[1],c);
+    p.point(pt,{color:PURPLE,r:4});
+    const spin=c>0.05?'spins counterclockwise':(c<-0.05?'spins clockwise':'does not rotate');
+    const flow=d>0.05?'expanding, a source':(d<-0.05?'compressing, a sink':'no expansion, incompressible here');
+    $('#cdOut').innerHTML=
+      `point = (${fmtDec(pt[0],2)}, ${fmtDec(pt[1],2)}) &nbsp; F = (${fmtDec(f.F(pt[0],pt[1])[0],2)}, ${fmtDec(f.F(pt[0],pt[1])[1],2)})<br>`
+     +`<span style="color:${c>0.05?BLUE:(c<-0.05?ORANGE:'inherit')}">scalar curl &nbsp;Q<sub>x</sub> − P<sub>y</sub> = <b>${fmtDec(c,2)}</b></span> &nbsp;→ the wheel ${spin}<br>`
+     +`<span style="color:${d>0.05?BLUE:(d<-0.05?ORANGE:'inherit')}">divergence &nbsp;P<sub>x</sub> + Q<sub>y</sub> = <b>${fmtDec(d,2)}</b></span> &nbsp;→ ${flow}<br>`
+     +`angular speed = |curl| / 2 = ${fmtDec(Math.abs(c)/2,2)}`;
+  }
+  const fBox=$('#cdFields');
+  CF.forEach((f,i)=>{const b=el('button',{class:'btn small'},M(f.tex));b.onclick=()=>{ci=i;$$('.btn',fBox).forEach((x,k)=>x.classList.toggle('on',k===i));draw();};fBox.appendChild(b);});
+  $$('.btn',fBox)[0].classList.add('on');typeset(fBox);
+  p.on('move',w=>{pt=[clamp(w[0],-2.7,2.7),clamp(w[1],-2.7,2.7)];draw();});
+  redrawOnShow('curl',draw);draw();
+
+  new Drill({mount:'#drill-curl',section:'curl',goal:6,
+    ...mixDrill([Q.curlCompute,Q.curlCompute,Q.divCompute,Q.divCompute,Q.conservative,Q.signPicture,Q.curl2D,Q.identity])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.greenRect,Q.greenDisk,Q.greenTri,Q.greenArea,Q.greenOrient,Q.greenIntegrand,
+  Q.curlCompute,Q.divCompute,Q.conservative,Q.signPicture,Q.curl2D,Q.identity]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'Green over a rectangle':q=>({v:String(q.val)}),
+  'Green over a disk':q=>({v:String(q.val)}),
+  'Green over a triangle':q=>({v:String(q.val)}),
+  'area from a parametrized boundary':q=>({ar:String(q.area)}),
+  'reversing the orientation':q=>({v:String(q.ans)}),
+  'the Green integrand':q=>({g:q.gstr}),
+  'curl of a vector field':q=>({cu:'<'+q.curlStr.join(', ')+'>'}),
+  'divergence of a vector field':q=>({dv:q.divStr}),
+  'conservative by the curl test':q=>({_btn:q.yes?0:1}),
+  'curl and divergence signs from a picture':q=>({_btn:[q.ci,3+q.di]}),
+  'scalar curl in the plane':q=>({g:q.gstr}),
+  'vector identities':q=>({_btn:q.ansIdx})
+};
+
+initModule({key:'greens',title:"Green's Theorem, Curl, and Divergence",sub:'Module 10 · Stewart 16.4 to 16.5'});
+</script>
+</body>
+</html>

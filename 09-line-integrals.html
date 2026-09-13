@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vector Fields and Line Integrals</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 9 · Stewart 16.1 to 16.3</p>
+  <h2>Vector fields and line integrals</h2>
+  <p class="lead">A vector field puts an arrow at every point. A line integral adds something up along a curve instead of along an interval. Together they answer one question over and over: how much work does a force do along a path?</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or animate, walks you through one full computation step by step, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answer formats are flexible. Vector fields and parametrizations can be typed as <code>&lt;2xy, x^2&gt;</code>, <code>(2xy, x^2)</code>, or <code>2xy i + x^2 j</code>. Potential functions are ordinary expressions like <code>x^2 y + 3z</code>, and any constant of integration is accepted (<code>+ C</code> is fine). Numbers can be exact, like <code>12/35</code>, <code>2pi*9</code>, <code>18pi</code>, or <code>(17^(3/2) - 1)/12</code>, and where a question says so a decimal is fine too. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the field <b>F</b></span>
+      <span><i class="dot" style="background:var(--b)"></i> the tangent direction <b>T</b></span>
+      <span><i class="dot" style="background:var(--c)"></i> the running total</span>
+      <span><i class="dot" style="background:var(--d)"></i> the curve <b>C</b> and its points</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Read a vector field off its formula and off its picture, and recognize rotation, radial, shear, and gradient fields.</li>
+      <li>Parametrize a segment, a circle, a graph, and a helix without thinking about it.</li>
+      <li>Tell the scalar line integral \(\int_C f\,ds\) from Module 3 apart from the work integral, and say why orientation matters for one and not the other.</li>
+      <li>Compute \(\int_C \mathbf{F}\cdot d\mathbf{r}\) for work, in the plane and in space, and say why orientation does matter.</li>
+      <li>Test whether a field is conservative, find a potential function, and use the Fundamental Theorem to skip the integral entirely.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ 1 VECTOR FIELDS -->
+<section data-id="fields" data-title="Vector fields" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 16.1</p>
+  <h2>Vector fields</h2>
+  <p class="lead">A vector field attaches a vector to every point. Wind, current, gravity, and electric force are all vector fields.</p>
+
+  <p>A <b>vector field</b> on a region of the plane is a function that eats a point and returns a vector:</p>
+  <div class="formula">\(\mathbf{F}(x,y)=\langle P(x,y),\,Q(x,y)\rangle=P(x,y)\,\mathbf{i}+Q(x,y)\,\mathbf{j}\)<span class="cap">\(P\) and \(Q\) are ordinary scalar functions, called the <b>component functions</b>. In space there is a third one: \(\mathbf{F}(x,y,z)=\langle P,Q,R\rangle\).</span></div>
+
+  <p>To sketch one, pick a handful of points, evaluate \(\mathbf{F}\) there, and draw each answer as an arrow whose <b>tail sits at the point you used</b>. That last part is the whole trick. The arrow at \((1,0)\) tells you about the field at \((1,0)\), not about the origin.</p>
+  <p>Four patterns cover most of the pictures you will meet:</p>
+  <ul>
+    <li><b>Rotation.</b> \(\mathbf{F}=\langle -y,x\rangle\) is perpendicular to the position vector \(\langle x,y\rangle\) at every point, so the arrows circle the origin counterclockwise and grow with the distance. \(\langle y,-x\rangle\) circles clockwise.</li>
+    <li><b>Radial.</b> \(\mathbf{F}=\langle x,y\rangle\) is the position vector itself: every arrow points straight away from the origin. \(\langle -x,-y\rangle\) points straight in, like gravity.</li>
+    <li><b>Shear.</b> \(\mathbf{F}=\langle y,0\rangle\) is horizontal everywhere, to the right above the \(x\)-axis and to the left below it. This is how water in a channel moves.</li>
+    <li><b>Constant.</b> \(\mathbf{F}=\langle a,b\rangle\) is the same arrow everywhere: a steady wind.</li>
+  </ul>
+
+  <div class="card">
+    <h4>Explore: the field plotter</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="fldPlot"></canvas><p class="plotcap">Each arrow is \(\mathbf{F}\) at its own tail point, shrunk by one common factor so the arrows do not overlap.</p></div>
+      <div>
+        <div class="row"><select id="fldSel"></select></div>
+        <div class="row" style="gap:10px;margin-top:10px">
+          <span>\(P(x,y)=\)</span><input class="num wide" id="fldP" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="row" style="gap:10px;margin-top:8px">
+          <span>\(Q(x,y)=\)</span><input class="num wide" id="fldQ" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="controls">
+          <button class="btn primary" id="fldFlow">Start the flow</button>
+          <button class="btn" id="fldClear">Clear particles</button>
+        </div>
+        <div class="readout" id="fldOut"></div>
+        <p class="hint">Start the flow and watch 200 particles get carried along by the field. Rotation spins them, \(\langle x,y\rangle\) blows them apart, \(\langle -x,-y\rangle\) sucks them into the origin, and \(\langle y,0\rangle\) slides them sideways at a speed set by their height. Then type your own \(P\) and \(Q\): try \(\langle x, -y\rangle\), or \(\langle \sin y, \sin x\rangle\).</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Gradient fields</h3>
+  <p>You already know one factory for vector fields: the gradient. If \(f(x,y)\) is a scalar function, then</p>
+  <div class="formula">\(\nabla f(x,y)=\langle f_x(x,y),\,f_y(x,y)\rangle\)<span class="cap">The <b>gradient vector field</b> of \(f\). In space, \(\nabla f=\langle f_x,f_y,f_z\rangle\). A field that equals some \(\nabla f\) is called <b>conservative</b>, and \(f\) is its <b>potential function</b>.</span></div>
+  <p>Gradient fields have a look you can spot. The gradient points in the direction of fastest increase of \(f\), and it is perpendicular to the level curve of \(f\) through that point. So the arrows of \(\nabla f\) cross the contour map of \(f\) at right angles, always pointing from lower contours toward higher ones, and they are longest where the contours are packed tightest.</p>
+  <p>In space a vector field \(\mathbf{F}(x,y,z)=\langle P,Q,R\rangle\) is drawn the same way, with one arrow in space at each point. The three component functions may depend on all three variables. Everything in this module works the same in two and three dimensions except for the conservative test, which gets an extra piece in Chapter 3.</p>
+
+  <div class="note"><b>Which fields are gradients?</b> Not all of them. If \(\mathbf{F}=\nabla f=\langle f_x,f_y\rangle\), then \(P_y=f_{xy}\) and \(Q_x=f_{yx}\), and mixed partials are equal. So a gradient field must satisfy \(P_y=Q_x\). A rotation field fails it: for \(\langle -y,x\rangle\), \(P_y=-1\) but \(Q_x=1\). Arrows that run in closed loops cannot be climbing a hill.</div>
+  <div class="warn"><b>Arrow lengths are scaled.</b> Every plotter (including the one above) multiplies all arrows by one common factor so that they fit between grid points. Compare arrow lengths with each other, never against the coordinate grid, and never read the tip of an arrow as a location.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-fields"></div>
+</section>
+
+<!-- ============================================================ 2 VECTOR LINE INTEGRALS -->
+<section data-id="vector" data-title="Line integrals of vector fields" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 16.2</p>
+  <h2>Line integrals of vector fields</h2>
+  <p class="lead">This is the work integral. Only the part of the force that points along the motion counts.</p>
+
+  <p>A constant force \(\mathbf{F}\) moving an object through a displacement \(\mathbf{D}\) does work \(\mathbf{F}\cdot\mathbf{D}\). When the force varies and the path bends, chop the path into tiny displacements \(d\mathbf{r}=\mathbf{r}'(t)\,dt\), dot each with the force there, and add:</p>
+  <div class="formula">\(\displaystyle W=\int_C \mathbf{F}\cdot d\mathbf{r}=\int_a^b \mathbf{F}\big(\mathbf{r}(t)\big)\cdot\mathbf{r}'(t)\,dt\)<span class="cap">Substitute the curve into \(\mathbf{F}\), dot with the velocity, integrate. No square roots: the speed does not appear on its own.</span></div>
+  <p>Write \(\mathbf{r}'(t)\,dt=\langle dx,dy\rangle\) and the dot product becomes the <b>differential form</b> of the same integral:</p>
+  <div class="formula">\(\displaystyle\int_C \mathbf{F}\cdot d\mathbf{r}=\int_C P\,dx+Q\,dy\qquad\text{and in space}\qquad \int_C P\,dx+Q\,dy+R\,dz\)<span class="cap">Same integral, different notation. To evaluate it, put \(x=x(t),\,y=y(t),\,dx=x'(t)\,dt,\,dy=y'(t)\,dt\) and integrate in \(t\).</span></div>
+  <p>There is a third way to read it. Since \(\mathbf{T}=\mathbf{r}'/|\mathbf{r}'|\) is the unit tangent and \(ds=|\mathbf{r}'|\,dt\),</p>
+  <div class="formula">\(\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}=\int_C (\mathbf{F}\cdot\mathbf{T})\,ds\)<span class="cap">The work integral is the scalar line integral of the <b>tangential component</b> of \(\mathbf{F}\). Where \(\mathbf{F}\) is perpendicular to the curve it contributes nothing.</span></div>
+
+  <p><b>Orientation matters here.</b> Reversing the curve reverses every \(d\mathbf{r}\), so every dot product flips sign:</p>
+  <div class="formula">\(\displaystyle\int_{-C}\mathbf{F}\cdot d\mathbf{r}=-\int_{C}\mathbf{F}\cdot d\mathbf{r}\qquad\text{while}\qquad \int_{-C}f\,ds=\int_{C}f\,ds\)</div>
+  <p>And as before, a path made of several pieces is handled one piece at a time and the results are added.</p>
+
+  <div class="card">
+    <h4>Step by step: \(\int_C\mathbf{F}\cdot d\mathbf{r}\) over a segment</h4>
+    <ul class="steps" id="vwkSteps"></ul>
+    <div class="controls">
+      <button class="btn" id="vwkPrev">◀ Back</button>
+      <button class="btn primary" id="vwkNext">Next step ▶</button>
+      <button class="btn" id="vwkNew">New problem</button>
+      <span class="status" id="vwkStatus"></span>
+    </div>
+    <p class="hint">Compare this with the scalar walkthrough in Module 3. Same parametrization, but here you dot with \(\mathbf{r}'(t)\) instead of multiplying by \(|\mathbf{r}'(t)|\), so no square root ever appears.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: the tangential component</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="wkPlot"></canvas><p class="plotcap">Orange: \(\mathbf{F}\) at the moving point. Blue: the unit tangent \(\mathbf{T}\). The green part of the curve is what you have integrated so far.</p></div>
+      <div>
+        <div class="presets" id="wkField"></div>
+        <div class="presets" id="wkCurve"></div>
+        <div class="sliders" id="wkSl"></div>
+        <label class="chk" style="margin-top:6px"><input type="checkbox" id="wkRev"> reverse the orientation</label>
+        <div style="margin-top:12px;font-size:13px;color:var(--muted)">\(\mathbf{F}\cdot\mathbf{T}\) at the moving point</div>
+        <div id="wkBar" style="height:16px;background:#efede8;border-radius:99px;position:relative;overflow:hidden;margin-top:6px">
+          <i id="wkFill" style="position:absolute;top:0;bottom:0;left:50%;width:0;background:var(--c);display:block"></i>
+          <i style="position:absolute;top:0;bottom:0;left:50%;width:1px;background:#b9b5ab;display:block"></i>
+        </div>
+        <div class="readout" id="wkOut"></div>
+        <p class="hint">Put the rotation field on the circle: \(\mathbf{F}\) and \(\mathbf{T}\) point the same way the whole trip, the bar stays green, and the work piles up to \(2\pi a^{2}\). Now switch to the radial field \(\langle x,y\rangle\) on the same circle: \(\mathbf{F}\) is perpendicular to \(\mathbf{T}\) everywhere, the bar sits at zero, and the total work is zero. Then tick the reverse box and watch the sign flip.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Only the tangential part counts.</b> A force perpendicular to the motion does no work: that is why \(\langle x,y\rangle\) does zero work around a circle centered at the origin, and why the string tension on a swinging pendulum does no work. If you can see that \(\mathbf{F}\perp\mathbf{T}\) along the whole curve, write 0 and move on.</div>
+  <div class="warn"><b>Orientation: two different rules.</b> \(\int_C f\,ds\) does not care which way you traverse \(C\). \(\int_C\mathbf{F}\cdot d\mathbf{r}\) changes sign. If a problem says "from \(B\) to \(A\)" and you parametrized from \(A\) to \(B\), you must negate the work, but you must not negate a mass or an arc length.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-vector"></div>
+</section>
+
+<!-- ============================================================ 3 FTC AND CONSERVATIVE FIELDS -->
+<section data-id="ftc" data-title="The Fundamental Theorem" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 16.3</p>
+  <h2>The Fundamental Theorem and conservative fields</h2>
+  <p class="lead">For a special class of fields the integral does not depend on the path at all. You only need the endpoints.</p>
+
+  <p>A vector field \(\mathbf{F}\) is <b>conservative</b> if it is the gradient of some scalar function: \(\mathbf{F}=\nabla f\). That function \(f\) is called a <b>potential function</b> for \(\mathbf{F}\). For such fields, work is a difference of two numbers:</p>
+  <div class="formula">\(\displaystyle\int_C \nabla f\cdot d\mathbf{r}=f\big(\mathbf{r}(b)\big)-f\big(\mathbf{r}(a)\big)=f(\text{end})-f(\text{start})\)<span class="cap">The Fundamental Theorem for line integrals. It is the chain rule run backwards: \(\frac{d}{dt}f(\mathbf{r}(t))=\nabla f\cdot\mathbf{r}'(t)\), so the integral of the right side is the net change in \(f\).</span></div>
+  <p>Three consequences follow immediately.</p>
+  <ul>
+    <li><b>Path independence.</b> Any two paths from \(A\) to \(B\) give the same answer, because both give \(f(B)-f(A)\). The shape of the path is irrelevant.</li>
+    <li><b>Closed curves give zero.</b> If \(C\) starts and ends at the same point, \(f(\text{end})-f(\text{start})=0\). Write \(\oint_C\nabla f\cdot d\mathbf{r}=0\).</li>
+    <li><b>Reversal flips the sign,</b> as always, since \(f(A)-f(B)=-(f(B)-f(A))\).</li>
+  </ul>
+
+  <h3>Is this field conservative?</h3>
+  <p>In the plane, on a domain with no holes in it (a <b>simply connected</b> region, such as all of \(\mathbb{R}^2\) or a disc), there is a clean test:</p>
+  <div class="formula">\(\mathbf{F}=\langle P,Q\rangle\ \text{is conservative}\iff \dfrac{\partial P}{\partial y}=\dfrac{\partial Q}{\partial x}\)<span class="cap">Necessary always, and sufficient when the domain is simply connected. Compute both partials and compare.</span></div>
+  <p>In space the same idea needs three equations, which are packaged as the <b>curl</b> (the subject of Module 10):</p>
+  <div class="formula">\(\operatorname{curl}\mathbf{F}=\langle R_y-Q_z,\;P_z-R_x,\;Q_x-P_y\rangle,\qquad \mathbf{F}\ \text{conservative}\iff \operatorname{curl}\mathbf{F}=\mathbf{0}\)<span class="cap">Three cross-partial equalities at once: \(R_y=Q_z\), \(P_z=R_x\), \(Q_x=P_y\). The last one is exactly the 2D test.</span></div>
+
+  <h3>Finding the potential function</h3>
+  <p>Once you know \(\mathbf{F}\) is conservative, recover \(f\) by partial integration. Integrate \(P\) with respect to \(x\), treating \(y\) as a constant. The "constant" of integration can be any function of \(y\), so call it \(g(y)\). Differentiate the result with respect to \(y\), set it equal to \(Q\), solve for \(g'(y)\), and integrate once more. In space there is one extra round with \(R\) and \(z\).</p>
+
+  <div class="card">
+    <h4>Step by step: recovering \(f\) from \(\mathbf{F}\)</h4>
+    <ul class="steps" id="pwkSteps"></ul>
+    <div class="controls">
+      <button class="btn" id="pwkPrev">◀ Back</button>
+      <button class="btn primary" id="pwkNext">Next step ▶</button>
+      <button class="btn" id="pwkNew">New field</button>
+      <span class="status" id="pwkStatus"></span>
+    </div>
+    <p class="hint">The check at the end is free: take the gradient of your \(f\) and see that you get \(\mathbf{F}\) back. Do it every time and this becomes a question you cannot get wrong.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: two paths, one answer</h4>
+    <div class="presets" id="potPresets"></div>
+    <div class="two">
+      <div><canvas class="scene" id="potScene"></canvas><p class="plotcap">The surface \(z=f(x,y)\) with both paths drawn on it. Drag to rotate, scroll to zoom.</p></div>
+      <div><canvas class="scene" id="potMap"></canvas><p class="plotcap">Contours of \(f\) with the gradient field \(\nabla f\). Both paths run from \(A\) to \(B\).</p></div>
+    </div>
+    <div class="readout" id="potOut"></div>
+    <p class="hint">The two paths have different lengths and different shapes, and the numerical work integrals along them agree to four decimals with \(f(B)-f(A)\). On the surface you can see why: both routes climb from the same starting height to the same ending height. Switch potentials and the agreement survives.</p>
+  </div>
+
+  <div class="note"><b>Conservative means endpoints only.</b> Once you have spotted that \(\mathbf{F}=\nabla f\), stop parametrizing. Evaluate \(f\) at the two endpoints and subtract. A problem that hands you an ugly path with a conservative field is testing exactly this reflex.</div>
+  <div class="warn"><b>The test needs a domain with no holes.</b> \(P_y=Q_x\) guarantees a potential only on a simply connected region. The standard counterexample is \(\mathbf{F}=\left\langle \frac{-y}{x^2+y^2},\frac{x}{x^2+y^2}\right\rangle\) on the plane minus the origin: it passes \(P_y=Q_x\) everywhere it is defined, yet its integral around the unit circle is \(2\pi\), not 0. The hole at the origin is the culprit.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-ftc"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions drawn from all three chapters. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const wideIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{wide:true,placeholder:ph}));
+const xwIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+let __uid=0;const uid=p=>p+(++__uid);
+const PH2='⟨P, Q⟩',PH3='⟨P, Q, R⟩';
+
+/* ---- exact rationals: [numerator, denominator] ---- */
+const rat=(n,d=1)=>{if(d<0){n=-n;d=-d;}const g=gcd(Math.abs(n),Math.abs(d))||1;return [n/g,d/g];};
+const radd=(a,b)=>rat(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const rval=a=>a[0]/a[1];
+const texFrac=a=>a[1]===1?String(a[0]):(a[0]<0?'-':'')+`\\tfrac{${Math.abs(a[0])}}{${a[1]}}`;
+const ratStr=a=>a[1]===1?String(a[0]):a[0]+'/'+a[1];
+
+/* ---- polynomials in t: integer coefficient arrays, constant term first ---- */
+const pAdd=(a,b)=>{const n=Math.max(a.length,b.length),o=Array(n).fill(0);for(let i=0;i<n;i++)o[i]=(a[i]||0)+(b[i]||0);return o;};
+const pMul=(a,b)=>{const o=Array(a.length+b.length-1).fill(0);for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++)o[i+j]+=a[i]*b[j];return o;};
+const pPow=(a,n)=>{let o=[1];for(let i=0;i<n;i++)o=pMul(o,a);return o;};
+const pDer=a=>a.length<2?[0]:a.slice(1).map((c,i)=>c*(i+1));
+const pInt=(a,T=1)=>{let s=[0,1];a.forEach((c,i)=>{if(c)s=radd(s,rat(c*Math.pow(T,i+1),i+1));});return s;};
+
+/* ---- term lists: [coef,i,j] means coef*x^i*y^j (a fourth entry adds z) ---- */
+const VARS=['x','y','z'];
+const sumTex=arr=>{let o='';arr.forEach(([c,m])=>{if(!c)return;const a=Math.abs(c);const piece=(a===1&&m)?m:texNum(a)+m;o+=o===''?((c<0?'-':'')+piece):((c<0?' - ':' + ')+piece);});return o||'0';};
+const sumStr=arr=>{let o='';arr.forEach(([c,m])=>{if(!c)return;const a=Math.abs(c);const piece=m?((a===1?'':a+'*')+m):String(a);o+=o===''?((c<0?'-':'')+piece):((c<0?' - ':' + ')+piece);});return o||'0';};
+const monTex=e=>{let s='';e.forEach((p,i)=>{if(!p)return;s+=VARS[i]+(p>1?`^{${p}}`:'');});return s;};
+const monStr=e=>{const a=[];e.forEach((p,i)=>{if(!p)return;a.push(p>1?`${VARS[i]}^${p}`:VARS[i]);});return a.join('*');};
+const tmTex=ts=>sumTex(ts.map(t=>[t[0],monTex(t.slice(1))]));
+const tmStr=ts=>sumStr(ts.map(t=>[t[0],monStr(t.slice(1))]));
+const tmEval=(ts,p)=>ts.reduce((s,t)=>{let v=t[0];for(let i=1;i<t.length;i++)v*=Math.pow(p[i-1],t[i]);return s+v;},0);
+const tmSub=(ts,XYZ)=>{let p=[0];ts.forEach(t=>{let q=[t[0]];for(let i=1;i<t.length;i++)q=pMul(q,pPow(XYZ[i-1],t[i]));p=pAdd(p,q);});return p;};
+const mergeT=ts=>{const m=new Map();ts.forEach(t=>{const k=t.slice(1).join(',');m.set(k,(m.get(k)||0)+t[0]);});
+  const out=[];m.forEach((c,k)=>{if(c)out.push([c,...k.split(',').map(Number)]);});
+  out.sort((a,b)=>{const da=a.slice(1).reduce((s,x)=>s+x,0),db=b.slice(1).reduce((s,x)=>s+x,0);return db-da||b[1]-a[1];});
+  return out.length?out:[[1,...ts[0].slice(1).map(()=>0)]];};
+const randTerms=(dim,n)=>{const ts=[];for(let i=0;i<n;i++){const e=Array(dim).fill(0);const deg=rint(0,2);for(let d=0;d<deg;d++)e[rint(0,dim-1)]++;ts.push([rnz(-3,3),...e]);}return mergeT(ts);};
+const polyTex=(a,v='t')=>sumTex(a.map((c,i)=>[c,i===0?'':(i===1?v:`${v}^{${i}}`)]));
+const polyStr=(a,v='t')=>sumStr(a.map((c,i)=>[c,i===0?'':(i===1?v:`${v}^${i}`)]));
+const tvec=p=>`\\langle ${p.join(',\\; ')} \\rangle`;
+const D2=[[3,4],[4,3],[6,8],[5,12],[0,5],[5,0],[8,6],[0,3],[3,0],[4,0],[0,4],[1,1],[2,2],[1,2],[2,1]];
+const D3=[[2,-1,2],[1,2,2],[2,3,6],[3,4,0],[6,2,3],[4,4,7],[0,3,4],[1,4,8],[1,1,1],[2,2,1]];
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------------------------------------------------------- chapter 1 */
+const PIC=[
+  {tex:R`\langle -y,\; x\rangle`,F:(x,y)=>[-y,x],why:'the arrows circle the origin counterclockwise and grow with the distance'},
+  {tex:R`\langle y,\; -x\rangle`,F:(x,y)=>[y,-x],why:'the arrows circle the origin clockwise'},
+  {tex:R`\langle x,\; y\rangle`,F:(x,y)=>[x,y],why:'every arrow points straight away from the origin'},
+  {tex:R`\langle -x,\; -y\rangle`,F:(x,y)=>[-x,-y],why:'every arrow points straight in toward the origin'},
+  {tex:R`\langle y,\; 0\rangle`,F:(x,y)=>[y,0],why:'every arrow is horizontal: to the right above the \\(x\\)-axis, to the left below it'},
+  {tex:R`\langle 0,\; x\rangle`,F:(x,y)=>[0,x],why:'every arrow is vertical: up to the right of the \\(y\\)-axis, down to the left'},
+  {tex:R`\langle 2,\; 1\rangle`,F:()=>[2,1],why:'every arrow is identical, since the field is constant'},
+  {tex:R`\langle x,\; -y\rangle`,F:(x,y)=>[x,-y],why:'the arrows push away from the \\(y\\)-axis and toward the \\(x\\)-axis'},
+  {tex:R`\langle y,\; x\rangle`,F:(x,y)=>[y,x],why:'the arrows push out along the line \\(y=x\\) and in along \\(y=-x\\)'},
+];
+Q.matchField={name:'match the field to its picture',
+  gen(){const opts=shuffle(PIC).slice(0,3),ans=rint(0,2),tgt=opts[ans];
+    const TP=[[1,2],[2,1],[2,-1],[-1,2],[1,1],[2,2],[1,-2],[-2,1]];
+    const pt=TP.find(p=>{const v=tgt.F(p[0],p[1]);
+      return opts.every((o,i)=>{if(i===ans)return true;const w=o.F(p[0],p[1]);return !(near(v[0],w[0])&&near(v[1],w[1]));});})||[2,3];
+    return {opts,ans,pt,ids:[uid('mf'),uid('mf'),uid('mf')]};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Which picture shows the vector field ${M(R`\mathbf{F}=`+q.opts[q.ans].tex)}?</p>
+      <div class="minis">${q.ids.map((id,i)=>`<div><canvas class="scene" id="${id}"></canvas><p class="cap">${'ABC'[i]}</p></div>`).join('')}</div>`;
+    q.get=choiceButtons(el,[0,1,2].map(i=>({label:'ABC'[i],value:i})));
+    const drawAll=()=>{q.ids.forEach((id,i)=>{const cv=$('#'+id,el);if(!cv||!cv.isConnected)return;
+      new Plot2D(cv,{xmin:-2.2,xmax:2.2,ymin:-2.2,ymax:2.2,labels:false}).begin().field(q.opts[i].F,{step:0.55,scale:0.18,color:'#d97706',width:1.2});});};
+    drawAll();setTimeout(drawAll,60);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick A, B, or C.'};
+    return {ok:v===q.ans,msg:v===q.ans?'':'Test one point. Put \\(x=1,\\,y=0\\) into the formula and find the picture with that arrow at \\((1,0)\\).'};},
+  solution(q){const o=q.opts[q.ans];return `<b>${'ABC'[q.ans]}.</b> For ${M(R`\mathbf{F}=`+o.tex)}, ${o.why}. Spot-check one point: at ${M(texPt(q.pt))} the formula gives ${M(texVec(o.F(q.pt[0],q.pt[1])))}, and only one of the three pictures has that arrow there.`;}
+};
+
+const GRAD2=[
+  ()=>{const a=pick([1,2,3]),m=rint(1,3),n=rint(1,3);
+    return {vars:['x','y'],fTex:tmTex([[a,m,n]]),fStr:tmStr([[a,m,n]]),
+      comps:[tmStr([[a*m,m-1,n]]),tmStr([[a*n,m,n-1]])],
+      cTex:[tmTex([[a*m,m-1,n]]),tmTex([[a*n,m,n-1]])],
+      how:`Power rule in each variable: hold ${M('y')} fixed to get ${M('f_x')}, then hold ${M('x')} fixed to get ${M('f_y')}.`};},
+  ()=>{const a=pick([1,1,2,3]),at=a===1?'':texNum(a);
+    return {vars:['x','y'],fTex:R`\sin(${at}xy)`,fStr:`sin(${a}*x*y)`,
+      comps:[`${a}*y*cos(${a}*x*y)`,`${a}*x*cos(${a}*x*y)`],
+      cTex:[R`${at}y\cos(${at}xy)`,R`${at}x\cos(${at}xy)`],
+      how:`Chain rule: the derivative of ${M(R`\sin u`)} is ${M(R`\cos u`)} times the partial derivative of ${M('u='+at+'xy')}.`};},
+  ()=>{const a=pick([1,1,2,3]),at=a===1?'':texNum(a);
+    return {vars:['x','y'],fTex:R`xe^{${at}y}`,fStr:`x*e^(${a}*y)`,
+      comps:[`e^(${a}*y)`,`${a}*x*e^(${a}*y)`],
+      cTex:[R`e^{${at}y}`,R`${at}xe^{${at}y}`],
+      how:`In ${M('x')} the factor ${M(R`e^{${at}y}`)} is a constant. In ${M('y')} use the chain rule on the exponential.`};},
+  ()=>({vars:['x','y'],fTex:R`\ln(x^{2}+y^{2})`,fStr:'ln(x^2+y^2)',
+      comps:['2*x/(x^2+y^2)','2*y/(x^2+y^2)'],
+      cTex:[R`\dfrac{2x}{x^{2}+y^{2}}`,R`\dfrac{2y}{x^{2}+y^{2}}`],domain:{x:[1,3],y:[1,3]},
+      how:`Chain rule on ${M(R`\ln u`)} with ${M('u=x^{2}+y^{2}')}: each partial is ${M(R`u_x/u`)} or ${M(R`u_y/u`)}.`}),
+];
+const GRAD3=[
+  ()=>{const a=pick([1,2,3]),at=a===1?'':texNum(a);
+    return {vars:['x','y','z'],fTex:`${at}xyz`,fStr:`${a}*x*y*z`,comps:[`${a}*y*z`,`${a}*x*z`,`${a}*x*y`],
+      cTex:[`${at}yz`,`${at}xz`,`${at}xy`],
+      how:`Each time, two of the three letters are constants.`};},
+  ()=>{const a=rnz(-3,3),b=rnz(-3,3),c=rnz(-3,3);
+    return {vars:['x','y','z'],fTex:sumTex([[a,'x^{2}'],[b,'y^{2}'],[c,'z^{2}']]),
+      fStr:sumStr([[a,'x^2'],[b,'y^2'],[c,'z^2']]),
+      comps:[`${2*a}*x`,`${2*b}*y`,`${2*c}*z`],
+      cTex:[sumTex([[2*a,'x']]),sumTex([[2*b,'y']]),sumTex([[2*c,'z']])],
+      how:`Each variable appears in exactly one term, so each partial derivative has one term.`};},
+  ()=>{const a=pick([1,2,3]),b=pick([1,2]),at=a===1?'':texNum(a),bt=b===1?'':texNum(b);
+    return {vars:['x','y','z'],fTex:sumTex([[a,'x^{2}y'],[b,'z^{3}']]),fStr:sumStr([[a,'x^2*y'],[b,'z^3']]),
+      comps:[`${2*a}*x*y`,`${a}*x^2`,`${3*b}*z^2`],
+      cTex:[sumTex([[2*a,'xy']]),sumTex([[a,'x^{2}']]),sumTex([[3*b,'z^{2}']])],
+      how:`The ${M(bt+'z^{3}')} term is a constant for ${M('f_x')} and ${M('f_y')}; the ${M(at+'x^{2}y')} term is a constant for ${M('f_z')}.`};},
+  ()=>{const a=pick([1,2,3]),b=pick([1,2,3]);
+    return {vars:['x','y','z'],fTex:sumTex([[1,'xy'],[a,'yz'],[b,'xz']]),fStr:sumStr([[1,'x*y'],[a,'y*z'],[b,'x*z']]),
+      comps:[sumStr([[1,'y'],[b,'z']]),sumStr([[1,'x'],[a,'z']]),sumStr([[a,'y'],[b,'x']])],
+      cTex:[sumTex([[1,'y'],[b,'z']]),sumTex([[1,'x'],[a,'z']]),sumTex([[a,'y'],[b,'x']])],
+      how:`Differentiate term by term; each term loses the variable you differentiate by.`};},
+];
+Q.gradField={name:'gradient field',
+  gen(){const e=(Math.random()<1/3?pick(GRAD3):pick(GRAD2))();e.dim=e.vars.length;return e;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the gradient vector field ${M(R`\nabla f`)} for ${M(`f(${q.vars.join(',')})=`+q.fTex)}.</p>`;
+    (q.dim===3?xwIn:wideIn)(el,'F',M(R`\nabla f=`),q.dim===2?PH2:PH3);},
+  check(q,el){return G(el,'F',checkExprVector($('[data-k=F]',el).value,q.comps,q.vars,{domain:q.domain}));},
+  solution(q){return `${q.how} That gives ${q.cTex.map((c,i)=>M(`f_{${q.vars[i]}}=${c}`)).join(', ')}, so ${M(R`\nabla f=`+tvec(q.cTex))}.`;}
+};
+
+const EV2=[
+  [[[1,2,0],[-1,0,1]],[[1,1,0],[1,0,2]]],
+  [[[2,1,1]],[[1,2,0],[-1,0,2]]],
+  [[[1,0,3]],[[1,3,0]]],
+  [[[3,1,0],[1,0,1]],[[1,1,1]]],
+  [[[1,1,1],[-2,0,1]],[[1,2,0]]],
+  [[[1,0,2],[1,0,0]],[[2,1,0],[-1,0,1]]],
+];
+const EV3=[
+  [[[1,1,0,1]],[[1,0,2,0]],[[1,1,0,0],[1,0,1,0],[1,0,0,1]]],
+  [[[1,0,1,1]],[[1,1,0,1]],[[1,1,1,0]]],
+  [[[1,2,0,0]],[[-2,0,1,1]],[[1,0,0,2]]],
+  [[[1,0,1,0],[1,0,0,1]],[[2,1,0,1]],[[1,1,1,0]]],
+];
+Q.evalField={name:'evaluate a vector field at a point',
+  gen(){const d3=Math.random()<0.35;const f=pick(d3?EV3:EV2);const p=Array.from({length:d3?3:2},()=>rint(-3,3));
+    return {f,p,v:f.map(ts=>tmEval(ts,p)),dim:d3?3:2,Ftex:tvec(f.map(tmTex))};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate the vector field ${M(R`\mathbf{F}=`+q.Ftex)} at the point ${M(texPt(q.p))}.</p>`;
+    wideIn(el,'v',M(R`\mathbf{F}`+texPt(q.p)+'='),q.dim===2?'⟨a, b⟩':'⟨a, b, c⟩');},
+  check(q,el){return G(el,'v',checkVector($('[data-k=v]',el).value,q.v));},
+  solution(q){return `Substitute ${q.p.map((c,i)=>M(`${VARS[i]}=${texNum(c)}`)).join(', ')} into each component function: ${M(R`\mathbf{F}`+texPt(q.p)+'='+texVec(q.v))}. The answer is a single vector, not a field.`;}
+};
+
+const GTEST=[
+  {tex:R`\langle 2xy,\; x^{2}\rangle`,ok:true,Py:'2x',Qx:'2x',f:'f=x^{2}y'},
+  {tex:R`\langle y,\; x\rangle`,ok:true,Py:'1',Qx:'1',f:'f=xy'},
+  {tex:R`\langle e^{y},\; xe^{y}\rangle`,ok:true,Py:'e^{y}',Qx:'e^{y}',f:'f=xe^{y}'},
+  {tex:R`\langle 2x+y,\; x+2y\rangle`,ok:true,Py:'1',Qx:'1',f:'f=x^{2}+xy+y^{2}'},
+  {tex:R`\langle -y,\; x\rangle`,ok:false,Py:'-1',Qx:'1',f:''},
+  {tex:R`\langle y,\; 0\rangle`,ok:false,Py:'1',Qx:'0',f:''},
+  {tex:R`\langle x^{2},\; xy\rangle`,ok:false,Py:'0',Qx:'y',f:''},
+  {tex:R`\langle y^{2},\; x\rangle`,ok:false,Py:'2y',Qx:'1',f:''},
+];
+Q.isGradient={name:'is F a gradient field',
+  gen(){return {...pick(GTEST)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Is ${M(R`\mathbf{F}=`+q.tex)} a gradient field, that is, is ${M(R`\mathbf{F}=\nabla f`)} for some function ${M('f')}?</p>`;
+    q.get=choiceButtons(el,[{label:'Yes',value:true},{label:'No',value:false}]);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick Yes or No.'};
+    return {ok:v===q.ok,msg:v===q.ok?'':'Compute \\(P_y\\) and \\(Q_x\\) and compare them.'};},
+  solution(q){return `The test: ${M(R`\mathbf{F}=\langle P,Q\rangle`)} on a domain without holes is a gradient field exactly when ${M('P_y=Q_x')}, because mixed partials of ${M('f')} are equal. Here ${M(`P_y=${q.Py}`)} and ${M(`Q_x=${q.Qx}`)}. ${q.ok?`They agree, so <b>yes</b>, and ${M(q.f)} is a potential function.`:'They disagree, so <b>no</b>: no potential function can exist.'}`;}
+};
+
+/* ---------------------------------------------------------- chapter 2 */
+Q.pdxqdy={name:'integral of P dx + Q dy',
+  gen(){const m=pick([1,2,2,3]),T=m===3?1:pick([1,1,2]);
+    const X=[0,1],Y=pPow([0,1],m);
+    const Pt=randTerms(2,rint(1,2)),Qt=randTerms(2,rint(1,2));
+    const FrX=tmSub(Pt,[X,Y]),FrY=tmSub(Qt,[X,Y]);
+    const integ=pAdd(pMul(FrX,pDer(X)),pMul(FrY,pDer(Y)));
+    const r=pInt(integ,T);
+    return {m,T,Pt,Qt,FrX,FrY,integ,r,ans:rval(r),X,Y,
+      Ptex:tmTex(Pt),Qtex:tmTex(Qt),rTex:tvec([polyTex(X),polyTex(Y)]),
+      rpTex:tvec([polyTex(pDer(X)),polyTex(pDer(Y))]),end:[T,Math.pow(T,m)]};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\int_C\left(${q.Ptex}\right)dx+\left(${q.Qtex}\right)dy`)} where ${M('C')} is ${q.m===1?'the segment':'the arc of'} ${M(`y=x${q.m>1?'^{'+q.m+'}':''}`)} from ${M('(0,0)')} to ${M(texPt(q.end))}. Fractions like <code>12/35</code> are fine.</p>`;
+    numIn(el,'I',M(R`\int_C P\,dx+Q\,dy=`));},
+  check(q,el){return G(el,'I',checkNumber($('[data-k=I]',el).value,q.ans));},
+  solution(q){return `Parametrize with ${M('x=t')}: ${M(R`\mathbf{r}(t)=`+q.rTex)}, ${M(`0\\le t\\le ${q.T}`)}, so ${M(`dx=${polyTex(pDer(q.X))}\\,dt`)} and ${M(`dy=${polyTex(pDer(q.Y))}\\,dt`)}.
+    Substituting, ${M(`P=${polyTex(q.FrX)}`)} and ${M(`Q=${polyTex(q.FrY)}`)}, so the integrand is ${M(R`\left(${polyTex(q.FrX)}\right)\left(${polyTex(pDer(q.X))}\right)+\left(${polyTex(q.FrY)}\right)\left(${polyTex(pDer(q.Y))}\right)=${polyTex(q.integ)}`)}.
+    Then ${M(R`\int_0^{${q.T}}\left(${polyTex(q.integ)}\right)dt=${texFrac(q.r)}`)}.`;}
+};
+
+const workSol=q=>`Parametrize: ${M(R`\mathbf{r}(t)=`+q.rTex)}, ${M(`0\\le t\\le ${q.Ttex}`)}, so ${M(R`\mathbf{r}'(t)=`+q.rpTex)}.
+  Substitute the curve into the field: ${M(R`\mathbf{F}(\mathbf{r}(t))=`+q.FrTex)}.
+  Dot with the velocity: ${M(R`\mathbf{F}(\mathbf{r}(t))\cdot\mathbf{r}'(t)=`+polyTex(q.integ))}.
+  Integrate: ${M(R`W=\int_0^{${q.Ttex}}\left(${polyTex(q.integ)}\right)dt=${texFrac(q.r)}`)}. No square root ever appears: this is a dot product, not an arc length.`;
+const buildWork=(Fts,curve)=>{
+  const Fr=Fts.map(ts=>tmSub(ts,curve));
+  const integ=Fr.reduce((s,p,i)=>pAdd(s,pMul(p,pDer(curve[i]))),[0]);
+  const r=pInt(integ,1);
+  return {Fts,curve,Fr,integ,r,ans:rval(r),Ftex:tvec(Fts.map(tmTex)),
+    rTex:tvec(curve.map(c=>polyTex(c))),rpTex:tvec(curve.map(c=>polyTex(pDer(c)))),
+    FrTex:tvec(Fr.map(p=>polyTex(p))),Ttex:'1'};};
+
+Q.workSeg={name:'work along a segment',
+  gen(){let P,Qp;do{P=[rint(-3,3),rint(-3,3)];Qp=[rint(-3,3),rint(-3,3)];}while(vzero(vsub(Qp,P)));
+    const d=vsub(Qp,P);
+    const q=buildWork([randTerms(2,rint(1,2)),randTerms(2,rint(1,2))],[[P[0],d[0]],[P[1],d[1]]]);
+    return {...q,P,Q:Qp,d};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the work done by the force field ${M(R`\mathbf{F}=`+q.Ftex)} in moving a particle along the straight line from ${M(texPt(q.P))} to ${M(texPt(q.Q))}. Fractions like <code>7/6</code> are fine.</p>`;
+    numIn(el,'W',M(R`W=\int_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'W',checkNumber($('[data-k=W]',el).value,q.ans));},
+  solution(q){return workSol(q);}
+};
+
+Q.workGraph={name:'work along a parabola or cubic',
+  gen(){const m=pick([2,2,3]);
+    const q=buildWork([randTerms(2,rint(1,2)),randTerms(2,rint(1,2))],[[0,1],pPow([0,1],m)]);
+    return {...q,m};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find ${M(R`\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}`)} for ${M(R`\mathbf{F}=`+q.Ftex)}, where ${M('C')} is the arc of ${M(`y=x^{${q.m}}`)} from ${M('(0,0)')} to ${M('(1,1)')}. Fractions are fine.</p>`;
+    numIn(el,'W',M(R`\int_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'W',checkNumber($('[data-k=W]',el).value,q.ans));},
+  solution(q){return workSol(q);}
+};
+
+const CWORK=[
+  {tex:R`\langle -y,\; x\rangle`,dot:(a,at)=>`(-${at}\\sin t)(-${at}\\sin t)+(${at}\\cos t)(${at}\\cos t)=${a*a}`,k:2,
+   note:'the field is tangent to the circle and points the way you are going, so every contribution is positive'},
+  {tex:R`\langle x,\; y\rangle`,dot:(a,at)=>`(${at}\\cos t)(-${at}\\sin t)+(${at}\\sin t)(${at}\\cos t)=0`,k:0,
+   note:'the field is radial, hence perpendicular to the tangent at every point'},
+  {tex:R`\langle y,\; -x\rangle`,dot:(a,at)=>`(${at}\\sin t)(-${at}\\sin t)+(-${at}\\cos t)(${at}\\cos t)=-${a*a}`,k:-2,
+   note:'the field is tangent to the circle but points against the motion'},
+  {tex:R`\langle y,\; 2x\rangle`,dot:(a,at)=>`(${at}\\sin t)(-${at}\\sin t)+(${2*a}\\cos t)(${at}\\cos t)=${a===1?'':a*a}\\left(2\\cos^{2}t-\\sin^{2}t\\right)`,k:1,
+   note:'use \\(\\int_0^{2\\pi}\\cos^{2}t\\,dt=\\int_0^{2\\pi}\\sin^{2}t\\,dt=\\pi\\)'},
+];
+Q.circleWork={name:'work around a circle',
+  gen(){const c=pick(CWORK),a=rint(1,3),at=a===1?'':String(a);return {...c,a,at,dotTex:c.dot(a,at),ans:c.k*Math.PI*a*a,
+    ansTex:c.k===0?'0':`${c.k===1?'':(c.k===-1?'-':c.k)}\\pi a^{2}=${c.k*a*a}\\pi`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the work done by ${M(R`\mathbf{F}=`+q.tex)} as a particle travels once counterclockwise around the circle ${M(`x^{2}+y^{2}=${q.a*q.a}`)}. Exact (like <code>18pi</code>) or a decimal to two places.</p>`;
+    numIn(el,'W',M(R`W=\oint_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'W',checkNumber($('[data-k=W]',el).value,q.ans,{tol:0.01}));},
+  solution(q){return `Counterclockwise means ${M(R`\mathbf{r}(t)=\langle ${q.at}\cos t,\,${q.at}\sin t\rangle`)}, ${M(R`0\le t\le 2\pi`)}, with ${M(R`\mathbf{r}'(t)=\langle -${q.at}\sin t,\,${q.at}\cos t\rangle`)}.
+    Then ${M(R`\mathbf{F}(\mathbf{r}(t))\cdot\mathbf{r}'(t)=`+q.dotTex)}, and ${q.note}.
+    So ${M(R`W=\int_0^{2\pi}\big(${q.dotTex.split('=').pop()}\big)dt=${q.ansTex}${q.ans===0?'':'\\approx '+fmtDec(q.ans,3)}`)}.`;}
+};
+
+Q.work3D={name:'work along a space curve',
+  gen(){const cubic=Math.random()<0.5;
+    const Fts=[randTerms(3,rint(1,2)),randTerms(3,rint(1,2)),randTerms(3,rint(1,2))];
+    if(cubic){const q=buildWork(Fts,[[0,1],[0,0,1],[0,0,0,1]]);return {...q,cubic};}
+    let P,Qp;do{P=[rint(-2,2),rint(-2,2),rint(-2,2)];Qp=[rint(-2,2),rint(-2,2),rint(-2,2)];}while(vzero(vsub(Qp,P)));
+    const d=vsub(Qp,P);
+    const q=buildWork(Fts,[[P[0],d[0]],[P[1],d[1]],[P[2],d[2]]]);
+    return {...q,cubic,P,Q:Qp,d};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find ${M(R`\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}`)} for ${M(R`\mathbf{F}=`+q.Ftex)}, where ${M('C')} is ${q.cubic?`the twisted cubic ${M(R`\mathbf{r}(t)=\langle t,\,t^{2},\,t^{3}\rangle`)}, ${M(R`0\le t\le 1`)}`:`the line segment from ${M(texPt(q.P))} to ${M(texPt(q.Q))}`}. Fractions are fine.</p>`;
+    numIn(el,'W',M(R`\int_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'W',checkNumber($('[data-k=W]',el).value,q.ans));},
+  solution(q){return workSol(q);}
+};
+
+Q.orientFlip={name:'reversing the orientation',
+  gen(){const W=rnz(-14,14),S=rint(2,20);return {W,S};},
+  render(q,el){el.innerHTML=`<p class="prompt">For a curve ${M('C')} and a field ${M(R`\mathbf{F}`)} you have computed ${M(R`\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}=${q.W}`)} and ${M(R`\displaystyle\int_C f\,ds=${q.S}`)}. Let ${M('-C')} be the same curve traversed in the opposite direction. What are the two integrals over ${M('-C')}?</p>`;
+    numIn(el,'W',M(R`\int_{-C}\mathbf{F}\cdot d\mathbf{r}=`));numIn(el,'S',M(R`\int_{-C}f\,ds=`));},
+  check(q,el){return Gall(el,[['W',checkNumber($('[data-k=W]',el).value,-q.W)],['S',checkNumber($('[data-k=S]',el).value,q.S)]]);},
+  solution(q){return `Reversing the curve replaces every ${M(R`d\mathbf{r}`)} by ${M(R`-d\mathbf{r}`)}, so the work changes sign: ${M(R`\int_{-C}\mathbf{F}\cdot d\mathbf{r}=${-q.W}`)}.
+    But ${M('ds')} is a length, and lengths do not care which way you walk, so the scalar line integral is unchanged: ${M(R`\int_{-C}f\,ds=${q.S}`)}.
+    In short: ${M(R`\int_{-C}\mathbf{F}\cdot d\mathbf{r}=-\int_{C}\mathbf{F}\cdot d\mathbf{r}`)} but ${M(R`\int_{-C}f\,ds=\int_{C}f\,ds`)}.`;}
+};
+
+/* ---------------------------------------------------------- chapter 4 */
+const sol2=(P,Q,intP,fy,gp,gt,f)=>`Integrate the first component with respect to ${M('x')}, holding ${M('y')} constant: ${M(R`f=\int\left(${P}\right)dx=${intP}+g(y)`)}. The constant of integration may depend on ${M('y')}.
+  Now differentiate in ${M('y')}: ${M(`f_y=${fy}+g'(y)`)}. Set this equal to ${M(`Q=${Q}`)}: ${gp==='0'?`${M(R`g'(y)=0`)}, so ${M('g')} is an ordinary constant`:`${M(R`g'(y)=`+gp)}, so ${M(`g(y)=${gt}`)}`}.
+  Therefore ${M(`f=${f}`)} (plus any constant). Check it by taking the gradient.`;
+const sol3=(P,Q,Rr,intP,fy,gy,gt,fz,hp,ht,f)=>`Integrate the first component in ${M('x')}: ${M(R`f=\int\left(${P}\right)dx=${intP}+g(y,z)`)}.
+  Differentiate in ${M('y')}: ${M(`f_y=${fy==='0'?'':fy+'+'}g_y`)}. Matching ${M(`Q=${Q}`)} gives ${M(`g_y=${gy}`)}, so ${gt==='0'?M('g=h(z)'):M(`g=${gt}+h(z)`)}.
+  Differentiate in ${M('z')}: ${M(`f_z=${fz==='0'?'':fz+'+'}h'(z)`)}. Matching ${M(`R=${Rr}`)} gives ${hp==='0'?`${M(R`h'(z)=0`)}, so ${M('h')} is a constant`:`${M(R`h'(z)=`+hp)}, so ${M(`h(z)=${ht}`)}`}.
+  Therefore ${M(`f=${f}`)} (plus any constant).`;
+
+const P2a=()=>{const a=rint(1,3),b=rint(1,3);
+  const f=sumTex([[a,'x^{2}y'],[b,'xy^{3}']]),P=sumTex([[2*a,'xy'],[b,'y^{3}']]),Qq=sumTex([[a,'x^{2}'],[3*b,'xy^{2}']]);
+  return {vars:['x','y'],poly:true,fTex:f,fStr:sumStr([[a,'x^2*y'],[b,'x*y^3']]),Ftex:[P,Qq],sol:sol2(P,Qq,f,Qq,'0','',f)};};
+const P2b=()=>{const a=rint(1,3);
+  const f=sumTex([[a,'xe^{y}']]),P=sumTex([[a,'e^{y}']]),Qq=sumTex([[a,'xe^{y}']]);
+  return {vars:['x','y'],poly:false,fTex:f,fStr:`${a}*x*e^y`,Ftex:[P,Qq],sol:sol2(P,Qq,f,Qq,'0','',f)};};
+const P2c=()=>{const a=rint(1,3);
+  const f=sumTex([[a,'y\\sin x']]),P=sumTex([[a,'y\\cos x']]),Qq=sumTex([[a,'\\sin x']]);
+  return {vars:['x','y'],poly:false,fTex:f,fStr:`${a}*y*sin(x)`,Ftex:[P,Qq],sol:sol2(P,Qq,f,Qq,'0','',f)};};
+const P2d=()=>{const a=rint(1,3),b=rnz(-3,3),c=rint(1,3);
+  const f=sumTex([[a,'x^{2}'],[b,'xy'],[c,'y^{2}']]),P=sumTex([[2*a,'x'],[b,'y']]),Qq=sumTex([[b,'x'],[2*c,'y']]);
+  return {vars:['x','y'],poly:true,fTex:f,fStr:sumStr([[a,'x^2'],[b,'x*y'],[c,'y^2']]),Ftex:[P,Qq],
+    sol:sol2(P,Qq,sumTex([[a,'x^{2}'],[b,'xy']]),sumTex([[b,'x']]),sumTex([[2*c,'y']]),sumTex([[c,'y^{2}']]),f)};};
+const P2e=()=>{const a=rint(1,3),b=rint(1,3);
+  const f=sumTex([[a,'x^{2}y'],[b,'y^{3}']]),P=sumTex([[2*a,'xy']]),Qq=sumTex([[a,'x^{2}'],[3*b,'y^{2}']]);
+  return {vars:['x','y'],poly:true,fTex:f,fStr:sumStr([[a,'x^2*y'],[b,'y^3']]),Ftex:[P,Qq],
+    sol:sol2(P,Qq,sumTex([[a,'x^{2}y']]),sumTex([[a,'x^{2}']]),sumTex([[3*b,'y^{2}']]),sumTex([[b,'y^{3}']]),f)};};
+const P2f=()=>{const a=rint(1,3),b=rnz(-3,3),c=rint(1,3);
+  const f=sumTex([[a,'x^{3}'],[b,'xy'],[c,'y^{3}']]),P=sumTex([[3*a,'x^{2}'],[b,'y']]),Qq=sumTex([[b,'x'],[3*c,'y^{2}']]);
+  return {vars:['x','y'],poly:true,fTex:f,fStr:sumStr([[a,'x^3'],[b,'x*y'],[c,'y^3']]),Ftex:[P,Qq],
+    sol:sol2(P,Qq,sumTex([[a,'x^{3}'],[b,'xy']]),sumTex([[b,'x']]),sumTex([[3*c,'y^{2}']]),sumTex([[c,'y^{3}']]),f)};};
+const POT2=[P2a,P2b,P2c,P2d,P2e,P2f],POT2P=[P2a,P2d,P2e,P2f];
+
+const P3a=()=>{const a=rint(1,3);
+  const f=sumTex([[a,'xyz']]),P=sumTex([[a,'yz']]),Qq=sumTex([[a,'xz']]),Rr=sumTex([[a,'xy']]);
+  return {vars:['x','y','z'],poly:true,fTex:f,fStr:sumStr([[a,'x*y*z']]),Ftex:[P,Qq,Rr],
+    sol:sol3(P,Qq,Rr,f,sumTex([[a,'xz']]),'0','0',sumTex([[a,'xy']]),'0','',f)};};
+const P3b=()=>{const a=rint(1,3),b=rint(1,3),c=rint(1,3);
+  const f=sumTex([[a,'x^{2}'],[b,'y^{2}'],[c,'z^{2}']]),P=sumTex([[2*a,'x']]),Qq=sumTex([[2*b,'y']]),Rr=sumTex([[2*c,'z']]);
+  return {vars:['x','y','z'],poly:true,fTex:f,fStr:sumStr([[a,'x^2'],[b,'y^2'],[c,'z^2']]),Ftex:[P,Qq,Rr],
+    sol:sol3(P,Qq,Rr,sumTex([[a,'x^{2}']]),'0',sumTex([[2*b,'y']]),sumTex([[b,'y^{2}']]),'0',sumTex([[2*c,'z']]),sumTex([[c,'z^{2}']]),f)};};
+const P3c=()=>{const a=rint(1,3),b=rint(1,2);
+  const f=sumTex([[a,'xy^{2}'],[b,'ye^{3z}']]),P=sumTex([[a,'y^{2}']]),Qq=sumTex([[2*a,'xy'],[b,'e^{3z}']]),Rr=sumTex([[3*b,'ye^{3z}']]);
+  return {vars:['x','y','z'],poly:false,fTex:f,fStr:sumStr([[a,'x*y^2'],[b,'y*e^(3*z)']]),Ftex:[P,Qq,Rr],
+    sol:sol3(P,Qq,Rr,sumTex([[a,'xy^{2}']]),sumTex([[2*a,'xy']]),sumTex([[b,'e^{3z}']]),sumTex([[b,'ye^{3z}']]),sumTex([[3*b,'ye^{3z}']]),'0','',f)};};
+const P3d=()=>{const a=rint(1,3),b=rint(1,3);
+  const f=sumTex([[a,'x^{2}y'],[b,'y^{2}z']]),P=sumTex([[2*a,'xy']]),Qq=sumTex([[a,'x^{2}'],[2*b,'yz']]),Rr=sumTex([[b,'y^{2}']]);
+  return {vars:['x','y','z'],poly:true,fTex:f,fStr:sumStr([[a,'x^2*y'],[b,'y^2*z']]),Ftex:[P,Qq,Rr],
+    sol:sol3(P,Qq,Rr,sumTex([[a,'x^{2}y']]),sumTex([[a,'x^{2}']]),sumTex([[2*b,'yz']]),sumTex([[b,'y^{2}z']]),sumTex([[b,'y^{2}']]),'0','',f)};};
+const P3e=()=>{const a=rint(1,3),b=rint(1,3),c=rint(1,3);
+  const f=sumTex([[a,'xy'],[b,'yz'],[c,'xz']]),P=sumTex([[a,'y'],[c,'z']]),Qq=sumTex([[a,'x'],[b,'z']]),Rr=sumTex([[b,'y'],[c,'x']]);
+  return {vars:['x','y','z'],poly:true,fTex:f,fStr:sumStr([[a,'x*y'],[b,'y*z'],[c,'x*z']]),Ftex:[P,Qq,Rr],
+    sol:sol3(P,Qq,Rr,sumTex([[a,'xy'],[c,'xz']]),sumTex([[a,'x']]),sumTex([[b,'z']]),sumTex([[b,'yz']]),sumTex([[b,'y'],[c,'x']]),'0','',f)};};
+const POT3=[P3a,P3b,P3c,P3d,P3e],POT3P=[P3a,P3b,P3d,P3e];
+
+const CON3=[
+  {tex:R`\langle yz,\; xz,\; xy\rangle`,ok:true,why:R`R_y=x=Q_z,\ P_z=y=R_x,\ Q_x=z=P_y`,f:'f=xyz'},
+  {tex:R`\langle 2x,\; 2y,\; 2z\rangle`,ok:true,why:R`\text{every cross-partial is }0`,f:'f=x^{2}+y^{2}+z^{2}'},
+  {tex:R`\langle y+z,\; x+z,\; x+y\rangle`,ok:true,why:R`R_y=1=Q_z,\ P_z=1=R_x,\ Q_x=1=P_y`,f:'f=xy+yz+xz'},
+  {tex:R`\langle 2xy,\; x^{2}+2yz,\; y^{2}\rangle`,ok:true,why:R`R_y=2y=Q_z,\ P_z=0=R_x,\ Q_x=2x=P_y`,f:'f=x^{2}y+y^{2}z'},
+  {tex:R`\langle y,\; -x,\; z\rangle`,ok:false,why:R`Q_x=-1\ \text{but}\ P_y=1`,f:''},
+  {tex:R`\langle z,\; x,\; y\rangle`,ok:false,why:R`R_y=1\ \text{but}\ Q_z=0`,f:''},
+  {tex:R`\langle xy,\; yz,\; zx\rangle`,ok:false,why:R`R_y=0\ \text{but}\ Q_z=y`,f:''},
+  {tex:R`\langle y^{2},\; x,\; z\rangle`,ok:false,why:R`Q_x=1\ \text{but}\ P_y=2y`,f:''},
+];
+Q.isConservative={name:'is F conservative',
+  gen(){if(Math.random()<0.45){const e=pick(CON3);return {...e,dim:3};}
+    const e=pick(GTEST);return {...e,dim:2,why:`P_y=${e.Py}\\ \\text{and}\\ Q_x=${e.Qx}`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Is the vector field ${M(R`\mathbf{F}=`+q.tex)} conservative on all of ${M(q.dim===2?R`\mathbb{R}^{2}`:R`\mathbb{R}^{3}`)}?</p>`;
+    q.get=choiceButtons(el,[{label:'Yes, it is conservative',value:true},{label:'No',value:false}]);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ok,msg:v===q.ok?'':(q.dim===2?'Compare \\(P_y\\) with \\(Q_x\\).':'Check all three curl equations: \\(R_y=Q_z\\), \\(P_z=R_x\\), \\(Q_x=P_y\\).')};},
+  solution(q){const test=q.dim===2?`On a simply connected domain, ${M(R`\langle P,Q\rangle`)} is conservative exactly when ${M('P_y=Q_x')}.`:`In space the test is ${M(R`\operatorname{curl}\mathbf{F}=\mathbf{0}`)}, that is ${M('R_y=Q_z')}, ${M('P_z=R_x')}, and ${M('Q_x=P_y')}.`;
+    return `${test} Here ${M(q.why)}. ${q.ok?`All the required partials agree, so <b>yes</b>: a potential exists, for example ${M(q.f)}.`:'The required partials do not agree, so <b>no</b>.'}`;}
+};
+
+Q.findPotential={name:'find a potential function',
+  gen(){const e=(Math.random()<1/3?pick(POT3):pick(POT2))();return {...e,dim:e.vars.length,Ftex:tvec(e.Ftex)};},
+  render(q,el){el.innerHTML=`<p class="prompt">The field ${M(R`\mathbf{F}=`+q.Ftex)} is conservative. Find a potential function ${M('f')}, that is a function with ${M(R`\nabla f=\mathbf{F}`)}. Any constant of integration is accepted.</p>`;
+    (q.dim===3?xwIn:wideIn)(el,'f',M(`f(${q.vars.join(',')})=`),'an expression in '+q.vars.join(', '));},
+  check(q,el){return G(el,'f',checkExprUpToConstant($('[data-k=f]',el).value,q.fStr,q.vars));},
+  solution(q){return q.sol;}
+};
+
+const PATHS=['any piecewise-smooth path','a smooth curve','a path','some curve'];
+Q.ftcEval={name:'fundamental theorem for line integrals',
+  gen(){const e=(Math.random()<0.35?pick(POT3P):pick(POT2P))();const n=e.vars.length;
+    const f=Expr.compile(e.fStr);
+    let A,B;do{A=Array.from({length:n},()=>rint(-3,3));B=Array.from({length:n},()=>rint(-3,3));}while(vzero(vsub(B,A)));
+    const env=p=>Object.fromEntries(e.vars.map((v,i)=>[v,p[i]]));
+    const fA=f(env(A)),fB=f(env(B));
+    return {...e,dim:n,Ftex:tvec(e.Ftex),A,B,fA,fB,ans:fB-fA,path:pick(PATHS)};},
+  render(q,el){el.innerHTML=`<p class="prompt">The field ${M(R`\mathbf{F}=`+q.Ftex)} is conservative with potential function ${M('f='+q.fTex)}. Evaluate ${M(R`\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}`)}, where ${M('C')} is ${q.path} running from ${M('A'+texPt(q.A))} to ${M('B'+texPt(q.B))}.</p>`;
+    numIn(el,'I',M(R`\int_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'I',checkNumber($('[data-k=I]',el).value,q.ans));},
+  solution(q){return `By the Fundamental Theorem, ${M(R`\int_C\nabla f\cdot d\mathbf{r}=f(B)-f(A)`)}: the path itself never enters the computation.
+    ${M(`f${texPt(q.B)}=${texNum(q.fB)}`)} and ${M(`f${texPt(q.A)}=${texNum(q.fA)}`)}, so the integral is ${M(`${texNum(q.fB)}-(${texNum(q.fA)})=${texNum(q.ans)}`)}.`;}
+};
+
+const LOOPS=[R`the circle \(x^{2}+y^{2}=4\), traversed once counterclockwise`,
+  R`the triangle with vertices \((0,0)\), \((3,0)\), \((0,2)\), traversed once`,
+  R`the closed curve \(\mathbf{r}(t)=\langle 2\cos t,\,3\sin t\rangle\), \(0\le t\le 2\pi\)`,
+  R`the square with corners \((\pm 1,\pm 1)\), traversed once counterclockwise`];
+Q.closedLoop={name:'work around a closed curve',
+  gen(){if(Math.random()<0.5){const e=pick(POT2P)();return {kind:'cons',...e,Ftex:tvec(e.Ftex),loop:pick(LOOPS),ans:0,exact:true};}
+    const cw=Math.random()<0.5,neg=Math.random()<0.5,a=rint(1,3);
+    const k=(neg?-1:1)*(cw?-1:1);
+    return {kind:'rot',a,cw,neg,ans:k*2*Math.PI*a*a,exact:false,
+      Ftex:neg?R`\langle y,\; -x\rangle`:R`\langle -y,\; x\rangle`,
+      loop:`the circle \\(x^{2}+y^{2}=${a*a}\\), traversed once ${cw?'clockwise':'counterclockwise'}`,
+      ansTex:`${k===1?'':'-'}2\\pi a^{2}=${k*2*a*a}\\pi`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\oint_C\mathbf{F}\cdot d\mathbf{r}`)} for ${M(R`\mathbf{F}=`+q.Ftex)}, where ${M('C')} is the <b>closed</b> curve given by ${q.loop}.${q.exact?'':' Exact (like <code>8pi</code>) or a decimal to two places.'}</p>`;
+    numIn(el,'I',M(R`\oint_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'I',checkNumber($('[data-k=I]',el).value,q.ans,q.exact?{}:{tol:0.01}));},
+  solution(q){
+    if(q.kind==='cons')return `Test the field: ${M('P_y=Q_x')} here, so ${M(R`\mathbf{F}`)} is conservative with potential ${M('f='+q.fTex)}. A closed curve ends where it started, so ${M(R`\oint_C\mathbf{F}\cdot d\mathbf{r}=f(\text{end})-f(\text{start})=0`)}. <b>0</b>, and no parametrization was needed.`;
+    const at=q.a===1?'':String(q.a),ccw=q.neg?-2*Math.PI*q.a*q.a:2*Math.PI*q.a*q.a;
+    return `This field is <b>not</b> conservative: for ${M(R`\langle -y,x\rangle`)}, ${M('P_y=-1')} while ${M('Q_x=1')}, so a closed curve need not give zero.
+      Parametrize counterclockwise: ${M(R`\mathbf{r}(t)=\langle ${at}\cos t,\,${at}\sin t\rangle`)}, ${M(R`0\le t\le 2\pi`)}. Then ${M(R`\mathbf{F}\cdot\mathbf{r}'=${q.neg?'-':''}${q.a*q.a}`)} (constant), so the counterclockwise integral is ${M(`${q.neg?'-':''}2\\pi a^{2}=${fmt(ccw/Math.PI)}\\pi`)}.
+      ${q.cw?`This curve runs clockwise, which flips that sign: ${M(q.ansTex)}`:'That is the answer'}, ${M(R`\approx `+fmtDec(q.ans,3))}.`;}
+};
+
+Q.pot3dFtc={name:'potential and the fundamental theorem in 3D',
+  gen(){const e=pick(POT3P)();const f=Expr.compile(e.fStr);
+    let A,B;do{A=[rint(-3,3),rint(-3,3),rint(-3,3)];B=[rint(-3,3),rint(-3,3),rint(-3,3)];}while(vzero(vsub(B,A)));
+    const env=p=>({x:p[0],y:p[1],z:p[2]});
+    const fA=f(env(A)),fB=f(env(B));
+    return {...e,Ftex:tvec(e.Ftex),A,B,fA,fB,ans:fB-fA};},
+  render(q,el){el.innerHTML=`<p class="prompt">The field ${M(R`\mathbf{F}=`+q.Ftex)} is conservative. Find a potential function, then use it to evaluate ${M(R`\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}`)} along a curve from ${M('A'+texPt(q.A))} to ${M('B'+texPt(q.B))}.</p>`;
+    xwIn(el,'f',M('f(x,y,z)='),'an expression in x, y, z');
+    numIn(el,'I',M(R`\int_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return Gall(el,[['f',checkExprUpToConstant($('[data-k=f]',el).value,q.fStr,q.vars)],
+    ['I',checkNumber($('[data-k=I]',el).value,q.ans)]]);},
+  solution(q){return `${q.sol} Then the Fundamental Theorem gives ${M(`f${texPt(q.B)}-f${texPt(q.A)}=${texNum(q.fB)}-(${texNum(q.fA)})=${texNum(q.ans)}`)}.`;}
+};
+
+/* ============================================================ chapter 1: field plotter + flow */
+(function(){
+  const plot=new Plot2D('#fldPlot',{xmin:-4,xmax:4,ymin:-4,ymax:4});
+  const PRE=[['⟨-y, x⟩   rotation','-y','x'],['⟨x, y⟩   radial, outward','x','y'],['⟨-x, -y⟩   radial, inward','-x','-y'],
+    ['⟨y, x⟩   saddle','y','x'],['⟨y, 0⟩   shear','y','0'],['⟨1, x⟩','1','x'],['⟨y, -x⟩   clockwise','y','-x'],
+    ['⟨x, -y⟩','x','-y'],['∇(x² + y²) = ⟨2x, 2y⟩','2x','2y'],['⟨sin y, cos x⟩','sin(y)','cos(x)']];
+  const sel=$('#fldSel');PRE.forEach(([n],i)=>sel.appendChild(el('option',{value:String(i)},n)));
+  const pin=$('#fldP'),qin=$('#fldQ'),btn=$('#fldFlow');
+  pin.value=PRE[0][1];qin.value=PRE[0][2];
+  let F=(x,y)=>[-y,x],err=null,parts=[],flowing=false,raf=null;
+  function build(){
+    try{const fp=Expr.compile(pin.value),fq=Expr.compile(qin.value);
+      const t=fp({x:1,y:1})+fq({x:1,y:1});
+      if(!Number.isFinite(t))throw new Error('that does not give a number at (1, 1)');
+      F=(x,y)=>[fp({x,y}),fq({x,y})];err=null;
+    }catch(e){err=e.message;}
+    draw();
+  }
+  const spawn=()=>[-4+8*Math.random(),-4+8*Math.random(),0,rint(150,420)];
+  function draw(){
+    plot.begin();
+    let mx=0;
+    for(let x=-4;x<=4.001;x+=0.8)for(let y=-4;y<=4.001;y+=0.8){const n=norm(F(x,y));if(Number.isFinite(n))mx=Math.max(mx,n);}
+    plot.field(F,{step:0.8,scale:mx>1e-9?0.62/mx:0.3,color:'#d97706',width:1.3});
+    if(parts.length){const ctx=plot.ctx;ctx.fillStyle='rgba(124,58,237,.8)';
+      parts.forEach(p=>{const q=plot.px(p[0],p[1]);ctx.beginPath();ctx.arc(q[0],q[1],2.2,0,7);ctx.fill();});}
+    const at=(x,y)=>{const v=F(x,y);return `⟨${fmtDec(v[0],2)}, ${fmtDec(v[1],2)}⟩`;};
+    $('#fldOut').innerHTML=err?`<span style="color:#dc2626">Could not read the field: ${err}</span>`
+      :`F(x, y) = ⟨${pin.value}, ${qin.value}⟩<br>F(1, 0) = ${at(1,0)} &nbsp;&nbsp; F(0, 1) = ${at(0,1)}<br>F(2, 1) = ${at(2,1)} &nbsp;&nbsp; F(−1, −2) = ${at(-1,-2)}<br>longest arrow drawn: |F| = ${fmtDec(mx,2)} (all arrows share one scale factor)`;
+  }
+  function tick(){
+    if(!flowing)return;
+    const sec=$('section[data-id="fields"]');
+    if(!sec||!sec.classList.contains('active')){flowing=false;btn.textContent='Start the flow';raf=null;return;}
+    parts.forEach(p=>{
+      const v=F(p[0],p[1]);let dx=v[0]*0.016,dy=v[1]*0.016;
+      if(!Number.isFinite(dx)||!Number.isFinite(dy)){const n=spawn();p[0]=n[0];p[1]=n[1];p[2]=0;p[3]=n[3];return;}
+      const L=Math.hypot(dx,dy);if(L>0.09){dx*=0.09/L;dy*=0.09/L;}
+      p[0]+=dx;p[1]+=dy;p[2]++;
+      if(p[2]>p[3]||Math.abs(p[0])>4.3||Math.abs(p[1])>4.3){const n=spawn();p[0]=n[0];p[1]=n[1];p[2]=0;p[3]=n[3];}
+    });
+    draw();raf=requestAnimationFrame(tick);
+  }
+  sel.onchange=()=>{const e=PRE[+sel.value];pin.value=e[1];qin.value=e[2];build();};
+  pin.oninput=qin.oninput=build;
+  btn.onclick=()=>{flowing=!flowing;btn.textContent=flowing?'Pause the flow':'Start the flow';
+    if(flowing){if(!parts.length)parts=Array.from({length:200},spawn);tick();}
+    else if(raf){cancelAnimationFrame(raf);raf=null;}};
+  $('#fldClear').onclick=()=>{parts=[];if(flowing){flowing=false;btn.textContent='Start the flow';if(raf)cancelAnimationFrame(raf);raf=null;}draw();};
+  redrawOnShow('fields',draw);build();
+  new Drill({mount:'#drill-fields',section:'fields',goal:6,...mixDrill([Q.matchField,Q.gradField,Q.gradField,Q.evalField,Q.isGradient,Q.isGradient])});
+})();
+
+/* ============================================================ shared step-by-step walkthrough UI */
+const stepUI=(mountId,statusId,prevId,nextId)=>({
+  show(lines,status,step){
+    $(mountId).innerHTML=lines.map((l,i)=>`<li class="${i===step?'now':(i>step?'dim':'')}">${i>step?`<b>${l.label}</b>`:l.html}</li>`).join('');
+    $(statusId).textContent=status[step];
+    $(prevId).disabled=step===0;$(nextId).disabled=step===lines.length-1;
+    typeset($(mountId));
+  }});
+
+/* ============================================================ chapter 2: walkthrough + work explorer */
+(function(){
+  const ui=stepUI('#vwkSteps','#vwkStatus','#vwkPrev','#vwkNext');
+  const ST=['Read the problem: a force field and a path.',
+    'Write the segment as r(t), exactly as for a scalar line integral.',
+    'Differentiate. This time you keep the vector, not its length.',
+    'Put x(t) and y(t) into both components of F.',
+    'Dot the two vectors. The result is a polynomial in t.',
+    'Integrate over the parameter interval. Done.'];
+  let lines=[],step=0;
+  function fresh(){
+    let P,Qp;do{P=[rint(-3,3),rint(-3,3)];Qp=[rint(-3,3),rint(-3,3)];}while(vzero(vsub(Qp,P)));
+    const d=vsub(Qp,P);
+    const q=buildWork([randTerms(2,rint(1,2)),randTerms(2,rint(1,2))],[[P[0],d[0]],[P[1],d[1]]]);
+    lines=[
+      {label:'The problem',html:`The force field is ${M(R`\mathbf{F}=`+q.Ftex)} and ${M('C')} is the segment from ${M(texPt(P))} to ${M(texPt(Qp))}. We want the work ${M(R`\displaystyle W=\int_C\mathbf{F}\cdot d\mathbf{r}`)}.`},
+      {label:'Parametrize',html:`<b>Parametrize.</b> ${M(R`\mathbf{r}(t)=`+q.rTex)}, ${M(R`0\le t\le 1`)}.`},
+      {label:'Velocity',html:`<b>Velocity.</b> ${M(R`\mathbf{r}'(t)=`+q.rpTex)}, so ${M(R`d\mathbf{r}=`+q.rpTex+R`\,dt`)}. No square root here: you keep the whole vector.`},
+      {label:'Substitute',html:`<b>Substitute.</b> ${M(R`\mathbf{F}(\mathbf{r}(t))=`+q.FrTex)}.`},
+      {label:'Dot product',html:`<b>Dot product.</b> ${M(R`\mathbf{F}(\mathbf{r}(t))\cdot\mathbf{r}'(t)=`+polyTex(q.integ))}.`},
+      {label:'Integrate',html:`<b>Integrate.</b> ${M(R`\displaystyle W=\int_0^1\left(${polyTex(q.integ)}\right)dt=${texFrac(q.r)}\approx ${fmtDec(q.ans,3)}`)}. If the path were reversed, this number would change sign.`}];
+    step=0;ui.show(lines,ST,step);
+  }
+  $('#vwkNext').onclick=()=>{step=Math.min(lines.length-1,step+1);ui.show(lines,ST,step);};
+  $('#vwkPrev').onclick=()=>{step=Math.max(0,step-1);ui.show(lines,ST,step);};
+  $('#vwkNew').onclick=fresh;
+  fresh();
+})();
+
+(function(){
+  const plot=new Plot2D('#wkPlot',{xmin:-2.2,xmax:2.2,ymin:-2.2,ymax:2.2});
+  const WF=[{n:'F = ⟨−y, x⟩',F:(x,y)=>[-y,x]},{n:'F = ⟨x, y⟩',F:(x,y)=>[x,y]},
+    {n:'F = ⟨y, 0⟩',F:(x,y)=>[y,0]},{n:'F = ⟨x, y²⟩',F:(x,y)=>[x,y*y]}];
+  const WC=[{n:'segment',r:t=>[-1.6+3.2*t,-1.3+2.6*t],rp:()=>[3.2,2.6],t0:0,t1:1},
+    {n:'circle, counterclockwise',r:t=>[1.5*Math.cos(t),1.5*Math.sin(t)],rp:t=>[-1.5*Math.sin(t),1.5*Math.cos(t)],t0:0,t1:2*Math.PI},
+    {n:'parabola',r:t=>[t,t*t-1.2],rp:t=>[1,2*t],t0:-1.5,t1:1.5}];
+  let fi=0,ci=1,s=0.45,rev=false;
+  const cur=()=>{const C=WC[ci];return rev?{n:C.n,t0:C.t0,t1:C.t1,r:u=>C.r(C.t0+C.t1-u),rp:u=>vscale(-1,C.rp(C.t0+C.t1-u))}:C;};
+  const work=(a,b)=>{const C=cur(),F=WF[fi].F,n=400;let acc=0;
+    const g=u=>{const p=C.r(u),v=C.rp(u),f=F(p[0],p[1]);return f[0]*v[0]+f[1]*v[1];};
+    for(let i=0;i<n;i++){const u1=a+(b-a)*i/n,u2=a+(b-a)*(i+1)/n;acc+=(g(u1)+g(u2))/2*(b-a)/n;}return acc;};
+  const mkBtns=(mount,list,get,set)=>{const box=$(mount);box.innerHTML='';
+    list.forEach((it,i)=>{const b=el('button',{class:'btn small'+(get()===i?' on':'')},it.n);
+      b.onclick=()=>{set(i);$$('.btn',box).forEach((x,j)=>x.classList.toggle('on',j===i));draw();};box.appendChild(b);});};
+  function draw(){
+    const C=cur(),F=WF[fi].F,t=C.t0+(C.t1-C.t0)*s;
+    plot.begin();
+    let mx=0;for(let x=-2;x<=2.001;x+=0.5)for(let y=-2;y<=2.001;y+=0.5){const n=norm(F(x,y));if(Number.isFinite(n))mx=Math.max(mx,n);}
+    plot.field(F,{step:0.5,scale:mx>1e-9?0.34/mx:0.3,color:'#f0c893',width:1.1});
+    plot.param(C.r,C.t0,C.t1,{color:'#d8cdf5',width:4});
+    plot.param(C.r,C.t0,t,{color:'#7c3aed',width:4,arrow:true});
+    const p=C.r(t),v=C.rp(t),T=unit(v),f=F(p[0],p[1]),ft=dot(f,T);
+    const sc=mx>1e-9?0.8/mx:0.4;
+    plot.vector(p,[p[0]+f[0]*sc,p[1]+f[1]*sc],{color:'#d97706',width:3,label:'F'});
+    plot.vector(p,[p[0]+T[0]*0.6,p[1]+T[1]*0.6],{color:'#2563eb',width:3,label:'T'});
+    plot.point(p,{color:'#7c3aed',r:5,ring:true});
+    let mt=0;for(let i=0;i<=120;i++){const u=C.t0+(C.t1-C.t0)*i/120;const q=C.r(u),w=unit(C.rp(u)),g=F(q[0],q[1]);mt=Math.max(mt,Math.abs(dot(g,w)));}
+    const pct=mt>1e-9?clamp(Math.abs(ft)/mt,0,1)*50:0;
+    const fill=$('#wkFill');
+    fill.style.left=(ft>=0?50:50-pct)+'%';fill.style.width=pct+'%';
+    fill.style.background=ft>=0?'var(--c)':'var(--bad-strong)';
+    $('#wkOut').innerHTML=`${WF[fi].n} &nbsp;&nbsp; C: ${WC[ci].n}${rev?' (reversed)':''}<br>`+
+      `t = ${fmtDec(t,3)} &nbsp; r(t) = (${fmtDec(p[0],2)}, ${fmtDec(p[1],2)})<br>`+
+      `F(r(t)) = ⟨${fmtDec(f[0],2)}, ${fmtDec(f[1],2)}⟩ &nbsp; T = ⟨${fmtDec(T[0],2)}, ${fmtDec(T[1],2)}⟩<br>`+
+      `F · T = <b>${fmtDec(ft,3)}</b> ${Math.abs(ft)<1e-9?'(perpendicular: no work)':(ft>0?'(pushing you along)':'(pushing back)')}<br>`+
+      `work so far = <b>${fmtDec(work(C.t0,t),4)}</b><br>whole curve ∫<sub>C</sub> F · dr = ${fmtDec(work(C.t0,C.t1),4)}`;
+  }
+  mkBtns('#wkField',WF,()=>fi,i=>fi=i);
+  mkBtns('#wkCurve',WC,()=>ci,i=>ci=i);
+  $('#wkSl').style.gridTemplateColumns='1fr';
+  sliderRow($('#wkSl'),{label:'position along C',min:0,max:1,step:0.01,value:s,onInput:v=>{s=v;draw();}});
+  $('#wkRev').onchange=e=>{rev=e.target.checked;draw();};
+  redrawOnShow('vector',draw);draw();
+  new Drill({mount:'#drill-vector',section:'vector',goal:6,...mixDrill([Q.workSeg,Q.workSeg,Q.workGraph,Q.pdxqdy,Q.circleWork,Q.circleWork,Q.work3D,Q.orientFlip])});
+})();
+
+/* ============================================================ chapter 3: walkthrough + potential surface */
+(function(){
+  const ui=stepUI('#pwkSteps','#pwkStatus','#pwkPrev','#pwkNext');
+  const ST=['A field is given. The job is to find a function whose gradient it is.',
+    'First check that a potential can exist at all.',
+    'Undo the x-derivative. The constant of integration may depend on y.',
+    'Differentiate your candidate with respect to y.',
+    'Compare with Q and solve for g(y).',
+    'Assemble f, then verify by taking the gradient.'];
+  const TAILS=[()=>{const m=rint(1,2);return {Q:sumTex([[3*m,'y^{2}']]),gp:sumTex([[3*m,'y^{2}']]),g:sumTex([[m,'y^{3}']]),gs:sumStr([[m,'y^3']])};},
+    ()=>{const m=rint(1,3);return {Q:sumTex([[2*m,'y']]),gp:sumTex([[2*m,'y']]),g:sumTex([[m,'y^{2}']]),gs:sumStr([[m,'y^2']])};},
+    ()=>{const m=rint(1,3);return {Q:sumTex([[m,'\\cos y']]),gp:sumTex([[m,'\\cos y']]),g:sumTex([[m,'\\sin y']]),gs:sumStr([[m,'sin(y)']])};},
+    ()=>{const m=rint(1,3);return {Q:sumTex([[m,'e^{y}']]),gp:sumTex([[m,'e^{y}']]),g:sumTex([[m,'e^{y}']]),gs:sumStr([[m,'e^y']])};}];
+  let lines=[],step=0;
+  function fresh(){
+    const a=rint(1,3),c=rnz(-3,3),tl=pick(TAILS)();
+    const P=sumTex([[2*a,'xy'],[c,'']]),Qq=sumTex([[a,'x^{2}']])+' + '+tl.Q;
+    const intP=sumTex([[a,'x^{2}y'],[c,'x']]);
+    const f=intP+' + '+tl.g;
+    lines=[
+      {label:'The problem',html:`Given ${M(R`\mathbf{F}=`+tvec([P,Qq]))}, find a potential function ${M('f')}, that is a function with ${M(R`\nabla f=\mathbf{F}`)}.`},
+      {label:'Check it is conservative',html:`<b>Check first.</b> ${M(`P_y=${sumTex([[2*a,'x']])}`)} and ${M(`Q_x=${sumTex([[2*a,'x']])}`)}. They agree on all of ${M(R`\mathbb{R}^{2}`)}, so a potential function exists.`},
+      {label:'Integrate P in x',html:`<b>Integrate ${M('P')} in ${M('x')}.</b> ${M(R`f=\int\left(${P}\right)dx=${intP}+g(y)`)}. Because we held ${M('y')} fixed, the constant of integration can be any function of ${M('y')}.`},
+      {label:'Differentiate in y',html:`<b>Differentiate in ${M('y')}.</b> ${M(`f_y=${sumTex([[a,'x^{2}']])}+g'(y)`)}.`},
+      {label:'Match Q',html:`<b>Match ${M('Q')}.</b> Set ${M(`${sumTex([[a,'x^{2}']])}+g'(y)=${Qq}`)}. The ${M(sumTex([[a,'x^{2}']]))} cancels, leaving ${M(`g'(y)=${tl.gp}`)}, so ${M(`g(y)=${tl.g}`)}.`},
+      {label:'Answer',html:`<b>Answer.</b> ${M(`f=${f}+C`)}. Verify: ${M(`f_x=${P}`)} and ${M(`f_y=${Qq}`)}, which is ${M(R`\mathbf{F}`)}.`}];
+    step=0;ui.show(lines,ST,step);
+  }
+  $('#pwkNext').onclick=()=>{step=Math.min(lines.length-1,step+1);ui.show(lines,ST,step);};
+  $('#pwkPrev').onclick=()=>{step=Math.max(0,step-1);ui.show(lines,ST,step);};
+  $('#pwkNew').onclick=fresh;
+  fresh();
+})();
+
+(function(){
+  const scene=new Scene3D('#potScene',{range:3,azim:-58,elev:26});
+  const map=new Plot2D('#potMap',{xmin:-2.2,xmax:2.2,ymin:-2.2,ymax:2.2});
+  const POTS=[
+    {n:'f = xy / 2',f:(x,y)=>x*y/2,g:(x,y)=>[y/2,x/2],lv:[-2,-1.5,-1,-0.5,0,0.5,1,1.5,2],tex:'f(x,y)=xy/2'},
+    {n:'f = (x² + y²) / 4',f:(x,y)=>(x*x+y*y)/4,g:(x,y)=>[x/2,y/2],lv:[0.1,0.4,0.8,1.2,1.6,2],tex:'f(x,y)=(x²+y²)/4'},
+    {n:'f = sin x · cos y',f:(x,y)=>Math.sin(x)*Math.cos(y),g:(x,y)=>[Math.cos(x)*Math.cos(y),-Math.sin(x)*Math.sin(y)],lv:[-0.9,-0.6,-0.3,0,0.3,0.6,0.9],tex:'f(x,y)=sin x cos y'}];
+  const A=[-1.6,-1.2],B=[1.6,1.4],dAB=vsub(B,A),nh=unit([-dAB[1],dAB[0]]);
+  const path1=t=>[A[0]+dAB[0]*t,A[1]+dAB[1]*t];
+  const path2=t=>{const p=path1(t),k=1.25*Math.sin(Math.PI*t);return [p[0]+nh[0]*k,p[1]+nh[1]*k];};
+  const lineInt=(pth,gf,n=800)=>{let acc=0;
+    for(let i=0;i<n;i++){const t1=i/n,t2=(i+1)/n,p1=pth(t1),p2=pth(t2),mid=pth((t1+t2)/2);
+      const g=gf(mid[0],mid[1]);acc+=g[0]*(p2[0]-p1[0])+g[1]*(p2[1]-p1[1]);}return acc;};
+  let pi=0;
+  function draw(){
+    const P=POTS[pi];
+    scene.clear();
+    scene.surface(P.f,[-2,2],[-2,2],{n:28,base:SURF.blue,alpha:0.5});
+    const lift=(pth,color)=>{const pts=[];for(let i=0;i<=120;i++){const p=pth(i/120);pts.push([p[0],p[1],P.f(p[0],p[1])+0.06]);}
+      scene.polyline(pts,{color,width:3.4});};
+    lift(path1,'#2563eb');lift(path2,'#7c3aed');
+    scene.point([A[0],A[1],P.f(A[0],A[1])+0.06],{color:'#d97706',label:'A',r:5});
+    scene.point([B[0],B[1],P.f(B[0],B[1])+0.06],{color:'#16a34a',label:'B',r:5});
+    scene.render();
+    map.begin();
+    map.contour(P.f,P.lv,{color:'#b9b5ab',labels:true});
+    map.field(P.g,{step:0.45,scale:0.3,normalize:true,color:'#f0c893',width:1.1});
+    map.param(path1,0,1,{color:'#2563eb',width:3,arrow:true});
+    map.param(path2,0,1,{color:'#7c3aed',width:3,arrow:true});
+    map.point(A,{color:'#d97706',label:'A',r:5});map.point(B,{color:'#16a34a',label:'B',r:5});
+    const fA=P.f(A[0],A[1]),fB=P.f(B[0],B[1]);
+    $('#potOut').innerHTML=`${P.tex} &nbsp;&nbsp; ∇f = ⟨f<sub>x</sub>, f<sub>y</sub>⟩ (the orange arrows)<br>`+
+      `f(B) − f(A) = ${fmtDec(fB,4)} − (${fmtDec(fA,4)}) = <b>${fmtDec(fB-fA,4)}</b><br>`+
+      `blue path: ∫ ∇f · dr = ${fmtDec(lineInt(path1,P.g),4)}<br>`+
+      `purple path: ∫ ∇f · dr = ${fmtDec(lineInt(path2,P.g),4)}<br>`+
+      `Both agree with f(B) − f(A). The path is irrelevant.`;
+  }
+  const box=$('#potPresets');
+  POTS.forEach((p,i)=>{const b=el('button',{class:'btn small'+(i===0?' on':'')},p.n);
+    b.onclick=()=>{pi=i;$$('.btn',box).forEach((x,j)=>x.classList.toggle('on',j===i));draw();};box.appendChild(b);});
+  redrawOnShow('ftc',draw);draw();
+  new Drill({mount:'#drill-ftc',section:'ftc',goal:6,...mixDrill([Q.isConservative,Q.isConservative,Q.findPotential,Q.findPotential,Q.ftcEval,Q.closedLoop,Q.pot3dFtc])});
+})();
+
+/* ============================================================ test hook */
+window.__solvers={
+  'match the field to its picture':q=>({_btn:q.ans}),
+  'gradient field':q=>({F:'<'+q.comps.join(', ')+'>'}),
+  'evaluate a vector field at a point':q=>({v:'<'+q.v.join(', ')+'>'}),
+  'is F a gradient field':q=>({_btn:q.ok?0:1}),
+  'integral of P dx + Q dy':q=>({I:ratStr(q.r)}),
+  'work along a segment':q=>({W:ratStr(q.r)}),
+  'work along a parabola or cubic':q=>({W:ratStr(q.r)}),
+  'work around a circle':q=>({W:String(q.ans)}),
+  'work along a space curve':q=>({W:ratStr(q.r)}),
+  'reversing the orientation':q=>({W:String(-q.W),S:String(q.S)}),
+  'is F conservative':q=>({_btn:q.ok?0:1}),
+  'find a potential function':q=>({f:q.fStr}),
+  'fundamental theorem for line integrals':q=>({I:String(q.ans)}),
+  'work around a closed curve':q=>({I:String(q.ans)}),
+  'potential and the fundamental theorem in 3D':q=>({f:q.fStr,I:String(q.ans)}),
+};
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.evalField,Q.gradField,Q.isGradient,Q.workSeg,Q.workGraph,Q.pdxqdy,
+  Q.circleWork,Q.work3D,Q.isConservative,Q.findPotential,Q.ftcEval,Q.closedLoop]});
+
+initModule({key:'line-integrals',title:'Vector Fields and Line Integrals',sub:'Module 9 · Stewart 16.1 to 16.3'});
+</script>
+</body>
+</html>
