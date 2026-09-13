@@ -712,7 +712,6 @@ MEM_CARDS.push(
     ID('arctan-inv-sqrt3',String.raw`\arctan\tfrac{1}{\sqrt3}=`,String.raw`\tfrac{\pi}{6}`),
     ID('arcsin-half',String.raw`\arcsin\tfrac12=`,String.raw`\tfrac{\pi}{6}`),
     ID('arccos-half',String.raw`\arccos\tfrac12=`,String.raw`\tfrac{\pi}{3}`),
-    ID('arctan-inf',String.raw`\lim_{x\to\infty}\arctan x=`,String.raw`\tfrac{\pi}{2}`),
     /* logs */
     ID('ln-prod',String.raw`\ln(ab)=`,String.raw`\ln a+\ln b`),
     ID('ln-quot',String.raw`\ln\dfrac{a}{b}=`,String.raw`\ln a-\ln b`),
