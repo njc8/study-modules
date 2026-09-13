@@ -262,16 +262,15 @@ function animator(sectionId,step){
   return api;
 }
 
-/* ============================================================ memory deck link for module welcome pages
+/* ============================================================ flashcard link for module welcome pages
    memoryCard(modKey, [fact html, ...]) -> a .card element listing the facts this module expects you to know cold,
-   with a button into the spaced-repetition trainer filtered to this module. */
+   with a button into the flashcards for this unit (math102/memory.html). */
 function memoryCard(modKey,facts){
-  let due=0,total=0;
-  try{const st=JSON.parse(localStorage.getItem('m102-memory')||'{}');const cards=(window.MEM_CARDS||[]).filter(c=>c.mod===modKey);total=cards.length;const now=Date.now();cards.forEach(c=>{const s=st.cards&&st.cards[c.id];if(!s||(s.due<=now&&!s.suspended))due++;});}catch(e){}
+  const total=(window.MEM_CARDS||[]).filter(c=>c.mod===modKey).length;
   const c=el('div',{class:'card tint memcard'});
-  c.innerHTML=`<h4>Know these cold</h4><p class="small muted">The facts below are pure recall. The drills assume them. The memory trainer schedules them for you so you only review what is fading.</p>
+  c.innerHTML=`<h4>Know these cold</h4><p class="small muted">The facts below are pure recall. The drills assume them. Write each answer in your notebook, then flip the card.</p>
     <ul>${facts.map(f=>`<li>${f}</li>`).join('')}</ul>
-    <div class="controls"><a class="btn primary" href="memory.html#mod=${modKey}">Review this module's cards${total?` (${due} due of ${total})`:''}</a><a class="btn" href="memory.html#cram=${modKey}">Cram all of them</a></div>`;
+    <div class="controls"><a class="btn primary" href="memory.html#mod=${modKey}">Flashcards for this unit${total?` (${total} cards)`:''}</a></div>`;
   return c;
 }
 

@@ -52,7 +52,7 @@ initModule({key:'c2-xxx',title:'Module title',sub:'Module N · Stewart 7.1'});
 
 - Module keys are fixed: `c2-found`, `c2-usub`, `c2-parts`, `c2-pf`, `c2-polar`, `c2-trigint`, `c2-param`, `c2-trigsub`, `c2-improper`, `c2-series`, `c2-tests`, `c2-taylor`, `c2-complex`. The key is the progress key and the memory deck tag.
 - `hub` defaults to `index.html`, which inside `math102/` is the MATH 102 hub. Do not pass `hub`.
-- `memoryCard(modKey, facts)` (from `calc102.js`) builds the "Know these cold" card: a list of the facts the module expects from memory, with buttons into the memory trainer. List 4 to 10 facts as short HTML strings with TeX. This card belongs in the welcome section only.
+- `memoryCard(modKey, facts)` (from `calc102.js`) builds the "Know these cold" card: a list of the facts the module expects from memory, with a button into the flashcards for that unit. List 4 to 10 facts as short HTML strings with TeX. This card belongs in the welcome section only.
 
 ## Extra engine API (assets/calc102.js)
 
@@ -74,7 +74,7 @@ Plotting: `polarCurve(plot, theta=>r, t0, t1, opts)`, `polarGrid(plot, {rmax})`,
 ## Question design rules for this course
 
 - **No multiple choice, no true/false pools.** The learner asked for this explicitly: recognition creates an illusion of fluency. Every question must require a produced answer (a number, an expression, an equation, an interval, a list). Choice buttons are allowed only for a decision that is inherently categorical (converges/diverges, absolutely/conditionally, horizontal/vertical, which substitution family) and only **alongside** a typed quantity that proves the work (the limit, the value of p, the ratio L, the comparison series). A question whose only input is a choice is not allowed.
-- **Rote facts go in the memory deck, not the drills.** Drills practice procedures. If a question is really "recall the formula", do not write it as a drill type; put the fact in the `memoryCard` list (the deck already has it).
+- **Rote facts go in the memory deck, not the drills.** Drills practice procedures. If a question is really "recall the formula", do not write it as a drill type; put the fact in the `memoryCard` list (the flashcard deck in `assets/m102-deck.js` already has it).
 - **Design the answer first.** Build integrands backwards from a clean antiderivative; choose limits so definite integrals come out as rationals, multiples of pi, or `ln` of a rational; choose polar and parametric parameters from the special angles; make series limits rational. Reject degenerate draws in `gen()` with a loop.
 - **Tell the learner the expected form** in the prompt when it is not obvious: "exact value", "you may leave ln in the answer", "comma-separated list", "an interval like [-1, 1)", "type diverges if it diverges", "to three decimal places".
 - **Domains for `checkExprUpToConstant`.** `ln|x|` needs `domain:{x:[0.3,3]}` or a symmetric domain excluding 0 is not possible with one interval, so pick one side; `arcsin` needs `[-0.9,0.9]`; `sec`/`tan` need `[-1.2,1.2]`; `sqrt(x^2-a^2)` needs `x>a`. When two forms differ by a constant (like `-cos^2 x` vs `sin^2 x`) the up-to-constant checker already accepts both.

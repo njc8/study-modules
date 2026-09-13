@@ -3,186 +3,108 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Memory Trainer · MATH 102</title>
+<title>Flashcards · MATH 102</title>
 <link rel="stylesheet" href="../assets/study.css">
-<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
-<script src="../assets/jquery.min.js"></script>
-<script src="../assets/mathquill/mathquill.min.js"></script>
 <script src="../assets/study.js"></script>
 <script src="../assets/calc102.js"></script>
 <script src="../assets/m102-deck.js"></script>
-<script src="../assets/memory.js"></script>
 <script src="../assets/mathjax-tex-svg.js"></script>
 <style>
-.mem-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-.mem-count{margin-left:auto}
-.mem-prompt{font-size:20px;line-height:1.6;margin:6px 0 14px}
-.mem-prompt .small{font-size:14px}
-.mem-answer{margin:10px 0}
-.mem-answer .ans{margin-top:0}
-.mem-recall{width:100%;max-width:640px;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;resize:vertical;outline:none;background:#fff}
-.mem-recall:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-.mem-show{font-size:19px;margin:12px 0 6px;color:var(--ink);font-weight:400}
-.mem-why{font-size:15px;color:var(--muted);font-weight:400;line-height:1.6}
-.mem-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
-.mem-bar .btn kbd{margin-left:8px;opacity:.7}
-.mem-bar .btn.again{border-color:#f0b4b4}
-.mem-bar .btn.known{margin-left:auto;font-weight:500}
-.fb .mem-show,.fb .mem-why{color:var(--ink)}
-.fb.good .mem-show,.fb.bad .mem-show{font-weight:400}
-.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:10px 0 4px}
-.stat{background:#fbfaf6;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.stat b{display:block;font-size:24px;letter-spacing:-.02em}
-.stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.forecast{display:flex;gap:6px;align-items:flex-end;height:44px;margin-top:8px}
-.forecast i{flex:1;background:var(--accent-soft);border-radius:4px 4px 0 0;position:relative;min-height:3px}
-.forecast i::after{content:attr(data-n);position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:11px;color:var(--muted);font-style:normal}
-.forecast-labels{display:flex;gap:6px;font-size:11px;color:var(--muted)}
-.forecast-labels span{flex:1;text-align:center}
-.modlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:4px 16px;margin:8px 0}
-.modlist label{font-size:14px;display:flex;align-items:center;gap:8px;padding:4px 0}
-.modlist label .cnt{margin-left:auto;font-size:12px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
-table.browse{width:100%;border-collapse:collapse;font-size:14px}
-table.browse td,table.browse th{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
-table.browse th{font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
-table.browse .tag{font-size:11px}
-table.browse .tag.new{background:#e8edfb;color:#3b5bdb}
-table.browse .tag.review{background:#dcfce7;color:#15803d}
-table.browse .tag.learning{background:#fef3c7;color:#b45309}
-table.browse .tag.known{background:#ede9fe;color:#6d28d9}
-table.browse .tag.suspended{background:#eee;color:#777}
-table.browse button{font-size:12px;padding:3px 8px}
-.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:10px 0}
-.flow .step{background:#fbfaf6;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px}
-.flow .step b{display:block;margin-bottom:4px}
+.fc-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:14px;color:var(--muted);margin-bottom:10px}
+.fc-card{min-height:260px;display:flex;flex-direction:column}
+.fc-prompt{font-size:22px;line-height:1.6;margin:6px 0 18px}
+.fc-answer{border-top:1px solid var(--line);padding-top:16px;margin-top:auto}
+.fc-show{font-size:20px;line-height:1.6}
+.fc-why{font-size:15px;color:var(--muted);margin-top:8px;line-height:1.6}
+.fc-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px}
+.fc-bar .btn kbd{margin-left:8px;opacity:.7}
+.fc-bar .spacer{flex:1}
+.fc-done .result{margin-top:4px}
+.fc-list{margin:10px 0 0;padding-left:20px}
+.fc-list li{margin:6px 0}
+.fc-nav a.pick .n{font-size:10px}
 </style>
 </head>
 <body>
 <div class="app">
 <nav class="side" id="nav"></nav>
 <main>
-
-<section data-id="review" data-title="Review">
-  <p class="eyebrow">Memory trainer</p>
-  <h2>Review what is due</h2>
-  <p class="lead">Every fact you must know cold in MATH 102 is a card. Answer from memory, get graded, and the card comes back right before you would forget it. Things you know well drift out of the way.</p>
-  <div class="card">
-    <div class="stat-row" id="statRow"></div>
-    <div class="forecast" id="forecast"></div><div class="forecast-labels" id="forecastLabels"></div>
-  </div>
-  <div class="card">
-    <h4>Modules in this session</h4>
-    <div class="modlist" id="modsReview"></div>
-    <div class="controls"><button class="btn small" id="modsAll">All</button><button class="btn small" id="modsNone">None</button><span class="status">New cards per day: <span class="stepper" id="newPerDay"></span></span></div>
-    <div class="controls"><button class="btn primary" id="startReview">Start review</button><span class="status" id="reviewHint"></span></div>
-  </div>
-  <div class="card" id="reviewBox" style="display:none"></div>
+<section data-id="deck" data-title="Flashcards" class="active">
+  <p class="eyebrow" id="eyebrow">Flashcards</p>
+  <h2 id="title">Pick a unit</h2>
+  <p class="lead">Read the card, write the answer in your notebook, then flip. Be honest when you mark it. Nothing is typed here.</p>
+  <div class="card" id="box"></div>
+  <p class="hint">Keys: <kbd>Space</kbd> or <kbd>Enter</kbd> flips, then <kbd>1</kbd> got it, <kbd>2</kbd> missed it. Missed cards are remembered in this browser so you can redo just those.</p>
 </section>
-
-<section data-id="cram" data-title="Cram">
-  <p class="eyebrow">Memory trainer</p>
-  <h2>Cram a module</h2>
-  <p class="lead">Every card from the chosen modules, shuffled, regardless of schedule. Use it the night before a quiz or exam. Cram sessions do not change the schedule.</p>
-  <div class="card">
-    <div class="modlist" id="modsCram"></div>
-    <div class="controls"><button class="btn small" id="cramAll">All</button><button class="btn small" id="cramNone">None</button><button class="btn primary" id="startCram">Start cram</button></div>
-  </div>
-  <div class="card" id="cramBox" style="display:none"></div>
-</section>
-
-<section data-id="browse" data-title="Browse cards">
-  <p class="eyebrow">Memory trainer</p>
-  <h2>Browse the deck</h2>
-  <p class="lead">See every card and where it sits in the schedule. Suspend a card you never want to see, reset one to start it over, or mark one as known.</p>
-  <div class="card">
-    <div class="controls"><label class="chk">Module <select id="browseMod"></select></label><label class="chk">Status <select id="browseStatus"><option value="">any</option><option value="new">new</option><option value="learning">learning</option><option value="review">review</option><option value="known">known</option><option value="suspended">suspended</option></select></label><span class="status" id="browseCount"></span></div>
-    <div style="overflow-x:auto"><table class="browse" id="browseTable"></table></div>
-  </div>
-</section>
-
-<section data-id="how" data-title="How it works">
-  <p class="eyebrow">Memory trainer</p>
-  <h2>How the trainer decides what to show you</h2>
-  <p class="lead">The design follows what the memory research says works: active recall, spaced repetition, no recognition-based multiple choice, and honest self-grading only where a machine cannot grade.</p>
-  <div class="flow">
-    <div class="step"><b>1. Retrieve, do not recognize</b>Every card asks you to produce the fact: type the antiderivative, the series, the formula. Recognizing a correct option in a list feels like knowing and is not, so there are no multiple-choice cards.</div>
-    <div class="step"><b>2. Machine grading where possible</b>Typed answers are graded by the same checkers as the module drills: any algebraically equivalent form is accepted, and an added constant of integration is fine.</div>
-    <div class="step"><b>3. Self-grading for statements</b>Cards like "state the ratio test" ask you to write it out, then reveal the answer. Rate yourself Again if any condition was missing. Being strict here is what makes the schedule work.</div>
-    <div class="step"><b>4. Spacing</b>A new card returns tomorrow, then in 3 days, then the gap multiplies (about 2.5 times) on every Good. Easy grows the gap faster. Hard grows it a little. Again sends the card back into the current session and shortens future gaps.</div>
-    <div class="step"><b>5. Nothing you already know</b>A card you answer Easy repeatedly is soon weeks away. "I know this cold" parks a card for 45 days, then audits it once. Cards with intervals of three weeks or more count as mastered.</div>
-    <div class="step"><b>6. Interleaving</b>Due cards from every enabled module are shuffled together, so retrieval happens without the context clue of the chapter you are in, which is exactly how exams ask.</div>
-  </div>
-  <div class="note"><b>Daily routine that works.</b> Open Review first (five to ten minutes). Then do the module drill you are currently on. Before a quiz, Cram that module once. Progress lives in this browser's storage, like the modules.</div>
-  <div class="card">
-    <h4>Keyboard</h4>
-    <p><kbd>Enter</kbd> checks a typed answer, reveals a recall card, and afterwards chooses Good. <kbd>1</kbd> Again, <kbd>2</kbd> Hard, <kbd>3</kbd> Good, <kbd>4</kbd> Easy.</p>
-    <div class="controls"><button class="btn" id="resetMemory">Reset all memory progress</button></div>
-  </div>
-</section>
-
 </main>
 </div>
 <script>
-MEM.load();
-const MODS=window.MEM_MODULES||[];
-const CARDS=window.MEM_CARDS||[];
-/* ---------- nav (same look as the modules, but modes instead of chapters) */
-const sections=$$('main > section');
+const MODS=window.MEM_MODULES||[],CARDS=window.MEM_CARDS||[];
+const KEY='m102-flash-missed';
+let missed={};try{missed=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+const saveMissed=()=>{try{localStorage.setItem(KEY,JSON.stringify(missed));}catch(e){}};
+const missedOf=mod=>CARDS.filter(c=>c.mod===mod&&missed[c.id]);
+let mod=null,queue=[],i=0,flipped=false,got=0,miss=[],mode='all';
+
 function buildNav(){
   const nav=$('#nav');
-  nav.innerHTML=`<a class="hub" href="index.html">◀ MATH 102 modules</a><h1>Memory trainer</h1><p class="sub">Spaced repetition for the facts</p><div id="navlinks"></div>`;
+  nav.innerHTML=`<a class="hub" href="index.html">◀ MATH 102 modules</a><h1>Flashcards</h1><p class="sub">${CARDS.length} cards, by unit</p><div id="navlinks"></div>`;
   const box=$('#navlinks');
-  sections.forEach(s=>{const a=el('a',{href:'#'+s.dataset.id,class:s.classList.contains('active')?'active':''});const n=s.dataset.id==='review'?MEM.stats(selectedMods('modsReview')).due:'';a.innerHTML=`<span class="n">${n===''?'·':n}</span><span>${s.dataset.title}</span>`;box.appendChild(a);});
+  MODS.forEach(m=>{const n=CARDS.filter(c=>c.mod===m.key).length;const k=missedOf(m.key).length;
+    const a=el('a',{href:'#mod='+m.key,class:'pick'+(m.key===mod?' active':'')});a.innerHTML=`<span class="n">${n}</span><span>${m.title.replace(/^Module \d+ · /,'')}${k?` <span class="muted">(${k} missed)</span>`:''}</span>`;box.appendChild(a);});
 }
-function showSection(id){const s=sections.find(x=>x.dataset.id===id)||sections[0];sections.forEach(x=>x.classList.toggle('active',x===s));buildNav();window.scrollTo({top:0});}
-/* ---------- module checkboxes */
-function renderMods(mountId,preselect){
-  const m=$('#'+mountId);m.innerHTML='';
-  MODS.forEach(mod=>{const st=MEM.stats([mod.key]);const lab=el('label');const on=!preselect||preselect.includes(mod.key);
-    lab.innerHTML=`<input type="checkbox" value="${mod.key}" ${on?'checked':''}> <span>${mod.title}</span><span class="cnt">${mountId==='modsReview'?`${st.due} due · ${st.fresh} new`:`${st.total} cards`}</span>`;m.appendChild(lab);});
-  $$('input',m).forEach(i=>i.onchange=()=>{updateStats();buildNav();});
+function start(key,which='all'){
+  mod=key;mode=which;const m=MODS.find(x=>x.key===key);if(!m)return home();
+  const src=which==='missed'?missedOf(key):CARDS.filter(c=>c.mod===key);
+  queue=shuffle(src);i=0;got=0;miss=[];flipped=false;
+  $('#eyebrow').textContent=m.title;$('#title').textContent=which==='missed'?'Redo the missed cards':'Flashcards';
+  buildNav();show();
 }
-function selectedMods(mountId){return $$('#'+mountId+' input:checked').map(i=>i.value);}
-function setAll(mountId,on){$$('#'+mountId+' input').forEach(i=>i.checked=on);updateStats();buildNav();}
-/* ---------- stats */
-function updateStats(){
-  const mods=selectedMods('modsReview');const s=MEM.stats(mods);
-  $('#statRow').innerHTML=[['Due now',s.due],['New today',Math.min(s.fresh,MEM.newAllowance())],['Learning',s.learning],['In review',s.review],['Mastered',s.mastered+s.known],['Total',s.total]].map(([k,v])=>`<div class="stat"><b>${v}</b><span>${k}</span></div>`).join('');
-  const mx=Math.max(1,...s.forecast);
-  $('#forecast').innerHTML=s.forecast.map(n=>`<i style="height:${Math.max(6,100*n/mx)}%" data-n="${n}"></i>`).join('');
-  const d=new Date();$('#forecastLabels').innerHTML=s.forecast.map((_,i)=>{const dd=new Date(d.getTime()+i*MEM.DAY);return `<span>${i===0?'today':['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dd.getDay()]}</span>`;}).join('');
-  $('#reviewHint').textContent=s.due||Math.min(s.fresh,MEM.newAllowance())?`${s.due} due plus up to ${Math.min(s.fresh,MEM.newAllowance())} new cards.`:'Nothing due. Lower the bar with Cram, or come back tomorrow.';
+function home(){
+  mod=null;$('#eyebrow').textContent='Flashcards';$('#title').textContent='Pick a unit';buildNav();
+  $('#box').innerHTML=`<p>Choose a unit in the sidebar. Each unit's cards are the facts its module expects you to know cold: antiderivatives, identities, formulas, test statements.</p>
+    <div class="controls">${MODS.map(m=>`<a class="btn small" href="#mod=${m.key}">${m.title.replace(/^Module \d+ · /,'')}</a>`).join('')}</div>`;
 }
-/* ---------- browse */
-function renderBrowse(){
-  const mod=$('#browseMod').value,status=$('#browseStatus').value;
-  const rows=CARDS.filter(c=>(!mod||c.mod===mod)&&(!status||MEM.peek(c.id).status===status));
-  $('#browseCount').textContent=`${rows.length} cards`;
-  const t=$('#browseTable');
-  t.innerHTML=`<tr><th>Prompt</th><th>Status</th><th>Interval</th><th>Due</th><th>Ease</th><th></th></tr>`+rows.map(c=>{const s=MEM.peek(c.id);const due=s.status==='new'||s.status==='suspended'?'':s.due<=Date.now()?'now':Math.ceil((s.due-Date.now())/MEM.DAY)+'d';
-    return `<tr data-id="${c.id}"><td>${c.prompt}</td><td><span class="tag ${s.status}">${s.status}</span></td><td>${s.status==='new'?'':s.ivl+'d'}</td><td>${due}</td><td>${s.status==='new'?'':s.ease.toFixed(2)}</td><td><button class="btn small act" data-act="${s.status==='suspended'?'unsuspend':'suspend'}">${s.status==='suspended'?'Unsuspend':'Suspend'}</button> <button class="btn small act" data-act="known">Known</button> <button class="btn small act" data-act="reset">Reset</button></td></tr>`;}).join('');
-  $$('.act',t).forEach(b=>b.onclick=()=>{const id=b.closest('tr').dataset.id;const a=b.dataset.act;if(a==='suspend')MEM.suspend(id,true);else if(a==='unsuspend')MEM.suspend(id,false);else if(a==='known')MEM.known(id);else MEM.reset(id);renderBrowse();updateStats();buildNav();});
-  typeset(t);
+function show(){
+  const box=$('#box');
+  if(i>=queue.length)return finish();
+  const c=queue[i];flipped=false;
+  box.innerHTML=`<div class="fc-top"><span>${i+1} of ${queue.length}</span><span>${got} right · ${miss.length} missed</span></div>
+    <div class="fc-card"><div class="fc-prompt">${c.prompt}</div>
+      <div class="fc-answer" id="ans" hidden><div class="fc-show">${c.show}</div>${c.why?`<div class="fc-why">${c.why}</div>`:''}</div>
+      <div class="fc-bar" id="bar"><button class="btn primary" id="flip">Flip <kbd>Space</kbd></button><span class="spacer"></span><button class="btn small" id="skip">Skip</button></div>
+    </div>`;
+  $('#flip').onclick=flip;$('#skip').onclick=()=>{i++;show();};
+  typeset(box);
 }
-/* ---------- wire up */
-const hash=new URLSearchParams(location.hash.replace(/^#/,'').replace(/&/g,'&'));
-const modParam=hash.get('mod'),cramParam=hash.get('cram');
-renderMods('modsReview',modParam?modParam.split(','):null);
-renderMods('modsCram',cramParam?cramParam.split(','):null);
-$('#modsAll').onclick=()=>setAll('modsReview',true);$('#modsNone').onclick=()=>setAll('modsReview',false);
-$('#cramAll').onclick=()=>setAll('modsCram',true);$('#cramNone').onclick=()=>setAll('modsCram',false);
-stepper('#newPerDay',MEM.state.settings.newPerDay||12,0,60,v=>{MEM.state.settings.newPerDay=v;MEM.save();updateStats();});
-$('#startReview').onclick=()=>{const box=$('#reviewBox');box.style.display='';new MemoryTrainer(box,{mods:selectedMods('modsReview'),onDone:()=>{box.style.display='none';updateStats();buildNav();renderMods('modsReview',selectedMods('modsReview'));}});box.scrollIntoView({behavior:'smooth',block:'start'});};
-$('#startCram').onclick=()=>{const box=$('#cramBox');box.style.display='';new MemoryTrainer(box,{mods:selectedMods('modsCram'),cram:true,onDone:()=>{box.style.display='none';}});box.scrollIntoView({behavior:'smooth',block:'start'});};
-const sel=$('#browseMod');sel.innerHTML='<option value="">all modules</option>'+MODS.map(m=>`<option value="${m.key}">${m.title}</option>`).join('');
-sel.onchange=renderBrowse;$('#browseStatus').onchange=renderBrowse;
-$('#resetMemory').onclick=()=>{if(confirm('Reset all memory progress? This cannot be undone.')){MEM.resetAll();updateStats();buildNav();renderBrowse();renderMods('modsReview');}};
-window.addEventListener('hashchange',()=>{const id=location.hash.slice(1).split('?')[0];if(['review','cram','browse','how'].includes(id))showSection(id);});
-updateStats();renderBrowse();
-showSection(cramParam?'cram':'review');
-initMathFields();typeset(document.body);
-/* harness hook: answer the current card correctly */
-window.__memTrainerSolve=()=>window.__memTrainer&&window.__memTrainer.card?memSolve(window.__memTrainer.card):null;
+function flip(){
+  if(flipped)return;flipped=true;$('#ans').hidden=false;
+  $('#bar').innerHTML=`<button class="btn primary" id="yes">Got it <kbd>1</kbd></button><button class="btn" id="no">Missed it <kbd>2</kbd></button>`;
+  $('#yes').onclick=()=>mark(true);$('#no').onclick=()=>mark(false);
+}
+function mark(ok){
+  const c=queue[i];
+  if(ok){got++;delete missed[c.id];}else{miss.push(c);missed[c.id]=true;}
+  saveMissed();buildNav();i++;show();
+}
+function finish(){
+  const box=$('#box');const k=missedOf(mod).length;
+  box.innerHTML=`<div class="fc-done"><div class="result">${got} of ${queue.length} right</div>
+    ${miss.length?`<p>Missed this round:</p><ul class="fc-list">${miss.map(c=>`<li>${c.prompt}</li>`).join('')}</ul>`:'<p>Clean sweep.</p>'}
+    <div class="controls">${k?`<button class="btn primary" id="redo">Redo the ${k} missed</button>`:''}<button class="btn" id="again">All cards again</button><button class="btn" id="back">Other units</button></div></div>`;
+  if(k)$('#redo').onclick=()=>start(mod,'missed');
+  $('#again').onclick=()=>start(mod,'all');$('#back').onclick=()=>{location.hash='';home();};
+  buildNav();typeset(box);
+}
+document.addEventListener('keydown',e=>{
+  if(!mod||i>=queue.length||e.metaKey||e.ctrlKey)return;
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();if(!flipped)flip();}
+  else if(flipped&&e.key==='1'){e.preventDefault();mark(true);}
+  else if(flipped&&e.key==='2'){e.preventDefault();mark(false);}
+});
+function route(){const m=/mod=([^&]+)/.exec(location.hash);if(m&&MODS.some(x=>x.key===m[1]))start(m[1]);else home();}
+window.addEventListener('hashchange',route);
+route();
 </script>
 </body>
 </html>

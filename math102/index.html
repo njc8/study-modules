@@ -37,8 +37,8 @@ body{padding:0}
   <p class="hint">Answer boxes work like WebAssign's calcPad: typing <code>sqrt</code>, <code>/</code>, <code>^</code>, <code>pi</code> builds the math as you type; <code>|</code> gives absolute value; <code>n!</code> is a factorial; <code>+ C</code> is optional on antiderivatives. Use the right arrow key to step out of a radical, fraction, or exponent.</p>
 
   <a class="memory" href="memory.html" id="memoryCard">
-    <div class="glyph">M</div>
-    <div class="txt"><b>Memory trainer</b><span>Spaced-repetition cards for every fact this course expects you to know cold: antiderivative tables, identities, tests, series, formulas. Typed recall, graded, scheduled so you only review what is fading.</span></div>
+    <div class="glyph">F</div>
+    <div class="txt"><b>Flashcards</b><span>Every fact this course expects you to know cold, one unit at a time: antiderivative tables, identities, tests, series, formulas. Write the answer in your notebook, flip, mark it, redo what you missed.</span></div>
     <div class="nums" id="memNums"></div>
   </a>
 
@@ -88,13 +88,7 @@ MODULES.forEach(m=>{
     <div class="prog"><span class="goalbar"><i style="width:${pct}%"></i></span><span>${total?`${done}/${total}`:'new'}</span></div>`;
   document.getElementById(m.g).appendChild(a);
 });
-/* memory trainer summary */
-(function(){
-  let st={cards:{}};try{st=JSON.parse(localStorage.getItem('m102-memory')||'{"cards":{}}');}catch(e){}
-  const cards=window.MEM_CARDS||[];const now=Date.now();let due=0,fresh=0,mastered=0;
-  cards.forEach(c=>{const s=st.cards&&st.cards[c.id];if(!s||s.status==='new')fresh++;else if(s.status==='suspended')return;else{if(s.due<=now)due++;if(s.status==='known'||s.ivl>=21)mastered++;}});
-  document.getElementById('memNums').innerHTML=`<div><b>${due}</b><span>due now</span></div><div><b>${fresh}</b><span>unseen</span></div><div><b>${mastered}</b><span>mastered</span></div><div><b>${cards.length}</b><span>cards</span></div>`;
-})();
+(function(){const cards=window.MEM_CARDS||[];const units=new Set(cards.map(c=>c.mod)).size;document.getElementById('memNums').innerHTML=`<div><b>${cards.length}</b><span>cards</span></div><div><b>${units}</b><span>units</span></div>`;})();
 </script>
 </body>
 </html>
