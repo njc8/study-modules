@@ -350,7 +350,9 @@ function checkPointList(user,ref,opts={}){
   const s=cleanAns(user);
   if(ref.length===0)return {ok:DNE.test(s)};
   if(DNE.test(s))return {ok:false};
-  const groups=s.match(/[\(\[⟨<][^\)\]⟩>]*[\)\]⟩>]/g);
+  /* top-level bracket groups, so coordinates like sqrt(3)/2 or (1/2) inside a point are kept whole */
+  const groups=[];{const open='([⟨<',close=')]⟩>';let depth=0,start=-1;for(let i=0;i<s.length;i++){const ch=s[i];if(open.includes(ch)){if(depth===0)start=i;depth++;}else if(close.includes(ch)){depth--;if(depth===0&&start>=0){groups.push(s.slice(start,i+1));start=-1;}}}}
+  if(!groups.length)groups.push(...(s.match(/[\(\[⟨<][^\)\]⟩>]*[\)\]⟩>]/g)||[]));
   if(!groups)return {ok:false,err:'Write points as (a, b) separated by commas'};
   const pts=[];for(const g of groups){const r=parseVector(g,ref[0].length);if(r.err)return {ok:false,err:r.err};pts.push(r.v);}
   if(pts.length!==ref.length)return {ok:false};
