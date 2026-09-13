@@ -693,9 +693,6 @@ MEM_CARDS.push(
     ID('sin-pi2',String.raw`\sin\tfrac{\pi}{2}=`,'1'),
     ID('cos-pi',String.raw`\cos\pi=`,'-1'),
     /* inverse trig */
-    ID('arcsin-range',String.raw`\text{range of }\arcsin x`,String.raw`\left[-\tfrac{\pi}{2},\tfrac{\pi}{2}\right]`),
-    ID('arccos-range',String.raw`\text{range of }\arccos x`,String.raw`[0,\pi]`),
-    ID('arctan-range',String.raw`\text{range of }\arctan x`,String.raw`\left(-\tfrac{\pi}{2},\tfrac{\pi}{2}\right)`),
     ID('arctan-1',String.raw`\arctan 1=`,String.raw`\tfrac{\pi}{4}`),
     ID('arctan-sqrt3',String.raw`\arctan\sqrt3=`,String.raw`\tfrac{\pi}{3}`),
     ID('arctan-inv-sqrt3',String.raw`\arctan\tfrac{1}{\sqrt3}=`,String.raw`\tfrac{\pi}{6}`),
