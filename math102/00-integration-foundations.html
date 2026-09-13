@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integration Foundations</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 0 · Stewart 5.3 to 5.4</p>
+  <h2>Integration foundations</h2>
+  <p class="lead">Everything in MATH 102 is an integral or a limit of integrals. This module makes the antiderivative table and the Fundamental Theorem automatic, so the new techniques have something solid to stand on.</p>
+
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or drag, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Antiderivatives may be typed with or without <code>+ C</code>: both are accepted. Type <code>|</code> for absolute value, so <code>ln|x|</code> works, and so does <code>ln(abs(x))</code>. Numbers are exact unless a problem says otherwise: <code>32/3</code>, <code>pi/4</code>, <code>e^2-1</code>, <code>ln(3)</code>, <code>sqrt(3)</code>, <code>9/2-8/ln(9)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>Answer boxes work like WebAssign's calcPad: typing <code>sqrt</code> builds a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>pi</code> the symbol. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--b)"></i> the integrand \(f\)</span>
+      <span><i class="dot" style="background:var(--a)"></i> the antiderivative \(F\)</span>
+      <span><i class="dot" style="background:var(--c)"></i> the accumulated value</span>
+      <span><i class="dot" style="background:var(--d)"></i> tangent lines and marked points</span>
+    </div>
+  </div>
+
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Write down the antiderivative of every function in the basic table, without hesitating.</li>
+      <li>Evaluate a definite integral with FTC2, including limits like \(\pi/3\), \(\ln 2\), and \(e\).</li>
+      <li>Differentiate an integral whose limits move, using FTC1 with the chain rule.</li>
+      <li>Turn a rate into a total with the Net Change Theorem, and separate displacement from distance.</li>
+      <li>Integrate with respect to \(y\), and read an integral off a picture as a signed area.</li>
+    </ul>
+  </div>
+
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 THE TABLE -->
+<section data-id="table" data-title="The antiderivative table" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 5.4</p>
+  <h2>The antiderivative table</h2>
+  <p class="lead">An antiderivative is a derivative read backwards. There is no new theory here, only a table you should be able to write from memory in two minutes.</p>
+
+  <p>A function \(F\) is an <b>antiderivative</b> of \(f\) if \(F'=f\). If \(F\) is one antiderivative, so is \(F+C\) for every constant \(C\), and on an interval those are the only ones: two functions with the same derivative differ by a constant. That whole family is what the <b>indefinite integral</b> names:</p>
+  <div class="formula">\(\displaystyle\int f(x)\,dx = F(x) + C \quad\text{means}\quad F'(x)=f(x)\)<span class="cap">The \(+\,C\) is not decoration. It is the statement that a derivative forgets constants, so integrating cannot recover one.</span></div>
+
+  <p>Every entry in the table below is a derivative you already know, written from right to left.</p>
+  <table class="simple">
+    <tr><th>Derivative fact</th><th>Antiderivative, read backwards</th></tr>
+    <tr><td>\(\frac{d}{dx}\frac{x^{n+1}}{n+1}=x^n\)</td><td>\(\displaystyle\int x^n\,dx=\frac{x^{n+1}}{n+1}+C\quad (n\neq -1)\)</td></tr>
+    <tr><td>\(\frac{d}{dx}\ln|x|=\frac1x\)</td><td>\(\displaystyle\int \frac{dx}{x}=\ln|x|+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}e^x=e^x\)</td><td>\(\displaystyle\int e^x\,dx=e^x+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}\frac{a^x}{\ln a}=a^x\)</td><td>\(\displaystyle\int a^x\,dx=\frac{a^x}{\ln a}+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}(-\cos x)=\sin x\)</td><td>\(\displaystyle\int \sin x\,dx=-\cos x+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}\sin x=\cos x\)</td><td>\(\displaystyle\int \cos x\,dx=\sin x+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}\tan x=\sec^2 x\)</td><td>\(\displaystyle\int \sec^2 x\,dx=\tan x+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}(-\cot x)=\csc^2 x\)</td><td>\(\displaystyle\int \csc^2 x\,dx=-\cot x+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}\sec x=\sec x\tan x\)</td><td>\(\displaystyle\int \sec x\tan x\,dx=\sec x+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}(-\csc x)=\csc x\cot x\)</td><td>\(\displaystyle\int \csc x\cot x\,dx=-\csc x+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}\arctan x=\frac{1}{1+x^2}\)</td><td>\(\displaystyle\int \frac{dx}{1+x^2}=\arctan x+C\)</td></tr>
+    <tr><td>\(\frac{d}{dx}\arcsin x=\frac{1}{\sqrt{1-x^2}}\)</td><td>\(\displaystyle\int \frac{dx}{\sqrt{1-x^2}}=\arcsin x+C\)</td></tr>
+  </table>
+
+  <div class="formula">\(\displaystyle\int x^n\,dx=\frac{x^{n+1}}{n+1}+C\;\;(n\neq-1)\)<span class="cap">Raise the power by one, divide by the new power. It works for every real \(n\) except \(-1\), including \(n=\tfrac12\) and \(n=-\tfrac34\).</span></div>
+  <div class="formula">\(\displaystyle\int \frac{1}{x}\,dx=\ln|x|+C\)<span class="cap">The absolute value patches the hole at \(n=-1\) on both sides of the origin: for \(x<0\), \(\frac{d}{dx}\ln(-x)=\frac{-1}{-x}=\frac1x\) as well.</span></div>
+  <div class="formula">\(\displaystyle\int a^x\,dx=\frac{a^x}{\ln a}+C\quad (a>0,\;a\neq1)\)<span class="cap">Differentiating \(a^x\) drops a factor of \(\ln a\), so integrating must divide by it. With \(a=e\) the factor is 1 and the formula collapses to \(\int e^x dx=e^x+C\).</span></div>
+
+  <p><b>Linearity.</b> \(\int\big(c\,f+g\big)dx=c\int f\,dx+\int g\,dx\). Constants come out, sums split. There is no product rule and no quotient rule for integrals, which is exactly why the rest of this course exists.</p>
+
+  <h3>Rewrite before you integrate</h3>
+  <p>The power rule only sees powers. Most of the work in this chapter is algebra done <b>before</b> the integral sign:</p>
+  <ul>
+    <li>\(\sqrt{x}=x^{1/2}\), \(\sqrt[4]{x}=x^{1/4}\), \(\dfrac{1}{\sqrt[4]{x}}=x^{-1/4}\)</li>
+    <li>\(\dfrac{1}{x^3}=x^{-3}\), so \(\displaystyle\int\frac{dx}{x^3}=\frac{x^{-2}}{-2}+C=-\frac{1}{2x^2}+C\)</li>
+    <li>\(\dfrac{(x+1)^2}{x}=\dfrac{x^2+2x+1}{x}=x+2+\dfrac1x\)</li>
+    <li>\(x(x+2)(x-3)=x^3-x^2-6x\)</li>
+  </ul>
+  <p>The WebAssign integration review opens with \(\displaystyle\int\left(\sqrt[4]{x}+\frac{1}{\sqrt[4]{x}}\right)dx\). Written as powers it is \(\int\big(x^{1/4}+x^{-1/4}\big)dx=\tfrac45x^{5/4}+\tfrac43x^{3/4}+C\), and there is nothing left to think about.</p>
+
+  <div class="card">
+    <h4>Explore: the slope of \(F\) is the height of \(f\)</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="slopePlot"></canvas><p class="plotcap">Blue is \(f\), orange is \(F\). The purple dashed line is the tangent to \(F\); the blue bar is the height \(f(x)\).</p></div>
+      <div>
+        <div class="presets" id="slopePresets"></div>
+        <div class="sliders" id="slopeSliders"></div>
+        <div class="readout" id="slopeOut"></div>
+        <p class="hint">Slide \(x\) and watch two numbers stay equal: the height of the blue bar and the slope of the purple tangent. Then move the \(C\) slider. The orange curve slides up and down, the tangent slides with it, and its slope never changes. Every \(C\) gives the same slopes, and that is why one integral is a whole family.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>Three ways this goes wrong.</b> First, using the power rule at \(n=-1\): \(\int x^{-1}dx\) is <b>not</b> \(\frac{x^0}{0}\), it is \(\ln|x|+C\). Second, integrating a radical without rewriting it as a power. Third, misreading a coefficient in the denominator: \(\displaystyle\int\frac{dx}{8x}=\frac18\int\frac{dx}{x}=\frac18\ln|x|+C\), not \(\ln|8x|\) and not \(8\ln|x|\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-table"></div>
+</section>
+
+<!-- ============================================================ 2 FTC -->
+<section data-id="ftc" data-title="The Fundamental Theorem" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 5.3</p>
+  <h2>The Fundamental Theorem</h2>
+  <p class="lead">Two statements, one idea: accumulating a rate and measuring a change are inverse operations.</p>
+
+  <p>Fix a continuous \(f\) and a starting point \(a\), and define the <b>accumulation function</b></p>
+  <div class="formula">\(\displaystyle g(x)=\int_a^x f(t)\,dt \qquad\Longrightarrow\qquad g'(x)=f(x)\)<span class="cap"><b>FTC Part 1.</b> The rate at which accumulated area grows is the current height. The letter \(t\) is a dummy: \(g\) is a function of the limit \(x\), not of \(t\).</span></div>
+  <p>Differentiating an integral therefore takes no work at all, as long as the variable sits alone in the upper limit. When it does not, use the chain rule. Write \(g(x)=H(u(x))\) where \(H(u)=\int_a^u f\):</p>
+  <div class="formula">\(\displaystyle\frac{d}{dx}\int_a^{u(x)} f(t)\,dt=f\big(u(x)\big)\,u'(x)\)<span class="cap">Evaluate \(f\) at the upper limit, then multiply by the derivative of that limit. This is the version most exam problems test.</span></div>
+  <p>Two variations follow from it. If the variable is in the <b>lower</b> limit, flip the sign, because \(\int_x^b=-\int_b^x\):</p>
+  <div class="formula">\(\displaystyle\frac{d}{dx}\int_x^{b} f(t)\,dt=-f(x),\qquad \frac{d}{dx}\int_{v(x)}^{u(x)} f(t)\,dt=f\big(u(x)\big)u'(x)-f\big(v(x)\big)v'(x)\)<span class="cap">With both limits moving, split at any constant \(c\): \(\int_v^u=\int_c^u-\int_c^v\), then differentiate each piece.</span></div>
+
+  <p><b>Part 2</b> is the one you compute with. If \(F\) is any antiderivative of a continuous \(f\) on \([a,b]\):</p>
+  <div class="formula">\(\displaystyle\int_a^b f(x)\,dx=F(b)-F(a)=\Big[F(x)\Big]_a^b\)<span class="cap"><b>FTC Part 2.</b> Any antiderivative works, because the \(+\,C\) cancels in the subtraction. This turns a limit of Riemann sums into two evaluations.</span></div>
+  <p>Read Part 2 with \(f=F'\) and it becomes the <b>Net Change Theorem</b>: the integral of a rate of change is the net change in the quantity.</p>
+  <div class="formula">\(\displaystyle\int_{t_1}^{t_2} Q'(t)\,dt=Q(t_2)-Q(t_1)\)<span class="cap">Water flowing in at \(r(t)\) litres per minute puts \(\int_{t_1}^{t_2} r\,dt\) litres in the tank. A particle with velocity \(v(t)\) has displacement \(\int v\,dt\) and distance travelled \(\int|v|\,dt\).</span></div>
+
+  <div class="card">
+    <h4>Explore: accumulation</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene short" id="accPlot"></canvas><p class="plotcap">The signed area from \(0\) to \(x\) under \(f\): green counts up, red counts down.</p>
+        <canvas class="scene short" id="accGraph"></canvas><p class="plotcap">The accumulated total \(g(x)\), with its tangent line of slope \(f(x)\).</p>
+      </div>
+      <div>
+        <div class="presets" id="accPresets"></div>
+        <div class="sliders" id="accSliders"></div>
+        <div class="controls"><button class="btn primary" id="accPlay">▶ Play</button><button class="btn" id="accReset">Reset</button></div>
+        <div class="readout" id="accOut"></div>
+        <p class="hint">Drag on the top panel, or press Play, and watch the two panels together. Push \(x\) past a point where \(f\) crosses zero: the shading turns red, \(g\) stops rising and starts falling, and the bottom curve has a maximum exactly there. That is FTC1 in one picture, and it is also the first derivative test.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: differentiating an integral with a moving limit</h4>
+    <div class="expr" id="wtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wtPrev">◀ Back</button>
+      <button class="btn primary" id="wtNext">Next step ▶</button>
+      <button class="btn" id="wtNew">New problem</button>
+      <span class="status" id="wtStatus"></span>
+    </div>
+    <p class="hint">Say the steps out loud: name \(u\), differentiate \(u\), plug \(u\) into \(f\), multiply. No integration ever happens, which is the whole point of Part 1.</p>
+  </div>
+
+  <div class="note"><b>The dummy variable never survives.</b> In \(g(x)=\int_1^{x^2}\sqrt{t}\,dt\) the answer \(g'(x)=\sqrt{x^2}\cdot 2x=2x^2\) (for \(x>0\)) contains no \(t\). If a \(t\) appears in your answer, you differentiated the wrong letter.</div>
+  <div class="warn"><b>Displacement is not distance.</b> \(\int_0^T v\,dt\) is where the particle ends up relative to where it started, and it can be zero for a long trip. Total distance is \(\int_0^T|v|\,dt\), which means finding where \(v\) changes sign and splitting the integral there.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-ftc"></div>
+</section>
+
+<!-- ============================================================ 3 AREAS -->
+<section data-id="areas" data-title="Reading integrals as areas" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 5.4 and the start of 5.5</p>
+  <h2>Reading integrals as areas</h2>
+  <p class="lead">Some integrals are faster to look at than to compute. Others are easier if you turn the picture sideways.</p>
+
+  <p>For \(f\ge0\), \(\int_a^b f\,dx\) is the area under the graph. For general \(f\) it is <b>signed</b> area: the parts above the axis count positive, the parts below count negative. So \(\int_{0}^{2\pi}\sin x\,dx=0\), not because nothing is there, but because the two halves cancel.</p>
+  <p>When the region is a shape you know, skip the antiderivative:</p>
+  <div class="formula">\(\displaystyle\int_{-r}^{r}\sqrt{r^2-x^2}\,dx=\frac{\pi r^2}{2},\qquad \int_0^{r}\sqrt{r^2-x^2}\,dx=\frac{\pi r^2}{4},\qquad \int_{-a}^{a}|x|\,dx=a^2\)<span class="cap">\(y=\sqrt{r^2-x^2}\) is the upper half of the circle \(x^2+y^2=r^2\), so the first integral is half a disk. The last is two triangles of base \(a\) and height \(a\).</span></div>
+  <p>A constant gives a rectangle, \(\int_a^b c\,dx=c(b-a)\), and a line through the origin gives a triangle, \(\int_0^b mx\,dx=\tfrac12 mb^2\). None of these need the Fundamental Theorem.</p>
+
+  <h3>Integrating with respect to \(y\)</h3>
+  <p>Nothing says the strips have to be vertical. If the region is described more easily by its left and right edges than by its top and bottom, slice it with <b>horizontal</b> strips. A strip at height \(y\) has width \(x_{\text{right}}-x_{\text{left}}\) and thickness \(dy\):</p>
+  <div class="formula">\(\displaystyle A=\int_c^d \big(x_{\text{right}}(y)-x_{\text{left}}(y)\big)\,dy\)<span class="cap">Solve the boundary curves for \(x\) as a function of \(y\) first. The limits \(c\) and \(d\) are the lowest and highest \(y\) the region reaches.</span></div>
+  <p>The region bounded by the \(y\)-axis, the line \(y=1\), and the curve \(y=\sqrt[3]{x}\) is the standard example. Solving for \(x\) gives \(x=y^3\), the strip runs from \(x=0\) to \(x=y^3\), and \(y\) runs from 0 to 1:</p>
+  <div class="formula">\(\displaystyle A=\int_0^1 y^3\,dy=\Big[\tfrac{y^4}{4}\Big]_0^1=\tfrac14\)<span class="cap">In \(x\) the same region needs \(\int_0^1(1-\sqrt[3]{x})\,dx\), which is more work for the same number. Choosing the direction of the strips is a real decision.</span></div>
+
+  <div class="card">
+    <h4>Explore: area with horizontal strips</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="wrtyPlot"></canvas><p class="plotcap">The purple curve and the dashed line \(y=c\) bound the blue region. The orange strip is one \(g(y)\,dy\).</p></div>
+      <div>
+        <div class="presets" id="wrtyPresets"></div>
+        <div class="sliders" id="wrtySliders"></div>
+        <div class="readout" id="wrtyOut"></div>
+        <p class="hint">Slide the strip from the bottom of the region to the top and read its width off the readout. Horizontal strips have width equal to right minus left, so with the \(y\)-axis on the left the width is just the curve solved for \(x\). Notice the running total climbing to the area as the strip reaches \(y=c\).</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Area between two curves</h3>
+  <p>Between two graphs the height of a vertical strip is top minus bottom, so</p>
+  <div class="formula">\(\displaystyle A=\int_a^b\big(y_{\text{top}}-y_{\text{bottom}}\big)\,dx\)<span class="cap">Find \(a\) and \(b\) by setting the two curves equal. Between consecutive intersections the same curve stays on top, so you never need absolute values inside one piece.</span></div>
+  <p>For \(y=x^2\) and \(y=2x\): solve \(x^2=2x\) to get \(x=0\) and \(x=2\). On \((0,2)\) the line is above the parabola, so \(A=\int_0^2(2x-x^2)dx=\big[x^2-\tfrac{x^3}{3}\big]_0^2=\tfrac43\).</p>
+  <div class="note"><b>Check which curve is on top by testing one point.</b> Pick any \(x\) strictly between the intersections and compare the two heights. If you get a negative area, you subtracted in the wrong order, and the fix is a sign, not a redo.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-areas"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+
+/* exact rationals: [numerator, denominator] with denominator > 0 */
+const rat=(n,d=1)=>{if(d<0){n=-n;d=-d;}const g=gcd(n,d)||1;return [n/g,d/g];};
+const radd=(a,b)=>rat(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const rsub=(a,b)=>rat(a[0]*b[1]-b[0]*a[1],a[1]*b[1]);
+const rval=a=>a[0]/a[1];
+const rstr=a=>a[1]===1?String(a[0]):`${a[0]}/${a[1]}`;
+const rtex=a=>a[1]===1?String(a[0]):(a[0]<0?'-':'')+`\\tfrac{${Math.abs(a[0])}}{${a[1]}}`;
+/* a rational multiple of pi, simplified: piTex(8,2) -> 4\pi */
+function piTex(n,d){const [p,q]=rat(n,d);const s=p<0?'-':'',A=Math.abs(p);
+  return q===1?s+(A===1?'\\pi':`${A}\\pi`):s+`\\tfrac{${A===1?'':A}\\pi}{${q}}`;}
+/* k(e^b - 1) style constants */
+const expTex=(k,b,a)=>`${cAbs(k)}\\left(e^{${b}}-${a===0?'1':`e^{${a}}`}\\right)`;
+const ipow=(n,k)=>{let v=1;for(let i=0;i<k;i++)v*=n;return v;};
+const APX=v=>Number.isInteger(v)?'':`\\approx ${fmtDec(v,4)}`;
+
+/* TeX for integrals */
+const dint=(lo,hi,body,dv='x')=>R`\int_{${lo}}^{${hi}} ${body}\,d${dv}`;
+const iint=(body,dv='x')=>R`\int ${body}\,d${dv}`;
+
+/* coefficient printing (always the magnitude; the sign is added by joinSigned) */
+const cAbs=a=>Math.abs(a)===1?'':String(Math.abs(a));
+const argTex=s=>/^[a-z]$/.test(s)?s:`\\left(${s}\\right)`;
+function coefTexAbs(n,d){const [p,q]=rat(Math.abs(n),d);return q===1?(p===1?'':String(p)):`\\tfrac{${p}}{${q}}`;}
+function fracTexAbs(n,d,body){const [p,q]=rat(Math.abs(n),d);return `\\frac{${p}}{${q===1?'':q}${body}}`;}
+function joinSigned(parts){let s='';parts.forEach(p=>{if(p.c===0)return;s+=(s===''?(p.c<0?'-':''):(p.c<0?' - ':' + '))+p.tex;});return s||'0';}
+function ratTermsTex(list){let s='';list.forEach(t=>{const n=t.c[0],d=t.c[1];if(n===0)return;const A=Math.abs(n);
+  const co=(A===1&&d===1&&t.body)?'':(d===1?String(A):`\\tfrac{${A}}{${d}}`);
+  s+=(s===''?(n<0?'-':''):(n<0?' - ':' + '))+co+t.body;});return s||'0';}
+
+/* ============================================================ numerical verification
+   Every stored answer is checked here before the question is handed to the learner:
+   antiderivatives by numeric differentiation, definite values by Simpson's rule. */
+const CF=s=>Expr.compile(s);
+function simpson(f,a,b,n=2000){if(n%2)n++;const h=(b-a)/n;let s=f(a)+f(b);
+  for(let i=1;i<n;i++)s+=f(a+i*h)*(i%2?4:2);return s*h/3;}
+function dnum(g,x,h=1e-4){return (g(x-2*h)-8*g(x-h)+8*g(x+h)-g(x+2*h))/(12*h);}
+/* F' = f on the domain? */
+function antiOK(fStr,FStr,dom){
+  let f,F;try{f=CF(fStr);F=CF(FStr);}catch(e){return false;}
+  const h=Math.min(1e-3,(dom[1]-dom[0])/500);
+  for(let i=1;i<=5;i++){
+    const x=dom[0]+(dom[1]-dom[0])*i/6;
+    let a,b;try{a=f({x});b=dnum(t=>F({x:t}),x,h);}catch(e){return false;}
+    if(!Number.isFinite(a)||!Number.isFinite(b))return false;
+    if(Math.abs(a-b)>1e-4*Math.max(1,Math.abs(a)))return false;
+  }
+  return true;
+}
+/* the definite integral of fStr over [a,b] really is val? */
+function valOK(fStr,a,b,val,tol=1e-3){
+  let f;try{f=CF(fStr);}catch(e){return false;}
+  let v;try{v=simpson(x=>f({x}),a,b);}catch(e){return false;}
+  return Number.isFinite(v)&&Math.abs(v-val)<=tol*Math.max(1,Math.abs(val));
+}
+/* d/dx of an accumulation function, by Simpson plus a central difference */
+function accDerivOK(ftStr,loStr,hiStr,ansStr,x0){
+  let ft,LO,HI,A;try{ft=CF(ftStr);LO=CF(loStr);HI=CF(hiStr);A=CF(ansStr);}catch(e){return false;}
+  const Gf=x=>{const lo=LO({x}),hi=HI({x});if(!Number.isFinite(lo)||!Number.isFinite(hi))return NaN;
+    return simpson(t=>ft({t}),lo,hi,800);};
+  const h=1e-3;
+  let num,exact;
+  try{num=(Gf(x0-2*h)-8*Gf(x0-h)+8*Gf(x0+h)-Gf(x0+2*h))/(12*h);exact=A({x:x0});}catch(e){return false;}
+  if(!Number.isFinite(num)||!Number.isFinite(exact))return false;
+  return Math.abs(num-exact)<=1e-3*Math.max(1,Math.abs(exact));
+}
+
+/* ============================================================ term factories for the indefinite integrals
+   Each term carries: iC/iTex (integrand, magnitude only), aC/aTex (antiderivative), integ/anti (strings the
+   engine can parse), rTex (the term rewritten as a power, for the worked solution). */
+const rcoef=()=>rint(1,6)*(Math.random()<0.25?-1:1);
+const POWTERMS={
+  pow(){const n=rint(1,4),a=rcoef();const b=`x${n===1?'':`^{${n}}`}`;return {
+    iC:a,iTex:`${cAbs(a)}${b}`,rTex:`${cAbs(a)}${b}`,rew:false,
+    aC:a,aTex:`${coefTexAbs(a,n+1)}x^{${n+1}}`,
+    integ:`(${a})*x^${n}`,anti:`(${a}/${n+1})*x^(${n+1})`};},
+  invpow(){const k=rint(2,3),a=rcoef();return {
+    iC:a,iTex:`\\frac{${Math.abs(a)}}{x^{${k}}}`,rTex:`${cAbs(a)}x^{-${k}}`,rew:true,
+    aC:-a,aTex:fracTexAbs(a,k-1,k-1===1?'x':`x^{${k-1}}`),
+    integ:`(${a})/x^${k}`,anti:`(${-a}/${k-1})/x^(${k-1})`};},
+  sqrtx(){const a=rcoef();return {
+    iC:a,iTex:`${cAbs(a)}\\sqrt{x}`,rTex:`${cAbs(a)}x^{1/2}`,rew:true,
+    aC:a,aTex:`${coefTexAbs(2*a,3)}x^{3/2}`,
+    integ:`(${a})*sqrt(x)`,anti:`(2*(${a})/3)*x^(3/2)`};},
+  invsqrt(){const a=rcoef();return {
+    iC:a,iTex:`\\frac{${Math.abs(a)}}{\\sqrt{x}}`,rTex:`${cAbs(a)}x^{-1/2}`,rew:true,
+    aC:a,aTex:`${2*Math.abs(a)}\\sqrt{x}`,
+    integ:`(${a})/sqrt(x)`,anti:`2*(${a})*sqrt(x)`};},
+  root4(){const a=rcoef();return {
+    iC:a,iTex:`${cAbs(a)}\\sqrt[4]{x}`,rTex:`${cAbs(a)}x^{1/4}`,rew:true,
+    aC:a,aTex:`${coefTexAbs(4*a,5)}x^{5/4}`,
+    integ:`(${a})*x^(1/4)`,anti:`(4*(${a})/5)*x^(5/4)`};},
+  invroot4(){const a=rcoef();return {
+    iC:a,iTex:`\\frac{${Math.abs(a)}}{\\sqrt[4]{x}}`,rTex:`${cAbs(a)}x^{-1/4}`,rew:true,
+    aC:a,aTex:`${coefTexAbs(4*a,3)}x^{3/4}`,
+    integ:`(${a})/x^(1/4)`,anti:`(4*(${a})/3)*x^(3/4)`};},
+  recip(){const a=rcoef();return {
+    iC:a,iTex:`\\frac{${Math.abs(a)}}{x}`,rTex:`\\frac{${Math.abs(a)}}{x}`,rew:false,
+    aC:a,aTex:`${cAbs(a)}\\ln|x|`,
+    integ:`(${a})/x`,anti:`(${a})*ln(abs(x))`};}
+};
+const TRANSTERMS={
+  ex(){const a=rcoef();return {iC:a,iTex:`${cAbs(a)}e^{x}`,aC:a,aTex:`${cAbs(a)}e^{x}`,
+    integ:`(${a})*e^x`,anti:`(${a})*e^x`};},
+  cosx(){const a=rcoef();return {iC:a,iTex:`${cAbs(a)}\\cos x`,aC:a,aTex:`${cAbs(a)}\\sin x`,
+    integ:`(${a})*cos(x)`,anti:`(${a})*sin(x)`};},
+  sinx(){const a=rcoef();return {iC:a,iTex:`${cAbs(a)}\\sin x`,aC:-a,aTex:`${cAbs(a)}\\cos x`,
+    integ:`(${a})*sin(x)`,anti:`(${-a})*cos(x)`};},
+  sec2(){const a=rcoef();return {iC:a,iTex:`${cAbs(a)}\\sec^2 x`,aC:a,aTex:`${cAbs(a)}\\tan x`,
+    integ:`(${a})*sec(x)^2`,anti:`(${a})*tan(x)`};},
+  sectan(){const a=rcoef();return {iC:a,iTex:`${cAbs(a)}\\sec x\\tan x`,aC:a,aTex:`${cAbs(a)}\\sec x`,
+    integ:`(${a})*sec(x)*tan(x)`,anti:`(${a})*sec(x)`};},
+  atanT(){const a=rcoef();return {iC:a,iTex:`\\frac{${Math.abs(a)}}{1+x^2}`,aC:a,aTex:`${cAbs(a)}\\arctan x`,
+    integ:`(${a})/(1+x^2)`,anti:`(${a})*arctan(x)`};},
+  asinT(){const a=rcoef();return {iC:a,iTex:`\\frac{${Math.abs(a)}}{\\sqrt{1-x^2}}`,aC:a,aTex:`${cAbs(a)}\\arcsin x`,
+    integ:`(${a})/sqrt(1-x^2)`,anti:`(${a})*arcsin(x)`};},
+  recipT(){const a=rcoef();return {iC:a,iTex:`\\frac{${Math.abs(a)}}{x}`,aC:a,aTex:`${cAbs(a)}\\ln|x|`,
+    integ:`(${a})/x`,anti:`(${a})*ln(abs(x))`};},
+  expb(){const a=rcoef(),b=pick([2,3,5]);return {iC:a,iTex:`${cAbs(a)}\\cdot ${b}^{x}`,aC:a,
+    aTex:`\\frac{${cAbs(a)}${b}^{x}}{\\ln ${b}}`,
+    integ:`(${a})*${b}^x`,anti:`(${a})*${b}^x/ln(${b})`};}
+};
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1: the table ---------- */
+Q.polyMix={name:'indefinite integral of a polynomial-style sum',
+  gen(){
+    const pool=['pow','invpow','sqrtx','invsqrt','root4','invroot4','recip'];
+    let last=null;
+    for(let tries=0;tries<40;tries++){
+      const ks=shuffle(pool).slice(0,rint(2,3));
+      if(!ks.includes('pow')&&Math.random()<0.55)ks[0]='pow';
+      const ts=ks.map(k=>POWTERMS[k]());
+      const integ=ts.map(t=>t.integ).join('+');
+      const anti=ts.map(t=>t.anti).join('+');
+      last={ts,integ,ansStr:anti,dom:[0.3,3],
+        iTex:joinSigned(ts.map(t=>({c:t.iC,tex:t.iTex}))),
+        rTex:joinSigned(ts.map(t=>({c:t.iC,tex:t.rTex}))),
+        aTex:joinSigned(ts.map(t=>({c:t.aC,tex:t.aTex}))),
+        rew:ts.some(t=>t.rew)};
+      if(antiOK(integ,anti,[0.3,3]))return last;
+    }
+    return last;
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the indefinite integral. Take ${M('x>0')}. Writing ${M('+\\,C')} is optional.</p>
+      ${D(iint('\\left('+q.iTex+'\\right)'))}`;
+    numIn(el,'f',M(iint('f(x)')+'='),{xwide:true,placeholder:'antiderivative'});},
+  check(q,el){return G(el,'f',checkExprUpToConstant($('[data-k=f]',el).value,q.ansStr,['x'],{domain:{x:[0.3,2.5]}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML='Write every term as a power of '+M('x')+' first: '+M(iint('\\left('+q.rTex+'\\right)'));},
+  solution(q){
+    return `Integrate term by term. ${q.rew?'Rewrite the radicals and reciprocals as powers, then raise each exponent by one and divide by the new exponent:':'Raise each exponent by one and divide by the new exponent:'}`+
+      D((q.rew?iint('\\left('+q.iTex+'\\right)')+'='+iint('\\left('+q.rTex+'\\right)'):iint('\\left('+q.iTex+'\\right)'))+'='+q.aTex+'+C');}
+};
+
+Q.transcMix={name:'indefinite integral with e^x and trig',
+  gen(){
+    const pool=['ex','cosx','sinx','sec2','sectan','atanT','asinT','recipT','expb'];
+    let last=null;
+    for(let tries=0;tries<40;tries++){
+      const ks=shuffle(pool).slice(0,2);
+      const ts=ks.map(k=>TRANSTERMS[k]());
+      const integ=ts.map(t=>t.integ).join('+');
+      const anti=ts.map(t=>t.anti).join('+');
+      last={ts,integ,ansStr:anti,
+        iTex:joinSigned(ts.map(t=>({c:t.iC,tex:t.iTex}))),
+        aTex:joinSigned(ts.map(t=>({c:t.aC,tex:t.aTex})))};
+      if(antiOK(integ,anti,[0.2,0.9]))return last;
+    }
+    return last;
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the indefinite integral. Every term is one line of the table read backwards. ${M('+\\,C')} is optional.</p>
+      ${D(iint('\\left('+q.iTex+'\\right)'))}`;
+    numIn(el,'f',M(iint('f(x)')+'='),{xwide:true,placeholder:'antiderivative'});},
+  check(q,el){return G(el,'f',checkExprUpToConstant($('[data-k=f]',el).value,q.ansStr,['x'],{domain:{x:[0.2,0.9]}}));},
+  solution(q){
+    return `Each term is a standard antiderivative, and constants ride along unchanged:`+
+      D(iint('\\left('+q.iTex+'\\right)')+'='+q.aTex+'+C')+
+      `Check it by differentiating: the derivative of the answer has to be the integrand again.`;}
+};
+
+const REWRITE=[
+  ()=>{const a=rint(1,4);return {
+    iTex:`\\frac{(x+${a})^2}{x}`,
+    rTex:`x + ${2*a} + \\frac{${a*a}}{x}`,
+    integ:`((x+${a})^2)/x`,anti:`x^2/2+${2*a}*x+${a*a}*ln(abs(x))`,
+    aTex:`\\tfrac{x^2}{2}+${2*a}x+${a*a}\\ln|x|`,
+    why:`Expand the square and divide every term by ${M('x')}`};},
+  ()=>{const a=rint(1,5);return {
+    iTex:`\\frac{x^2+${a}}{\\sqrt{x}}`,
+    rTex:`x^{3/2}+${a}x^{-1/2}`,
+    integ:`(x^2+${a})/sqrt(x)`,anti:`(2/5)*x^(5/2)+${2*a}*sqrt(x)`,
+    aTex:`\\tfrac{2}{5}x^{5/2}+${2*a}\\sqrt{x}`,
+    why:`Split the fraction and use ${M('1/\\sqrt{x}=x^{-1/2}')}`};},
+  ()=>{const a=rint(1,4),b=rint(1,4);return {
+    iTex:`x(x+${a})(x-${b})`,
+    rTex:texPoly([1,a-b,-a*b,0],'x'),
+    integ:`x*(x+${a})*(x-${b})`,
+    anti:`x^4/4+(${a-b}/3)*x^3-(${a*b}/2)*x^2`,
+    aTex:ratTermsTex([{c:rat(1,4),body:'x^4'},{c:rat(a-b,3),body:'x^3'},{c:rat(-a*b,2),body:'x^2'}]),
+    why:`Multiply the three factors out`};},
+  ()=>{const a=rint(2,6),b=rint(1,5);return {
+    iTex:`\\frac{${a}x+${b}}{x^2}`,
+    rTex:`\\frac{${a}}{x}+\\frac{${b}}{x^2}`,
+    integ:`(${a}*x+${b})/x^2`,anti:`${a}*ln(abs(x))-${b}/x`,
+    aTex:`${a}\\ln|x|-\\frac{${b}}{x}`,
+    why:`Split the fraction over the two terms in the numerator`};}
+];
+Q.rewriteFirst={name:'rewrite, then integrate',
+  gen(){let last=null;
+    for(let tries=0;tries<30;tries++){
+      last=pick(REWRITE)();last.ansStr=last.anti;
+      if(antiOK(last.integ,last.anti,[0.3,3]))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">There is no quotient rule and no product rule for integrals, so rewrite the integrand first. Take ${M('x>0')}.</p>
+      ${D(iint(q.iTex))}`;
+    numIn(el,'f',M(iint('f(x)')+'='),{xwide:true,placeholder:'antiderivative'});},
+  check(q,el){return G(el,'f',checkExprUpToConstant($('[data-k=f]',el).value,q.ansStr,['x'],{domain:{x:[0.3,2.5]}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=q.why+': '+M(q.iTex+'='+q.rTex);},
+  solution(q){
+    return `${q.why}:`+D(q.iTex+'='+q.rTex)+`Now every piece is in the table:`+
+      D(iint('\\left('+q.rTex+'\\right)')+'='+q.aTex+'+C');}
+};
+
+Q.definiteBasic={name:'definite integral by FTC2',
+  gen(){
+    let last=null;
+    for(let tries=0;tries<40;tries++){
+      const kind=pick(['poly','poly','exp','ax','trig','logv']);
+      let c=null;
+      if(kind==='poly'){
+        const c2=rint(-3,4),c1=rint(-4,4),c0=rint(-3,4);
+        if(c2===0&&c1===0&&c0===0)continue;
+        const a=rint(-1,2),b=a+rint(1,3);
+        const val=radd(radd(rat(c2*(ipow(b,3)-ipow(a,3)),3),rat(c1*(b*b-a*a),2)),rat(c0*(b-a),1));
+        c={ftex:`\\left(${texPoly([c2,c1,c0],'x')}\\right)`,loT:String(a),hiT:String(b),lo:a,hi:b,
+           integ:`(${c2})*x^2+(${c1})*x+(${c0})`,val:rval(val),ansStr:rstr(val),valTex:rtex(val),
+           antiTex:ratTermsTex([{c:rat(c2,3),body:'x^3'},{c:rat(c1,2),body:'x^2'},{c:rat(c0,1),body:'x'}])};
+      }else if(kind==='exp'){
+        const k=rint(1,4),a=rint(-1,1),b=a+rint(1,2);
+        c={ftex:`${cAbs(k)}e^{x}`,loT:String(a),hiT:String(b),lo:a,hi:b,
+           integ:`${k}*e^x`,val:k*(Math.exp(b)-Math.exp(a)),ansStr:`${k}*(e^(${b})-e^(${a}))`,
+           valTex:expTex(k,b,a),antiTex:`${cAbs(k)}e^{x}`};
+      }else if(kind==='ax'){
+        const m=pick([2,3,4,9]);
+        c={ftex:`\\left(${m}x-${m}^{x}\\right)`,loT:'0',hiT:'1',lo:0,hi:1,
+           integ:`${m}*x-${m}^x`,val:m/2-(m-1)/Math.log(m),ansStr:`${m}/2-${m-1}/ln(${m})`,
+           valTex:`\\tfrac{${m}}{2}-\\dfrac{${m-1}}{\\ln ${m}}`,
+           antiTex:`\\tfrac{${m}}{2}x^2-\\frac{${m}^{x}}{\\ln ${m}}`};
+      }else if(kind==='trig'){
+        const k=rint(1,5);
+        if(Math.random()<0.5)c={ftex:`${cAbs(k)}\\cos x`,loT:'0',hiT:'\\tfrac{\\pi}{2}',lo:0,hi:PI/2,
+           integ:`${k}*cos(x)`,val:k,ansStr:String(k),valTex:String(k),antiTex:`${cAbs(k)}\\sin x`};
+        else c={ftex:`${cAbs(k)}\\sin x`,loT:'0',hiT:'\\pi',lo:0,hi:PI,
+           integ:`${k}*sin(x)`,val:2*k,ansStr:String(2*k),valTex:String(2*k),antiTex:`-${cAbs(k)}\\cos x`};
+      }else{
+        const k=rint(1,5),m=rint(2,5);
+        c={ftex:`\\frac{${k}}{x}`,loT:'1',hiT:String(m),lo:1,hi:m,
+           integ:`${k}/x`,val:k*Math.log(m),ansStr:`${k}*ln(${m})`,
+           valTex:`${cAbs(k)}\\ln ${m}`,antiTex:`${cAbs(k)}\\ln|x|`};
+      }
+      last=c;
+      if(valOK(c.integ,c.lo,c.hi,c.val))return c;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate the definite integral. Give an exact value: fractions are fine, and you may leave ${M('e')} and ${M('\\ln')} in the answer.</p>
+      ${D(dint(q.loT,q.hiT,q.ftex))}`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}));},
+  solution(q){
+    return `Antidifferentiate, then subtract the two evaluations:`+
+      D(dint(q.loT,q.hiT,q.ftex)+R`=\Big[\,${q.antiTex}\,\Big]_{${q.loT}}^{${q.hiT}}=${q.valTex}${APX(q.val)}`)+
+      `The constant of integration would cancel in the subtraction, so there is no reason to carry it.`;}
+};
+
+const AREAC=[
+  ()=>{const n=rint(2,3),b=rint(2,4);const v=rat(ipow(b,n+1),n+1);return {
+    ftex:`x^{${n}}`,integ:`x^${n}`,lo:0,hi:b,loT:'0',hiT:String(b),
+    val:rval(v),ansStr:rstr(v),valTex:rtex(v),antiTex:`\\tfrac{x^{${n+1}}}{${n+1}}`};},
+  ()=>{const b=pick([1,4,9]),k=rint(1,3);const v=rat(2*k*Math.round(Math.pow(b,1.5)),3);return {
+    ftex:`${cAbs(k)}\\sqrt{x}`,integ:`${k}*sqrt(x)`,lo:0,hi:b,loT:'0',hiT:String(b),
+    val:rval(v),ansStr:rstr(v),valTex:rtex(v),antiTex:`${coefTexAbs(2*k,3)}x^{3/2}`};},
+  ()=>{const k=rint(1,4);return {
+    ftex:`${cAbs(k)}\\cos x`,integ:`${k}*cos(x)`,lo:0,hi:PI/2,loT:'0',hiT:'\\tfrac{\\pi}{2}',
+    val:k,ansStr:String(k),valTex:String(k),antiTex:`${cAbs(k)}\\sin x`};},
+  ()=>{const k=rint(1,4);return {
+    ftex:`${cAbs(k)}\\sin x`,integ:`${k}*sin(x)`,lo:0,hi:PI,loT:'0',hiT:'\\pi',
+    val:2*k,ansStr:String(2*k),valTex:String(2*k),antiTex:`-${cAbs(k)}\\cos x`};},
+  ()=>{const k=rint(1,3),b=rint(1,2);return {
+    ftex:`${cAbs(k)}e^{x}`,integ:`${k}*e^x`,lo:0,hi:b,loT:'0',hiT:String(b),
+    val:k*(Math.exp(b)-1),ansStr:`${k}*(e^(${b})-1)`,valTex:expTex(k,b,0),antiTex:`${cAbs(k)}e^{x}`};},
+  ()=>{const k=rint(1,4),m=rint(2,5);return {
+    ftex:`\\frac{${k}}{x}`,integ:`${k}/x`,lo:1,hi:m,loT:'1',hiT:String(m),
+    val:k*Math.log(m),ansStr:`${k}*ln(${m})`,valTex:`${cAbs(k)}\\ln ${m}`,antiTex:`${cAbs(k)}\\ln|x|`};},
+  ()=>{const k=rint(1,4);return {
+    ftex:`\\frac{${k}}{1+x^2}`,integ:`${k}/(1+x^2)`,lo:0,hi:1,loT:'0',hiT:'1',
+    val:k*PI/4,ansStr:`${k}*pi/4`,valTex:piTex(k,4),antiTex:`${cAbs(k)}\\arctan x`};}
+];
+Q.areaUnderCurve={name:'area under a curve',
+  gen(){let last=null;
+    for(let tries=0;tries<30;tries++){
+      last=pick(AREAC)();
+      if(valOK(last.integ,last.lo,last.hi,last.val))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The integrand is never negative on this interval, so the integral is the area under the graph. Find that area. Exact value.</p>
+      ${D(`f(x)=${q.ftex},\\qquad ${q.loT}\\le x\\le ${q.hiT}`)}`;
+    numIn(el,'v','Area =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}));},
+  solution(q){
+    return `The region sits above the axis, so its area is the integral:`+
+      D(dint(q.loT,q.hiT,q.ftex)+R`=\Big[\,${q.antiTex}\,\Big]_{${q.loT}}^{${q.hiT}}=${q.valTex}${APX(q.val)}`);}
+};
+
+/* ---------- chapter 2: the Fundamental Theorem ---------- */
+const FPOOL=[
+  {tex:'t^2',t:'t^2',texAt:s=>`${argTex(s)}^{2}`,at:s=>`(${s})^2`},
+  {tex:'\\sin t',t:'sin(t)',texAt:s=>`\\sin\\left(${s}\\right)`,at:s=>`sin(${s})`},
+  {tex:'\\cos t',t:'cos(t)',texAt:s=>`\\cos\\left(${s}\\right)`,at:s=>`cos(${s})`},
+  {tex:'\\sqrt{t}',t:'sqrt(t)',texAt:s=>`\\sqrt{${s}}`,at:s=>`sqrt(${s})`},
+  {tex:'\\dfrac{1}{1+t^2}',t:'1/(1+t^2)',texAt:s=>`\\dfrac{1}{1+${argTex(s)}^{2}}`,at:s=>`1/(1+(${s})^2)`},
+  {tex:'e^{t}',t:'e^t',texAt:s=>`e^{${s}}`,at:s=>`e^(${s})`}
+];
+const UPOOL=[
+  {tex:'x^2',str:'x^2',dtex:'2x',dstr:'2*x'},
+  {tex:'x^3',str:'x^3',dtex:'3x^2',dstr:'3*x^2'},
+  {tex:'2x',str:'2*x',dtex:'2',dstr:'2'},
+  {tex:'3x+1',str:'3*x+1',dtex:'3',dstr:'3'},
+  {tex:'\\sqrt{x}',str:'sqrt(x)',dtex:'\\dfrac{1}{2\\sqrt{x}}',dstr:'1/(2*sqrt(x))'}
+];
+
+Q.ftc1Upper={name:'derivative of an integral with variable upper limit',
+  gen(){let last=null;
+    for(let tries=0;tries<30;tries++){
+      const f=pick(FPOOL),u=pick(UPOOL);
+      const ansStr=`(${f.at(u.str)})*(${u.dstr})`;
+      last={f,u,ansStr,ansTex:`${f.texAt(u.tex)}\\cdot ${u.dtex}`};
+      if(accDerivOK(f.t,'1',u.str,ansStr,0.85)&&accDerivOK(f.t,'1',u.str,ansStr,1.4))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Use the Fundamental Theorem, Part 1, with the chain rule. Your answer is an expression in ${M('x')} with no ${M('t')} in it.</p>
+      ${D(`g(x)=`+dint('1',q.u.tex,q.f.tex,'t'))}`;
+    numIn(el,'g',M(R`g'(x)=`),{xwide:true,placeholder:'expression in x'});},
+  check(q,el){return G(el,'g',checkExpr($('[data-k=g]',el).value,q.ansStr,['x'],{domain:{x:[0.5,2]}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML='Set '+M(`u=${q.u.tex}`)+', so '+M(R`u'=`+q.u.dtex)+'. Then '+M(R`g'(x)=f(u)\,u'`)+'.';},
+  solution(q){
+    return `With ${M(`u=${q.u.tex}`)} the upper limit is ${M('u')} and ${M(R`u'=`+q.u.dtex)}. Part 1 plus the chain rule gives ${M(R`g'(x)=f(u(x))\,u'(x)`)}, and here ${M(`f(u)=${q.f.texAt(q.u.tex)}`)}:`+
+      D(R`g'(x)=${q.ansTex}`)+
+      `The lower limit is a constant, so it contributes nothing.`;}
+};
+
+Q.ftc1Lower={name:'variable lower limit',
+  gen(){let last=null;
+    for(let tries=0;tries<30;tries++){
+      const f=pick(FPOOL),b=pick([2,3,5]);
+      const ansStr=`-(${f.at('x')})`;
+      last={f,b,ansStr,ansTex:`-${f.texAt('x')}`};
+      if(accDerivOK(f.t,'x',String(b),ansStr,0.85)&&accDerivOK(f.t,'x',String(b),ansStr,1.4))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The variable is in the lower limit this time. Differentiate.</p>
+      ${D(`g(x)=`+dint('x',String(q.b),q.f.tex,'t'))}`;
+    numIn(el,'g',M(R`g'(x)=`),{xwide:true,placeholder:'expression in x'});},
+  check(q,el){return G(el,'g',checkExpr($('[data-k=g]',el).value,q.ansStr,['x'],{domain:{x:[0.5,2]}}));},
+  solution(q){
+    return `Swapping the limits changes the sign: ${M(dint('x',String(q.b),q.f.tex,'t')+'=-'+dint(String(q.b),'x',q.f.tex,'t'))}. Now the variable is on top, so Part 1 applies directly:`+
+      D(R`g'(x)=-${q.f.texAt('x')}`);}
+};
+
+Q.ftc1Both={name:'variable in both limits',
+  gen(){let last=null;
+    for(let tries=0;tries<30;tries++){
+      const f=pick(FPOOL);
+      const square=Math.random()<0.5;
+      let lo,hi,ansStr,ansTex,loT,hiT;
+      if(square){
+        lo='x';hi='x^2';loT='x';hiT='x^2';
+        ansStr=`(${f.at('x^2')})*(2*x)-(${f.at('x')})`;
+        ansTex=`${f.texAt('x^2')}\\cdot 2x-${f.texAt('x')}`;
+      }else{
+        const a=rint(1,3);let b=rint(1,4);if(b===a)b=a+1;
+        lo=`${a}*x`;hi=`${b}*x`;loT=`${a===1?'':a}x`;hiT=`${b===1?'':b}x`;
+        ansStr=`(${f.at(`${b}*x`)})*(${b})-(${f.at(`${a}*x`)})*(${a})`;
+        ansTex=`${b===1?'':b+'\\,'}${f.texAt(hiT)}-${a===1?'':a+'\\,'}${f.texAt(loT)}`;
+      }
+      last={f,lo,hi,loT,hiT,ansStr,ansTex};
+      if(accDerivOK(f.t,lo,hi,ansStr,0.85)&&accDerivOK(f.t,lo,hi,ansStr,1.4))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Both limits move. Split the integral at a constant, then differentiate each piece.</p>
+      ${D(`g(x)=`+dint(q.loT,q.hiT,q.f.tex,'t'))}`;
+    numIn(el,'g',M(R`g'(x)=`),{xwide:true,placeholder:'expression in x'});},
+  check(q,el){return G(el,'g',checkExpr($('[data-k=g]',el).value,q.ansStr,['x'],{domain:{x:[0.5,2]}}));},
+  solution(q){
+    return `Write ${M(dint(q.loT,q.hiT,'f','t')+'='+dint('c',q.hiT,'f','t')+'-'+dint('c',q.loT,'f','t'))} for any constant ${M('c')}. Each piece is a Part 1 problem with the chain rule, and the top limit contributes with a plus sign, the bottom with a minus:`+
+      D(R`g'(x)=${q.ansTex}`);}
+};
+
+const DEVAL=[
+  {tex:k=>`${cAbs(k)}\\sec^2 x`,integ:'sec(x)^2',lo:0,hi:PI/3,loT:'0',hiT:'\\tfrac{\\pi}{3}',
+   val:Math.sqrt(3),vs:'sqrt(3)',vt:'\\sqrt3',F:'\\tan x'},
+  {tex:k=>`${cAbs(k)}\\sin x`,integ:'sin(x)',lo:0,hi:PI,loT:'0',hiT:'\\pi',val:2,vs:'2',vt:'2',F:'-\\cos x'},
+  {tex:k=>`\\frac{${k}}{x}`,integ:'1/x',lo:1,hi:Math.E,loT:'1',hiT:'e',val:1,vs:'1',vt:'1',F:'\\ln|x|'},
+  {tex:k=>`${cAbs(k)}e^{x}`,integ:'e^x',lo:0,hi:Math.LN2,loT:'0',hiT:'\\ln 2',val:1,vs:'1',vt:'1',F:'e^{x}'},
+  {tex:k=>`${cAbs(k)}\\cos x`,integ:'cos(x)',lo:PI/6,hi:PI/2,loT:'\\tfrac{\\pi}{6}',hiT:'\\tfrac{\\pi}{2}',
+   val:0.5,vs:'1/2',vt:'\\tfrac12',F:'\\sin x'},
+  {tex:k=>`\\frac{${k}}{1+x^2}`,integ:'1/(1+x^2)',lo:0,hi:1,loT:'0',hiT:'1',val:PI/4,vs:'pi/4',vt:'\\tfrac{\\pi}{4}',F:'\\arctan x'},
+  {tex:k=>`\\frac{${k}}{\\sqrt{1-x^2}}`,integ:'1/sqrt(1-x^2)',lo:0,hi:0.5,loT:'0',hiT:'\\tfrac12',
+   val:PI/6,vs:'pi/6',vt:'\\tfrac{\\pi}{6}',F:'\\arcsin x'},
+  {tex:k=>`${cAbs(k)}\\sec x\\tan x`,integ:'sec(x)*tan(x)',lo:0,hi:PI/3,loT:'0',hiT:'\\tfrac{\\pi}{3}',
+   val:1,vs:'1',vt:'1',F:'\\sec x'},
+  {tex:k=>`${cAbs(k)}\\csc^2 x`,integ:'csc(x)^2',lo:PI/4,hi:PI/2,loT:'\\tfrac{\\pi}{4}',hiT:'\\tfrac{\\pi}{2}',
+   val:1,vs:'1',vt:'1',F:'-\\cot x'},
+  {tex:k=>`${cAbs(k)}\\csc x\\cot x`,integ:'csc(x)*cot(x)',lo:PI/4,hi:PI/2,loT:'\\tfrac{\\pi}{4}',hiT:'\\tfrac{\\pi}{2}',
+   val:Math.SQRT2-1,vs:'sqrt(2)-1',vt:'\\sqrt2-1',F:'-\\csc x'},
+  {tex:k=>`${cAbs(k)}\\sqrt{x}`,integ:'sqrt(x)',lo:0,hi:4,loT:'0',hiT:'4',val:16/3,vs:'16/3',vt:'\\tfrac{16}{3}',F:'\\tfrac{2}{3}x^{3/2}'},
+  {tex:k=>`\\frac{${k}}{x^2}`,integ:'1/x^2',lo:1,hi:2,loT:'1',hiT:'2',val:0.5,vs:'1/2',vt:'\\tfrac12',F:'-\\tfrac{1}{x}'},
+  {tex:k=>`${cAbs(k)}e^{x}`,integ:'e^x',lo:0,hi:1,loT:'0',hiT:'1',val:Math.E-1,vs:'e-1',vt:'e-1',F:'e^{x}'},
+  {tex:k=>`${cAbs(k)}\\cdot 2^{x}`,integ:'2^x',lo:0,hi:1,loT:'0',hiT:'1',val:1/Math.LN2,vs:'1/ln(2)',vt:'\\tfrac{1}{\\ln 2}',
+   F:'\\frac{2^{x}}{\\ln 2}'}
+];
+Q.definiteEval={name:'definite integral by FTC2, trig and exponential',
+  gen(){let last=null;
+    for(let tries=0;tries<30;tries++){
+      const c=pick(DEVAL),k=rint(1,6);
+      last={c,k,val:k*c.val,ansStr:`${k}*(${c.vs})`,ftex:c.tex(k)};
+      if(valOK(`${k}*(${c.integ})`,c.lo,c.hi,k*c.val))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate. Exact value: answers like <code>4sqrt(3)</code>, <code>pi/6</code>, <code>3(e-1)</code>, or <code>5/ln(2)</code> are expected.</p>
+      ${D(dint(q.c.loT,q.c.hiT,q.ftex))}`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML='An antiderivative of the integrand is '+M(`${cAbs(q.k)}${q.c.F}`)+'. Now evaluate at both limits and subtract.';},
+  solution(q){
+    return `Pull the constant out and use the table:`+
+      D(dint(q.c.loT,q.c.hiT,q.ftex)+R`=${cAbs(q.k)}\Big[\,${q.c.F}\,\Big]_{${q.c.loT}}^{${q.c.hiT}}=${/^\d+$/.test(q.c.vt)?String(q.k*Number(q.c.vt)):(q.k===1?q.c.vt:q.k+'\\left('+q.c.vt+'\\right)')}${APX(q.val)}`);}
+};
+
+Q.netChange={name:'net change from a rate',
+  gen(){let last=null;
+    for(let tries=0;tries<30;tries++){
+      const kind=pick(['tank','pop','bact']);
+      let c=null;
+      if(kind==='tank'){
+        const a=rint(2,8),b=rint(1,5),t1=rint(0,3),t2=t1+rint(2,5);
+        const val=radd(rat(a*(t2-t1),1),rat(b*(t2*t2-t1*t1),2));
+        c={kind,rtex:`${a}+${b===1?'':b}t`,integ:`${a}+${b}*x`,lo:t1,hi:t2,loT:String(t1),hiT:String(t2),
+           val:rval(val),ansStr:rstr(val),valTex:rtex(val),unit:'litres',
+           antiTex:ratTermsTex([{c:rat(a,1),body:'t'},{c:rat(b,2),body:'t^2'}]),
+           prompt:`Water flows into a tank at the rate ${M(`r(t)=${a}+${b===1?'':b}t`)} litres per minute. How much water enters the tank between ${M(`t=${t1}`)} and ${M(`t=${t2}`)} minutes?`};
+      }else if(kind==='pop'){
+        const k=rint(2,6),t1=rint(0,2),t2=t1+rint(1,4);
+        const val=rat(k*(ipow(t2,3)-ipow(t1,3)),3);
+        c={kind,rtex:`${k}t^2`,integ:`${k}*x^2`,lo:t1,hi:t2,loT:String(t1),hiT:String(t2),
+           val:rval(val),ansStr:rstr(val),valTex:rtex(val),unit:'individuals',
+           antiTex:ratTermsTex([{c:rat(k,3),body:'t^3'}]),
+           prompt:`A population grows at the rate ${M(`P'(t)=${k}t^2`)} individuals per year. By how much does the population change between ${M(`t=${t1}`)} and ${M(`t=${t2}`)} years?`};
+      }else{
+        const k=rint(2,6),T=rint(1,3);
+        c={kind,rtex:`${k}e^{t}`,integ:`${k}*e^x`,lo:0,hi:T,loT:'0',hiT:String(T),
+           val:k*(Math.exp(T)-1),ansStr:`${k}*(e^(${T})-1)`,valTex:expTex(k,T,0),unit:'bacteria',
+           antiTex:`${k}e^{t}`,
+           prompt:`A bacterial culture grows at the rate ${M(`r(t)=${k}e^{t}`)} bacteria per hour. How many bacteria are added between ${M('t=0')} and ${M(`t=${T}`)} hours?`};
+      }
+      last=c;
+      if(valOK(c.integ,c.lo,c.hi,c.val))return c;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">${q.prompt} Give an exact value.</p>`;
+    numIn(el,'v','Total =',{wide:true,placeholder:q.unit});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}));},
+  solution(q){
+    return `By the Net Change Theorem the total is the integral of the rate:`+
+      D(dint(q.loT,q.hiT,q.rtex,'t')+R`=\Big[\,${q.antiTex}\,\Big]_{${q.loT}}^{${q.hiT}}=${q.valTex}${APX(q.val)}`)+
+      `Units check: a rate in ${q.unit} per unit time times a time gives ${q.unit}.`;}
+};
+
+Q.displacementDistance={name:'displacement and distance',
+  gen(){let last=null;
+    for(let tries=0;tries<40;tries++){
+      let p,qc,r,T,vtex,vdisp;
+      if(Math.random()<0.5){
+        const c=rint(2,4);p=0;qc=-c*c;r=c;T=c+rint(1,3);vtex=`t^2-${c*c}`;vdisp=`\\left(t^2-${c*c}\\right)`;
+      }else{
+        const a=rint(1,3),b=a+rint(2,4);p=-(a+b);qc=a*b;r=a;T=a+rint(1,Math.min(3,b-a));
+        vtex=`(t-${a})(t-${b})`;vdisp=vtex;
+      }
+      if(T<=r)continue;
+      const V=t=>radd(radd(rat(ipow(t,3),3),rat(p*t*t,2)),rat(qc*t,1));
+      const V0=V(0),Vr=V(r),VT=V(T);
+      const disp=rsub(VT,V0),A1=rsub(Vr,V0),A2=rsub(VT,Vr);
+      const dist=radd(rat(Math.abs(A1[0]),A1[1]),rat(Math.abs(A2[0]),A2[1]));
+      const integ=`x^2+(${p})*x+(${qc})`;
+      last={p,qc,r,T,vtex,vdisp,disp,dist,A1,A2,integ,
+        dv:rval(disp),sv:rval(dist),dStr:rstr(disp),sStr:rstr(dist),
+        antiTex:ratTermsTex([{c:rat(1,3),body:'t^3'},{c:rat(p,2),body:'t^2'},{c:rat(qc,1),body:'t'}])};
+      if(valOK(integ,0,T,last.dv)&&valOK(`abs(${integ})`,0,T,last.sv,3e-3))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">A particle moves along a line with velocity ${M(`v(t)=${q.vtex}`)} metres per second, for ${M(`0\\le t\\le ${q.T}`)}. Find the displacement and the total distance travelled. Exact values; fractions are fine.</p>`;
+    numIn(el,'d','displacement =',{wide:true,placeholder:'metres'});
+    numIn(el,'s','total distance =',{wide:true,placeholder:'metres'});},
+  check(q,el){return Gall(el,[
+    ['d',checkNumber($('[data-k=d]',el).value,q.dv,{rel:1e-6})],
+    ['s',checkNumber($('[data-k=s]',el).value,q.sv,{rel:1e-6})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML='The velocity changes sign at '+M(`t=${q.r}`)+'. Displacement is one integral; for distance, integrate '+M('|v|')+' by splitting there.';},
+  solution(q){
+    const A1=rtex(q.A1),A2=rtex(q.A2);
+    return `An antiderivative of ${M('v')} is ${M(q.antiTex)}. Displacement is a single integral:`+
+      D(dint('0',String(q.T),q.vdisp,'t')+`=${rtex(q.disp)}${APX(q.dv)}`)+
+      `The velocity changes sign at ${M(`t=${q.r}`)}, so split there for the distance: ${M(dint('0',String(q.r),'v','t')+`=${A1}`)} and ${M(dint(String(q.r),String(q.T),'v','t')+`=${A2}`)}. Total distance is the sum of the absolute values:`+
+      D(dint('0',String(q.T),'|v(t)|','t')+`=\\left|${A1}\\right|+\\left|${A2}\\right|=${rtex(q.dist)}${APX(q.sv)}`);}
+};
+
+/* ---------- chapter 3: areas ---------- */
+const GEOC=[
+  ()=>{const r=rint(1,5);return {
+    tex:dint(`-${r}`,String(r),`\\sqrt{${r*r}-x^2}`),integ:`sqrt(${r*r}-x^2)`,lo:-r,hi:r,
+    val:PI*r*r/2,ansStr:`pi*${r*r}/2`,valTex:piTex(r*r,2),
+    why:`${M(`y=\\sqrt{${r*r}-x^2}`)} is the upper half of the circle of radius ${M(String(r))}, so the region is a half disk of area ${M(R`\tfrac12\pi r^2=\tfrac{${r*r}\pi}{2}`)}.`};},
+  ()=>{const r=rint(1,5);return {
+    tex:dint('0',String(r),`\\sqrt{${r*r}-x^2}`),integ:`sqrt(${r*r}-x^2)`,lo:0,hi:r,
+    val:PI*r*r/4,ansStr:`pi*${r*r}/4`,valTex:piTex(r*r,4),
+    why:`This is the quarter of the disk of radius ${M(String(r))} in the first quadrant, so the area is ${M(R`\tfrac14\pi r^2=\tfrac{${r*r}\pi}{4}`)}.`};},
+  ()=>{const c=rnz(-5,6),a=rint(-3,1),b=a+rint(1,5);return {
+    tex:dint(String(a),String(b),String(c)),integ:`${c}`,lo:a,hi:b,
+    val:c*(b-a),ansStr:String(c*(b-a)),valTex:String(c*(b-a)),
+    why:`A constant integrand gives a rectangle of height ${M(String(c))} and width ${M(String(b-a))}${c<0?', counted negative because it lies below the axis':''}: ${M(`${c}\\cdot ${b-a}=${c*(b-a)}`)}.`};},
+  ()=>{const m=rint(1,5),b=rint(1,5);return {
+    tex:dint('0',String(b),`${m===1?'':m}x`),integ:`${m}*x`,lo:0,hi:b,
+    val:m*b*b/2,ansStr:rstr(rat(m*b*b,2)),valTex:rtex(rat(m*b*b,2)),
+    why:`The region is a triangle with base ${M(String(b))} and height ${M(`${m}\\cdot ${b}=${m*b}`)}, so the area is ${M(R`\tfrac12(${b})(${m*b})=${rtex(rat(m*b*b,2))}`)}.`};},
+  ()=>{const a=rint(1,5);return {
+    tex:dint(`-${a}`,String(a),'|x|'),integ:'abs(x)',lo:-a,hi:a,
+    val:a*a,ansStr:String(a*a),valTex:String(a*a),
+    why:`The graph of ${M('|x|')} makes two triangles, each with base ${M(String(a))} and height ${M(String(a))}: ${M(R`2\cdot\tfrac12(${a})(${a})=${a*a}`)}.`};},
+  ()=>{const a=rint(1,4),b=a*rint(1,4);return {
+    tex:dint('0',String(a),`${b===1?'':b}-\\tfrac{${b}}{${a}}x`),integ:`${b}-(${b}/${a})*x`,lo:0,hi:a,
+    val:a*b/2,ansStr:rstr(rat(a*b,2)),valTex:rtex(rat(a*b,2)),
+    why:`The line drops from ${M(`y=${b}`)} at ${M('x=0')} to ${M('y=0')} at ${M(`x=${a}`)}, so the region is a triangle with base ${M(String(a))} and height ${M(String(b))}: ${M(R`\tfrac12(${a})(${b})=${rtex(rat(a*b,2))}`)}.`};}
+];
+Q.geometry={name:'evaluate by geometry',
+  gen(){let last=null;
+    for(let tries=0;tries<30;tries++){
+      last=pick(GEOC)();
+      if(valOK(last.integ,last.lo,last.hi,last.val,3e-3))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Evaluate by interpreting the integral as a signed area. Do not antidifferentiate. Exact value; <code>pi</code> is allowed.</p>
+      ${D(q.tex)}`;
+    numIn(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6}));},
+  solution(q){return q.why+(Number.isInteger(q.val)?'':` As a decimal that is about ${fmtDec(q.val,4)}.`);}
+};
+
+Q.wrtY={name:'area with horizontal strips',
+  gen(){let last=null;
+    for(let tries=0;tries<20;tries++){
+      const k=pick([2,3]),c=rint(1,4);
+      const val=rat(ipow(c,k+1),k+1);
+      last={k,c,gStr:`y^${k}`,gTex:`y^{${k}}`,
+        curveTex:k===2?'y=\\sqrt{x}':'y=\\sqrt[3]{x}',
+        val:rval(val),ansStr:rstr(val),
+        antiTex:`\\tfrac{y^{${k+1}}}{${k+1}}`};
+      if(valOK(`x^${k}`,0,c,last.val))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Let ${M('D')} be the region bounded by the ${M('y')}-axis, the line ${M(`y=${q.c}`)}, and the curve ${M(q.curveTex)}. Slice it with horizontal strips: give the width of the strip as a function of ${M('y')}, then the area.</p>`;
+    numIn(el,'g','strip width =',{wide:true,placeholder:'expression in y'});
+    numIn(el,'v','Area =',{wide:true});},
+  check(q,el){return Gall(el,[
+    ['g',checkExpr($('[data-k=g]',el).value,q.gStr,['y'],{domain:{y:[0.1,q.c]}})],
+    ['v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6})]]);},
+  solution(q){
+    return `Solve the curve for ${M('x')}: ${M(q.curveTex)} means ${M(`x=y^{${q.k}}`)}. A horizontal strip at height ${M('y')} runs from the ${M('y')}-axis at ${M('x=0')} to the curve at ${M(`x=y^{${q.k}}`)}, so its width is ${M(q.gTex)}, and ${M('y')} runs from ${M('0')} to ${M(String(q.c))}:`+
+      D(dint('0',String(q.c),q.gTex,'y')+R`=\Big[\,${q.antiTex}\,\Big]_{0}^{${q.c}}=${rtex(rat(ipow(q.c,q.k+1),q.k+1))}${APX(q.val)}`);}
+};
+
+const BETW=[
+  ()=>{const a=rint(1,4);return {
+    c1:'y=x^2',c2:`y=${a===1?'':a}x`,xs:[0,a],lo:0,hi:a,
+    topTex:`${a===1?'':a}x`,botTex:'x^2',integ:`${a}*x-x^2`,
+    val:ipow(a,3)/6,ansStr:rstr(rat(ipow(a,3),6)),valTex:rtex(rat(ipow(a,3),6)),
+    antiTex:ratTermsTex([{c:rat(a,2),body:'x^2'},{c:rat(-1,3),body:'x^3'}]),
+    setTex:`x^2=${a===1?'':a}x`,note:''};},
+  ()=>{const b=rint(1,3);return {
+    c1:'y=x^2',c2:`y=${b*b}`,xs:[-b,b],lo:-b,hi:b,
+    topTex:String(b*b),botTex:'x^2',integ:`${b*b}-x^2`,
+    val:4*ipow(b,3)/3,ansStr:rstr(rat(4*ipow(b,3),3)),valTex:rtex(rat(4*ipow(b,3),3)),
+    antiTex:ratTermsTex([{c:rat(b*b,1),body:'x'},{c:rat(-1,3),body:'x^3'}]),
+    setTex:`x^2=${b*b}`,note:''};},
+  ()=>({c1:'y=\\sqrt{x}',c2:'y=x',xs:[0,1],lo:0,hi:1,
+    topTex:'\\sqrt{x}',botTex:'x',integ:'sqrt(x)-x',
+    val:1/6,ansStr:'1/6',valTex:'\\tfrac16',
+    antiTex:ratTermsTex([{c:rat(2,3),body:'x^{3/2}'},{c:rat(-1,2),body:'x^2'}]),
+    setTex:'\\sqrt{x}=x',note:''}),
+  ()=>({c1:'y=x^3',c2:'y=x',xs:[0,1],lo:0,hi:1,
+    topTex:'x',botTex:'x^3',integ:'x-x^3',
+    val:1/4,ansStr:'1/4',valTex:'\\tfrac14',
+    antiTex:ratTermsTex([{c:rat(1,2),body:'x^2'},{c:rat(-1,4),body:'x^4'}]),
+    setTex:'x^3=x',note:' in the first quadrant'})
+];
+Q.betweenCurves={name:'area between two curves',
+  gen(){let last=null;
+    for(let tries=0;tries<20;tries++){
+      last=pick(BETW)();
+      if(valOK(last.integ,last.lo,last.hi,last.val))return last;
+    }
+    return last;},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find where the curves ${M(q.c1)} and ${M(q.c2)} meet${q.note}, then find the area of the region between them.</p>`;
+    numIn(el,'xs',M('x')+'-values where they meet:',{wide:true,placeholder:'comma-separated list'});
+    numIn(el,'v','Area =',{wide:true});},
+  check(q,el){return Gall(el,[
+    ['xs',checkNumberList($('[data-k=xs]',el).value,q.xs)],
+    ['v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-6})]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML='Set the two right-hand sides equal: '+M(q.setTex)+'. Between the roots, '+M(q.topTex)+' is the larger one.';},
+  solution(q){
+    return `Set them equal: ${M(q.setTex)} gives ${M('x='+q.xs.join(',\\;'))}. Between those values ${M(q.topTex)} is on top, so the strip height is ${M(q.topTex+'-'+q.botTex)}:`+
+      D(dint(String(q.lo),String(q.hi),`\\left(${q.topTex}-${q.botTex}\\right)`)+R`=\Big[\,${q.antiTex}\,\Big]_{${q.lo}}^{${q.hi}}=${q.valTex}${APX(q.val)}`);}
+};
+
+/* ============================================================ chapter 1 explore: slope of F is height of f */
+(function(){
+  const P=[
+    {n:'f = x²',f:x=>x*x,F:x=>x*x*x/3,ftex:'x^2',Ftex:'\\tfrac{x^3}{3}',
+     win:{xmin:-2.6,xmax:2.6,ymin:-3,ymax:5},xr:[-2.2,2.2],cr:[-2.4,2.4]},
+    {n:'f = cos x',f:Math.cos,F:Math.sin,ftex:'\\cos x',Ftex:'\\sin x',
+     win:{xmin:-4.2,xmax:4.2,ymin:-2.6,ymax:2.6},xr:[-3.8,3.8],cr:[-4,4]},
+    {n:'f = eˣ',f:Math.exp,F:x=>Math.exp(x)-1,ftex:'e^x',Ftex:'e^x-1',
+     win:{xmin:-2.6,xmax:2.2,ymin:-2,ymax:6},xr:[-2.2,1.7],cr:[-2.2,2.2]},
+    {n:'f = 1/x  (x > 0)',f:x=>1/x,F:Math.log,ftex:'\\tfrac{1}{x}',Ftex:'\\ln x',
+     win:{xmin:-0.5,xmax:5,ymin:-2.8,ymax:3.6},xr:[0.25,4.6],cr:[-2.8,2.8]},
+    {n:'f = sec²x',f:x=>1/(Math.cos(x)*Math.cos(x)),F:Math.tan,ftex:'\\sec^2 x',Ftex:'\\tan x',
+     win:{xmin:-1.45,xmax:1.45,ymin:-4,ymax:6},xr:[-1.15,1.15],cr:[-4,4]}
+  ];
+  const plot=new Plot2D('#slopePlot',P[0].win);
+  let cur=P[0],x0=1,C=0,sx=null,sc=null;
+  const pbox=$('#slopePresets'),sbox=$('#slopeSliders');
+  P.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);
+    b.onclick=()=>{cur=pr;$$('.btn',pbox).forEach(z=>z.classList.remove('on'));b.classList.add('on');build();draw();};
+    pbox.appendChild(b);});
+  $$('.btn',pbox)[0].classList.add('on');
+  function build(){
+    sbox.innerHTML='';
+    x0=cur.xr[0]+(cur.xr[1]-cur.xr[0])*0.68;C=0;
+    sx=sliderRow(sbox,{label:'x',min:cur.xr[0],max:cur.xr[1],step:(cur.xr[1]-cur.xr[0])/120,value:x0,
+      onInput:v=>{x0=v;draw();}});
+    sc=sliderRow(sbox,{label:'C',min:-3,max:3,step:0.5,value:0,onInput:v=>{C=v;draw();}});
+  }
+  function draw(){
+    Object.assign(plot.o,cur.win);plot.begin();
+    const a=cur.xr[0],b=cur.xr[1];
+    plot.fn(cur.F,{color:'#c9c5bb',width:1.4,dash:[4,4],xmin:a,xmax:b});
+    plot.fn(x=>cur.F(x)+C,{color:'#d97706',width:2.6,xmin:a,xmax:b});
+    plot.fn(cur.f,{color:'#2563eb',width:2.6,xmin:a,xmax:b});
+    const h=cur.f(x0),Fv=cur.F(x0)+C;
+    const span=(cur.win.xmax-cur.win.xmin)*0.22;
+    plot.fn(t=>Fv+h*(t-x0),{color:'#7c3aed',width:1.8,dash:[6,4],xmin:x0-span,xmax:x0+span});
+    const w=(cur.win.xmax-cur.win.xmin)*0.008;
+    plot.poly([[x0-w,0],[x0+w,0],[x0+w,h],[x0-w,h]],{fill:'rgba(37,99,235,.55)',stroke:'#2563eb',width:1});
+    plot.point([x0,h],{color:'#2563eb',r:4.5,label:'f(x)'});
+    plot.point([x0,Fv],{color:'#d97706',r:5.5,label:'F(x)'});
+    const slope=(cur.F(x0+1e-4)-cur.F(x0-1e-4))/2e-4;
+    $('#slopeOut').innerHTML=
+      `x = ${fmtDec(x0,3)}<br>`+
+      `f(x) = ${fmtDec(h,4)} &nbsp; (height of the blue bar)<br>`+
+      `F(x) + C = ${fmtDec(Fv,4)}<br>`+
+      `slope of F at x = ${fmtDec(slope,4)} &nbsp; <b>= f(x)</b><br>`+
+      `C = ${fmtDec(C,2)} (the grey dashed curve is C = 0)`;
+  }
+  build();redrawOnShow('table',draw);draw();
+
+  new Drill({mount:'#drill-table',section:'table',goal:7,
+    ...mixDrill([Q.polyMix,Q.polyMix,Q.transcMix,Q.transcMix,Q.rewriteFirst,Q.rewriteFirst,Q.definiteBasic,Q.areaUnderCurve])});
+})();
+
+/* ============================================================ chapter 2 explore: accumulation + walkthrough */
+(function(){
+  const P=[
+    {n:'f = sin x',f:Math.sin,xmax:2*PI,win:{xmin:-0.5,xmax:6.9,ymin:-1.6,ymax:1.6},
+     gwin:{xmin:-0.5,xmax:6.9,ymin:-0.6,ymax:2.4},tex:'\\sin x'},
+    {n:'f = 2 − x',f:x=>2-x,xmax:4,win:{xmin:-0.4,xmax:4.4,ymin:-2.6,ymax:2.6},
+     gwin:{xmin:-0.4,xmax:4.4,ymin:-1.2,ymax:2.6},tex:'2-x'},
+    {n:'f = x²/2',f:x=>x*x/2,xmax:3,win:{xmin:-0.4,xmax:3.4,ymin:-0.6,ymax:5},
+     gwin:{xmin:-0.4,xmax:3.4,ymin:-0.6,ymax:5},tex:'\\tfrac{x^2}{2}'},
+    {n:'f = cos x',f:Math.cos,xmax:2*PI,win:{xmin:-0.5,xmax:6.9,ymin:-1.6,ymax:1.6},
+     gwin:{xmin:-0.5,xmax:6.9,ymin:-1.6,ymax:1.6},tex:'\\cos x'}
+  ];
+  const top=new Plot2D('#accPlot',P[0].win),bot=new Plot2D('#accGraph',P[0].gwin);
+  let cur=P[0],x0=1,tab=null,slider=null;
+  function buildTab(pr){const N=400,h=pr.xmax/N,g=[0];
+    for(let i=1;i<=N;i++){const a=(i-1)*h;g.push(g[i-1]+(pr.f(a)+4*pr.f(a+h/2)+pr.f(a+h))*h/6);}
+    return {g,h,N,xmax:pr.xmax};}
+  const gAt=(T,x)=>{const s=clamp(x,0,T.xmax)/T.h;const i=Math.min(T.N-1,Math.floor(s));return T.g[i]+(T.g[i+1]-T.g[i])*(s-i);};
+  const pbox=$('#accPresets'),sbox=$('#accSliders');
+  P.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);
+    b.onclick=()=>{cur=pr;tab=buildTab(pr);$$('.btn',pbox).forEach(z=>z.classList.remove('on'));b.classList.add('on');build();draw();};
+    pbox.appendChild(b);});
+  $$('.btn',pbox)[0].classList.add('on');
+  function build(){
+    sbox.innerHTML='';
+    x0=Math.min(x0,cur.xmax);
+    slider=sliderRow(sbox,{label:'x',min:0,max:cur.xmax,step:cur.xmax/240,value:x0,onInput:v=>{x0=v;draw();}});
+  }
+  function shadeSigned(p,f,b){
+    if(b<=1e-9)return;
+    const N=180;let i=0;
+    while(i<N){
+      const s=f(b*(i+0.5)/N)>=0?1:-1;
+      let j=i+1;
+      while(j<N&&((f(b*(j+0.5)/N)>=0?1:-1)===s))j++;
+      p.region(b*i/N,b*j/N,()=>0,f,{fill:s>0?'rgba(22,163,74,.28)':'rgba(220,38,38,.24)',stroke:null,n:40});
+      i=j;
+    }
+  }
+  function draw(){
+    Object.assign(top.o,cur.win);top.begin();
+    shadeSigned(top,cur.f,x0);
+    top.fn(cur.f,{color:'#2563eb',width:2.6,xmin:0,xmax:cur.xmax});
+    const h=cur.f(x0);
+    top.vector([x0,0],[x0,h],{color:'#7c3aed',width:2,label:'f(x)'});
+    top.point([x0,0],{color:'#7c3aed',r:6,ring:true,label:'x'});
+    const gv=gAt(tab,x0);
+    Object.assign(bot.o,cur.gwin);bot.begin();
+    bot.fn(x=>gAt(tab,x),{color:'#16a34a',width:2.6,xmin:0,xmax:cur.xmax});
+    const span=cur.xmax*0.18;
+    bot.fn(t=>gv+h*(t-x0),{color:'#7c3aed',width:1.6,dash:[6,4],xmin:x0-span,xmax:x0+span});
+    bot.point([x0,gv],{color:'#16a34a',r:5.5,label:'g(x)'});
+    $('#accOut').innerHTML=
+      `x = ${fmtDec(x0,3)}<br>`+
+      `g(x) = ∫₀ˣ f(t) dt = <b>${fmtDec(gv,4)}</b><br>`+
+      `f(x) = ${fmtDec(h,4)} = slope of g at x<br>`+
+      (Math.abs(h)<0.03?'f(x) ≈ 0 here, so g has a flat spot: a maximum or a minimum.'
+        :h>0?'f(x) &gt; 0, so the shading is green and g is rising.'
+             :'f(x) &lt; 0, so the shading is red and g is falling.');
+  }
+  top.on('down',w=>{x0=clamp(w[0],0,cur.xmax);slider.set(x0);draw();})
+     .on('drag',w=>{x0=clamp(w[0],0,cur.xmax);slider.set(x0);draw();});
+  tab=buildTab(cur);build();
+  const anim=animator('ftc',dt=>{x0+=dt*cur.xmax/6;if(x0>cur.xmax)x0=0;slider.set(x0);draw();});
+  $('#accPlay').onclick=function(){anim.toggle();this.textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  $('#accReset').onclick=()=>{x0=0;slider.set(0);draw();};
+  redrawOnShow('ftc',draw);draw();
+
+  /* ---- walkthrough: differentiate an integral with a moving limit ---- */
+  let wf,wu,wc,step=0;
+  function newW(){wf=pick(FPOOL);wu=pick(UPOOL);wc=pick([0,1,2]);step=0;drawW();}
+  function drawW(){
+    const L=[];
+    L.push(`<span class="t b">${M(R`g(x)=`+dint(String(wc),wu.tex,wf.tex,'t'))}</span>`);
+    L.push(`<span class="${step>=1?'':'faint'}">${step>=1?'':'&nbsp;'} <span class="t ${step===1?'now':''} a">${M(`u=${wu.tex}`)}</span></span>`);
+    L.push(`<span class="${step>=2?'':'faint'}">${step>=2?'':'&nbsp;'} <span class="t ${step===2?'now':''} a">${M(R`u'=`+wu.dtex)}</span></span>`);
+    L.push(`<span class="${step>=3?'':'faint'}">${step>=3?'':'&nbsp;'} <span class="t ${step===3?'now':''} b">${M(`f(u)=${wf.texAt(wu.tex)}`)}</span></span>`);
+    L.push(`<span class="${step>=4?'':'faint'}">= <span class="t ${step===4?'now':''} c">${M(R`g'(x)=f(u)\,u'=${wf.texAt(wu.tex)}\cdot ${wu.dtex}`)}</span></span>`);
+    $('#wtExpr').innerHTML=L.join('<br>');
+    const st=['The lower limit is a constant, so it contributes nothing. Press Next.',
+      'Name the upper limit u. Everything else is the chain rule.',
+      'Differentiate u by itself.',
+      'Put u into f. This is where the dummy variable t disappears.',
+      'Multiply: the derivative is f(u) times u prime. No integration was needed.'];
+    $('#wtStatus').textContent=st[step];
+    $('#wtPrev').disabled=step===0;$('#wtNext').disabled=step===4;
+    typeset($('#wtExpr'));
+  }
+  $('#wtNext').onclick=()=>{step=Math.min(4,step+1);drawW();};
+  $('#wtPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#wtNew').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-ftc',section:'ftc',goal:6,
+    ...mixDrill([Q.ftc1Upper,Q.ftc1Upper,Q.ftc1Lower,Q.ftc1Both,Q.definiteEval,Q.definiteEval,Q.netChange,Q.displacementDistance])});
+})();
+
+/* ============================================================ chapter 3 explore: horizontal strips */
+(function(){
+  const P=[
+    {n:'y = ∛x, y = 1',g:y=>y*y*y,c:1,gtex:'x=y^3',ctex:'y=\\sqrt[3]{x}',
+     win:{xmin:-0.35,xmax:1.6,ymin:-0.35,ymax:1.6},area:0.25,areaT:'\\tfrac14'},
+    {n:'y = √x, y = 1.5',g:y=>y*y,c:1.5,gtex:'x=y^2',ctex:'y=\\sqrt{x}',
+     win:{xmin:-0.5,xmax:2.6,ymin:-0.5,ymax:2.1},area:1.125,areaT:'\\tfrac98'},
+    {n:'y = x², y = 2',g:y=>Math.sqrt(y),c:2,gtex:'x=\\sqrt{y}',ctex:'y=x^2',
+     win:{xmin:-0.4,xmax:1.9,ymin:-0.4,ymax:2.5},area:2*Math.sqrt(2)*2/3,areaT:'\\tfrac{4\\sqrt2}{3}'}
+  ];
+  const plot=new Plot2D('#wrtyPlot',P[0].win);
+  let cur=P[0],y0=0.6,slider=null;
+  const pbox=$('#wrtyPresets'),sbox=$('#wrtySliders');
+  P.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);
+    b.onclick=()=>{cur=pr;$$('.btn',pbox).forEach(z=>z.classList.remove('on'));b.classList.add('on');build();draw();};
+    pbox.appendChild(b);});
+  $$('.btn',pbox)[0].classList.add('on');
+  function build(){
+    sbox.innerHTML='';y0=cur.c*0.55;
+    slider=sliderRow(sbox,{label:'strip at y',min:0,max:cur.c,step:cur.c/160,value:y0,onInput:v=>{y0=v;draw();}});
+  }
+  const run=(g,b)=>{if(b<=0)return 0;const N=200,h=b/N;let s=g(0)+g(b);
+    for(let i=1;i<N;i++)s+=g(i*h)*(i%2?4:2);return s*h/3;};
+  function draw(){
+    Object.assign(plot.o,cur.win);plot.begin();
+    const N=120,pts=[];
+    for(let i=0;i<=N;i++){const y=cur.c*i/N;pts.push([cur.g(y),y]);}
+    pts.push([0,cur.c]);pts.push([0,0]);
+    plot.poly(pts,{fill:'rgba(37,99,235,.16)',stroke:'rgba(37,99,235,.35)',width:1});
+    plot.param(t=>[cur.g(t),t],0,cur.c*1.12,{color:'#7c3aed',width:2.4,n:300});
+    plot.fn(()=>cur.c,{color:'#b9b5ab',width:1.6,dash:[6,4]});
+    const w=cur.g(y0),t=(cur.win.ymax-cur.win.ymin)*0.008;
+    plot.poly([[0,y0-t],[w,y0-t],[w,y0+t],[0,y0+t]],{fill:'rgba(217,119,6,.9)',stroke:'#d97706',width:1});
+    plot.point([w,y0],{color:'#d97706',r:4.5});
+    plot.point([0,y0],{color:'#d97706',r:4.5});
+    plot.text([cur.g(cur.c),cur.c],'  y = '+fmtDec(cur.c,2),{color:'#8b877e',dx:4,dy:-6});
+    const partial=run(cur.g,y0),total=run(cur.g,cur.c);
+    $('#wrtyOut').innerHTML=
+      `curve solved for x: ${cur.gtex.replace(/[\\^{}]/g,'').replace('x=','x = ')}<br>`+
+      `y = ${fmtDec(y0,3)} &nbsp; strip width g(y) = <b>${fmtDec(w,4)}</b><br>`+
+      `running total ∫₀^y g dy = ${fmtDec(partial,4)}<br>`+
+      `whole region ∫₀^${fmtDec(cur.c,2)} g dy = <b>${fmtDec(total,4)}</b>`;
+  }
+  plot.on('down',w=>{y0=clamp(w[1],0,cur.c);slider.set(y0);draw();})
+      .on('drag',w=>{y0=clamp(w[1],0,cur.c);slider.set(y0);draw();});
+  build();redrawOnShow('areas',draw);draw();
+
+  new Drill({mount:'#drill-areas',section:'areas',goal:6,
+    ...mixDrill([Q.geometry,Q.geometry,Q.wrtY,Q.wrtY,Q.betweenCurves,Q.betweenCurves,Q.areaUnderCurve])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.polyMix,Q.transcMix,Q.rewriteFirst,Q.definiteBasic,Q.areaUnderCurve,
+  Q.ftc1Upper,Q.ftc1Lower,Q.ftc1Both,Q.definiteEval,Q.netChange,Q.displacementDistance,
+  Q.geometry,Q.wrtY,Q.betweenCurves]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-found',[
+  R`Power rule: \(\displaystyle\int x^n dx=\frac{x^{n+1}}{n+1}+C\) for \(n\neq-1\), and \(\displaystyle\int\frac{dx}{x}=\ln|x|+C\).`,
+  R`Exponentials: \(\displaystyle\int e^x dx=e^x+C\) and \(\displaystyle\int a^x dx=\frac{a^x}{\ln a}+C\).`,
+  R`\(\displaystyle\int\sin x\,dx=-\cos x+C\), \(\displaystyle\int\cos x\,dx=\sin x+C\).`,
+  R`\(\displaystyle\int\sec^2x\,dx=\tan x+C\), \(\displaystyle\int\csc^2x\,dx=-\cot x+C\).`,
+  R`\(\displaystyle\int\sec x\tan x\,dx=\sec x+C\), \(\displaystyle\int\csc x\cot x\,dx=-\csc x+C\).`,
+  R`\(\displaystyle\int\frac{dx}{1+x^2}=\arctan x+C\), \(\displaystyle\int\frac{dx}{\sqrt{1-x^2}}=\arcsin x+C\).`,
+  R`FTC 1: if \(g(x)=\int_a^x f(t)dt\) then \(g'(x)=f(x)\); with a moving limit, \(\frac{d}{dx}\int_a^{u(x)}f=f(u)u'\).`,
+  R`FTC 2: \(\displaystyle\int_a^b f(x)dx=F(b)-F(a)\) for any antiderivative \(F\) of a continuous \(f\).`,
+  R`Net change: \(\displaystyle\int_{t_1}^{t_2}Q'(t)dt=Q(t_2)-Q(t_1)\); displacement is \(\int v\,dt\), distance is \(\int|v|\,dt\).`
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'indefinite integral of a polynomial-style sum':q=>({f:q.ansStr}),
+  'indefinite integral with e^x and trig':q=>({f:q.ansStr}),
+  'rewrite, then integrate':q=>({f:q.ansStr}),
+  'definite integral by FTC2':q=>({v:q.ansStr}),
+  'area under a curve':q=>({v:q.ansStr}),
+  'derivative of an integral with variable upper limit':q=>({g:q.ansStr}),
+  'variable lower limit':q=>({g:q.ansStr}),
+  'variable in both limits':q=>({g:q.ansStr}),
+  'definite integral by FTC2, trig and exponential':q=>({v:q.ansStr}),
+  'net change from a rate':q=>({v:q.ansStr}),
+  'displacement and distance':q=>({d:q.dStr,s:q.sStr}),
+  'evaluate by geometry':q=>({v:q.ansStr}),
+  'area with horizontal strips':q=>({g:q.gStr,v:q.ansStr}),
+  'area between two curves':q=>({xs:q.xs.join(', '),v:q.ansStr})
+};
+
+initModule({key:'c2-found',title:'Integration Foundations',sub:'Module 0 · Stewart 5.3 to 5.4'});
+</script>
+</body>
+</html>
