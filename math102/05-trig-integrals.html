@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trigonometric Integrals</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 5 · Stewart 7.2</p>
+  <h2>Trigonometric integrals</h2>
+  <p class="lead">Four identities and two "save one factor" moves handle every product of sines, cosines, tangents, and secants you will meet.</p>
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Antiderivatives can be written with or without <code>+ C</code>. Powers are typed either way: <code>sin(x)^3</code> or <code>sin^3(x)</code>, and the <kbd>^</kbd> key builds the exponent for you. Absolute values come from the <kbd>|</kbd> key, so <code>ln|sec x|</code> types straight through. Numbers can be exact: <code>pi/6</code>, <code>3/8</code>, <code>2/15</code>, <code>1 - pi/4</code>, <code>3/2 - ln(2)</code>, <code>sqrt(3)</code>.</p>
+    <p>The checker compares your answer to the reference numerically, so <b>any equivalent form is accepted</b>, including forms that differ by a constant. If you get \(-\tfrac12\cos^2x\) and the book prints \(\tfrac12\sin^2x\), both are marked correct: they differ by the constant \(\tfrac12\). Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the factor you save, the rewritten form</span>
+      <span><i class="dot" style="background:var(--b)"></i> the integrand and the area under it</span>
+      <span><i class="dot" style="background:var(--c)"></i> the result</span>
+      <span><i class="dot" style="background:var(--d)"></i> marked points and moving bounds</span>
+    </div>
+  </div>
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Rewrite any even power of sine or cosine with the half-angle identities, so it can be integrated on sight.</li>
+      <li>Integrate \(\sin^m x\cos^n x\) for any \(m\) and \(n\), by saving one factor when a power is odd and by half-angle identities when both are even.</li>
+      <li>Integrate \(\tan^m x\sec^n x\), and produce the four standard antiderivatives \(\int\tan x\,dx\), \(\int\cot x\,dx\), \(\int\sec x\,dx\), \(\int\csc x\,dx\) from memory.</li>
+      <li>Turn a product of two different frequencies into a sum with the product-to-sum identities, and use it to integrate.</li>
+      <li>Evaluate the definite versions that show up in polar area and in Fourier series, including the orthogonality integrals.</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 IDENTITIES -->
+<section data-id="identities" data-title="The identities that do the work" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 7.2</p>
+  <h2>The identities that do the work</h2>
+  <p class="lead">Every trigonometric integral in this module is one of two moves: trade an even power for a lower frequency, or save one factor and substitute.</p>
+
+  <p>Three <b>Pythagorean identities</b> convert one squared function into another. They are the reason an even power can always be traded away:</p>
+  <div class="formula">\(\sin^2x+\cos^2x=1 \qquad 1+\tan^2x=\sec^2x \qquad 1+\cot^2x=\csc^2x\)<span class="cap">Divide the first by \(\cos^2x\) to get the second, by \(\sin^2x\) to get the third. You never need to memorize all three separately.</span></div>
+
+  <p>The <b>half-angle identities</b> are the workhorses. They come straight from the double angle formula \(\cos 2x = 2\cos^2x-1 = 1-2\sin^2x\). Solve that for \(\cos^2 x\), then for \(\sin^2x\):</p>
+  <div class="formula">\(\cos^2x=\dfrac{1+\cos 2x}{2}\qquad\qquad \sin^2x=\dfrac{1-\cos 2x}{2}\)<span class="cap">A squared function of \(x\) becomes a first power of a function of \(2x\). Squares are hard to integrate; first powers are not.</span></div>
+  <p>Read the right side as a constant plus a wiggle. The constant is \(\tfrac12\), and the wiggle \(\pm\tfrac12\cos 2x\) averages to zero over a full period. That single sentence is the whole reason these identities exist: <b>the average value of \(\sin^2x\) or \(\cos^2x\) over a period is exactly \(\tfrac12\)</b>.</p>
+
+  <div class="card">
+    <h4>Explore: the average of a square</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="avgPlot"></canvas><p class="plotcap">Blue is the square. Orange dashed is its half-angle rewrite \(\tfrac12\mp\tfrac12\cos 2x\), drawn on top so you can see the two curves are the same curve. The gray dashed line is \(y=\tfrac12\).</p></div>
+      <div>
+        <div class="presets" id="avgPresets"></div>
+        <div class="controls"><label class="chk"><input type="checkbox" id="avgRw" checked> show the rewrite</label>
+          <button class="btn" id="avgPlay">▶ Play</button></div>
+        <div class="sliders" id="avgSliders"></div>
+        <div class="readout" id="avgOut"></div>
+        <p class="hint">Slide \(b\) to a full period, \(b=2\pi\). The shaded area is exactly \(\pi\), which is half of the width \(2\pi\): the wiggle above the line \(y=\tfrac12\) cancels the dip below it. Now stop at \(b=\pi/2\) and watch the running average sit above \(\tfrac12\) for \(\sin^2\) and below it for \(\cos^2\). Over any whole number of half periods the two agree.</p>
+      </div>
+    </div>
+  </div>
+
+  <p>Two more rewrites fall out of the same two identities and get used constantly:</p>
+  <div class="formula">\(\sin^4x=\dfrac{3-4\cos 2x+\cos 4x}{8}\qquad \sin^2x\cos^2x=\dfrac{1-\cos 4x}{8}\)<span class="cap">Square \(\sin^2x=\tfrac{1-\cos 2x}{2}\) and apply the identity again to the \(\cos^2 2x\) it produces. For the second one, use \(\sin x\cos x=\tfrac12\sin 2x\) first, then square.</span></div>
+  <div class="note"><b>The shortcut for \(\sin^2x\cos^2x\).</b> Do not expand it. Recognize \(\sin x\cos x=\tfrac12\sin 2x\), square to get \(\tfrac14\sin^2 2x\), then half-angle that: \(\tfrac14\cdot\tfrac{1-\cos 4x}{2}=\tfrac{1-\cos 4x}{8}\). Two lines instead of six.</div>
+
+  <p>Integrating the rewritten form is immediate, because \(\int\cos(kx)\,dx=\tfrac1k\sin(kx)\):</p>
+  <div class="formula">\(\displaystyle\int\sin^2(kx)\,dx=\frac{x}{2}-\frac{\sin(2kx)}{4k}+C\qquad \int\cos^2(kx)\,dx=\frac{x}{2}+\frac{\sin(2kx)}{4k}+C\)<span class="cap">Only the sign in front of the sine changes. The \(x/2\) is the average value \(\tfrac12\) times the width, and the sine term is the wiggle.</span></div>
+  <div class="warn"><b>The inner constant divides twice.</b> In \(\int\sin^2(3x)\,dx\) the rewrite gives \(\tfrac12-\tfrac12\cos 6x\), and integrating \(\cos 6x\) divides by 6, not by 3. The answer is \(\tfrac{x}{2}-\tfrac{\sin 6x}{12}\). Differentiate to check whenever you are unsure.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-identities"></div>
+</section>
+
+<!-- ============================================================ 2 SIN COS -->
+<section data-id="sincos" data-title="Powers of sine and cosine" data-goal="8">
+  <p class="eyebrow">Chapter 2 · Stewart 7.2</p>
+  <h2>Powers of sine and cosine</h2>
+  <p class="lead">One question decides the whole problem: is a power odd? If it is, save one factor and substitute. If not, use the half-angle identities.</p>
+
+  <p>The reason an odd power is easy is that \(\sin x\) and \(\cos x\) are each other's derivative, up to a sign. Saving one factor turns it into the \(du\):</p>
+  <div class="formula">\(u=\sin x\;\Rightarrow\;du=\cos x\,dx\qquad\qquad u=\cos x\;\Rightarrow\;du=-\sin x\,dx\)<span class="cap">The saved factor is exactly what \(du\) needs. Everything left over must be turned into the new variable, and only an even power can be, because \(\cos^2x=1-\sin^2x\).</span></div>
+
+  <div class="card tint">
+    <h4>The decision, for \(\displaystyle\int\sin^m x\cos^n x\,dx\)</h4>
+    <ol class="steps">
+      <li><b>\(n\) odd (the cosine power).</b> Save one \(\cos x\). The remaining \(\cos^{n-1}x\) has an even power, so write it as \((1-\sin^2x)^{(n-1)/2}\). Substitute \(u=\sin x\).</li>
+      <li><b>\(m\) odd (the sine power).</b> Save one \(\sin x\). Write \(\sin^{m-1}x=(1-\cos^2x)^{(m-1)/2}\). Substitute \(u=\cos x\), and carry the minus sign from \(du=-\sin x\,dx\).</li>
+      <li><b>Both even.</b> There is nothing to save. Use \(\sin^2x=\tfrac{1-\cos 2x}{2}\) and \(\cos^2x=\tfrac{1+\cos 2x}{2}\) to halve every power, and repeat if a square survives.</li>
+      <li><b>Both odd.</b> Either choice works. Save from the smaller power: it leaves less to expand.</li>
+    </ol>
+  </div>
+
+  <p>Three worked examples, in the order you will meet them.</p>
+  <p><b>\(\int\sin^3x\,dx\).</b> The sine power is odd. Save one: \(\int\sin^2x\,\sin x\,dx=\int(1-\cos^2x)\sin x\,dx\). With \(u=\cos x\), \(du=-\sin x\,dx\), this is \(-\int(1-u^2)\,du=-u+\tfrac{u^3}{3}\), so the answer is \(-\cos x+\tfrac13\cos^3x+C\).</p>
+  <p><b>\(\int\sin^2x\cos^3x\,dx\).</b> The cosine power is odd. Save one cosine: \(\int\sin^2x(1-\sin^2x)\cos x\,dx\). With \(u=\sin x\) this is \(\int(u^2-u^4)\,du=\tfrac{u^3}{3}-\tfrac{u^5}{5}\), so \(\tfrac13\sin^3x-\tfrac15\sin^5x+C\).</p>
+  <p><b>\(\int\cos^4x\,dx\).</b> Both even, so no substitution. \(\cos^4x=\left(\tfrac{1+\cos 2x}{2}\right)^2=\tfrac14(1+2\cos 2x+\cos^2 2x)\), and the surviving square needs the identity again: \(\cos^2 2x=\tfrac{1+\cos 4x}{2}\). The result is \(\tfrac38 x+\tfrac14\sin 2x+\tfrac1{32}\sin 4x+C\).</p>
+
+  <div class="card">
+    <h4>Step-by-step: save a factor and substitute</h4>
+    <div class="expr" id="scExpr"></div>
+    <div class="controls">
+      <button class="btn" id="scPrev">◀ Back</button>
+      <button class="btn primary" id="scNext">Next step ▶</button>
+      <button class="btn" id="scNew">New problem</button>
+      <span class="status" id="scStatus"></span>
+    </div>
+    <p class="hint">Check yourself at the substitution step: after you replace \(\sin x\) or \(\cos x\) by \(u\), not a single trigonometric function may remain. If one does, you saved the wrong factor.</p>
+  </div>
+
+  <div class="warn"><b>Two ways to get this wrong.</b> In \(\int\sin^3x\cos^3x\,dx\), save <b>one</b> cosine, not both: the point is to leave an even power behind, not to strip the factor bare. And never try to save a factor from \(\int\sin^2x\cos^2x\,dx\): both powers are even, so whichever factor you pull out leaves an odd power that the Pythagorean identity cannot convert. That one is a half-angle problem.</div>
+
+  <div class="card">
+    <h4>Explore: which power is odd</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="subPlot"></canvas><p class="plotcap">The integrand \(\sin^m x\cos^n x\) on \([0,\pi]\), shaded from \(0\) to the bound you slide.</p></div>
+      <div>
+        <div class="row" style="gap:10px;margin-bottom:8px"><span style="width:74px">\(m\) (sine)</span><span id="subM"></span></div>
+        <div class="row" style="gap:10px"><span style="width:74px">\(n\) (cosine)</span><span id="subN"></span></div>
+        <div class="sliders" id="subSliders"></div>
+        <div class="readout" id="subForm"></div>
+        <div class="readout" id="subOut"></div>
+        <p class="hint">Set \(n\) odd and watch the curve stay lopsided about \(x=\pi/2\): the cosine factor changes sign there, and the whole integral over \([0,\pi]\) collapses to zero. Set both powers even and the curve is a nonnegative hump with a genuinely positive area, which is exactly the case that needs the half-angle identities.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-sincos"></div>
+</section>
+
+<!-- ============================================================ 3 TAN SEC -->
+<section data-id="tansec" data-title="Powers of tangent and secant" data-goal="7">
+  <p class="eyebrow">Chapter 3 · Stewart 7.2</p>
+  <h2>Powers of tangent and secant</h2>
+  <p class="lead">Same game, different pair. Two derivative facts and one Pythagorean identity decide everything.</p>
+
+  <div class="formula">\(\dfrac{d}{dx}\tan x=\sec^2x\qquad \dfrac{d}{dx}\sec x=\sec x\tan x\qquad 1+\tan^2x=\sec^2x\)<span class="cap">The two derivatives tell you what a usable \(du\) looks like: either a lone \(\sec^2x\), or the pair \(\sec x\tan x\) together. The identity converts whatever is left.</span></div>
+
+  <div class="card tint">
+    <h4>The decision, for \(\displaystyle\int\tan^m x\sec^n x\,dx\)</h4>
+    <ol class="steps">
+      <li><b>\(n\) even (the secant power), \(n\ge 2\).</b> Save \(\sec^2x\) for \(du\). The remaining \(\sec^{n-2}x\) has an even power, so write it as \((1+\tan^2x)^{(n-2)/2}\). Substitute \(u=\tan x\).</li>
+      <li><b>\(m\) odd (the tangent power).</b> Save the pair \(\sec x\tan x\) for \(du\). The remaining \(\tan^{m-1}x\) is an even power, so write it as \((\sec^2x-1)^{(m-1)/2}\). Substitute \(u=\sec x\).</li>
+      <li><b>Neither.</b> Even tangent power with no secant, or an odd secant power with no tangent. These reduce to the standard list below, usually with \(\tan^2x=\sec^2x-1\) or with integration by parts.</li>
+    </ol>
+  </div>
+
+  <p>The four basic antiderivatives are pure memory. Two of them are substitutions you could do; two are tricks you would not invent under time pressure.</p>
+  <div class="formula">\(\displaystyle\int\tan x\,dx=\ln|\sec x|+C \qquad \int\cot x\,dx=\ln|\sin x|+C\)<span class="cap">\(\int\tan x\,dx=\int\frac{\sin x}{\cos x}dx\) with \(u=\cos x\) gives \(-\ln|\cos x|\), which is the same as \(\ln|\sec x|\).</span></div>
+  <div class="formula">\(\displaystyle\int\sec x\,dx=\ln|\sec x+\tan x|+C \qquad \int\csc x\,dx=\ln|\csc x-\cot x|+C\)<span class="cap">Multiply and divide by \(\sec x+\tan x\): the numerator becomes exactly the derivative of the denominator. Memorize the result instead of rediscovering it.</span></div>
+
+  <p>Two more that show up constantly. The first is a one-line identity, the second is the by-parts loop from Module 2:</p>
+  <div class="formula">\(\displaystyle\int\tan^2x\,dx=\tan x-x+C \qquad \int\sec^3x\,dx=\tfrac12\big(\sec x\tan x+\ln|\sec x+\tan x|\big)+C\)<span class="cap">For the first, \(\tan^2x=\sec^2x-1\). For the second, take \(u=\sec x\), \(dv=\sec^2x\,dx\); the integral reappears on the right and you solve for it.</span></div>
+  <div class="note"><b>Cotangent and cosecant are the mirror image.</b> \(\frac{d}{dx}\cot x=-\csc^2x\) and \(\frac{d}{dx}\csc x=-\csc x\cot x\). Every rule above carries over with a sign flip, so nothing new has to be learned. Stewart's problems are written in tangent and secant almost every time.</div>
+
+  <div class="card">
+    <h4>Step-by-step: tangent and secant</h4>
+    <div class="expr" id="tsExpr"></div>
+    <div class="controls">
+      <button class="btn" id="tsPrev">◀ Back</button>
+      <button class="btn primary" id="tsNext">Next step ▶</button>
+      <button class="btn" id="tsNew">New problem</button>
+      <span class="status" id="tsStatus"></span>
+    </div>
+    <p class="hint">Notice which identity each branch uses. Saving \(\sec^2x\) leaves secants, which become \(1+\tan^2x\). Saving \(\sec x\tan x\) leaves tangents, which become \(\sec^2x-1\). Reaching for the wrong one is the usual slip.</p>
+  </div>
+
+  <div class="warn"><b>An odd secant power with an even tangent power is the hard case.</b> \(\int\sec^3x\,dx\) and \(\int\tan^2x\sec x\,dx\) have no substitution: there is no lone \(\sec^2x\) and no \(\sec x\tan x\) pair to save. Convert to pure secants and use the \(\int\sec^3 x\,dx\) formula.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-tansec"></div>
+</section>
+
+<!-- ============================================================ 4 PRODUCTS -->
+<section data-id="products" data-title="Products with different frequencies" data-goal="4">
+  <p class="eyebrow">Chapter 4 · Stewart 7.2</p>
+  <h2>Products with different frequencies</h2>
+  <p class="lead">When the two factors have different inner multipliers, no substitution helps. Turn the product into a sum instead.</p>
+
+  <p>Add and subtract the angle addition formulas and three identities drop out. They convert a product of two waves into a sum of two waves, and a sum is something you can integrate one term at a time:</p>
+  <div class="formula">\(\sin A\cos B=\tfrac12\big[\sin(A-B)+\sin(A+B)\big]\)<span class="cap">From \(\sin(A+B)+\sin(A-B)=2\sin A\cos B\).</span></div>
+  <div class="formula">\(\sin A\sin B=\tfrac12\big[\cos(A-B)-\cos(A+B)\big] \qquad \cos A\cos B=\tfrac12\big[\cos(A-B)+\cos(A+B)\big]\)<span class="cap">Both come from \(\cos(A\mp B)=\cos A\cos B\pm\sin A\sin B\). Note the minus sign in the sine-sine one: it is the only asymmetry to remember.</span></div>
+  <p>Every product of two different frequencies becomes a <b>beat</b>: a slow wave at the difference frequency \(m-n\) and a fast one at the sum frequency \(m+n\), each with amplitude \(\tfrac12\). This is the first step of a Fourier series, where a signal is broken into pure frequencies by integrating it against \(\sin(nx)\) and \(\cos(nx)\).</p>
+
+  <div class="card">
+    <h4>Explore: a product is a beat</h4>
+    <div class="xf">
+      <div><canvas class="scene wide" id="prodPlot"></canvas><p class="plotcap">Blue is the product. Orange dashed are the two halves of the rewrite, \(\tfrac12\) of the difference frequency and \(\tfrac12\) of the sum frequency. The shaded area is the integral over \([0,\pi]\).</p></div>
+      <div>
+        <div class="presets" id="prodKinds"></div>
+        <div class="row" style="gap:10px;margin-bottom:8px"><span style="width:26px">\(m\)</span><span id="prodM"></span></div>
+        <div class="row" style="gap:10px"><span style="width:26px">\(n\)</span><span id="prodN"></span></div>
+        <div class="controls"><label class="chk"><input type="checkbox" id="prodRw" checked> show the two terms</label></div>
+        <div class="readout" id="prodForm"></div>
+        <div class="readout" id="prodOut"></div>
+        <p class="hint">Set \(m=n\) and watch the difference frequency collapse to a constant: the slow wave becomes the flat line \(\tfrac12\), the signed areas stop cancelling, and the integral jumps from \(0\) to \(\pi/2\). That jump is <b>orthogonality</b>, and it is the reason a Fourier coefficient picks out exactly one frequency.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula">\(\displaystyle\int_{-\pi}^{\pi}\sin(mx)\cos(nx)\,dx=0 \quad\text{always}\qquad \int_{-\pi}^{\pi}\cos(mx)\cos(nx)\,dx=\begin{cases}0,& m\ne n\\ \pi,& m=n\end{cases}\)<span class="cap">The same holds for \(\sin(mx)\sin(nx)\). Distinct frequencies are orthogonal over a full period: their product has as much area above the axis as below.</span></div>
+  <div class="note"><b>Check the difference frequency first.</b> If \(m=n\) the term \(\cos((m-n)x)\) is \(\cos 0=1\), a constant, and it integrates to \(x\), not to a sine. Forgetting that is how a nonzero orthogonality integral turns into a wrong zero.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-products"></div>
+</section>
+
+<!-- ============================================================ 5 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const PI=Math.PI;
+const G=(box,k,res)=>{gradeInput($(`[data-k=${k}]`,box),res);return res;};
+const VAL=(box,k)=>$(`[data-k=${k}]`,box).value;
+const aLine=(box,k,label,ph)=>box.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+const nLine=(box,k,label)=>box.appendChild(ansLine(label,k,{wide:true}));
+const hintBox=(box,html)=>{let h=$('.hintbox',box);if(!h){h=box.appendChild(document.createElement('div'));h.className='hintbox expr';}h.innerHTML=html;};
+
+/* ---------- fractions and polynomials in u (index = power, entry = [num, den]) ---------- */
+const ZF=[0,1],OF=[1,1];
+const pTrim=p=>{const o=p.slice();while(o.length>1&&o[o.length-1][0]===0)o.pop();return o;};
+const pAdd=(a,b)=>{const n=Math.max(a.length,b.length),o=[];for(let i=0;i<n;i++)o.push(frAdd(a[i]||ZF,b[i]||ZF));return pTrim(o);};
+const pMul=(a,b)=>{const o=Array.from({length:a.length+b.length-1},()=>ZF);for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++)o[i+j]=frAdd(o[i+j],frMul(a[i],b[j]));return pTrim(o);};
+const pScale=(k,a)=>pTrim(a.map(c=>frMul(k,c)));
+const pPow=(a,m)=>{let o=[OF];for(let i=0;i<m;i++)o=pMul(o,a);return o;};
+const pInt=a=>{const o=[ZF];a.forEach((c,i)=>o.push(frMul(c,[1,i+1])));return pTrim(o);};
+const pMono=m=>{const o=[];for(let i=0;i<m;i++)o.push(ZF);o.push(OF);return o;};
+const pAt1=a=>{let s=ZF;a.forEach(c=>{s=frAdd(s,c);});return s;};
+const pTerms=p=>p.reduce((s,c)=>s+(c[0]?1:0),0);
+/* TeX for a polynomial, body(k) renders the k-th power */
+function pTex(p,body){let out='';p.forEach((c,k)=>{if(c[0]===0)return;const b=body(k);const a=Math.abs(c[0]);
+  const co=(a===1&&c[1]===1)?(b?'':'1'):texFrac(a,c[1],{tf:true});
+  out+=(out===''?(c[0]<0?'-':''):(c[0]<0?' - ':' + '))+co+b;});return out||'0';}
+/* parseable string for a polynomial */
+function pStr(p,body){const t=[];p.forEach((c,k)=>{if(c[0]===0)return;const b=body(k);t.push(`(${c[0]}/${c[1]})`+(b?`*(${b})`:''));});return t.length?t.join('+'):'0';}
+const uTex=k=>k===0?'':k===1?'u':`u^{${k}}`;
+/* (body)^j with the trivial exponents cleaned up, and u^p(body)^j as an integrand */
+const parTex=(b,j)=>j===0?'':j===1?`(${b})`:`(${b})^{${j}}`;
+const uProdTex=(p,b,j)=>[uTex(p),parTex(b,j)].filter(Boolean).join('')||'1';
+const uStr=k=>k===0?'':k===1?'u':`u^${k}`;
+const fnTex=(f,arg)=>k=>k===0?'':k===1?`\\${f} ${arg}`:`\\${f}^{${k}} ${arg}`;
+const fnStr=(f,arg)=>k=>k===0?'':k===1?`${f}(${arg})`:`${f}(${arg})^${k}`;
+
+/* ---------- integrand rendering ---------- */
+const argTex=k=>k===1?'x':`(${k}x)`;
+const argStr=k=>k===1?'x':`${k}x`;
+function powTex(f,p,k){if(!p)return '';const a=argTex(k);return p===1?`\\${f} ${a}`:`\\${f}^{${p}} ${a}`;}
+function powStr(f,p,k){if(!p)return '';const a=argStr(k);return p===1?`${f}(${a})`:`${f}(${a})^${p}`;}
+function prodTex(f1,p1,f2,p2,k){const s=[powTex(f1,p1,k),powTex(f2,p2,k)].filter(Boolean);return s.length?s.join('\\,'):'1';}
+function prodStr(f1,p1,f2,p2,k){const s=[powStr(f1,p1,k),powStr(f2,p2,k)].filter(Boolean);return s.length?s.join('*'):'1';}
+
+/* ---------- numeric checks: every stored antiderivative and every stored value is verified ---------- */
+function verifyAnti(ansStr,intStr,pts){
+  let F,g;try{F=Expr.compile(ansStr);g=Expr.compile(intStr);}catch(e){return false;}
+  for(const x of pts){
+    const d=(F({x:x+1e-5})-F({x:x-1e-5}))/2e-5,v=g({x});
+    if(!Number.isFinite(d)||!Number.isFinite(v))return false;
+    if(Math.abs(d-v)>1e-4*Math.max(1,Math.abs(v)))return false;
+  }
+  return true;
+}
+function simpsonF(f,a,b,n=2000){
+  if(n%2)n++;const h=(b-a)/n;let s=f(a)+f(b);
+  for(let i=1;i<n;i++)s+=f(a+i*h)*(i%2?4:2);
+  return s*h/3;
+}
+function simpsonStr(intStr,a,b,n=4000){
+  let g;try{g=Expr.compile(intStr);}catch(e){return NaN;}
+  return simpsonF(x=>g({x}),a,b,n);
+}
+const verifyDef=(intStr,a,b,v)=>{const s=simpsonStr(intStr,a,b);return Number.isFinite(s)&&Math.abs(s-v)<=1e-5*Math.max(1,Math.abs(v));};
+/* two expression strings agree as functions of x (used to verify every stored identity rewrite) */
+function sameFn(a,b){
+  let f,g;try{f=Expr.compile(a);g=Expr.compile(b);}catch(e){return false;}
+  for(let i=0;i<12;i++){const x=-2.2+i*0.4;const u=f({x}),v=g({x});
+    if(!Number.isFinite(u)||!Number.isFinite(v)||Math.abs(u-v)>1e-9*Math.max(1,Math.abs(v)))return false;}
+  return true;
+}
+/* exact printing of a number that is rational or a rational multiple of pi */
+function ratOf(x,maxD=64){for(let d=1;d<=maxD;d++){const n=x*d;if(Math.abs(n-Math.round(n))<1e-9*Math.max(1,Math.abs(x)))return [Math.round(n),d];}return null;}
+const piStr=(n,d)=>`${n===1?'':n===-1?'-':n}pi${d===1?'':'/'+d}`;
+const piTex=(n,d)=>{const s=n<0?'-':'';const a=Math.abs(n);const num=a===1?'\\pi':a+'\\pi';return d===1?s+num:`${s}\\frac{${num}}{${d}}`;};
+function numForms(v){
+  if(Math.abs(v)<1e-12)return {str:'0',tex:'0'};
+  let r=ratOf(v);if(r)return {str:r[1]===1?String(r[0]):`${r[0]}/${r[1]}`,tex:texFrac(r[0],r[1])};
+  r=ratOf(v/PI);if(r)return {str:piStr(r[0],r[1]),tex:piTex(r[0],r[1])};
+  return null;
+}
+
+/* ---------- antiderivative builders ---------- */
+/* one odd power: returns {anti (poly in u), uTexName, uStrName, j, saved, from} */
+function oddAnti(m,n){
+  if(n%2===1){const j=(n-1)/2;const poly=pMul(pMono(m),pPow([OF,ZF,[-1,1]],j));
+    return {poly,anti:pInt(poly),u:'sin',j,keep:m,other:n};}
+  const j=(m-1)/2;const poly=pMul(pMono(n),pPow([OF,ZF,[-1,1]],j));
+  return {poly,anti:pScale([-1,1],pInt(poly)),u:'cos',j,keep:n,other:m};
+}
+/* both even, inner multiplier k: closed forms */
+function evenAnti(m,n,k){
+  const t=`${m},${n}`;
+  const A=2*k,B=4*k;
+  if(t==='2,0')return {str:`x/2-sin(${A}x)/${4*k}`,tex:R`\frac{x}{2}-\frac{\sin(${A}x)}{${4*k}}`};
+  if(t==='0,2')return {str:`x/2+sin(${A}x)/${4*k}`,tex:R`\frac{x}{2}+\frac{\sin(${A}x)}{${4*k}}`};
+  if(t==='4,0')return {str:`3*x/8-sin(${A}x)/${4*k}+sin(${B}x)/${32*k}`,tex:R`\frac{3x}{8}-\frac{\sin(${A}x)}{${4*k}}+\frac{\sin(${B}x)}{${32*k}}`};
+  if(t==='0,4')return {str:`3*x/8+sin(${A}x)/${4*k}+sin(${B}x)/${32*k}`,tex:R`\frac{3x}{8}+\frac{\sin(${A}x)}{${4*k}}+\frac{\sin(${B}x)}{${32*k}}`};
+  if(t==='2,2')return {str:`x/8-sin(${B}x)/${32*k}`,tex:R`\frac{x}{8}-\frac{\sin(${B}x)}{${32*k}}`};
+  return {str:'x',tex:'x'};
+}
+/* double factorial, df(-1)=df(0)=df(1)=1 */
+const df=k=>{let r=1;for(let i=k;i>1;i-=2)r*=i;return r;};
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1 ---------- */
+const SQ_RE=/(sin|cos|tan|sec|csc|cot)\s*(\([^()]*\))?\s*(\^|\*\*)/i;
+Q.rewritePower={name:'rewrite with a half-angle identity',
+  gen(){
+    for(let t=0;;t++){const q=Q.rewritePower.build();if(t>40||sameFn(q.lhsStr,q.ref))return q;}
+  },
+  build(){
+    const kind=pick(['s2','c2','s2','c2','s4','c4','sc2']);
+    const k=(kind==='s2'||kind==='c2')?rint(1,3):1;
+    const lhsStr=kind==='s2'?`sin(${argStr(k)})^2`:kind==='c2'?`cos(${argStr(k)})^2`
+      :kind==='s4'?'sin(x)^4':kind==='c4'?'cos(x)^4':'sin(x)^2*cos(x)^2';
+    let qTex,ref,refTex,why;
+    if(kind==='s2'){qTex=powTex('sin',2,k);ref=`(1-cos(${2*k}x))/2`;refTex=R`\frac{1-\cos(${2*k}x)}{2}`;why=R`\sin^2\theta=\tfrac{1-\cos 2\theta}{2}\text{ with }\theta=${k===1?'x':k+'x'}`;}
+    else if(kind==='c2'){qTex=powTex('cos',2,k);ref=`(1+cos(${2*k}x))/2`;refTex=R`\frac{1+\cos(${2*k}x)}{2}`;why=R`\cos^2\theta=\tfrac{1+\cos 2\theta}{2}\text{ with }\theta=${k===1?'x':k+'x'}`;}
+    else if(kind==='s4'){qTex=R`\sin^{4} x`;ref='(3-4*cos(2x)+cos(4x))/8';refTex=R`\frac{3-4\cos 2x+\cos 4x}{8}`;why=R`\left(\tfrac{1-\cos 2x}{2}\right)^2\text{, then }\cos^2 2x=\tfrac{1+\cos 4x}{2}`;}
+    else if(kind==='c4'){qTex=R`\cos^{4} x`;ref='(3+4*cos(2x)+cos(4x))/8';refTex=R`\frac{3+4\cos 2x+\cos 4x}{8}`;why=R`\left(\tfrac{1+\cos 2x}{2}\right)^2\text{, then }\cos^2 2x=\tfrac{1+\cos 4x}{2}`;}
+    else{qTex=R`\sin^{2} x\,\cos^{2} x`;ref='(1-cos(4x))/8';refTex=R`\frac{1-\cos 4x}{8}`;why=R`\sin x\cos x=\tfrac12\sin 2x\text{, square, then half-angle}`;}
+    return {kind,k,qTex,ref,refTex,why,lhsStr,ansStr:ref};
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Rewrite ${M(q.qTex)} so that it contains no squared or higher power of a trigonometric function. Your answer may only use first powers of sines and cosines.</p>`;
+    aLine(box,'e',M(q.qTex+'='),'first powers only');},
+  check(q,box){const s=cleanAns(VAL(box,'e'));
+    if(SQ_RE.test(s))return G(box,'e',{ok:false,msg:'Your answer still contains a squared trigonometric function. Trade it for a cosine of a doubled angle.'});
+    return G(box,'e',checkExpr(VAL(box,'e'),q.ref,['x']));},
+  hint(q,box){hintBox(box,M(q.why));},
+  solution(q){return `Use ${M(q.why)}: ${M(q.qTex+'='+q.refTex)}.`;}
+};
+Q.integrateSquare={name:'integrate a square',
+  gen(){
+    for(let t=0;;t++){
+      const kind=pick(['s','c','s','c','sc']);
+      const k=kind==='sc'?1:rint(1,3);
+      const m=kind==='s'?2:kind==='c'?0:2,n=kind==='s'?0:kind==='c'?2:2;
+      const a=evenAnti(m,n,k);
+      const intTex=prodTex('sin',m,'cos',n,k),intStr=prodStr('sin',m,'cos',n,k);
+      const q={m,n,k,intTex,intStr,ansStr:a.str,ansTex:a.tex,
+        rwTex:kind==='s'?R`\frac{1-\cos(${2*k}x)}{2}`:kind==='c'?R`\frac{1+\cos(${2*k}x)}{2}`:R`\frac{1-\cos(4x)}{8}`};
+      if(t>40||verifyAnti(q.ansStr,q.intStr,[0.4,0.75,1.1]))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(null,null,q.intTex,'x'))}. Rewrite first, then integrate. The constant of integration is optional.</p>`;
+    aLine(box,'a',M(texInt(null,null,q.intTex,'x')+'='),'antiderivative');},
+  check(q,box){return G(box,'a',checkExprUpToConstant(VAL(box,'a'),q.ansStr,['x'],{domain:{x:[0.2,1.2]}}));},
+  hint(q,box){hintBox(box,M(q.intTex+'='+q.rwTex));},
+  solution(q){return `Half-angle first: ${M(q.intTex+'='+q.rwTex)}. Integrating term by term, and remembering that ${M(R`\int\cos(cx)\,dx=\tfrac1c\sin(cx)`)}, gives ${M(q.ansTex+'+C')}.`;}
+};
+Q.definiteSquare={name:'definite integral of a square',
+  gen(){
+    const POOL=[
+      {m:2,n:0,k:1,lo:0,hi:PI,loT:'0',hiT:'\\pi',s:'pi/2',t:R`\frac{\pi}{2}`},
+      {m:0,n:2,k:1,lo:0,hi:PI/2,loT:'0',hiT:'\\pi/2',s:'pi/4',t:R`\frac{\pi}{4}`},
+      {m:2,n:0,k:2,lo:0,hi:PI/4,loT:'0',hiT:'\\pi/4',s:'pi/8',t:R`\frac{\pi}{8}`},
+      {m:0,n:2,k:2,lo:0,hi:2*PI,loT:'0',hiT:'2\\pi',s:'pi',t:R`\pi`},
+      {m:2,n:0,k:1,lo:0,hi:PI/3,loT:'0',hiT:'\\pi/3',s:'pi/6-sqrt(3)/8',t:R`\frac{\pi}{6}-\frac{\sqrt3}{8}`},
+      {m:2,n:0,k:1,lo:0,hi:PI/2,loT:'0',hiT:'\\pi/2',s:'pi/4',t:R`\frac{\pi}{4}`},
+      {m:0,n:2,k:2,lo:0,hi:PI,loT:'0',hiT:'\\pi',s:'pi/2',t:R`\frac{\pi}{2}`},
+      {m:0,n:2,k:1,lo:0,hi:PI/6,loT:'0',hiT:'\\pi/6',s:'pi/12+sqrt(3)/8',t:R`\frac{\pi}{12}+\frac{\sqrt3}{8}`},
+      {m:2,n:2,k:1,lo:0,hi:PI/2,loT:'0',hiT:'\\pi/2',s:'pi/16',t:R`\frac{\pi}{16}`},
+      {m:2,n:0,k:3,lo:0,hi:2*PI,loT:'0',hiT:'2\\pi',s:'pi',t:R`\pi`}
+    ];
+    for(let t=0;;t++){
+      const p=pick(POOL),A=pick([1,1,2,3,4]);
+      const base=Expr.evalNumber(p.s),v=A*base;
+      const intTex=(A===1?'':A)+prodTex('sin',p.m,'cos',p.n,p.k);
+      const intStr=(A===1?'':A+'*')+prodStr('sin',p.m,'cos',p.n,p.k);
+      const q={...p,A,v,intTex,intStr,ansStr:A===1?p.s:`${A}*(${p.s})`,ansTex:A===1?p.t:`${A}\\left(${p.t}\\right)`,
+        oneTex:prodTex('sin',p.m,'cos',p.n,p.k)};
+      if(t>40||verifyDef(q.intStr,q.lo,q.hi,q.v))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(q.loT,q.hiT,q.intTex,'x'))}. Give the exact value.</p>`;
+    nLine(box,'v',M(texInt(q.loT,q.hiT,q.intTex,'x')+'='));},
+  check(q,box){return G(box,'v',checkNumber(VAL(box,'v'),q.v));},
+  hint(q,box){hintBox(box,M(R`\int ${q.oneTex}\,dx=`+evenAnti(q.m,q.n,q.k).tex));},
+  solution(q){const a=evenAnti(q.m,q.n,q.k);
+    return `An antiderivative of ${M(q.oneTex)} is ${M(a.tex)}. Substituting the limits ${M(q.hiT)} and ${M(q.loT)}${q.A===1?'':` and multiplying by ${q.A}`} gives ${M(q.ansTex+'\\approx '+fmtDec(q.v,4))}.`;}
+};
+
+/* ---------- chapter 2 ---------- */
+Q.oddPower={name:'one odd power',
+  gen(){
+    for(let t=0;;t++){
+      let m,n;do{m=rint(0,4);n=rint(0,4);}while(((m%2===1)===(n%2===1))||m+n<2||m+n>5);
+      const d=oddAnti(m,n);
+      const body=d.u==='sin'?fnTex('sin','x'):fnTex('cos','x');
+      const bodyS=d.u==='sin'?fnStr('sin','x'):fnStr('cos','x');
+      const q={m,n,u:d.u,j:d.j,anti:d.anti,poly:d.poly,
+        intTex:prodTex('sin',m,'cos',n,1),intStr:prodStr('sin',m,'cos',n,1),
+        ansStr:pStr(d.anti,bodyS),ansTex:pTex(d.anti,body),
+        uIntTex:(d.u==='sin'?R`\int `+uProdTex(m,'1-u^2',d.j):R`-\int `+uProdTex(n,'1-u^2',d.j))+R`\,du`,
+        expTex:(d.u==='sin'?'':'-')+R`\int\left(`+pTex(d.poly,uTex)+R`\right)du`};
+      if(t>40||verifyAnti(q.ansStr,q.intStr,[0.35,0.7,1.1]))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(null,null,q.intTex,'x'))}. Save one factor, substitute, and give the antiderivative as a polynomial in ${M(q.u==='sin'?R`\sin x`:R`\cos x`)}.</p>`;
+    aLine(box,'a',M(texInt(null,null,q.intTex,'x')+'='),'antiderivative');},
+  check(q,box){return G(box,'a',checkExprUpToConstant(VAL(box,'a'),q.ansStr,['x'],{domain:{x:[0.2,1.2]}}));},
+  hint(q,box){hintBox(box,`The ${q.u==='sin'?'cosine':'sine'} power is odd, so save one ${q.u==='sin'?M(R`\cos x`):M(R`\sin x`)} and let ${M('u='+(q.u==='sin'?R`\sin x`:R`\cos x`))}. The integral becomes ${M(q.uIntTex)}.`);},
+  solution(q){const sv=q.u==='sin'?R`\cos x`:R`\sin x`;
+    return `The ${q.u==='sin'?'cosine':'sine'} power is odd, so save one ${M(sv)} and convert the rest with ${M(q.u==='sin'?R`\cos^2x=1-\sin^2x`:R`\sin^2x=1-\cos^2x`)}. With ${M('u='+(q.u==='sin'?R`\sin x`:R`\cos x`))} the integral is ${M(q.uIntTex)} ${M('='+q.expTex)}, which integrates to ${M(pTex(q.anti,uTex))}. Back-substituting: ${M(q.ansTex+'+C')}.`;}
+};
+Q.bothEven={name:'both powers even',
+  gen(){
+    for(let t=0;;t++){
+      const [m,n]=pick([[4,0],[0,4],[2,2],[2,2],[2,0],[0,2],[4,0],[0,4]]);
+      const k=(m===2&&n===0)||(m===0&&n===2)?rint(2,3):rint(1,2);
+      const a=evenAnti(m,n,k);
+      const q={m,n,k,intTex:prodTex('sin',m,'cos',n,k),intStr:prodStr('sin',m,'cos',n,k),ansStr:a.str,ansTex:a.tex};
+      if(t>40||verifyAnti(q.ansStr,q.intStr,[0.3,0.62,1.0]))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(null,null,q.intTex,'x'))}. Both powers are even, so there is nothing to save: use the half-angle identities.</p>`;
+    aLine(box,'a',M(texInt(null,null,q.intTex,'x')+'='),'antiderivative');},
+  check(q,box){return G(box,'a',checkExprUpToConstant(VAL(box,'a'),q.ansStr,['x'],{domain:{x:[0.2,1.1]}}));},
+  hint(q,box){hintBox(box,`Halve every power first. ${M(R`\sin^2\theta=\tfrac{1-\cos 2\theta}{2}`)} and ${M(R`\cos^2\theta=\tfrac{1+\cos 2\theta}{2}`)}, applied twice if a square survives.`);},
+  solution(q){return `Both powers are even, so rewrite with the half-angle identities (twice, if a squared cosine appears), then integrate each term. Since ${M(R`\int\cos(cx)\,dx=\tfrac1c\sin(cx)`)}, the answer is ${M(q.ansTex+'+C')}.`;}
+};
+Q.definiteSinCos={name:'definite integral of sine and cosine powers',
+  gen(){
+    for(let t=0;;t++){
+      const both=Math.random()<0.4;
+      let m,n,hi,hiT,fracv,str,tex,isPi;
+      if(both){
+        [m,n]=pick([[2,0],[0,2],[4,0],[0,4],[2,2]]);
+        const full=Math.random()<0.4;hi=full?PI:PI/2;hiT=full?'\\pi':'\\pi/2';
+        let f=fr(df(m-1)*df(n-1),2*df(m+n));if(full)f=fr(2*f[0],f[1]);
+        fracv=f;str=piStr(f[0],f[1]);tex=piTex(f[0],f[1]);isPi=true;
+      }else{
+        do{m=rint(0,4);n=rint(0,4);}while(((m%2===1)===(n%2===1))||m+n<2||m+n>5);
+        hi=PI/2;hiT='\\pi/2';
+        const d=oddAnti(m,n);let f=pAt1(pInt(d.poly));
+        fracv=f;str=f[1]===1?String(f[0]):`${f[0]}/${f[1]}`;tex=texFrac(f[0],f[1]);isPi=false;
+      }
+      const v=Expr.evalNumber(str);
+      const q={m,n,hi,hiT,v,isPi,ansStr:str,ansTex:tex,
+        intTex:prodTex('sin',m,'cos',n,1),intStr:prodStr('sin',m,'cos',n,1)};
+      if(t>40||verifyDef(q.intStr,0,q.hi,q.v))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt('0',q.hiT,q.intTex,'x'))}. Give the exact value${q.isPi?'':' as a fraction'}.</p>`;
+    nLine(box,'v',M(texInt('0',q.hiT,q.intTex,'x')+'='));},
+  check(q,box){return G(box,'v',checkNumber(VAL(box,'v'),q.v));},
+  hint(q,box){hintBox(box,q.isPi?`Both powers are even: half-angle identities, then substitute the limits. Every cosine term vanishes at these limits, so only the ${M('x')} term survives and the answer is a multiple of ${M(R`\pi`)}.`
+    :`One power is odd. Substitute ${M((q.n%2===1?'u=\\sin x':'u=\\cos x'))} and change the limits, which turns this into a polynomial integral over ${M(q.n%2===1?'[0,1]':'[0,1]')}. The answer is rational.`);},
+  solution(q){
+    if(q.isPi)return `Both powers are even, so use the half-angle identities. Every sine term is zero at both limits, leaving only the constant term: the value is ${M(q.ansTex+'\\approx '+fmtDec(q.v,4))}.`;
+    const d=oddAnti(q.m,q.n);
+    return `The ${q.n%2===1?'cosine':'sine'} power is odd. Save one factor, substitute ${M(q.n%2===1?R`u=\sin x`:R`u=\cos x`)}, and change the limits: the integral becomes ${M(R`\int_0^1\left(`+pTex(d.poly,uTex)+R`\right)du`)}, which evaluates to ${M(q.ansTex+'\\approx '+fmtDec(q.v,4))}.`;}
+};
+Q.sinCosMixed={name:'with a substitution inside',
+  gen(){
+    for(let t=0;;t++){
+      const kind=pick(['s3','c3','sqrtc','sqrts','pow','pow']);
+      let intTex,intStr,ansStr,ansTex,sub;
+      if(kind==='s3'){const k=rint(1,3);const a=argStr(k),aT=argTex(k);
+        intTex=R`\sin^{3} ${aT}`;intStr=`sin(${a})^3`;
+        ansStr=`(1/${k})*(-cos(${a})+cos(${a})^3/3)`;ansTex=R`\frac{1}{${k}}\left(-\cos ${aT}+\tfrac13\cos^{3} ${aT}\right)`;sub=R`u=\cos ${aT}`;}
+      else if(kind==='c3'){const k=rint(1,3);const a=argStr(k),aT=argTex(k);
+        intTex=R`\cos^{3} ${aT}`;intStr=`cos(${a})^3`;
+        ansStr=`(1/${k})*(sin(${a})-sin(${a})^3/3)`;ansTex=R`\frac{1}{${k}}\left(\sin ${aT}-\tfrac13\sin^{3} ${aT}\right)`;sub=R`u=\sin ${aT}`;}
+      else if(kind==='sqrtc'){intTex=R`\sqrt{\cos x}\,\sin^{3} x`;intStr='sqrt(cos(x))*sin(x)^3';
+        ansStr='-(2/3)*cos(x)^(3/2)+(2/7)*cos(x)^(7/2)';ansTex=R`-\tfrac23\cos^{3/2} x+\tfrac27\cos^{7/2} x`;sub=R`u=\cos x`;}
+      else if(kind==='sqrts'){intTex=R`\sqrt{\sin x}\,\cos^{3} x`;intStr='sqrt(sin(x))*cos(x)^3';
+        ansStr='(2/3)*sin(x)^(3/2)-(2/7)*sin(x)^(7/2)';ansTex=R`\tfrac23\sin^{3/2} x-\tfrac27\sin^{7/2} x`;sub=R`u=\sin x`;}
+      else{const p=rint(2,5),which=pick(['s','c']);
+        if(which==='s'){intTex=R`\sin^{${p}} x\,\cos x`;intStr=`sin(x)^${p}*cos(x)`;
+          ansStr=`sin(x)^${p+1}/${p+1}`;ansTex=R`\frac{\sin^{${p+1}} x}{${p+1}}`;sub=R`u=\sin x`;}
+        else{intTex=R`\cos^{${p}} x\,\sin x`;intStr=`cos(x)^${p}*sin(x)`;
+          ansStr=`-cos(x)^${p+1}/${p+1}`;ansTex=R`-\frac{\cos^{${p+1}} x}{${p+1}}`;sub=R`u=\cos x`;}}
+      const q={kind,intTex,intStr,ansStr,ansTex,sub};
+      if(t>40||verifyAnti(q.ansStr,q.intStr,[0.3,0.65,1.1]))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(null,null,q.intTex,'x'))}. The constant of integration is optional.</p>`;
+    aLine(box,'a',M(texInt(null,null,q.intTex,'x')+'='),'antiderivative');},
+  check(q,box){return G(box,'a',checkExprUpToConstant(VAL(box,'a'),q.ansStr,['x'],{domain:{x:[0.25,1.15]}}));},
+  hint(q,box){hintBox(box,`Substitute ${M(q.sub)}.`);},
+  solution(q){return `Save one factor for ${M('du')} and substitute ${M(q.sub)}. Integrating the resulting power of ${M('u')} term by term and putting ${M('u')} back gives ${M(q.ansTex+'+C')}.`;}
+};
+
+/* ---------- chapter 3 ---------- */
+Q.secEven={name:'even power of secant',
+  gen(){
+    for(let t=0;;t++){
+      const n=pick([2,2,4]),m=rint(0,4),j=(n-2)/2;
+      if(m+n<3)continue;
+      const poly=j===0?pMono(m):pMul(pMono(m),pPow([OF,ZF,OF],j));
+      const anti=pInt(poly);
+      const q={m,n,j,poly,anti,
+        intTex:prodTex('tan',m,'sec',n,1),intStr:prodStr('tan',m,'sec',n,1),
+        ansStr:pStr(anti,fnStr('tan','x')),ansTex:pTex(anti,fnTex('tan','x')),
+        uIntTex:R`\int `+uProdTex(m,'1+u^2',j)+R`\,du`};
+      if(t>40||verifyAnti(q.ansStr,q.intStr,[-0.7,0.25,0.85]))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(null,null,q.intTex,'x'))}. Give the antiderivative as a polynomial in ${M(R`\tan x`)}.</p>`;
+    aLine(box,'a',M(texInt(null,null,q.intTex,'x')+'='),'antiderivative');},
+  check(q,box){return G(box,'a',checkExprUpToConstant(VAL(box,'a'),q.ansStr,['x'],{domain:{x:[-1,1]}}));},
+  hint(q,box){hintBox(box,`The secant power is even, so save ${M(R`\sec^2x`)} for ${M('du')} and let ${M(R`u=\tan x`)}. The integral becomes ${M(q.uIntTex)}.`);},
+  solution(q){return `Save ${M(R`\sec^2x\,dx=du`)} with ${M(R`u=\tan x`)}${q.j?`, and convert the remaining ${M(powTex('sec',q.n-2,1))} with ${M(R`\sec^2x=1+\tan^2x`)}`:''}. The integral is ${M(q.uIntTex)} ${M('='+R`\int\left(`+pTex(q.poly,uTex)+R`\right)du=`+pTex(q.anti,uTex))}. Back-substituting gives ${M(q.ansTex+'+C')}.`;}
+};
+Q.tanOdd={name:'odd power of tangent',
+  gen(){
+    for(let t=0;;t++){
+      const m=pick([1,1,3,3,5]),n=pick([1,2,3]),j=(m-1)/2;
+      const poly=pMul(pPow([[-1,1],ZF,OF],j),pMono(n-1));
+      const anti=pInt(poly);
+      const q={m,n,j,poly,anti,
+        intTex:prodTex('tan',m,'sec',n,1),intStr:prodStr('tan',m,'sec',n,1),
+        ansStr:pStr(anti,fnStr('sec','x')),ansTex:pTex(anti,fnTex('sec','x')),
+        uIntTex:R`\int `+uProdTex(n-1,'u^2-1',j)+R`\,du`};
+      if(t>40||verifyAnti(q.ansStr,q.intStr,[0.3,0.7,1.1]))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(null,null,q.intTex,'x'))}. Give the antiderivative as a polynomial in ${M(R`\sec x`)}.</p>`;
+    aLine(box,'a',M(texInt(null,null,q.intTex,'x')+'='),'antiderivative');},
+  check(q,box){return G(box,'a',checkExprUpToConstant(VAL(box,'a'),q.ansStr,['x'],{domain:{x:[0.2,1.2]}}));},
+  hint(q,box){hintBox(box,`The tangent power is odd, so save the pair ${M(R`\sec x\tan x`)} for ${M('du')} and let ${M(R`u=\sec x`)}. The integral becomes ${M(q.uIntTex)}.`);},
+  solution(q){return `The tangent power is odd. Save ${M(R`\sec x\tan x\,dx=du`)} with ${M(R`u=\sec x`)}${q.j?`, and convert ${M(powTex('tan',q.m-1,1))} with ${M(R`\tan^2x=\sec^2x-1`)}`:''}. The integral is ${M(q.uIntTex)} ${M('='+R`\int\left(`+pTex(q.poly,uTex)+R`\right)du=`+pTex(q.anti,uTex))}, so the answer is ${M(q.ansTex+'+C')}.`;}
+};
+Q.tanBasics={name:'the standard tangent and secant antiderivatives',
+  gen(){
+    for(let t=0;;t++){
+      const kind=pick(['tan','cot','sec','csc','tan2','sec3','tan3']);
+      const A=pick([1,1,2,3]),k=pick([1,1,2]);
+      const a=argStr(k),aT=argTex(k);const c=`(${A}/${k})`;const cT=texCoef(A/k);
+      let intTex,intStr,ansStr,ansTex,why;
+      if(kind==='tan'){intTex=(A===1?'':A)+`\\tan ${aT}`;intStr=`${A}*tan(${a})`;
+        ansStr=`${c}*ln(abs(sec(${a})))`;ansTex=cT+R`\ln\left|\sec ${aT}\right|`;why=R`\int\tan\theta\,d\theta=\ln|\sec\theta|`;}
+      else if(kind==='cot'){intTex=(A===1?'':A)+`\\cot ${aT}`;intStr=`${A}*cot(${a})`;
+        ansStr=`${c}*ln(abs(sin(${a})))`;ansTex=cT+R`\ln\left|\sin ${aT}\right|`;why=R`\int\cot\theta\,d\theta=\ln|\sin\theta|`;}
+      else if(kind==='sec'){intTex=(A===1?'':A)+`\\sec ${aT}`;intStr=`${A}*sec(${a})`;
+        ansStr=`${c}*ln(abs(sec(${a})+tan(${a})))`;ansTex=cT+R`\ln\left|\sec ${aT}+\tan ${aT}\right|`;why=R`\int\sec\theta\,d\theta=\ln|\sec\theta+\tan\theta|`;}
+      else if(kind==='csc'){intTex=(A===1?'':A)+`\\csc ${aT}`;intStr=`${A}*csc(${a})`;
+        ansStr=`${c}*ln(abs(csc(${a})-cot(${a})))`;ansTex=cT+R`\ln\left|\csc ${aT}-\cot ${aT}\right|`;why=R`\int\csc\theta\,d\theta=\ln|\csc\theta-\cot\theta|`;}
+      else if(kind==='tan2'){intTex=(A===1?'':A)+`\\tan^{2} ${aT}`;intStr=`${A}*tan(${a})^2`;
+        ansStr=`${c}*tan(${a})-${A}*x`;ansTex=cT+`\\tan ${aT}-`+(A===1?'':A)+'x';why=R`\tan^2\theta=\sec^2\theta-1`;}
+      else if(kind==='sec3'){intTex=(A===1?'':A)+`\\sec^{3} ${aT}`;intStr=`${A}*sec(${a})^3`;
+        ansStr=`(${A}/${2*k})*(sec(${a})*tan(${a})+ln(abs(sec(${a})+tan(${a}))))`;
+        ansTex=texCoef(A/(2*k))+R`\left(\sec ${aT}\tan ${aT}+\ln\left|\sec ${aT}+\tan ${aT}\right|\right)`;
+        why=R`\int\sec^3\theta\,d\theta=\tfrac12(\sec\theta\tan\theta+\ln|\sec\theta+\tan\theta|)`;}
+      else{intTex=(A===1?'':A)+`\\tan^{3} ${aT}`;intStr=`${A}*tan(${a})^3`;
+        ansStr=`${c}*(tan(${a})^2/2+ln(abs(cos(${a}))))`;
+        ansTex=cT+R`\left(\tfrac12\tan^{2} ${aT}+\ln\left|\cos ${aT}\right|\right)`;
+        why=R`\tan^3\theta=\tan\theta(\sec^2\theta-1)`;}
+      const q={kind,A,k,intTex,intStr,ansStr,ansTex,why,dom:[0.3/k,1.2/k]};
+      if(t>40||verifyAnti(q.ansStr,q.intStr,[0.35/k,0.7/k,1.1/k]))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(null,null,q.intTex,'x'))}. Absolute values are typed with the <kbd>|</kbd> key, as in <code>ln|sec x|</code>.</p>`;
+    aLine(box,'a',M(texInt(null,null,q.intTex,'x')+'='),'antiderivative');},
+  check(q,box){return G(box,'a',checkExprUpToConstant(VAL(box,'a'),q.ansStr,['x'],{domain:{x:q.dom}}));},
+  hint(q,box){hintBox(box,M(q.why));},
+  solution(q){return `Use ${M(q.why)}.${q.k>1?` The inner ${M(q.k+'x')} divides the whole antiderivative by ${q.k}.`:''} The answer is ${M(q.ansTex+'+C')}.`;}
+};
+Q.definiteTanSec={name:'definite integral with tangent and secant',
+  gen(){
+    const POOL=[
+      {i:'tan(x)^2',iT:R`\tan^{2} x`,hi:PI/4,hiT:'\\pi/4',s:'1-pi/4',t:R`1-\frac{\pi}{4}`},
+      {i:'sec(x)^4',iT:R`\sec^{4} x`,hi:PI/4,hiT:'\\pi/4',s:'4/3',t:R`\frac{4}{3}`},
+      {i:'tan(x)*sec(x)',iT:R`\tan x\,\sec x`,hi:PI/3,hiT:'\\pi/3',s:'1',t:'1'},
+      {i:'tan(x)^3*sec(x)^2',iT:R`\tan^{3} x\,\sec^{2} x`,hi:PI/4,hiT:'\\pi/4',s:'1/4',t:R`\frac{1}{4}`},
+      {i:'sec(x)^2*tan(x)',iT:R`\sec^{2} x\,\tan x`,hi:PI/4,hiT:'\\pi/4',s:'1/2',t:R`\frac{1}{2}`},
+      {i:'tan(x)^3',iT:R`\tan^{3} x`,hi:PI/3,hiT:'\\pi/3',s:'3/2-ln(2)',t:R`\frac{3}{2}-\ln 2`},
+      {i:'tan(x)',iT:R`\tan x`,hi:PI/4,hiT:'\\pi/4',s:'ln(2)/2',t:R`\tfrac12\ln 2`},
+      {i:'sec(x)',iT:R`\sec x`,hi:PI/4,hiT:'\\pi/4',s:'ln(sqrt(2)+1)',t:R`\ln(\sqrt2+1)`},
+      {i:'tan(x)^2*sec(x)^2',iT:R`\tan^{2} x\,\sec^{2} x`,hi:PI/4,hiT:'\\pi/4',s:'1/3',t:R`\frac{1}{3}`},
+      {i:'sec(x)^2',iT:R`\sec^{2} x`,hi:PI/3,hiT:'\\pi/3',s:'sqrt(3)',t:R`\sqrt3`}
+    ];
+    for(let t=0;;t++){
+      const p=pick(POOL),A=pick([1,1,2,3,5]);
+      const v=A*Expr.evalNumber(p.s);
+      const q={...p,A,v,intTex:(A===1?'':A)+p.iT,intStr:(A===1?'':A+'*')+p.i,
+        ansStr:A===1?p.s:`${A}*(${p.s})`,ansTex:A===1?p.t:`${A}\\left(${p.t}\\right)`};
+      if(t>40||verifyDef(q.intStr,0,q.hi,q.v))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt('0',q.hiT,q.intTex,'x'))}. Give the exact value; you may leave ${M(R`\ln`)} and radicals in the answer.</p>`;
+    nLine(box,'v',M(texInt('0',q.hiT,q.intTex,'x')+'='));},
+  check(q,box){return G(box,'v',checkNumber(VAL(box,'v'),q.v));},
+  hint(q,box){hintBox(box,`Find an antiderivative of ${M(q.iT)} first, then substitute ${M('x='+q.hiT)} and ${M('x=0')}.`);},
+  solution(q){return `Integrate ${M(q.iT)} by the rule for its shape, then substitute the limits ${M(q.hiT)} and ${M('0')}${q.A===1?'':`, and multiply by ${q.A}`}. The value is ${M(q.ansTex+'\\approx '+fmtDec(q.v,4))}.`;}
+};
+
+/* ---------- chapter 4 ---------- */
+const kx=k=>k===1?'x':`${k}x`;
+const PROD_RE=/(sin|cos)[^+\-]*\)\s*\*?\s*(sin|cos)/i;
+const KINDS={sc:{tex:(m,n)=>R`\sin(${kx(m)})\cos(${kx(n)})`,str:(m,n)=>`sin(${m}x)*cos(${n}x)`,name:R`\sin A\cos B=\tfrac12[\sin(A-B)+\sin(A+B)]`},
+             ss:{tex:(m,n)=>R`\sin(${kx(m)})\sin(${kx(n)})`,str:(m,n)=>`sin(${m}x)*sin(${n}x)`,name:R`\sin A\sin B=\tfrac12[\cos(A-B)-\cos(A+B)]`},
+             cc:{tex:(m,n)=>R`\cos(${kx(m)})\cos(${kx(n)})`,str:(m,n)=>`cos(${m}x)*cos(${n}x)`,name:R`\cos A\cos B=\tfrac12[\cos(A-B)+\cos(A+B)]`}};
+function sumForm(kind,m,n){const d=m-n,s=m+n,ad=Math.abs(d);
+  if(d===0){if(kind==='sc')return {str:`sin(${s}x)/2`,tex:R`\tfrac12\sin(${kx(s)})`};
+    if(kind==='ss')return {str:`(1-cos(${s}x))/2`,tex:R`\tfrac12\left[1-\cos(${kx(s)})\right]`};
+    return {str:`(1+cos(${s}x))/2`,tex:R`\tfrac12\left[1+\cos(${kx(s)})\right]`};}
+  if(kind==='sc')return {str:`(${d<0?'-':''}sin(${ad}x)+sin(${s}x))/2`,tex:R`\tfrac12\left[${d<0?'-':''}\sin(${kx(ad)})+\sin(${kx(s)})\right]`};
+  if(kind==='ss')return {str:`(cos(${ad}x)-cos(${s}x))/2`,tex:R`\tfrac12\left[\cos(${kx(ad)})-\cos(${kx(s)})\right]`};
+  return {str:`(cos(${ad}x)+cos(${s}x))/2`,tex:R`\tfrac12\left[\cos(${kx(ad)})+\cos(${kx(s)})\right]`};}
+Q.productToSum={name:'rewrite a product as a sum',
+  gen(){
+    for(let t=0;;t++){
+      const kind=pick(['sc','sc','ss','cc']);const m=rint(2,5);const n=rint(1,m-1);
+      const f=sumForm(kind,m,n);
+      const q={kind,m,n,intTex:KINDS[kind].tex(m,n),intStr:KINDS[kind].str(m,n),ansStr:f.str,ansTex:f.tex,idTex:KINDS[kind].name};
+      if(t>40||sameFn(q.intStr,q.ansStr))return q;
+    }},
+  render(q,box){box.innerHTML=`<p class="prompt">Rewrite ${M(q.intTex)} as a sum of two terms, each a single sine or cosine. No products of trigonometric functions may appear in your answer.</p>`;
+    aLine(box,'e',M(q.intTex+'='),'a sum of two terms');},
+  check(q,box){const s=cleanAns(VAL(box,'e'));
+    if(PROD_RE.test(s))return G(box,'e',{ok:false,msg:'That is still a product of two trigonometric functions. Use the product-to-sum identity to break it into a sum.'});
+    return G(box,'e',checkExpr(VAL(box,'e'),q.ansStr,['x']));},
+  hint(q,box){hintBox(box,M(q.idTex));},
+  solution(q){return `Apply ${M(q.idTex)} with ${M('A='+q.m+'x')} and ${M('B='+q.n+'x')}, so the difference frequency is ${M(String(q.m-q.n))} and the sum frequency is ${M(String(q.m+q.n))}: ${M(q.intTex+'='+q.ansTex)}.`;}
+};
+Q.integrateProduct={name:'integrate a product of two frequencies',
+  gen(){
+    for(let t=0;;t++){
+      const kind=pick(['sc','sc','ss','cc']);const m=rint(2,5);const n=rint(1,m-1);
+      const d=m-n,s=m+n;let ansStr,ansTex;
+      if(kind==='sc'){ansStr=`-cos(${d}x)/${2*d}-cos(${s}x)/${2*s}`;ansTex=R`-\frac{\cos(${kx(d)})}{${2*d}}-\frac{\cos(${kx(s)})}{${2*s}}`;}
+      else if(kind==='ss'){ansStr=`sin(${d}x)/${2*d}-sin(${s}x)/${2*s}`;ansTex=R`\frac{\sin(${kx(d)})}{${2*d}}-\frac{\sin(${kx(s)})}{${2*s}}`;}
+      else{ansStr=`sin(${d}x)/${2*d}+sin(${s}x)/${2*s}`;ansTex=R`\frac{\sin(${kx(d)})}{${2*d}}+\frac{\sin(${kx(s)})}{${2*s}}`;}
+      const f=sumForm(kind,m,n);
+      const q={kind,m,n,d,s,ansStr,ansTex,intTex:KINDS[kind].tex(m,n),intStr:KINDS[kind].str(m,n),sumTex:f.tex,idTex:KINDS[kind].name};
+      if(t>40||verifyAnti(q.ansStr,q.intStr,[0.3,0.9,1.9]))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(null,null,q.intTex,'x'))}. Rewrite the product as a sum first. The constant of integration is optional.</p>`;
+    aLine(box,'a',M(texInt(null,null,q.intTex,'x')+'='),'antiderivative');},
+  check(q,box){return G(box,'a',checkExprUpToConstant(VAL(box,'a'),q.ansStr,['x'],{domain:{x:[0.2,2.5]}}));},
+  hint(q,box){hintBox(box,M(q.intTex+'='+q.sumTex));},
+  solution(q){return `Product to sum: ${M(q.intTex+'='+q.sumTex)}. Integrate each term, dividing by its own frequency: ${M(q.ansTex+'+C')}.`;}
+};
+Q.definiteProduct={name:'definite integral over a period',
+  gen(){
+    for(let t=0;;t++){
+      const kind=t>60?'ss':pick(['ss','cc','sc','ss','cc']);
+      let m=rint(1,4),n=rint(1,4);if(Math.random()<0.35||t>60)n=m;
+      const [a,b,aT,bT]=t>60?[0,PI,'0','\\pi']:pick([[0,PI,'0','\\pi'],[-PI,PI,'-\\pi','\\pi'],[0,PI/2,'0','\\pi/2']]);
+      const d=m-n,s=m+n;
+      const F=kind==='sc'?(x=>0.5*((d===0?0:-Math.cos(d*x)/d)-Math.cos(s*x)/s))
+             :kind==='ss'?(x=>0.5*((d===0?x:Math.sin(d*x)/d)-Math.sin(s*x)/s))
+             :(x=>0.5*((d===0?x:Math.sin(d*x)/d)+Math.sin(s*x)/s));
+      const raw=F(b)-F(a);const nf=numForms(raw);
+      if(!nf){if(t>60)continue;else continue;}
+      const v=Expr.evalNumber(nf.str);
+      const f=sumForm(kind,m,n);
+      const q={kind,m,n,d,s,a,b,aT,bT,v,ansStr:nf.str,ansTex:nf.tex,
+        intTex:KINDS[kind].tex(m,n),intStr:KINDS[kind].str(m,n),sumTex:f.tex,idTex:KINDS[kind].name};
+      if(t>40||verifyDef(q.intStr,q.a,q.b,q.v))return q;
+    }
+  },
+  render(q,box){box.innerHTML=`<p class="prompt">Evaluate ${M(texInt(q.aT,q.bT,q.intTex,'x'))}. Give the exact value (it may be ${M('0')}).</p>`;
+    nLine(box,'v',M(texInt(q.aT,q.bT,q.intTex,'x')+'='));},
+  check(q,box){return G(box,'v',checkNumber(VAL(box,'v'),q.v));},
+  hint(q,box){hintBox(box,`${M(q.intTex+'='+q.sumTex)}${q.d===0?`. The frequencies are equal, so the first term is the constant ${M(R`\tfrac12`)} and it does not integrate to zero.`:''}`);},
+  solution(q){return `Product to sum: ${M(q.intTex+'='+q.sumTex)}. `+
+    (q.d===0?`Because ${M('m=n')}, the difference term is the constant ${M(R`\tfrac12`)}, whose integral is ${M(R`\tfrac12(b-a)`)}; the sum term integrates to zero over this interval. `
+            :`Each term is a full number of half periods over this interval, so each integrates to a value read off from its own frequency. `)+
+    `The value is ${M(q.ansTex+(Math.abs(q.v)<1e-12?'':'\\approx '+fmtDec(q.v,4)))}.`;}
+};
+
+/* ============================================================ step-by-step cards */
+function walkCard({expr,status,prev,next,neu,make}){
+  let cur=make(),st=0;
+  function draw(){
+    const L=cur.lines;
+    $(expr).innerHTML=L.map((t,i)=>i===0
+      ? `<span class="t b">${t}</span>`
+      : `<span class="${st>=i?'':'faint'}">= <span class="t ${st===i?'now':''} ${i===L.length-1?'c':'a'}">${t}</span></span>`).join('<br>');
+    $(status).textContent=cur.steps[st];
+    $(prev).disabled=st===0;$(next).disabled=st===L.length-1;
+    typeset($(expr));
+  }
+  $(next).onclick=()=>{st=Math.min(cur.lines.length-1,st+1);draw();};
+  $(prev).onclick=()=>{st=Math.max(0,st-1);draw();};
+  $(neu).onclick=()=>{cur=make();st=0;draw();};
+  draw();
+}
+
+/* ============================================================ chapter 1: average of a square */
+(function(){
+  const p=new Plot2D('#avgPlot',{xmin:-0.5,xmax:2*PI+0.5,ymin:-0.35,ymax:1.45,grid:true,axes:true,labels:false});
+  let which='sin',b=PI,rw=true;
+  const kbox=$('#avgPresets');
+  [['sin','sin²x'],['cos','cos²x']].forEach(([k,lab])=>{const btn=el('button',{class:'btn small'},lab);
+    btn.onclick=()=>{which=k;$$('.btn',kbox).forEach(x=>x.classList.remove('on'));btn.classList.add('on');draw();};kbox.appendChild(btn);});
+  $$('.btn',kbox)[0].classList.add('on');
+  const sl=sliderRow($('#avgSliders'),{label:'upper limit b',min:0,max:2*PI,step:0.01,value:PI,fmt:v=>fmtDec(v,2),onInput:v=>{b=v;draw();}});
+  $('#avgRw').onchange=()=>{rw=$('#avgRw').checked;draw();};
+  const anim=animator('identities',dt=>{b+=dt*1.2;if(b>2*PI)b-=2*PI;sl.set(b);draw();});
+  $('#avgPlay').onclick=()=>{anim.toggle();$('#avgPlay').textContent=anim.running?'⏸ Pause':'▶ Play';};
+  function draw(){
+    const f=which==='sin'?(x=>Math.sin(x)*Math.sin(x)):(x=>Math.cos(x)*Math.cos(x));
+    p.begin();
+    p.fn(()=>0.5,{color:'#b9b5ab',width:1.4,dash:[6,5]});
+    if(b>0.002)p.region(0,b,()=>0,f,{fill:'rgba(37,99,235,.16)',stroke:'rgba(37,99,235,.32)',n:300});
+    p.fn(f,{color:'#2563eb',width:2.4});
+    if(rw)p.fn(x=>0.5+(which==='sin'?-0.5:0.5)*Math.cos(2*x),{color:'#d97706',width:2.4,dash:[8,6]});
+    p.param(t=>[b,t],0,f(b),{color:'#7c3aed',width:1.5,dash:[4,3],n:24});
+    p.point([b,f(b)],{color:'#7c3aed',r:5});
+    [[PI/2,'π/2'],[PI,'π'],[3*PI/2,'3π/2'],[2*PI,'2π']].forEach(([x,s])=>p.text([x,-0.14],s,{align:'center'}));
+    p.text([2*PI+0.05,0.5],'½',{color:'#8b877e',dy:4});
+    const I=which==='sin'?b/2-Math.sin(2*b)/4:b/2+Math.sin(2*b)/4;
+    $('#avgOut').innerHTML=`b = ${fmtDec(b,3)} = ${fmtDec(b/PI,3)}π<br>`+
+      `∫₀ᵇ ${which}²x dx = b/2 ${which==='sin'?'−':'+'} sin(2b)/4 = <b>${fmtDec(I,4)}</b><br>`+
+      `flat box of height ½: ½·b = ${fmtDec(b/2,4)}<br>`+
+      `running average = ${b>1e-4?fmtDec(I/b,4):'-'} &nbsp;(½ = 0.5)`;
+  }
+  redrawOnShow('identities',draw);draw();
+  new Drill({mount:'#drill-identities',section:'identities',goal:6,
+    ...mixDrill([Q.rewritePower,Q.rewritePower,Q.integrateSquare,Q.integrateSquare,Q.definiteSquare])});
+})();
+
+/* ============================================================ chapter 2: walkthrough + odd factor explorer */
+(function(){
+  function make(){
+    let m,n;do{m=rint(0,4);n=rint(0,4);}while(((m%2===1)===(n%2===1))||m+n<3||m+n>5);
+    const d=oddAnti(m,n);const lines=[],steps=[];const P=(l,s)=>{lines.push(l);steps.push(s);};
+    P(M(texInt(null,null,prodTex('sin',m,'cos',n,1),'x')),'Exactly one power is odd, so this is a save-one-factor problem. Press Next.');
+    if(d.u==='sin'){
+      P(M(R`\int `+powTex('sin',m,1)+(n>1?'\\,'+powTex('cos',n-1,1):'')+R`\cdot\cos x\,dx`),
+        'The cosine power is odd. Peel one cos x off and set it aside: that factor is exactly what du needs.');
+      if(d.j>0)P(M(R`\int `+powTex('sin',m,1)+R`\,(1-\sin^2 x)^{${d.j}}\cdot\cos x\,dx`),
+        'What is left has an even cosine power, so convert it with cos²x = 1 - sin²x. Now everything but the saved factor is a sine.');
+      P(M(R`\int `+uProdTex(m,'1-u^2',d.j)+R`\,du`),'Substitute u = sin x, so du = cos x dx. Not a single trigonometric function is left.');
+    }else{
+      P(M(R`\int `+(m>1?powTex('sin',m-1,1)+'\\,':'')+powTex('cos',n,1)+R`\cdot\sin x\,dx`),
+        'The sine power is odd. Peel one sin x off: that factor is du, up to a sign.');
+      if(d.j>0)P(M(R`\int (1-\cos^2 x)^{${d.j}}\,`+powTex('cos',n,1)+R`\cdot\sin x\,dx`),
+        'What is left has an even sine power, so convert it with sin²x = 1 - cos²x.');
+      P(M(R`-\int `+uProdTex(n,'1-u^2',d.j)+R`\,du`),'Substitute u = cos x, so du = -sin x dx. The minus sign comes out in front.');
+    }
+    if(pTerms(d.poly)>1)P(M((d.u==='sin'?'':'-')+R`\int\left(`+pTex(d.poly,uTex)+R`\right)du`),'Expand, so the power rule applies term by term.');
+    P(M(pTex(d.anti,uTex)),'Integrate each power of u.');
+    P(M(pTex(d.anti,d.u==='sin'?fnTex('sin','x'):fnTex('cos','x'))+'+C'),'Put u back. Differentiate this and you get the original integrand.');
+    return {lines,steps};
+  }
+  walkCard({expr:'#scExpr',status:'#scStatus',prev:'#scPrev',next:'#scNext',neu:'#scNew',make});
+
+  const p=new Plot2D('#subPlot',{xmin:-0.3,xmax:PI+0.35,ymin:-1.18,ymax:1.18,grid:true,axes:true,labels:false});
+  let m=3,n=2,bb=PI,Fc=null;
+  stepper('#subM',3,0,3,v=>{m=v;refresh();});
+  stepper('#subN',2,0,3,v=>{n=v;refresh();});
+  sliderRow($('#subSliders'),{label:'upper bound',min:0,max:PI,step:0.01,value:PI,fmt:v=>fmtDec(v,2),onInput:v=>{bb=v;draw();}});
+  function anti(){
+    if(n%2===1||m%2===1){const d=oddAnti(m,n);
+      return {tex:pTex(d.anti,d.u==='sin'?fnTex('sin','x'):fnTex('cos','x')),
+              str:pStr(d.anti,d.u==='sin'?fnStr('sin','x'):fnStr('cos','x')),
+              sub:d.u==='sin'?R`u=\sin x`:R`u=\cos x`,
+              why:d.u==='sin'?'the cosine power is odd, so save one cos x':'the sine power is odd, so save one sin x'};}
+    const a=evenAnti(m,n,1);
+    return {tex:a.tex,str:a.str,sub:null,why:'both powers are even, so nothing can be saved'};
+  }
+  function refresh(){
+    const a=anti();Fc=Expr.compile(a.str);
+    $('#subForm').innerHTML=D(texInt(null,null,prodTex('sin',m,'cos',n,1),'x')+'='+a.tex+'+C')+
+      `<div class="small">${a.why}${a.sub?`, then substitute ${M(a.sub)}`:', so use the half-angle identities'}</div>`;
+    typeset($('#subForm'));draw();
+  }
+  function draw(){
+    const f=x=>Math.pow(Math.sin(x),m)*Math.pow(Math.cos(x),n);
+    p.begin();
+    if(bb>0.002)p.region(0,bb,()=>0,f,{fill:'rgba(37,99,235,.16)',stroke:'rgba(37,99,235,.3)',n:300});
+    p.fn(f,{color:'#2563eb',width:2.4});
+    p.param(t=>[bb,t],0,f(bb),{color:'#7c3aed',width:1.5,dash:[4,3],n:24});
+    p.point([bb,f(bb)],{color:'#7c3aed',r:5});
+    [[PI/2,'π/2'],[PI,'π']].forEach(([x,s])=>p.text([x,-0.16],s,{align:'center'}));
+    const I=Fc?Fc({x:bb})-Fc({x:0}):0,full=Fc?Fc({x:PI})-Fc({x:0}):0;
+    $('#subOut').innerHTML=`bound = ${fmtDec(bb,3)} = ${fmtDec(bb/PI,3)}π<br>`+
+      `running integral from 0 = <b>${fmtDec(I,4)}</b><br>`+
+      `over all of [0, π]: ${fmtDec(Math.abs(full)<1e-12?0:full,4)}${Math.abs(full)<1e-12?', the two halves cancel exactly':''}`;
+  }
+  refresh();redrawOnShow('sincos',draw);
+  new Drill({mount:'#drill-sincos',section:'sincos',goal:8,
+    ...mixDrill([Q.oddPower,Q.oddPower,Q.oddPower,Q.bothEven,Q.bothEven,Q.definiteSinCos,Q.definiteSinCos,Q.sinCosMixed,Q.sinCosMixed])});
+})();
+
+/* ============================================================ chapter 3: walkthrough */
+(function(){
+  function make(){
+    const secBranch=Math.random()<0.5;
+    let m,n,poly,anti,uName,lines=[],steps=[];const P=(l,s)=>{lines.push(l);steps.push(s);};
+    if(secBranch){n=pick([2,2,4]);m=rint(0,4);const j=(n-2)/2;
+      poly=j===0?pMono(m):pMul(pMono(m),pPow([OF,ZF,OF],j));anti=pInt(poly);uName='tan';
+      P(M(texInt(null,null,prodTex('tan',m,'sec',n,1),'x')),'The secant power is even, so this is a u = tan x problem. Press Next.');
+      P(M(R`\int `+powTex('tan',m,1)+(n>2?'\\,'+powTex('sec',n-2,1):'')+R`\cdot\sec^2 x\,dx`),
+        'Save sec²x for du. It is the derivative of tan x, so it is exactly what the substitution needs.');
+      if(j>0)P(M(R`\int `+powTex('tan',m,1)+R`\,(1+\tan^2 x)^{${j}}\cdot\sec^2 x\,dx`),
+        'The leftover secant power is even, so convert it with sec²x = 1 + tan²x.');
+      P(M(R`\int `+uProdTex(m,'1+u^2',j)+R`\,du`),'Substitute u = tan x, du = sec²x dx.');
+    }else{m=pick([1,1,3,5]);n=pick([1,2,3]);const j=(m-1)/2;
+      poly=pMul(pPow([[-1,1],ZF,OF],j),pMono(n-1));anti=pInt(poly);uName='sec';
+      P(M(texInt(null,null,prodTex('tan',m,'sec',n,1),'x')),'The tangent power is odd, so this is a u = sec x problem. Press Next.');
+      P(M(R`\int `+(m>1?powTex('tan',m-1,1)+'\\,':'')+(n>1?powTex('sec',n-1,1):'')+R`\cdot\sec x\tan x\,dx`),
+        'Save the pair sec x tan x for du. They must travel together: that product is the derivative of sec x.');
+      if(j>0)P(M(R`\int (\sec^2 x-1)^{${j}}\,`+(n>1?powTex('sec',n-1,1):'')+R`\cdot\sec x\tan x\,dx`),
+        'The leftover tangent power is even, so convert it with tan²x = sec²x - 1.');
+      P(M(R`\int `+uProdTex(n-1,'u^2-1',j)+R`\,du`),'Substitute u = sec x, du = sec x tan x dx.');
+    }
+    if(pTerms(poly)>1)P(M(R`\int\left(`+pTex(poly,uTex)+R`\right)du`),'Expand so the power rule applies term by term.');
+    P(M(pTex(anti,uTex)),'Integrate each power of u.');
+    P(M(pTex(anti,fnTex(uName,'x'))+'+C'),`Put u = ${uName === 'tan' ? 'tan' : 'sec'} x back. Differentiating returns the original integrand.`);
+    return {lines,steps};
+  }
+  walkCard({expr:'#tsExpr',status:'#tsStatus',prev:'#tsPrev',next:'#tsNext',neu:'#tsNew',make});
+  new Drill({mount:'#drill-tansec',section:'tansec',goal:7,
+    ...mixDrill([Q.secEven,Q.secEven,Q.tanOdd,Q.tanOdd,Q.tanBasics,Q.tanBasics,Q.definiteTanSec])});
+})();
+
+/* ============================================================ chapter 4: a product is a beat */
+(function(){
+  const p=new Plot2D('#prodPlot',{xmin:-0.3,xmax:PI+0.35,ymin:-1.2,ymax:1.2,grid:true,axes:true,labels:false});
+  let kind='sc',m=3,n=2,rw=true;
+  const kbox=$('#prodKinds');
+  [['sc','sin(mx)·cos(nx)'],['ss','sin(mx)·sin(nx)'],['cc','cos(mx)·cos(nx)']].forEach(([k,lab])=>{
+    const btn=el('button',{class:'btn small'},lab);
+    btn.onclick=()=>{kind=k;$$('.btn',kbox).forEach(x=>x.classList.remove('on'));btn.classList.add('on');refresh();};kbox.appendChild(btn);});
+  $$('.btn',kbox)[0].classList.add('on');
+  stepper('#prodM',3,1,5,v=>{m=v;refresh();});
+  stepper('#prodN',2,1,5,v=>{n=v;refresh();});
+  $('#prodRw').onchange=()=>{rw=$('#prodRw').checked;draw();};
+  const fOf=()=>kind==='sc'?(x=>Math.sin(m*x)*Math.cos(n*x))
+    :kind==='ss'?(x=>Math.sin(m*x)*Math.sin(n*x)):(x=>Math.cos(m*x)*Math.cos(n*x));
+  const termsOf=()=>{const d=m-n,s=m+n;
+    if(kind==='sc')return [x=>0.5*Math.sin(d*x),x=>0.5*Math.sin(s*x)];
+    if(kind==='ss')return [x=>0.5*Math.cos(d*x),x=>-0.5*Math.cos(s*x)];
+    return [x=>0.5*Math.cos(d*x),x=>0.5*Math.cos(s*x)];};
+  function refresh(){
+    const f=sumForm(kind,m,n);
+    $('#prodForm').innerHTML=D(KINDS[kind].tex(m,n)+'='+f.tex);
+    typeset($('#prodForm'));draw();
+  }
+  function draw(){
+    const f=fOf(),T=termsOf(),d=m-n,s=m+n;
+    p.begin();
+    p.region(0,PI,()=>0,f,{fill:'rgba(37,99,235,.15)',stroke:'rgba(37,99,235,.3)',n:400});
+    if(rw){p.fn(T[0],{color:'#d97706',width:1.8,dash:[8,5]});p.fn(T[1],{color:'#16a34a',width:1.8,dash:[3,4]});}
+    p.fn(f,{color:'#2563eb',width:2.4});
+    [[PI/2,'π/2'],[PI,'π']].forEach(([x,t])=>p.text([x,-0.17],t,{align:'center'}));
+    const I=simpsonF(f,0,PI,2000);
+    $('#prodOut').innerHTML=`difference frequency m − n = ${d}${d===0?' (a constant term, ½)':''}<br>`+
+      `sum frequency m + n = ${s}<br>`+
+      `∫₀^π = <b>${fmtDec(Math.abs(I)<1e-9?0:I,4)}</b>${Math.abs(I)<1e-9?', orthogonal on [0, π]':''}<br>`+
+      `∫₀^π as a multiple of π: ${fmtDec(I/PI,4)}`;
+  }
+  refresh();redrawOnShow('products',draw);
+  new Drill({mount:'#drill-products',section:'products',goal:4,
+    ...mixDrill([Q.productToSum,Q.productToSum,Q.integrateProduct,Q.definiteProduct])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.rewritePower,Q.integrateSquare,Q.definiteSquare,
+  Q.oddPower,Q.bothEven,Q.definiteSinCos,Q.sinCosMixed,
+  Q.secEven,Q.tanOdd,Q.tanBasics,Q.definiteTanSec,
+  Q.productToSum,Q.integrateProduct,Q.definiteProduct]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-trigint',[
+  '\\(\\sin^2x+\\cos^2x=1\\), \\(1+\\tan^2x=\\sec^2x\\), \\(1+\\cot^2x=\\csc^2x\\)',
+  '\\(\\sin^2x=\\dfrac{1-\\cos 2x}{2}\\), \\(\\cos^2x=\\dfrac{1+\\cos 2x}{2}\\), \\(\\sin 2x=2\\sin x\\cos x\\)',
+  '\\(\\int\\tan x\\,dx=\\ln|\\sec x|+C\\) and \\(\\int\\sec x\\,dx=\\ln|\\sec x+\\tan x|+C\\)',
+  '\\(\\int\\sec^3x\\,dx=\\tfrac12\\big(\\sec x\\tan x+\\ln|\\sec x+\\tan x|\\big)+C\\)',
+  'Product to sum: \\(\\sin A\\cos B=\\tfrac12[\\sin(A-B)+\\sin(A+B)]\\), \\(\\sin A\\sin B=\\tfrac12[\\cos(A-B)-\\cos(A+B)]\\), \\(\\cos A\\cos B=\\tfrac12[\\cos(A-B)+\\cos(A+B)]\\)',
+  '\\(d(\\tan x)=\\sec^2x\\,dx\\) and \\(d(\\sec x)=\\sec x\\tan x\\,dx\\): the two shapes a substitution can use'
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'rewrite with a half-angle identity':q=>({e:q.ansStr}),
+  'integrate a square':q=>({a:q.ansStr}),
+  'definite integral of a square':q=>({v:q.ansStr}),
+  'one odd power':q=>({a:q.ansStr}),
+  'both powers even':q=>({a:q.ansStr}),
+  'definite integral of sine and cosine powers':q=>({v:q.ansStr}),
+  'with a substitution inside':q=>({a:q.ansStr}),
+  'even power of secant':q=>({a:q.ansStr}),
+  'odd power of tangent':q=>({a:q.ansStr}),
+  'the standard tangent and secant antiderivatives':q=>({a:q.ansStr}),
+  'definite integral with tangent and secant':q=>({v:q.ansStr}),
+  'rewrite a product as a sum':q=>({e:q.ansStr}),
+  'integrate a product of two frequencies':q=>({a:q.ansStr}),
+  'definite integral over a period':q=>({v:q.ansStr})
+};
+
+initModule({key:'c2-trigint',title:'Trigonometric Integrals',sub:'Module 5 · Stewart 7.2'});
+</script>
+</body>
+</html>
