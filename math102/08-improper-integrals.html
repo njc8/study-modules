@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Improper Integrals</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 8 · Stewart 7.8</p>
+  <h2>Improper integrals</h2>
+  <p class="lead">Stretch an integral to infinity, or run it into a vertical asymptote, and it stops being a sum of finitely many finite pieces. It becomes a limit. Sometimes that limit is a finite number, and sometimes it is not, and usually a single exponent decides which.</p>
+
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or animate, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Answers are exact. Type <code>diverges</code> whenever the integral diverges (<code>inf</code> and <code>DNE</code> are also accepted). Convergent values are typed exactly: <code>1/2</code>, <code>pi/2</code>, <code>e^(-2)</code>, <code>ln(2)</code>, <code>2sqrt(3)/3</code>, <code>(1/2)ln(3)</code>. When a question asks for a comparison exponent, give the number <code>p</code> alone. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>Answer boxes work like WebAssign's calcPad: <code>/</code> makes a fraction, <code>^</code> an exponent, <code>sqrt</code> a radical, <code>pi</code> the symbol. Use the right arrow key to step out of a fraction or an exponent before typing what comes next.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the moving bound: \(t\), \(b\), the shaded tail</span>
+      <span><i class="dot" style="background:var(--b)"></i> the integrand and its graph</span>
+      <span><i class="dot" style="background:var(--c)"></i> the value the running integral settles on</span>
+      <span><i class="dot" style="background:var(--d)"></i> the comparison function and marked points</span>
+    </div>
+  </div>
+
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Rewrite any improper integral as a limit of ordinary definite integrals, with the limit written correctly.</li>
+      <li>Evaluate type 1 integrals (infinite interval) and type 2 integrals (infinite integrand), including the ones that need parts or partial fractions.</li>
+      <li>Spot a hidden discontinuity inside the interval before you integrate, and split there.</li>
+      <li>Use both \(p\)-tests: at infinity large \(p\) wins, near zero small \(p\) wins, and \(p=1\) fails both ways.</li>
+      <li>Decide convergence by comparison when there is no usable antiderivative.</li>
+    </ul>
+  </div>
+
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 TYPE 1 -->
+<section data-id="type1" data-title="Infinite intervals" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 7.8</p>
+  <h2>Infinite intervals</h2>
+  <p class="lead">You cannot substitute \(\infty\) into an antiderivative. You substitute \(t\), then let \(t\) run.</p>
+
+  <p>An integral over an unbounded interval is a <b>type 1 improper integral</b>. It is defined as a limit of ordinary integrals:</p>
+  <div class="formula">\(\displaystyle\int_a^{\infty} f(x)\,dx=\lim_{t\to\infty}\int_a^{t} f(x)\,dx,\qquad \int_{-\infty}^{b} f(x)\,dx=\lim_{t\to-\infty}\int_{t}^{b} f(x)\,dx\)<span class="cap">If the limit exists as a finite number, the integral <b>converges</b> and that number is its value. Otherwise it <b>diverges</b>. "Diverges" covers both \(\pm\infty\) and a limit that simply fails to exist.</span></div>
+
+  <p>For a doubly infinite interval you must split, and <b>both halves must converge on their own</b>:</p>
+  <div class="formula">\(\displaystyle\int_{-\infty}^{\infty} f(x)\,dx=\int_{-\infty}^{c} f(x)\,dx+\int_{c}^{\infty} f(x)\,dx\)<span class="cap">Any convenient \(c\) works, usually \(c=0\). If either piece diverges, the whole integral diverges, no matter how nicely the two infinities look like they should cancel.</span></div>
+
+  <div class="warn"><b>Symmetry is not convergence.</b> \(\int_{-t}^{t} x\,dx=0\) for every \(t\), but \(\int_{-\infty}^{\infty} x\,dx\) <b>diverges</b>: the piece \(\int_0^{\infty}x\,dx\) is already infinite. You are not allowed to let the two ends run to infinity at the same rate. Split first, then take two independent limits.</div>
+
+  <h3>The one fact this chapter is built on</h3>
+  <div class="formula">\(\displaystyle\int_1^{\infty}\frac{dx}{x^{p}}\ \text{converges}\iff p>1,\qquad\text{and then}\ \int_1^{\infty}\frac{dx}{x^{p}}=\frac{1}{p-1}\)<span class="cap">Proof sketch: for \(p\ne1\), \(\int_1^t x^{-p}dx=\dfrac{t^{1-p}-1}{1-p}\). If \(p>1\) the exponent \(1-p\) is negative, so \(t^{1-p}\to0\) and the limit is \(\frac{1}{p-1}\). If \(p<1\) then \(t^{1-p}\to\infty\). If \(p=1\) the antiderivative is \(\ln t\), which also goes to infinity.</span></div>
+  <p>More generally \(\displaystyle\int_a^{\infty}\frac{dx}{x^p}=\frac{a^{1-p}}{p-1}\) for \(a>0\) and \(p>1\). The other workhorse is the exponential:</p>
+  <div class="formula">\(\displaystyle\int_0^{\infty} e^{-ax}\,dx=\frac{1}{a}\quad(a>0),\qquad \int_c^{\infty} e^{-ax}\,dx=\frac{e^{-ac}}{a}\)<span class="cap">Exponential decay always wins. Every \(\int x^n e^{-ax}dx\) over \([0,\infty)\) converges too, because \(e^{-ax}\) beats any power.</span></div>
+
+  <div class="note"><b>The five limits you actually need.</b> \(\dfrac{1}{t^{k}}\to0\) for \(k>0\); \(e^{-t}\to0\); \(t\,e^{-t}\to0\) (and \(t^n e^{-t}\to 0\) for any \(n\)); \(\dfrac{\ln t}{t}\to0\); \(\arctan t\to\dfrac{\pi}{2}\). Every type 1 problem in this course ends by using one of these.</div>
+
+  <div class="card">
+    <h4>Explore: the tail of \(1/x^p\)</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene wide" id="tailPlot"></canvas>
+        <p class="plotcap">The blue curve is \(y=1/x^p\). The orange region is \(\int_1^b\), and the dashed line marks \(x=b\).</p>
+        <canvas class="scene short" id="tailRun"></canvas>
+        <p class="plotcap">The running value \(F(b)=\int_1^b x^{-p}dx\) plotted against \(b\). Green dashed line: the limit \(1/(p-1)\), when there is one.</p>
+      </div>
+      <div>
+        <div class="sliders" id="tailSliders"></div>
+        <div class="controls" id="tailCtl"></div>
+        <div class="readout" id="tailOut"></div>
+        <p class="hint">Set \(p=2\) and press Play: the shaded area keeps growing but the running value flattens onto the green line at 1. Now set \(p=1\). The picture barely changes, the curve still hugs the axis, but the running value climbs like \(\ln b\) forever. Slide \(p\) down to \(0.5\) and the growth becomes obvious. The boundary at \(p=1\) is invisible in the graph of the integrand and total in the graph of the integral.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: replace the infinity with \(t\)</h4>
+    <div class="expr" id="wtExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wtPrev">◀ Back</button>
+      <button class="btn primary" id="wtNext">Next step ▶</button>
+      <button class="btn" id="wtNew">New problem</button>
+      <span class="status" id="wtStatus"></span>
+    </div>
+    <p class="hint">Write the limit symbol on every line until it is gone. Students who skip it end up writing \(e^{-\infty}=0\) inside a bracket, which is not a legal substitution, and they lose the habit exactly when the limit is the hard part.</p>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-type1"></div>
+</section>
+
+<!-- ============================================================ 2 TYPE 2 -->
+<section data-id="type2" data-title="Discontinuous integrands" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 7.8</p>
+  <h2>Discontinuous integrands</h2>
+  <p class="lead">The interval can be short and the integral still improper, if the integrand runs off to infinity somewhere on it.</p>
+
+  <p>If \(f\) is continuous on \([a,b)\) and blows up at \(b\), the integral is a <b>type 2 improper integral</b>:</p>
+  <div class="formula">\(\displaystyle\int_a^{b} f(x)\,dx=\lim_{t\to b^{-}}\int_a^{t} f(x)\,dx,\qquad\text{and if the blow-up is at }a:\ \int_a^{b} f\,dx=\lim_{t\to a^{+}}\int_t^{b} f\,dx\)<span class="cap">Same move as chapter 1: pull the bad endpoint back to \(t\), integrate normally, then let \(t\) slide onto it. The one-sided arrow matters, because you approach from inside the interval.</span></div>
+  <p>If the blow-up is at an interior point \(c\) with \(a \lt c \lt b\), <b>split there</b> and require both pieces to converge:</p>
+  <div class="formula">\(\displaystyle\int_a^{b} f\,dx=\int_a^{c} f\,dx+\int_c^{b} f\,dx\)<span class="cap">Both pieces are now type 2 with the bad point at an endpoint. If either one diverges, the whole thing diverges.</span></div>
+
+  <div class="warn"><b>The classic wrong answer.</b> \(\displaystyle\int_{-1}^{1}\frac{dx}{x^{2}}\) is <b>not</b> \(\left[-\tfrac1x\right]_{-1}^{1}=-1-1=-2\). A negative answer for a positive integrand should stop you cold. The Fundamental Theorem needs \(f\) continuous on \([-1,1]\), and \(1/x^2\) is not. Split at \(0\): \(\int_0^1 x^{-2}dx\) already diverges, so the whole integral diverges.</div>
+
+  <p>The mirror image of the chapter 1 fact, and the reason the two are so easy to confuse:</p>
+  <div class="formula">\(\displaystyle\int_0^{1}\frac{dx}{x^{p}}\ \text{converges}\iff p<1,\qquad\text{and then}\ \int_0^{1}\frac{dx}{x^{p}}=\frac{1}{1-p}\)<span class="cap">Near \(0\) a <b>small</b> exponent is harmless, because \(x^{-p}\) barely blows up. Out at \(\infty\) a <b>large</b> exponent is what you need, because \(x^{-p}\) must die fast. The exponent \(p=1\) fails on both ends, which is why \(\int_0^{\infty}dx/x\) diverges twice over.</span></div>
+  <p>One more standard value, because the integrand is unbounded but the area is not: \(\displaystyle\int_0^{1}\ln x\,dx=\Big[x\ln x-x\Big]_0^{1}=-1\), using \(x\ln x\to0\) as \(x\to0^{+}\).</p>
+
+  <div class="card">
+    <h4>Explore: shrink toward the asymptote</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene wide" id="singPlot"></canvas>
+        <p class="plotcap">\(y=1/x^p\) on \((0,1]\). The orange region is \(\int_t^1\); the dashed line marks the moving lower limit \(x=t\).</p>
+        <canvas class="scene short" id="singRun"></canvas>
+        <p class="plotcap">The running value \(\int_t^1 x^{-p}dx\) plotted against \(\log_{10}t\). Moving left is moving \(t\) toward \(0\).</p>
+      </div>
+      <div>
+        <div class="sliders" id="singSliders"></div>
+        <div class="controls" id="singCtl"></div>
+        <div class="readout" id="singOut"></div>
+        <p class="hint">Press Play with \(p=0.5\): the spike gets taller and thinner and the running value walks onto the green line at 2. Now \(p=1.5\). The spike looks similar, but the running value climbs off the top of the plot. Compare with chapter 1: near \(0\), small \(p\) is good; out at \(\infty\), large \(p\) is good. Only \(p=1\) manages to be bad in both places.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Check the interval before you integrate.</b> Look at the integrand and ask where the denominator vanishes, where a logarithm hits its argument zero, where a tangent or secant hits an odd multiple of \(\pi/2\). If any of those points lies in \([a,b]\), the integral is improper and the Fundamental Theorem does not apply directly.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-type2"></div>
+</section>
+
+<!-- ============================================================ 3 COMPARISON -->
+<section data-id="compare" data-title="The comparison theorem" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 7.8</p>
+  <h2>The comparison theorem</h2>
+  <p class="lead">Most integrands have no elementary antiderivative. You can still decide convergence, by trapping the integrand between things you already know.</p>
+
+  <div class="formula">\(\text{If }0\le f(x)\le g(x)\text{ on }[a,\infty):\quad \int_a^{\infty}g\ \text{converges}\ \Longrightarrow\ \int_a^{\infty}f\ \text{converges};\qquad \int_a^{\infty}f\ \text{diverges}\ \Longrightarrow\ \int_a^{\infty}g\ \text{diverges}\)<span class="cap">Read it as: the small one is dragged down by a convergent big one, and the big one is dragged up by a divergent small one. It gives you convergence, not the value. It also gives you a bound: \(\int f\le\int g\).</span></div>
+  <p>The two things you compare to are always the same:</p>
+  <ul>
+    <li><b>Powers:</b> \(\displaystyle\int_1^{\infty}\frac{dx}{x^p}\) converges exactly when \(p>1\).</li>
+    <li><b>Exponentials:</b> \(\displaystyle\int_a^{\infty}e^{-x}dx=e^{-a}\) converges, and every \(e^{-kx}\) with \(k>0\) does too.</li>
+  </ul>
+
+  <h3>How to guess the answer first</h3>
+  <p>Keep only the dominant term in the numerator and the denominator, and read off the power. For large \(x\):</p>
+  <div class="formula">\(\frac{x^2+3}{x^4+x}\sim\frac{x^2}{x^4}=\frac{1}{x^{2}},\qquad \frac{x+1}{x^2+2}\sim\frac1x,\qquad \frac{1}{\sqrt{x^3+1}}\sim\frac{1}{x^{3/2}}\)<span class="cap">Subtract the degree of the bottom from the degree of the top; a square root halves a degree. If the resulting power \(p\) is bigger than \(1\), expect convergence.</span></div>
+  <p>Three size facts settle almost every comparison: <b>\(e^{-x}\) beats every power</b> (so \(x^{100}e^{-x}\to0\)), <b>\(\ln x\) loses to every power</b> (so \(\ln x\le x^{\varepsilon}\) eventually), and <b>bounded factors do not matter</b> (\(\sin x\), \(\cos x\), \(\arctan x\) are trapped between constants).</p>
+
+  <h3>Choosing the direction</h3>
+  <p>You need the inequality that points the right way, and you get it by adjusting the same expression you guessed with:</p>
+  <ul>
+    <li>To prove <b>convergence</b> you need \(f\le g\) with \(\int g\) convergent, so make the integrand <b>bigger</b>: drop a positive term from a denominator, or replace a bounded factor by its maximum. \(\dfrac{2+\sin x}{x^{3}}\le\dfrac{3}{x^{3}}\).</li>
+    <li>To prove <b>divergence</b> you need \(f\ge g\) with \(\int g\) divergent, so make the integrand <b>smaller</b>: drop a positive term from a numerator, or replace a bounded factor by its minimum. \(\dfrac{1+e^{-x}}{x}\ge\dfrac1x\).</li>
+  </ul>
+  <div class="note"><b>Only the tail matters.</b> The inequality has to hold from some point on, not everywhere. \(\int_1^{\infty}e^{-x^2}dx\) converges because \(x^2\ge x\) for \(x\ge1\), so \(e^{-x^2}\le e^{-x}\) there. What happens on a bounded piece can never make an integral diverge, as long as the integrand is continuous on it.</div>
+  <div class="warn"><b>Comparison needs \(f\ge0\).</b> The theorem as stated is for nonnegative integrands. With a sign-changing \(f\) the right move is to compare \(|f|\) instead, which gives absolute convergence.</div>
+
+  <div class="card">
+    <h4>Explore: trapping a tail</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene wide" id="cmpPlot"></canvas>
+        <p class="plotcap">Blue: the integrand \(f\). Purple: the comparison \(g\). The shaded tails run from \(1\) to \(b\).</p>
+      </div>
+      <div>
+        <div class="presets" id="cmpPresets"></div>
+        <div class="sliders" id="cmpSliders"></div>
+        <div class="readout" id="cmpOut"></div>
+        <p class="hint">Push \(b\) to the right and watch the two numbers. In the convergent presets both settle, and the \(f\) number stays under the \(g\) number forever, which is the bound the theorem hands you for free. In the divergent preset both keep climbing, slowly, and \(f\) is the one on top: that is the direction you need to force \(g\) up with it.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-compare"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from all three chapters. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+const R=String.raw;
+const PI=Math.PI, INF=Infinity;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+
+/* ============================================================ TeX helpers */
+/* an exponent like 3/2 printed from a decimal */
+function powTex(p){
+  if(Math.abs(p-Math.round(p))<1e-9)return String(Math.round(p));
+  const [n,d]=fr(Math.round(p*24),24);return `${n}/${d}`;
+}
+/* x^p in a denominator: x, sqrt(x), or x^{3/2} */
+const xPow=p=>near(p,1)?'x':near(p,0.5)?'\\sqrt{x}':`x^{${powTex(p)}}`;
+/* \int_lo^hi dx/den */
+const intFrac=(lo,hi,den)=>R`\int_{${lo}}^{${hi}}\frac{dx}{${den}}`;
+/* \int_lo^hi body dx */
+const intBody=(lo,hi,body,dv='x')=>R`\int_{${lo}}^{${hi}} ${body}\,d${dv}`;
+const DIVTEX='\\text{diverges}';
+/* (x - c) written with the sign folded in */
+const shiftTex=c=>c===0?'x':`(x${c<0?'+':'-'}${Math.abs(c)})`;
+
+/* ============================================================ numeric verification
+   Every generator builds {f, F, pieces, val} and hands it to verifyImproper before the question is shown:
+   F' is compared with f by central differences at seven interior points, and each piece's endpoint limits are
+   probed directly (x = 1e300 for infinity, x = p +- 1e-14 for a finite bad point). A draw that does not
+   reproduce the stored answer is thrown away and regenerated. */
+function dnum(F,x){const h=1e-5*Math.max(1,Math.abs(x));return (F(x+h)-F(x-h))/(2*h);}
+/* one-sided limit of F at p, approached from inside (side = +1 from above, -1 from below) */
+function limAt(F,p,side){
+  let a,b;
+  if(p===INF||p===-INF){
+    /* walk in from the deepest probe that F can still evaluate: a factor like x^2 overflows at 1e300
+       long before the exponential that multiplies it has stopped being zero */
+    const sg=p===INF?1:-1,L=[1e300,1e150,1e75,1e40,1e20,1e10];
+    let i=-1;
+    for(let k=0;k+1<L.length;k++){
+      const u=F(sg*L[k]),v=F(sg*L[k+1]);
+      if(Number.isFinite(u)&&Number.isFinite(v)){i=k;a=u;b=v;break;}
+    }
+    if(i<0)return {div:true};
+  }else{
+    a=F(p+side*1e-14);b=F(p+side*1e-12);
+  }
+  if(!Number.isFinite(a)||!Number.isFinite(b))return {div:true};
+  if(Math.abs(a)>1e3)return {div:true};
+  const d=Math.abs(a-b);
+  if(d>0.02)return {div:true};
+  return {div:false,val:a,tol:Math.max(1e-9,4*d)};
+}
+function pieceVal(F,a,b){
+  const A=limAt(F,a,1),B=limAt(F,b,-1);
+  if(A.div||B.div)return {div:true};
+  return {div:false,val:B.val-A.val,tol:A.tol+B.tol+1e-9};
+}
+function antiOK(f,F,a,b){
+  const fa=Number.isFinite(a),fb=Number.isFinite(b);
+  let xs;
+  if(fa&&fb)xs=[0.11,0.24,0.38,0.5,0.62,0.77,0.9].map(s=>a+(b-a)*s);
+  else if(fa)xs=[0.3,0.9,1.7,3.4,6,11,25].map(t=>a+t);
+  else if(fb)xs=[0.3,0.9,1.7,3.4,6,11,25].map(t=>b-t);
+  else xs=[-14,-5,-1.3,-0.4,0.6,2.2,8];
+  let good=0,bad=0;
+  for(const x of xs){
+    const v=f(x);if(!Number.isFinite(v))continue;
+    const d=dnum(F,x);if(!Number.isFinite(d))continue;
+    /* allow for the round-off floor of a central difference: when F carries a large additive constant
+       (as a piecewise antiderivative does) the subtraction F(x+h) - F(x-h) loses most of its digits */
+    const h=1e-5*Math.max(1,Math.abs(x));
+    const floor=50*Number.EPSILON*Math.abs(F(x))/h;
+    good++;if(Math.abs(d-v)>1e-5*Math.max(1e-9,Math.abs(v))+floor)bad++;
+  }
+  return good>=5&&bad===0;
+}
+/* F must be a genuine antiderivative across the whole piece, not just at seven points: Simpson over the
+   interior 90% has to reproduce F(x1) - F(x0). This is what catches a singularity hiding inside a piece
+   that was never split (the [-1,1] dx/x^2 trap). */
+function contOK(f,F,a,b){
+  const A=Number.isFinite(a)?a:(Number.isFinite(b)?b-20:-20);
+  const B=Number.isFinite(b)?b:(Number.isFinite(a)?a+20:20);
+  const L=B-A,x0=A+0.05*L,x1=B-0.05*L,n=2000,h=(x1-x0)/n;
+  let s=f(x0)+f(x1);
+  for(let i=1;i<n;i++)s+=(i%2?4:2)*f(x0+i*h);
+  if(!Number.isFinite(s))return false;
+  const I=s*h/3,J=F(x1)-F(x0);
+  return Number.isFinite(J)&&Math.abs(I-J)<=1e-4*Math.max(1,Math.abs(J));
+}
+function verifyImproper(q){
+  for(const pc of q.pieces)if(!antiOK(q.f,q.F,pc[0],pc[1])||!contOK(q.f,q.F,pc[0],pc[1]))return false;
+  let tot=0,tol=0;
+  for(const pc of q.pieces){
+    const r=pieceVal(q.F,pc[0],pc[1]);
+    if(r.div)return q.val==='diverges';
+    tot+=r.val;tol+=r.tol;
+  }
+  if(q.val==='diverges')return false;
+  return Math.abs(tot-q.val)<=Math.max(tol,1e-7*Math.max(1,Math.abs(q.val)));
+}
+/* does the improper integral described by f, F, pieces converge? (used by the p-test condition question) */
+function convergesQ(F,pieces){
+  for(const pc of pieces){if(pieceVal(F,pc[0],pc[1]).div)return false;}
+  return true;
+}
+/* draw from a pool of factories until the stored answer verifies. A pool that cannot produce a verified
+   question is a bug in the pool, so it is raised rather than quietly serving an unchecked question. */
+function drawVerified(pool){
+  for(let k=0;k<80;k++){const q=pick(pool)();if(verifyImproper(q))return q;}
+  throw new Error('no draw in this pool reproduced its stored answer');
+}
+/* finish a value question: the string the solver types and the reference the checker uses */
+function seal(q){
+  q.ansStr=q.val==='diverges'?'diverges':String(q.val);
+  q.ref=q.val==='diverges'?'inf':q.val;
+  return q;
+}
+/* composite Simpson, for the explore readouts only */
+function simp(f,a,b,n){
+  n=n%2?n+1:n;const h=(b-a)/n;let s=f(a)+f(b);
+  for(let i=1;i<n;i++)s+=(i%2?4:2)*f(a+i*h);
+  return s*h/3;
+}
+
+/* ============================================================ shared render / check for "value or diverges" */
+function askValue(el,q,lead){
+  el.innerHTML=`<p class="prompt">${lead||'Evaluate the improper integral. Give an exact value, or type <code>diverges</code> if it diverges.'}</p>${D(q.tex)}`;
+  numIn(el,'v','Value =',{wide:true,placeholder:'exact value or diverges'});
+}
+const checkVal=(q,el)=>G(el,'v',checkLimit($('[data-k=v]',el).value,q.ref));
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1: the p-integral ---------- */
+const PANTI={1.5:'-\\frac{2}{\\sqrt{x}}',2:'-\\frac{1}{x}',3:'-\\frac{1}{2x^{2}}',4:'-\\frac{1}{3x^{3}}'};
+const PEVAL={1.5:a=>`\\frac{2}{\\sqrt{${a}}}`,2:a=>`\\frac{1}{${a}}`,3:a=>`\\frac{1}{2\\cdot${a}^{2}}`,4:a=>`\\frac{1}{3\\cdot${a}^{3}}`};
+const H32={1:'2',2:'\\sqrt{2}',3:'\\tfrac{2\\sqrt{3}}{3}'};
+Q.pIntegral={name:'p-integral',
+  gen(){return seal(drawVerified([()=>{
+    const p=pick([0.5,1,1.5,2,3,4]),a=pick([1,2,3]);
+    const conv=p>1;
+    const f=x=>Math.pow(x,-p);
+    const F=p===1?(x=>Math.log(x)):(x=>Math.pow(x,1-p)/(1-p));
+    const val=conv?Math.pow(a,1-p)/(p-1):'diverges';
+    const valTex=conv?(p===2?texFrac(1,a):p===3?texFrac(1,2*a*a):p===4?texFrac(1,3*a*a*a):H32[a]):DIVTEX;
+    return {p,a,f,F,val,valTex,pieces:[[a,INF]],tex:intFrac(a,'\\infty',xPow(p))};
+  }]));},
+  render(q,el){askValue(el,q,`Evaluate this ${M('p')}-integral, or type <code>diverges</code>. Exact values only.`);},
+  check:checkVal,
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Antiderivative: `+M(q.p===1?R`\int\frac{dx}{x}=\ln x`:q.p===0.5?R`\int\frac{dx}{\sqrt{x}}=2\sqrt{x}`:R`\int\frac{dx}{${xPow(q.p)}}=${PANTI[q.p]}`)+`. Now ask what it does as `+M(R`x\to\infty`)+`.`;},
+  solution(q){
+    const a=q.a;
+    if(q.p===1)return `Pull the infinity back to ${M('t')}: `+D(R`\lim_{t\to\infty}\int_{${a}}^{t}\frac{dx}{x}=\lim_{t\to\infty}\Big[\ln x\Big]_{${a}}^{t}=\lim_{t\to\infty}\big(\ln t-\ln ${a}\big)=\infty`)+`The logarithm grows without bound, slowly but forever, so the integral <b>diverges</b>. ${M('p=1')} is the boundary case and it is on the losing side.`;
+    if(q.p===0.5)return `With ${M('p=\\tfrac12')} the antiderivative still grows: `+D(R`\lim_{t\to\infty}\int_{${a}}^{t}\frac{dx}{\sqrt{x}}=\lim_{t\to\infty}\Big[2\sqrt{x}\Big]_{${a}}^{t}=\lim_{t\to\infty}\big(2\sqrt{t}-2\sqrt{${a}}\big)=\infty`)+`Any ${M('p\\le 1')} <b>diverges</b> at infinity.`;
+    return `Replace ${M('\\infty')} by ${M('t')} and integrate: `+
+      D(R`\lim_{t\to\infty}\int_{${a}}^{t}\frac{dx}{${xPow(q.p)}}=\lim_{t\to\infty}\left[${PANTI[q.p]}\right]_{${a}}^{t}=\lim_{t\to\infty}\left(${PEVAL[q.p](a)}-\frac{${texNum(1/(q.p-1))}}{t^{${powTex(q.p-1)}}}\right)=${q.valTex}`)+
+      `The ${M('t')} term dies because ${M(`p-1=${powTex(q.p-1)}>0`)}. In general ${M(R`\int_a^{\infty}x^{-p}dx=\frac{a^{1-p}}{p-1}`)} whenever ${M('p>1')}.`;}
+};
+
+/* ---------- chapter 1: exponential tails ---------- */
+const EXPO=[
+  ()=>{const a=pick([1,2,3]),ax=a===1?'x':`${a}x`;
+    return {tex:intBody(0,'\\infty',`e^{-${ax}}`),f:x=>Math.exp(-a*x),F:x=>-Math.exp(-a*x)/a,pieces:[[0,INF]],val:1/a,valTex:texFrac(1,a),
+      why:`${M(R`\int_0^{t}e^{-${ax}}dx=\left[-\tfrac{1}{${a}}e^{-${ax}}\right]_0^{t}=\tfrac{1}{${a}}-\tfrac{1}{${a}}e^{-${a}t}`)}, and ${M(R`e^{-${a}t}\to0`)}, so the value is ${M(texFrac(1,a))}.`};},
+  ()=>{const a=pick([1,2,3]),ax=a===1?'x':`${a}x`;
+    return {tex:intBody('-\\infty',0,`e^{${ax}}`),f:x=>Math.exp(a*x),F:x=>Math.exp(a*x)/a,pieces:[[-INF,0]],val:1/a,valTex:texFrac(1,a),
+      why:`Now the bad end is on the left: ${M(R`\lim_{t\to-\infty}\left[\tfrac{1}{${a}}e^{${ax}}\right]_{t}^{0}=\tfrac{1}{${a}}-\lim_{t\to-\infty}\tfrac{1}{${a}}e^{${a}t}=\tfrac{1}{${a}}`)}, because ${M(R`e^{${a}t}\to0`)} as ${M(R`t\to-\infty`)}.`};},
+  ()=>{const a=pick([1,2]),ax=a===1?'x':`${a}x`;
+    return {tex:intBody(0,'\\infty',`xe^{-${ax}}`),f:x=>x*Math.exp(-a*x),F:x=>-(x/a+1/(a*a))*Math.exp(-a*x),pieces:[[0,INF]],val:1/(a*a),valTex:texFrac(1,a*a),
+      why:`Integrate by parts with ${M('u=x')}, ${M(`dv=e^{-${ax}}dx`)}: ${M(R`\int xe^{-${ax}}dx=-\left(\tfrac{x}{${a}}+\tfrac{1}{${a*a}}\right)e^{-${ax}}`)}. At ${M('t')} the bracket is killed by ${M(R`te^{-${a}t}\to0`)} (exponential beats the power), and at ${M('0')} it contributes ${M(texFrac(1,a*a))}.`};},
+  ()=>{const a=pick([1,2]),ax=a===1?'x^{2}':`${a}x^{2}`;
+    return {tex:intBody(0,'\\infty',`xe^{-${ax}}`),f:x=>x*Math.exp(-a*x*x),F:x=>-Math.exp(-a*x*x)/(2*a),pieces:[[0,INF]],val:1/(2*a),valTex:texFrac(1,2*a),
+      why:`Substitute ${M(`u=${a}x^{2}`)}, ${M(`du=${2*a}x\\,dx`)}: the integral is ${M(R`\left[-\tfrac{1}{${2*a}}e^{-${ax}}\right]_0^{t}\to\tfrac{1}{${2*a}}`)}.`};},
+  ()=>{const a=pick([1,2]),c=pick([1,2]),ax=a===1?'x':`${a}x`;
+    return {tex:intBody(c,'\\infty',`e^{-${ax}}`),f:x=>Math.exp(-a*x),F:x=>-Math.exp(-a*x)/a,pieces:[[c,INF]],val:Math.exp(-a*c)/a,
+      valTex:a===1?`e^{-${c}}`:R`\tfrac{1}{${a}}e^{-${a*c}}`,
+      why:`Same antiderivative, different lower limit: ${M(R`\left[-\tfrac{1}{${a}}e^{-${ax}}\right]_{${c}}^{t}\to\tfrac{1}{${a}}e^{-${a*c}}`)}. Leaving ${M('e')} in the answer is expected.`};},
+  ()=>{const a=pick([1,2]),b=pick([0,1]),ax=a===1?'x':`${a}x`;
+    return {tex:intBody(b,'\\infty',`e^{${ax}}`),f:x=>Math.exp(a*x),F:x=>Math.exp(a*x)/a,pieces:[[b,INF]],val:'diverges',valTex:DIVTEX,
+      why:`The exponent is <b>positive</b>, so ${M(R`\left[\tfrac{1}{${a}}e^{${ax}}\right]_{${b}}^{t}=\tfrac{1}{${a}}e^{${a}t}-\tfrac{1}{${a}}e^{${a*b}}\to\infty`)}. Growing exponentials never have convergent tails.`};},
+  ()=>({tex:intBody('-\\infty',0,'xe^{x}'),f:x=>x*Math.exp(x),F:x=>(x-1)*Math.exp(x),pieces:[[-INF,0]],val:-1,valTex:'-1',
+      why:`Parts gives ${M(R`\int xe^{x}dx=(x-1)e^{x}`)}. At ${M('0')} that is ${M('-1')}; as ${M(R`t\to-\infty`)}, ${M(R`(t-1)e^{t}\to0`)} because the exponential wins. Value ${M('-1-0=-1')}. A negative value is fine here: the integrand is negative on ${M('(-\\infty,0)')}.`}),
+  ()=>{const a=pick([1,2]);
+    return {tex:intBody(0,'\\infty',`x^{2}e^{-${a===1?'x':a+'x'}}`),f:x=>x*x*Math.exp(-a*x),F:x=>-(x*x/a+2*x/(a*a)+2/(a*a*a))*Math.exp(-a*x),pieces:[[0,INF]],val:2/(a*a*a),valTex:texFrac(2,a*a*a),
+      why:`Two rounds of parts: ${M(R`\int x^{2}e^{-${a===1?'x':a+'x'}}dx=-\left(\tfrac{x^{2}}{${a}}+\tfrac{2x}{${a*a}}+\tfrac{2}{${a*a*a}}\right)e^{-${a===1?'x':a+'x'}}`)}. Every term at ${M('t')} vanishes, so the value is what is left at ${M('0')}: ${M(texFrac(2,a*a*a))}.`};}
+];
+Q.exponential={name:'exponential tails',
+  gen(){return seal(drawVerified(EXPO));},
+  render(q,el){askValue(el,q);},
+  check:checkVal,
+  solution(q){return q.why;}
+};
+
+/* ---------- chapter 1: rational and arctan tails ---------- */
+const RATT=[
+  ()=>{const a=pick([1,2,3]),a2=a*a;
+    return {tex:intFrac('-\\infty','\\infty',`${a2}+x^{2}`),f:x=>1/(a2+x*x),F:x=>Math.atan(x/a)/a,pieces:[[-INF,0],[0,INF]],val:PI/a,
+      valTex:a===1?'\\pi':R`\tfrac{\pi}{${a}}`,
+      why:`Split at ${M('0')}. Each half uses ${M(R`\int\frac{dx}{${a2}+x^{2}}=\tfrac{1}{${a}}\arctan\tfrac{x}{${a}}`)}. As ${M(R`x\to\pm\infty`)} the arctangent tends to ${M(R`\pm\tfrac{\pi}{2}`)}, so the total is ${M(R`\tfrac{1}{${a}}\left(\tfrac{\pi}{2}+\tfrac{\pi}{2}\right)=${a===1?'\\pi':R`\tfrac{\pi}{${a}}`}`)}.`};},
+  ()=>{const a=pick([1,2,3]),a2=a*a;
+    return {tex:intFrac(0,'\\infty',`${a2}+x^{2}`),f:x=>1/(a2+x*x),F:x=>Math.atan(x/a)/a,pieces:[[0,INF]],val:PI/(2*a),
+      valTex:R`\tfrac{\pi}{${2*a}}`,
+      why:`${M(R`\lim_{t\to\infty}\left[\tfrac{1}{${a}}\arctan\tfrac{x}{${a}}\right]_{0}^{t}=\tfrac{1}{${a}}\cdot\tfrac{\pi}{2}-0=\tfrac{\pi}{${2*a}}`)}. The arctangent limit is the whole problem.`};},
+  ()=>{const a=pick([1,2,3]);
+    return {tex:intFrac(a,'\\infty','x^{2}+x'),f:x=>1/(x*x+x),F:x=>Math.log(x)-Math.log(x+1),pieces:[[a,INF]],val:Math.log((a+1)/a),
+      valTex:a===1?'\\ln 2':R`\ln\tfrac{${a+1}}{${a}}`,
+      why:`Partial fractions: ${M(R`\frac{1}{x(x+1)}=\frac1x-\frac{1}{x+1}`)}, so the antiderivative is ${M(R`\ln\frac{x}{x+1}`)}. As ${M(R`x\to\infty`)} the ratio ${M(R`\frac{x}{x+1}\to1`)} and the logarithm goes to ${M('0')}. The value is ${M(R`0-\ln\tfrac{${a}}{${a+1}}=\ln\tfrac{${a+1}}{${a}}`)}. Combining the two logarithms <b>before</b> taking the limit is what makes this work.`};},
+  ()=>{const a=pick([2,3]);
+    return {tex:intFrac(a,'\\infty','x^{2}-1'),f:x=>1/(x*x-1),F:x=>0.5*(Math.log(x-1)-Math.log(x+1)),pieces:[[a,INF]],val:0.5*Math.log((a+1)/(a-1)),
+      valTex:R`\tfrac12\ln ${a===2?3:2}`,
+      why:`${M(R`\frac{1}{x^{2}-1}=\tfrac12\left(\frac{1}{x-1}-\frac{1}{x+1}\right)`)}, giving ${M(R`\tfrac12\ln\frac{x-1}{x+1}`)}. That tends to ${M(R`\tfrac12\ln1=0`)}, so the value is ${M(R`-\tfrac12\ln\tfrac{${a-1}}{${a+1}}=\tfrac12\ln ${a===2?3:2}`)}.`};},
+  ()=>{const a=pick([0,1,2]);
+    return {tex:intBody(a,'\\infty',R`\frac{x}{x^{2}+1}`),f:x=>x/(x*x+1),F:x=>0.5*Math.log(x*x+1),pieces:[[a,INF]],val:'diverges',valTex:DIVTEX,
+      why:`Substituting ${M('u=x^{2}+1')} gives ${M(R`\tfrac12\ln(x^{2}+1)`)}, and ${M(R`\tfrac12\ln(t^{2}+1)\to\infty`)}. It <b>diverges</b>. Note the integrand behaves like ${M(R`1/x`)} for large ${M('x')}, which is the losing power.`};},
+  ()=>({tex:intFrac('e','\\infty','x\\ln x'),f:x=>1/(x*Math.log(x)),F:x=>Math.log(Math.log(x)),pieces:[[Math.E,INF]],val:'diverges',valTex:DIVTEX,
+      why:`With ${M('u=\\ln x')} the integral becomes ${M(R`\int_1^{\ln t}\frac{du}{u}=\ln(\ln t)`)}, which goes to ${M('\\infty')}. It <b>diverges</b>, even though the integrand is far smaller than ${M('1/x')}.`}),
+  ()=>{const k=pick([1,2]),lo=k===1?'e':`e^{${k}}`;
+    return {tex:intFrac(lo,'\\infty','x(\\ln x)^{2}'),f:x=>1/(x*Math.log(x)*Math.log(x)),F:x=>-1/Math.log(x),pieces:[[Math.exp(k),INF]],val:1/k,valTex:texFrac(1,k),
+      why:`With ${M('u=\\ln x')} this is ${M(R`\int_{${k}}^{\ln t}\frac{du}{u^{2}}=\tfrac{1}{${k}}-\tfrac{1}{\ln t}\to\tfrac{1}{${k}}`)}. Squaring the logarithm is exactly enough to make it converge, which is the same ${M('p>1')} rule one level up.`};},
+  ()=>{const a=pick([1,Math.E]),aT=a===1?'1':'e';
+    return {tex:intBody(aT,'\\infty',R`\frac{\ln x}{x^{2}}`),f:x=>Math.log(x)/(x*x),F:x=>-(Math.log(x)+1)/x,pieces:[[a,INF]],val:(1+Math.log(a))/a,
+      valTex:a===1?'1':R`\tfrac{2}{e}`,
+      why:`Parts with ${M('u=\\ln x')}, ${M('dv=x^{-2}dx')}: ${M(R`\int\frac{\ln x}{x^{2}}dx=-\frac{\ln x+1}{x}`)}. At ${M('t')} this tends to ${M('0')} because ${M(R`\frac{\ln t}{t}\to0`)}, so the value is ${M(R`\frac{\ln ${aT}+1}{${aT}}=${a===1?'1':R`\tfrac{2}{e}`}`)}.`};},
+  ()=>({tex:intFrac(0,'\\infty','x^{2}+2x+2'),f:x=>1/(x*x+2*x+2),F:x=>Math.atan(x+1),pieces:[[0,INF]],val:PI/2-PI/4,valTex:R`\tfrac{\pi}{4}`,
+      why:`Complete the square: ${M(R`x^{2}+2x+2=(x+1)^{2}+1`)}, so the antiderivative is ${M(R`\arctan(x+1)`)}. The value is ${M(R`\tfrac{\pi}{2}-\arctan1=\tfrac{\pi}{2}-\tfrac{\pi}{4}=\tfrac{\pi}{4}`)}.`})
+];
+Q.rationalArctan={name:'rational and arctan tails',
+  gen(){return seal(drawVerified(RATT));},
+  render(q,el){askValue(el,q);},
+  check:checkVal,
+  solution(q){return q.why;}
+};
+
+/* ---------- chapter 1: two-sided infinite intervals ---------- */
+const TWOS=[
+  ()=>({tex:intBody('-\\infty','\\infty','x'),f:x=>x,F:x=>x*x/2,pieces:[[-INF,0],[0,INF]],val:'diverges',valTex:DIVTEX,
+      why:`Split at ${M('0')}. Already ${M(R`\int_0^{\infty}x\,dx=\lim_{t\to\infty}\tfrac{t^{2}}{2}=\infty`)}, so the whole integral <b>diverges</b>. It is tempting to say the answer is ${M('0')} by symmetry, but ${M(R`\lim_{t\to\infty}\int_{-t}^{t}x\,dx=0`)} is a different (and weaker) statement: the definition requires the two ends to run independently.`}),
+  ()=>({tex:intBody('-\\infty','\\infty','x^{3}'),f:x=>x*x*x,F:x=>Math.pow(x,4)/4,pieces:[[-INF,0],[0,INF]],val:'diverges',valTex:DIVTEX,
+      why:`${M(R`\int_0^{\infty}x^{3}dx=\lim_{t\to\infty}\tfrac{t^{4}}{4}=\infty`)}, so it <b>diverges</b>. Oddness does not rescue an integral whose halves are infinite.`}),
+  ()=>({tex:intBody('-\\infty','\\infty',R`\frac{x}{1+x^{2}}`),f:x=>x/(1+x*x),F:x=>0.5*Math.log(1+x*x),pieces:[[-INF,0],[0,INF]],val:'diverges',valTex:DIVTEX,
+      why:`The right half is ${M(R`\lim_{t\to\infty}\tfrac12\ln(1+t^{2})=\infty`)}, so the integral <b>diverges</b>. This is the sharpest version of the trap: the integrand is odd and tends to ${M('0')}, but only like ${M('1/x')}, which is too slow.`}),
+  ()=>({tex:intBody('-\\infty','\\infty',R`\frac{x}{(1+x^{2})^{2}}`),f:x=>x/Math.pow(1+x*x,2),F:x=>-1/(2*(1+x*x)),pieces:[[-INF,0],[0,INF]],val:0,valTex:'0',
+      why:`Here each half really does converge: ${M(R`\int_0^{\infty}\frac{x\,dx}{(1+x^{2})^{2}}=\left[-\tfrac{1}{2(1+x^{2})}\right]_0^{\infty}=\tfrac12`)} and the left half is ${M(R`-\tfrac12`)}. Both finite, so the value is ${M('0')}. Compare with the previous type: dropping from ${M('1/x')} to ${M('1/x^{3}')} decay is what makes the difference.`}),
+  ()=>{const a=pick([1,2]),a2=a*a;
+    return {tex:intFrac('-\\infty','\\infty',`${a2}+x^{2}`),f:x=>1/(a2+x*x),F:x=>Math.atan(x/a)/a,pieces:[[-INF,0],[0,INF]],val:PI/a,valTex:a===1?'\\pi':R`\tfrac{\pi}{${a}}`,
+      why:`Both halves converge: ${M(R`\tfrac{1}{${a}}\arctan\tfrac{x}{${a}}`)} tends to ${M(R`\pm\tfrac{\pi}{${2*a}}`)}, so the total is ${M(a===1?'\\pi':R`\tfrac{\pi}{${a}}`)}.`};},
+  ()=>{const a=pick([1,2]),ax=a===1?'|x|':`${a}|x|`;
+    return {tex:intBody('-\\infty','\\infty',`e^{-${ax}}`),f:x=>Math.exp(-a*Math.abs(x)),F:x=>x<0?Math.exp(a*x)/a:2/a-Math.exp(-a*x)/a,pieces:[[-INF,0],[0,INF]],val:2/a,valTex:texFrac(2,a),
+      why:`The absolute value forces the split at ${M('0')}. Each half is ${M(texFrac(1,a))} by the standard exponential tail, and the integrand is even, so the total is ${M(texFrac(2,a))}.`};},
+  ()=>({tex:intBody('-\\infty','\\infty','xe^{-x^{2}}'),f:x=>x*Math.exp(-x*x),F:x=>-Math.exp(-x*x)/2,pieces:[[-INF,0],[0,INF]],val:0,valTex:'0',
+      why:`Both halves converge: ${M(R`\int_0^{\infty}xe^{-x^{2}}dx=\tfrac12`)} and the left half is ${M(R`-\tfrac12`)}. Since both are finite the answer really is ${M('0')}, and here the symmetry argument is legitimate.`}),
+  ()=>({tex:intFrac('-\\infty','\\infty','(1+x^{2})^{2}'),f:x=>1/Math.pow(1+x*x,2),F:x=>x/(2*(1+x*x))+0.5*Math.atan(x),pieces:[[-INF,0],[0,INF]],val:PI/2,valTex:R`\tfrac{\pi}{2}`,
+      why:`The antiderivative (from the trigonometric substitution ${M('x=\\tan\\theta')}) is ${M(R`\frac{x}{2(1+x^{2})}+\tfrac12\arctan x`)}. The rational piece tends to ${M('0')} and the arctangent to ${M(R`\pm\tfrac{\pi}{4}`)}, so the total is ${M(R`\tfrac{\pi}{2}`)}.`})
+];
+Q.twoSided={name:'split a two-sided integral',
+  gen(){return seal(drawVerified(TWOS));},
+  render(q,el){askValue(el,q,`Split at ${M('0')} and evaluate, or type <code>diverges</code>. Remember that <b>both</b> halves must converge.`);},
+  check:checkVal,
+  solution(q){return q.why;}
+};
+
+/* ---------- chapter 2: a vertical asymptote at an endpoint ---------- */
+const ENDP=[
+  ()=>{const c=pick([{p:1/3,a:pick([1,8])},{p:0.5,a:pick([1,4,9])},{p:2/3,a:1},{p:0.75,a:1},{p:1,a:pick([1,2])},{p:1.5,a:1},{p:2,a:pick([1,2])}]);
+    const p=c.p,a=c.a,conv=p<1;
+    const k=conv?Math.round(Math.pow(a,1-p)*1e9)/1e9:0;
+    const [n,d]=fr(Math.round(p*24),24);
+    return {tex:intFrac(0,a,xPow(p)),f:x=>Math.pow(x,-p),F:p===1?(x=>Math.log(x)):(x=>Math.pow(x,1-p)/(1-p)),
+      pieces:[[0,a]],val:conv?Math.pow(a,1-p)/(1-p):'diverges',
+      valTex:conv?texFrac(Math.round(k*d),d-n):DIVTEX,
+      why:conv?`The integrand blows up at the <b>lower</b> endpoint, so ${M(R`\int_0^{${a}}x^{-${powTex(p)}}dx=\lim_{t\to0^{+}}\left[\frac{x^{${powTex(1-p)}}}{${powTex(1-p)}}\right]_{t}^{${a}}`)}. The exponent ${M(`1-p=${powTex(1-p)}`)} is positive, so ${M(`t^{${powTex(1-p)}}\\to0`)} and the value is ${M(R`\frac{${a}^{${powTex(1-p)}}}{${powTex(1-p)}}=${texFrac(Math.round(k*d),d-n)}`)}. Near zero, ${M('p<1')} converges.`
+        :(p===1?`${M(R`\lim_{t\to0^{+}}\big[\ln x\big]_{t}^{${a}}=\ln ${a}-\lim_{t\to0^{+}}\ln t=\infty`)}. The boundary exponent ${M('p=1')} <b>diverges</b> at zero as well as at infinity.`
+              :`${M(R`\lim_{t\to0^{+}}\left[\frac{x^{${powTex(1-p)}}}{${powTex(1-p)}}\right]_{t}^{${a}}`)} has a negative exponent ${M(`1-p=${powTex(1-p)}`)}, so ${M(`t^{${powTex(1-p)}}\\to\\infty`)} and the integral <b>diverges</b>.`)};},
+  ()=>{const a=pick([1,4,9]);
+    return {tex:intFrac(0,a,`\\sqrt{${a}-x}`),f:x=>1/Math.sqrt(a-x),F:x=>-2*Math.sqrt(a-x),pieces:[[0,a]],val:2*Math.sqrt(a),valTex:String(2*Math.sqrt(a)),
+      why:`The bad point is the <b>upper</b> endpoint ${M(`x=${a}`)}. With ${M(`u=${a}-x`)} the antiderivative is ${M(`-2\\sqrt{${a}-x}`)}, so ${M(R`\lim_{t\to ${a}^{-}}\left[-2\sqrt{${a}-x}\right]_{0}^{t}=0+2\sqrt{${a}}=${2*Math.sqrt(a)}`)}. A square root in the denominator is a ${M('p=\\tfrac12')} blow-up, which is mild enough to converge.`};},
+  ()=>{const a=pick([0,1,2]),w=pick([1,8,27]),b=a+w;
+    return {tex:intFrac(a,b,`${shiftTex(a)}^{2/3}`),f:x=>1/Math.pow(Math.cbrt(x-a),2),F:x=>3*Math.cbrt(x-a),pieces:[[a,b]],val:3*Math.cbrt(w),valTex:String(3*Math.round(Math.cbrt(w))),
+      why:`Blow-up at the lower endpoint ${M(`x=${a}`)}, exponent ${M('p=\\tfrac23<1')}. ${M(R`\lim_{t\to ${a}^{+}}\left[3${shiftTex(a)}^{1/3}\right]_{t}^{${b}}=3\sqrt[3]{${w}}=${3*Math.round(Math.cbrt(w))}`)}.`};},
+  ()=>{const a=pick([1,Math.E]),aT=a===1?'1':'e';
+    return {tex:intBody(0,aT,'\\ln x'),f:x=>Math.log(x),F:x=>x*Math.log(x)-x,pieces:[[0,a]],val:a*Math.log(a)-a,valTex:a===1?'-1':'0',
+      why:`${M('\\ln x\\to-\\infty')} at the lower endpoint, so the integral is improper. ${M(R`\int\ln x\,dx=x\ln x-x`)}, and ${M(R`\lim_{t\to0^{+}}(t\ln t-t)=0`)} because ${M('t\\ln t\\to0')}. So the value is ${M(`${aT}\\ln ${aT}-${aT}=${a===1?'-1':'0'}`)}.`};},
+  ()=>({tex:intBody(0,'\\pi/2','\\tan x'),f:x=>Math.tan(x),F:x=>-Math.log(Math.cos(x)),pieces:[[0,PI/2]],val:'diverges',valTex:DIVTEX,
+      why:`${M('\\tan x\\to\\infty')} as ${M(R`x\to\tfrac{\pi}{2}^{-}`)}. With ${M(R`\int\tan x\,dx=-\ln|\cos x|`)}, ${M(R`\lim_{t\to\pi/2^{-}}\big(-\ln|\cos t|\big)=\infty`)}, so it <b>diverges</b>.`}),
+  ()=>{const a=pick([1,2,3]);
+    return {tex:intFrac(0,a,`${a}-x`),f:x=>1/(a-x),F:x=>-Math.log(a-x),pieces:[[0,a]],val:'diverges',valTex:DIVTEX,
+      why:`The denominator vanishes at the upper endpoint. ${M(R`\lim_{t\to ${a}^{-}}\big[-\ln(${a}-x)\big]_{0}^{t}=\lim_{t\to ${a}^{-}}\big(-\ln(${a}-t)+\ln ${a}\big)=\infty`)}. A simple pole (${M('p=1')}) always <b>diverges</b>.`};},
+  ()=>{const a=pick([1,2,3]);
+    return {tex:intFrac(0,a,`\\sqrt{${a*a}-x^{2}}`),f:x=>1/Math.sqrt(a*a-x*x),F:x=>Math.asin(x/a),pieces:[[0,a]],val:PI/2,valTex:R`\tfrac{\pi}{2}`,
+      why:`The integrand blows up at ${M(`x=${a}`)}. ${M(R`\int\frac{dx}{\sqrt{${a*a}-x^{2}}}=\arcsin\frac{x}{${a}}`)}, so the value is ${M(R`\arcsin 1-\arcsin 0=\tfrac{\pi}{2}`)}. Notice the answer does not depend on ${M(`${a}`)} at all.`};},
+  ()=>{const a=pick([1,2]);
+    return {tex:intFrac(0,a,`x\\sqrt{x}`),f:x=>Math.pow(x,-1.5),F:x=>-2/Math.sqrt(x),pieces:[[0,a]],val:'diverges',valTex:DIVTEX,
+      why:`${M(R`x\sqrt{x}=x^{3/2}`)}, so this is the ${M('p=\\tfrac32')} case near zero. ${M(R`\lim_{t\to0^{+}}\left[-\frac{2}{\sqrt{x}}\right]_{t}^{${a}}=-\frac{2}{\sqrt{${a}}}+\lim_{t\to0^{+}}\frac{2}{\sqrt{t}}=\infty`)}: it <b>diverges</b>, because ${M('p\\ge1')} near zero.`};}
+];
+Q.endpointBlowup={name:'vertical asymptote at an endpoint',
+  gen(){return seal(drawVerified(ENDP));},
+  render(q,el){askValue(el,q,'The integrand is unbounded at one endpoint. Evaluate the integral, or type <code>diverges</code>.');},
+  check:checkVal,
+  solution(q){return q.why;}
+};
+
+/* ---------- chapter 2: find the bad point first ---------- */
+Q.hiddenPoint={name:'find the bad point first',
+  gen(){
+    const q=drawVerified([()=>{
+      const kind=pick(['k2','k2','k1','k23','k23','exp2']);
+      const c=pick([-2,-1,0,1,2]);
+      const cube=pick([1,8,27]),cube2=pick([1,8,27]);
+      const d1=kind==='k23'?cube:pick([1,2,3]),d2=kind==='k23'?cube2:pick([1,2,3]);
+      const a=c-d1,b=c+d2;
+      const s=shiftTex(c);
+      let den,f,F,val;
+      if(kind==='k23'){den=`${s}^{2/3}`;f=x=>1/Math.pow(Math.cbrt(x-c),2);F=x=>3*Math.cbrt(x-c);val=3*(Math.cbrt(d1)+Math.cbrt(d2));}
+      else if(kind==='k1'){den=c===0?'x':s;f=x=>1/(x-c);F=x=>Math.log(Math.abs(x-c));val='diverges';}
+      else if(kind==='exp2'){den=c===0?'x^{2}':`x^{2}${-2*c<0?'-':'+'}${Math.abs(2*c)}x+${c*c}`;f=x=>1/((x-c)*(x-c));F=x=>-1/(x-c);val='diverges';}
+      else {den=`${s}^{2}`;f=x=>1/((x-c)*(x-c));F=x=>-1/(x-c);val='diverges';}
+      return {kind,c,a,b,d1,d2,den,f,F,val,pieces:[[a,c],[c,b]],tex:intFrac(a,b,den),
+        valTex:val==='diverges'?DIVTEX:String(3*(Math.round(Math.cbrt(d1))+Math.round(Math.cbrt(d2))))};
+    }]);
+    return seal(q);
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">This integral is improper for a reason that is easy to miss: the integrand blows up at a point <b>strictly inside</b> the interval. Name that point, then evaluate (type <code>diverges</code> if it diverges).</p>${D(q.tex)}`;
+    numIn(el,'c',M('\\text{bad point } x='));
+    numIn(el,'v','Value =',{wide:true,placeholder:'exact value or diverges'});
+  },
+  check(q,el){return Gall(el,[['c',checkNumber($('[data-k=c]',el).value,q.c)],['v',checkLimit($('[data-k=v]',el).value,q.ref)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Set the denominator to zero: ${M(`${q.den}=0`)} at ${M(`x=${q.c}`)}, and ${M(`${q.a} \\lt ${q.c} \\lt ${q.b}`)}. Split there and treat each piece separately.`;},
+  solution(q){
+    const head=`The denominator vanishes at ${M(`x=${q.c}`)}, which lies inside ${M(`[${q.a},${q.b}]`)}, so the Fundamental Theorem does not apply directly. Split: ${M(R`\int_{${q.a}}^{${q.b}}=\int_{${q.a}}^{${q.c}}+\int_{${q.c}}^{${q.b}}`)}. `;
+    if(q.kind==='k23')return head+`Each piece has the mild exponent ${M('p=\\tfrac23<1')}: `+
+      D(R`\int_{${q.a}}^{${q.c}}\frac{dx}{${q.den}}=\left[3${shiftTex(q.c)}^{1/3}\right]_{${q.a}}^{${q.c}}=3\sqrt[3]{${q.d1}},\qquad \int_{${q.c}}^{${q.b}}\frac{dx}{${q.den}}=3\sqrt[3]{${q.d2}}`)+
+      `Both converge, so the integral converges to ${M(`3\\sqrt[3]{${q.d1}}+3\\sqrt[3]{${q.d2}}=${q.valTex}`)}. The cube root is what keeps this real on the left of ${M(`x=${q.c}`)}.`;
+    if(q.kind==='k1')return head+`Each piece is a simple pole: ${M(R`\lim_{t\to ${q.c}^{-}}\big[\ln|${shiftTex(q.c)}|\big]_{${q.a}}^{t}=-\infty`)}. The left piece already <b>diverges</b>, so the whole integral <b>diverges</b>.`;
+    return head+`Each piece has ${M('p=2\\ge1')}: ${M(R`\lim_{t\to ${q.c}^{+}}\left[-\frac{1}{${shiftTex(q.c)}}\right]_{t}^{${q.b}}=\infty`)}, so it <b>diverges</b>. Evaluating ${M(R`\left[-\frac{1}{${shiftTex(q.c)}}\right]_{${q.a}}^{${q.b}}`)} mechanically gives a finite (and often negative) number, which is the standard wrong answer here.`;}
+};
+
+/* ---------- chapter 2: the p-test near zero ---------- */
+Q.pNearZero={name:'the p-test near zero',
+  gen(){return seal(drawVerified([()=>{
+    const p=pick([0.25,1/3,0.5,2/3,0.75,1,4/3,1.5,2,3]);
+    const conv=p<1;
+    const [n,d]=fr(Math.round(p*24),24);
+    return {p,f:x=>Math.pow(x,-p),F:p===1?(x=>Math.log(x)):(x=>Math.pow(x,1-p)/(1-p)),pieces:[[0,1]],
+      val:conv?1/(1-p):'diverges',valTex:conv?texFrac(d,d-n):DIVTEX,
+      tex:intFrac(0,1,xPow(p))};
+  }]));},
+  render(q,el){askValue(el,q,`Use the ${M('p')}-test near zero. Evaluate, or type <code>diverges</code>.`);},
+  check:checkVal,
+  solution(q){
+    if(q.val==='diverges')return `Here ${M(`p=${powTex(q.p)}\\ge 1`)}. ${q.p===1?M(R`\lim_{t\to0^{+}}\big[\ln x\big]_{t}^{1}=\infty`):M(R`\lim_{t\to0^{+}}\left[\frac{x^{${powTex(1-q.p)}}}{${powTex(1-q.p)}}\right]_{t}^{1}=\infty`)}, so it <b>diverges</b>. Near zero the rule is the reverse of the one at infinity: you need ${M('p<1')}.`;
+    return `Here ${M(`p=${powTex(q.p)}<1`)}, so ${M(`1-p=${powTex(1-q.p)}>0`)} and ${M(`t^{${powTex(1-q.p)}}\\to0`)}: `+
+      D(R`\int_0^{1}\frac{dx}{${xPow(q.p)}}=\lim_{t\to0^{+}}\left[\frac{x^{${powTex(1-q.p)}}}{${powTex(1-q.p)}}\right]_{t}^{1}=\frac{1}{1-p}=${q.valTex}`)+
+      `The integrand is unbounded and the area is still finite, because the spike is thin enough.`;}
+};
+
+/* ---------- chapter 2: the p-test as a condition ---------- */
+Q.pCondition={name:'the p-test as a condition',
+  gen(){
+    let q=null;
+    for(let k=0;k<40;k++){
+      const atInf=Math.random()<0.5,a=pick([1,2,5]);
+      const mk=p=>({F:p===1?(x=>Math.log(x)):(x=>Math.pow(x,1-p)/(1-p)),pieces:atInf?[[a,INF]]:[[0,a]]});
+      const hi=mk(1.4),lo=mk(0.6);
+      const cvHi=convergesQ(hi.F,hi.pieces),cvLo=convergesQ(lo.F,lo.pieces);
+      const ok=atInf?(cvHi&&!cvLo):(!cvHi&&cvLo);
+      const cand={atInf,a,ref:{v:'p',op:atInf?'>':'<',val:1},condStr:atInf?'p>1':'p<1',
+        tex:atInf?intFrac(a,'\\infty','x^{p}'):intFrac(0,a,'x^{p}')};
+      q=cand;if(ok)return cand;
+    }
+    throw new Error('p-test condition did not verify against p = 0.6 and p = 1.4');
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">For which values of ${M('p')} does this integral converge? Write a condition such as <code>p &gt; 1</code>.</p>${D(q.tex)}`;
+    numIn(el,'p','Converges when',{placeholder:'p > 1'});
+  },
+  check(q,el){return G(el,'p',checkCondition($('[data-k=p]',el).value,q.ref));},
+  solution(q){
+    if(q.atInf)return `Out at infinity the tail must die fast enough. ${M(R`\int_{${q.a}}^{t}x^{-p}dx=\frac{t^{1-p}-${q.a}^{1-p}}{1-p}`)}, and ${M('t^{1-p}\\to0')} exactly when ${M('1-p<0')}. So it converges for ${M('p>1')} (and then the value is ${M(R`\frac{${q.a}^{1-p}}{p-1}`)}); for ${M('p=1')} the antiderivative is ${M('\\ln t')}, which also diverges.`;
+    return `Near zero the spike must be thin enough. ${M(R`\int_{t}^{${q.a}}x^{-p}dx=\frac{${q.a}^{1-p}-t^{1-p}}{1-p}`)}, and ${M('t^{1-p}\\to0')} exactly when ${M('1-p>0')}. So it converges for ${M('p<1')}, the opposite of the rule at infinity. At ${M('p=1')} the antiderivative ${M('\\ln t')} runs to ${M('-\\infty')}.`;}
+};
+
+/* ============================================================ chapter 3 verification helpers */
+/* f(x) ~ C/x^p as x -> infinity, with C > 0 */
+function asymptoticOK(f,p){
+  const L1=Math.pow(1e5,p)*f(1e5),L2=Math.pow(1e6,p)*f(1e6);
+  if(!Number.isFinite(L1)||!Number.isFinite(L2)||L1<=0||L2<=0)return false;
+  if(Math.abs(L1-L2)>3e-3*Math.max(1,Math.abs(L2)))return false;
+  for(let x=1;x<=200;x+=1)if(!(f(x)>0))return false;
+  return true;
+}
+/* the ratio f/g stays bounded above (conv) or bounded away from zero (div) on the tail */
+function ratioOK(f,g,conv){
+  let mn=Infinity,mx=0;
+  for(let i=0;i<=400;i++){
+    const x=1+i*0.15,r=f(x)/g(x);
+    if(!Number.isFinite(r)||f(x)<0)return false;
+    if(r<mn)mn=r;if(r>mx)mx=r;
+  }
+  return conv?(mx<=60):(mn>1e-6);
+}
+
+/* ---------- chapter 3: behaves like c/x^p ---------- */
+const DOMP=[
+  {tex:R`\frac{x^{2}+3}{x^{4}+x}`,f:x=>(x*x+3)/(Math.pow(x,4)+x),p:2,c:'1',top:'x^{2}',bot:'x^{4}'},
+  {tex:R`\frac{1}{\sqrt{x^{3}+1}}`,f:x=>1/Math.sqrt(Math.pow(x,3)+1),p:1.5,c:'1',top:'1',bot:'\\sqrt{x^{3}}=x^{3/2}'},
+  {tex:R`\frac{x+1}{x^{2}+2}`,f:x=>(x+1)/(x*x+2),p:1,c:'1',top:'x',bot:'x^{2}'},
+  {tex:R`\frac{\sqrt{x}}{x^{2}+1}`,f:x=>Math.sqrt(x)/(x*x+1),p:1.5,c:'1',top:'x^{1/2}',bot:'x^{2}'},
+  {tex:R`\frac{2x^{2}+1}{x^{3}+5}`,f:x=>(2*x*x+1)/(Math.pow(x,3)+5),p:1,c:'2',top:'2x^{2}',bot:'x^{3}'},
+  {tex:R`\frac{x}{\sqrt{x^{6}+1}}`,f:x=>x/Math.sqrt(Math.pow(x,6)+1),p:2,c:'1',top:'x',bot:'x^{3}'},
+  {tex:R`\frac{1}{x^{2}+3x}`,f:x=>1/(x*x+3*x),p:2,c:'1',top:'1',bot:'x^{2}'},
+  {tex:R`\frac{\sqrt{x+1}}{x^{2}}`,f:x=>Math.sqrt(x+1)/(x*x),p:1.5,c:'1',top:'x^{1/2}',bot:'x^{2}'},
+  {tex:R`\frac{3x+2}{\sqrt{x^{5}+1}}`,f:x=>(3*x+2)/Math.sqrt(Math.pow(x,5)+1),p:1.5,c:'3',top:'3x',bot:'x^{5/2}'},
+  {tex:R`\frac{x^{3}+2}{x^{4}+5x}`,f:x=>(Math.pow(x,3)+2)/(Math.pow(x,4)+5*x),p:1,c:'1',top:'x^{3}',bot:'x^{4}'},
+  {tex:R`\frac{5x+1}{x^{2}+x+1}`,f:x=>(5*x+1)/(x*x+x+1),p:1,c:'5',top:'5x',bot:'x^{2}'},
+  {tex:R`\frac{x^{2}}{x^{4}+1}`,f:x=>x*x/(Math.pow(x,4)+1),p:2,c:'1',top:'x^{2}',bot:'x^{4}'},
+  {tex:R`\frac{1}{\sqrt{x+1}}`,f:x=>1/Math.sqrt(x+1),p:0.5,c:'1',top:'1',bot:'x^{1/2}'},
+  {tex:R`\frac{x+4}{\sqrt{x^{5}+x}}`,f:x=>(x+4)/Math.sqrt(Math.pow(x,5)+x),p:1.5,c:'1',top:'x',bot:'x^{5/2}'}
+];
+Q.dominantPower={name:'behaves like a power',
+  gen(){
+    for(let k=0;k<40;k++){
+      const e=pick(DOMP);
+      if(asymptoticOK(e.f,e.p))return {...e,conv:e.p>1};
+    }
+    throw new Error('no integrand in the pool matched its stored power');
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Keep only the dominant term on the top and on the bottom. Give the power ${M('p')} with ${M(R`f(x)\sim\dfrac{c}{x^{p}}`)} for large ${M('x')}, then say what the integral does.</p>${D(intBody(1,'\\infty',q.tex))}`;
+    numIn(el,'p',M('p='),{placeholder:'a number like 3/2'});
+    q.get=choiceButtons(el,[{label:'converges',value:true},{label:'diverges',value:false}]);
+  },
+  check(q,el){
+    const r=G(el,'p',checkNumber($('[data-k=p]',el).value,q.p));
+    const v=q.get();
+    if(v===null)return {ok:false,msg:'Give the power and pick a verdict.'};
+    if(!r.ok)return r;
+    if(v!==q.conv)return {ok:false,msg:q.conv?`With ${M(`p=${powTex(q.p)}>1`)} the comparison integral converges, so this one does too.`:`With ${M(`p=${powTex(q.p)}\\le1`)} the comparison integral diverges, and so does this one.`};
+    return {ok:true};
+  },
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Dominant top: ${M(q.top)}. Dominant bottom: ${M(q.bot)}. Divide.`;},
+  solution(q){
+    return `For large ${M('x')} the top behaves like ${M(q.top)} and the bottom like ${M(q.bot)}, so `+
+      D(R`f(x)\sim\frac{${q.c==='1'?'':q.c}}{x^{${powTex(q.p)}}},\qquad p=${powTex(q.p)}`)+
+      `Since ${M(`p=${powTex(q.p)}${q.conv?'>':'\\le'}1`)}, the reference integral ${M(intFrac(1,'\\infty',`x^{${powTex(q.p)}}`))} ${q.conv?'converges':'diverges'}, and by limit comparison (the ratio tends to the positive constant ${M(q.c)}) the given integral <b>${q.conv?'converges':'diverges'}</b>.`;}
+};
+
+/* ---------- chapter 3: choose a comparison function ---------- */
+const CMPF=[
+  {tex:R`\frac{2+\sin x}{x^{3}}`,f:x=>(2+Math.sin(x))/Math.pow(x,3),g:x=>Math.pow(x,-3),gTex:R`\frac{3}{x^{3}}`,gStr:'1/x^3',conv:true,
+   why:`${M(R`\sin x\le1`)}, so ${M(R`\frac{2+\sin x}{x^{3}}\le\frac{3}{x^{3}}`)}, and ${M(R`\int_1^{\infty}\frac{3\,dx}{x^{3}}`)} converges (${M('p=3>1')}).`},
+  {tex:R`\frac{2+\sin x}{x}`,f:x=>(2+Math.sin(x))/x,g:x=>1/x,gTex:R`\frac{1}{x}`,gStr:'1/x',conv:false,
+   why:`${M(R`\sin x\ge-1`)}, so ${M(R`\frac{2+\sin x}{x}\ge\frac{1}{x}`)}, and ${M(R`\int_1^{\infty}\frac{dx}{x}`)} diverges. A divergent lower bound forces divergence.`},
+  {tex:R`\frac{1+\cos^{2}x}{x^{2}}`,f:x=>(1+Math.pow(Math.cos(x),2))/(x*x),g:x=>1/(x*x),gTex:R`\frac{2}{x^{2}}`,gStr:'1/x^2',conv:true,
+   why:`${M(R`\cos^{2}x\le1`)}, so the integrand is at most ${M(R`\frac{2}{x^{2}}`)}, and ${M('p=2>1')} converges.`},
+  {tex:R`\frac{1+\cos^{2}x}{x}`,f:x=>(1+Math.pow(Math.cos(x),2))/x,g:x=>1/x,gTex:R`\frac{1}{x}`,gStr:'1/x',conv:false,
+   why:`${M(R`1+\cos^{2}x\ge1`)}, so the integrand is at least ${M(R`\frac{1}{x}`)}, which diverges.`},
+  {tex:R`\frac{3+\sin x}{\sqrt{x}}`,f:x=>(3+Math.sin(x))/Math.sqrt(x),g:x=>1/Math.sqrt(x),gTex:R`\frac{2}{\sqrt{x}}`,gStr:'1/sqrt(x)',conv:false,
+   why:`${M(R`3+\sin x\ge2`)}, so the integrand is at least ${M(R`\frac{2}{\sqrt{x}}`)}, and ${M('p=\\tfrac12\\le1')} diverges.`},
+  {tex:R`e^{-x^{2}}`,f:x=>Math.exp(-x*x),g:x=>Math.exp(-x),gTex:'e^{-x}',gStr:'e^(-x)',conv:true,
+   why:`For ${M('x\\ge1')} we have ${M('x^{2}\\ge x')}, so ${M(R`e^{-x^{2}}\le e^{-x}`)}, and ${M(R`\int_1^{\infty}e^{-x}dx=e^{-1}`)} converges. There is no elementary antiderivative here, so comparison is the only tool.`},
+  {tex:R`\frac{e^{-x}}{x}`,f:x=>Math.exp(-x)/x,g:x=>Math.exp(-x),gTex:'e^{-x}',gStr:'e^(-x)',conv:true,
+   why:`For ${M('x\\ge1')}, ${M(R`\frac{e^{-x}}{x}\le e^{-x}`)}, and the exponential integral converges.`},
+  {tex:R`\frac{1}{x+e^{x}}`,f:x=>1/(x+Math.exp(x)),g:x=>Math.exp(-x),gTex:'e^{-x}',gStr:'e^(-x)',conv:true,
+   why:`Dropping the positive ${M('x')} from the denominator makes the fraction bigger: ${M(R`\frac{1}{x+e^{x}}\le\frac{1}{e^{x}}=e^{-x}`)}, which converges.`},
+  {tex:R`e^{-x}\cos^{2}x`,f:x=>Math.exp(-x)*Math.pow(Math.cos(x),2),g:x=>Math.exp(-x),gTex:'e^{-x}',gStr:'e^(-x)',conv:true,
+   why:`${M(R`\cos^{2}x\le1`)}, so the integrand is at most ${M('e^{-x}')}, which converges.`},
+  {tex:R`\frac{\ln x}{x^{3}}`,f:x=>Math.log(x)/Math.pow(x,3),g:x=>1/(x*x),gTex:R`\frac{1}{x^{2}}`,gStr:'1/x^2',conv:true,
+   why:`${M(R`\ln x\le x`)} for ${M('x\\ge1')}, so ${M(R`\frac{\ln x}{x^{3}}\le\frac{1}{x^{2}}`)}, which converges. The logarithm is always beaten by one power of ${M('x')}.`},
+  {tex:R`\frac{\arctan x}{x^{2}}`,f:x=>Math.atan(x)/(x*x),g:x=>1/(x*x),gTex:R`\frac{\pi/2}{x^{2}}`,gStr:'1/x^2',conv:true,
+   why:`${M(R`\arctan x\le\tfrac{\pi}{2}`)}, so the integrand is at most ${M(R`\frac{\pi/2}{x^{2}}`)}, which converges.`},
+  {tex:R`\frac{2-\cos x}{x}`,f:x=>(2-Math.cos(x))/x,g:x=>1/x,gTex:R`\frac{1}{x}`,gStr:'1/x',conv:false,
+   why:`${M(R`2-\cos x\ge1`)}, so the integrand is at least ${M(R`\frac{1}{x}`)}, which diverges.`},
+  {tex:R`\frac{\sin^{2}x}{x^{2}}`,f:x=>Math.pow(Math.sin(x),2)/(x*x),g:x=>1/(x*x),gTex:R`\frac{1}{x^{2}}`,gStr:'1/x^2',conv:true,
+   why:`${M(R`\sin^{2}x\le1`)}, so the integrand is at most ${M(R`\frac{1}{x^{2}}`)}, which converges.`},
+  {tex:R`\frac{1+e^{-x}}{x}`,f:x=>(1+Math.exp(-x))/x,g:x=>1/x,gTex:R`\frac{1}{x}`,gStr:'1/x',conv:false,
+   why:`${M(R`1+e^{-x}\ge1`)}, so the integrand is at least ${M(R`\frac{1}{x}`)}, and ${M(R`\int_1^{\infty}\frac{dx}{x}`)} diverges.`}
+];
+Q.compareFunction={name:'choose a comparison function',
+  gen(){
+    for(let k=0;k<40;k++){const e=pick(CMPF);if(ratioOK(e.f,e.g,e.conv))return {...e};}
+    throw new Error('no comparison in the pool bounded its integrand the right way');
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Give a comparison function ${M('g(x)')} of the simplest form ${M(R`\dfrac{c}{x^{p}}`)} or ${M('c\\,e^{-x}')} that settles this integral, then give the verdict. Any positive constant multiple of the right ${M('g')} is accepted.</p>${D(intBody(1,'\\infty',q.tex))}`;
+    numIn(el,'g',M('g(x)='),{wide:true,placeholder:'1/x^2 or e^(-x)'});
+    q.get=choiceButtons(el,[{label:'converges',value:true},{label:'diverges',value:false}]);
+  },
+  check(q,el){
+    const r=G(el,'g',checkExprUpToFactor($('[data-k=g]',el).value,q.gStr,['x'],{domain:{x:[1,12]},positive:true}));
+    const v=q.get();
+    if(v===null)return {ok:false,msg:'Give a comparison function and pick a verdict.'};
+    if(!r.ok)return r.err?r:{ok:false,msg:'Use the simplest power or exponential that bounds the integrand the right way.'};
+    if(v!==q.conv)return {ok:false,msg:q.conv?'Your comparison converges, so the integral does too.':'Your comparison diverges and sits underneath the integrand, so the integral diverges.'};
+    return {ok:true};
+  },
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`To prove convergence you need ${M('f\\le g')} with ${M(R`\int g`)} convergent; to prove divergence you need ${M('f\\ge g')} with ${M(R`\int g`)} divergent. Replace the bounded factor by its ${q.conv?'largest':'smallest'} value.`;},
+  solution(q){
+    return `Take ${M(`g(x)=${q.gTex}`)}. ${q.why} So the integral <b>${q.conv?'converges':'diverges'}</b>.`;}
+};
+
+/* ---------- chapter 3: bound the value ---------- */
+const CBND=[
+  {ftex:R`\frac{\sin^{2}x}{x^{2}}`,f:x=>Math.pow(Math.sin(x),2)/(x*x),gtex:R`\frac{1}{x^{2}}`,g:x=>1/(x*x),Fg:x=>-1/x,val:1,valTex:'1',bound:R`\sin^{2}x\le1`},
+  {ftex:R`\frac{2+\sin x}{x^{3}}`,f:x=>(2+Math.sin(x))/Math.pow(x,3),gtex:R`\frac{3}{x^{3}}`,g:x=>3/Math.pow(x,3),Fg:x=>-1.5/(x*x),val:1.5,valTex:R`\tfrac32`,bound:R`2+\sin x\le3`},
+  {ftex:R`\frac{1+\cos^{2}x}{x^{4}}`,f:x=>(1+Math.pow(Math.cos(x),2))/Math.pow(x,4),gtex:R`\frac{2}{x^{4}}`,g:x=>2/Math.pow(x,4),Fg:x=>-2/(3*Math.pow(x,3)),val:2/3,valTex:R`\tfrac23`,bound:R`1+\cos^{2}x\le2`},
+  {ftex:R`e^{-x}\cos^{2}x`,f:x=>Math.exp(-x)*Math.pow(Math.cos(x),2),gtex:'e^{-x}',g:x=>Math.exp(-x),Fg:x=>-Math.exp(-x),val:Math.exp(-1),valTex:'e^{-1}',bound:R`\cos^{2}x\le1`},
+  {ftex:R`\frac{3+\sin x}{x^{3}}`,f:x=>(3+Math.sin(x))/Math.pow(x,3),gtex:R`\frac{4}{x^{3}}`,g:x=>4/Math.pow(x,3),Fg:x=>-2/(x*x),val:2,valTex:'2',bound:R`3+\sin x\le4`},
+  {ftex:R`\frac{x}{x^{4}+1}`,f:x=>x/(Math.pow(x,4)+1),gtex:R`\frac{1}{x^{3}}`,g:x=>Math.pow(x,-3),Fg:x=>-1/(2*x*x),val:0.5,valTex:R`\tfrac12`,bound:R`x^{4}+1\ge x^{4}`},
+  {ftex:R`\frac{1}{x^{2}+e^{x}}`,f:x=>1/(x*x+Math.exp(x)),gtex:'e^{-x}',g:x=>Math.exp(-x),Fg:x=>-Math.exp(-x),val:Math.exp(-1),valTex:'e^{-1}',bound:R`x^{2}+e^{x}\ge e^{x}`},
+  {ftex:R`\frac{\arctan x}{x^{2}}`,f:x=>Math.atan(x)/(x*x),gtex:R`\frac{\pi/2}{x^{2}}`,g:x=>(PI/2)/(x*x),Fg:x=>-(PI/2)/x,val:PI/2,valTex:R`\tfrac{\pi}{2}`,bound:R`\arctan x\le\tfrac{\pi}{2}`},
+  {ftex:R`\frac{2+\cos x}{x^{5/2}}`,f:x=>(2+Math.cos(x))/Math.pow(x,2.5),gtex:R`\frac{3}{x^{5/2}}`,g:x=>3*Math.pow(x,-2.5),Fg:x=>-2/Math.sqrt(x*x*x),val:2,valTex:'2',bound:R`2+\cos x\le3`},
+  {ftex:R`e^{-2x}\left(1+\sin^{2}x\right)`,f:x=>Math.exp(-2*x)*(1+Math.pow(Math.sin(x),2)),gtex:'2e^{-2x}',g:x=>2*Math.exp(-2*x),Fg:x=>-Math.exp(-2*x),val:Math.exp(-2),valTex:'e^{-2}',bound:R`1+\sin^{2}x\le2`}
+];
+Q.compareValueBound={name:'bound the value',
+  gen(){
+    for(let k=0;k<40;k++){
+      const e=pick(CBND);
+      let ok=antiOK(e.g,e.Fg,1,INF);
+      const r=pieceVal(e.Fg,1,INF);
+      if(r.div||Math.abs(r.val-e.val)>Math.max(r.tol,1e-7))ok=false;
+      for(let i=0;i<=400&&ok;i++){const x=1+i*0.15;if(!(e.f(x)>=-1e-12&&e.f(x)<=e.g(x)+1e-12))ok=false;}
+      if(ok)return {...e,ansStr:String(e.val)};
+    }
+    throw new Error('no bounding integral in the pool reproduced its stored value');
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">On ${M('[1,\\infty)')} the integrand satisfies ${M(`0\\le ${q.ftex}\\le ${q.gtex}`)}, because ${M(q.bound)}. The comparison theorem then bounds the integral by ${M(R`\int_1^{\infty}g(x)\,dx`)}. Compute that bound exactly.</p>${D(intBody(1,'\\infty',q.ftex)+R`\;\le\;`+intBody(1,'\\infty',q.gtex))}`;
+    numIn(el,'v','Bound =',{wide:true,placeholder:'exact value'});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  solution(q){
+    return `Only the bounding integral has to be computed, and it is one of the standard ones: `+
+      D(intBody(1,'\\infty',q.gtex)+`=${q.valTex}`)+
+      `Since ${M(q.bound)} gives ${M(`0\\le ${q.ftex}\\le ${q.gtex}`)} on ${M('[1,\\infty)')}, the original integral converges and is at most ${M(q.valTex)}. Comparison gives a bound, never the exact value.`;}
+};
+
+/* ============================================================ chapter 1: the tail explorer + walkthrough */
+(function(){
+  const plot=new Plot2D('#tailPlot',{xmin:0.35,xmax:12.6,ymin:-0.14,ymax:1.55});
+  const run=new Plot2D('#tailRun',{xmin:-3,xmax:63,ymin:-0.4,ymax:4,grid:false});
+  let p=2,s=Math.log(8)/Math.log(60);
+  const bOf=v=>Math.pow(60,v);
+  const Fb=x=>near(p,1)?Math.log(x):(1-Math.pow(x,1-p))/(p-1);
+  const sb=$('#tailSliders');
+  sliderRow(sb,{label:'p',min:0.5,max:3,step:0.1,value:p,onInput:v=>{p=v;draw();}});
+  const sB=sliderRow(sb,{label:'b',min:0,max:1,step:0.004,value:s,fmt:v=>fmtDec(bOf(v),2),onInput:v=>{s=v;draw();}});
+  const anim=animator('type1',dt=>{s+=dt*0.20;if(s>1)s=0;sB.set(s);draw();});
+  const btn=el('button',{class:'btn primary'},'▶ Play');
+  btn.onclick=()=>{anim.toggle();btn.textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  $('#tailCtl').appendChild(btn);
+  function draw(){
+    const b=bOf(s),g=x=>Math.pow(x,-p);
+    plot.begin();
+    plot.region(1,Math.min(b,12.55),()=>0,g,{fill:'rgba(217,119,6,.30)',stroke:'rgba(217,119,6,.5)'});
+    plot.fn(g,{color:'#c9c5bb',width:1.4,xmin:0.4,xmax:1,dash:[4,4]});
+    plot.fn(g,{color:'#2563eb',width:2.6,xmin:1,xmax:12.55});
+    if(b<=12.4){
+      plot.param(t=>[b,t],-0.12,Math.min(1.5,g(b)+0.3),{color:'#d97706',width:1.6,dash:[5,4],n:20});
+      plot.point([b,0],{color:'#d97706',r:4,label:'b'});
+    } else plot.text([12.4,1.34],'b is off the right edge',{color:'#d97706',align:'right'});
+    plot.point([1,1],{color:'#7c3aed',r:4,label:'(1, 1)'});
+    const lim=p>1?1/(p-1):null;
+    const top=lim!==null?Math.max(1.4,lim*1.7):Math.max(3,Fb(60)*1.12);
+    Object.assign(run.o,{ymin:-0.09*top,ymax:top});
+    run.begin();
+    if(lim!==null){run.fn(()=>lim,{color:'#16a34a',width:1.6,dash:[6,4],xmin:0,xmax:62});
+      run.text([61,lim],'1/(p−1)',{color:'#16a34a',align:'right',dy:-7});}
+    run.param(t=>[t,Fb(t)],1,60,{color:'#b9b5ab',width:1.8,n:500});
+    run.param(t=>[t,Fb(t)],1,Math.max(1.0005,b),{color:'#d97706',width:3.2,n:500});
+    run.point([b,Fb(b)],{color:'#d97706',r:5});
+    $('#tailOut').innerHTML=D(R`\int_1^{b}\frac{dx}{x^{p}}=`+(near(p,1)?R`\ln b`:R`\frac{1-b^{1-p}}{p-1}`))+
+      `p = ${fmtDec(p,2)} &nbsp; b = ${fmtDec(b,3)}<br>`+
+      `running value ∫₁<sup>b</sup> = <b>${fmtDec(Fb(b),4)}</b><br>`+
+      (p>1?`as b → ∞ this tends to <b>1/(p − 1) = ${fmtDec(1/(p-1),4)}</b>, so the integral <b>converges</b>`
+          :`as b → ∞ this tends to <b>∞</b>, so the integral <b>diverges</b>`);
+    typeset($('#tailOut'));
+  }
+  redrawOnShow('type1',draw);draw();
+
+  /* ---------- step-by-step walkthrough ---------- */
+  const WALK=[
+    ()=>{const a=pick([1,2]),p=pick([2,3]);const v=1/((p-1)*Math.pow(a,p-1));
+      return {L:[R`\int_{${a}}^{\infty}\frac{dx}{x^{${p}}}`,
+        R`=\lim_{t\to\infty}\int_{${a}}^{t}x^{-${p}}\,dx`,
+        R`=\lim_{t\to\infty}\left[${PANTI[p]}\right]_{${a}}^{t}`,
+        R`=\lim_{t\to\infty}\left(${PEVAL[p](a)}-\frac{${texNum(1/(p-1))}}{t^{${p-1}}}\right)`,
+        R`=${texNum(v)}`],
+      end:`The ${M('t')} term dies because the exponent ${M(`${p-1}`)} is positive. Converges to ${M(texNum(v))}.`};},
+    ()=>{const a=pick([1,2,3]),ax=a===1?'x':`${a}x`;
+      return {L:[R`\int_{0}^{\infty}e^{-${ax}}\,dx`,
+        R`=\lim_{t\to\infty}\int_{0}^{t}e^{-${ax}}\,dx`,
+        R`=\lim_{t\to\infty}\left[-\tfrac{1}{${a}}e^{-${ax}}\right]_{0}^{t}`,
+        R`=\lim_{t\to\infty}\left(\tfrac{1}{${a}}-\tfrac{1}{${a}}e^{-${a}t}\right)`,
+        R`=${texFrac(1,a)}`],
+      end:`${M(R`e^{-${a}t}\to0`)}, so only the value at the lower limit survives. Converges to ${M(texFrac(1,a))}.`};},
+    ()=>{const a=pick([1,2,3]);
+      return {L:[R`\int_{${a}}^{\infty}\frac{dx}{x}`,
+        R`=\lim_{t\to\infty}\int_{${a}}^{t}\frac{dx}{x}`,
+        R`=\lim_{t\to\infty}\Big[\ln x\Big]_{${a}}^{t}`,
+        R`=\lim_{t\to\infty}\big(\ln t-\ln ${a}\big)`,
+        R`=\infty`],
+      end:`The logarithm has no ceiling, so this one <b>diverges</b>. Every step was legal; the integral simply has no finite value.`};},
+    ()=>({L:[R`\int_{0}^{\infty}\frac{dx}{1+x^{2}}`,
+        R`=\lim_{t\to\infty}\int_{0}^{t}\frac{dx}{1+x^{2}}`,
+        R`=\lim_{t\to\infty}\Big[\arctan x\Big]_{0}^{t}`,
+        R`=\lim_{t\to\infty}\big(\arctan t-0\big)`,
+        R`=\tfrac{\pi}{2}`],
+      end:`${M(R`\arctan t\to\tfrac{\pi}{2}`)} is one of the five limits worth memorising. Converges to ${M(R`\tfrac{\pi}{2}`)}.`}),
+    ()=>({L:[R`\int_{1}^{\infty}\frac{\ln x}{x^{2}}\,dx`,
+        R`=\lim_{t\to\infty}\int_{1}^{t}\frac{\ln x}{x^{2}}\,dx`,
+        R`=\lim_{t\to\infty}\left[-\frac{\ln x+1}{x}\right]_{1}^{t}`,
+        R`=\lim_{t\to\infty}\left(1-\frac{\ln t}{t}-\frac{1}{t}\right)`,
+        R`=1`],
+      end:`Parts with ${M('u=\\ln x')}, ${M('dv=x^{-2}dx')} produced the bracket, and ${M(R`\frac{\ln t}{t}\to0`)} finished it. Converges to ${M('1')}.`})
+  ];
+  const STAT=['You cannot substitute infinity. Replace the upper limit by t and write the limit symbol.',
+    'Now it is an ordinary definite integral. Find the antiderivative.',
+    'Substitute both limits and subtract, keeping the limit symbol out front.',
+    'Now take the limit. This is where t e^{-t}, (ln t)/t and 1/t^k do their work.',
+    'Read off the verdict.'];
+  let W=null,step=0;
+  function newW(){W=pick(WALK)();step=0;drawW();}
+  function drawW(){
+    const cls=['b','a','a','a','c'];
+    $('#wtExpr').innerHTML=W.L.map((line,i)=>
+      `<span class="${i<=step?'':'faint'}"><span class="t ${i===step?'now':''} ${cls[i]}">${M(line)}</span></span>`).join('<br>');
+    $('#wtStatus').textContent=step===4?W.end.replace(/<[^>]+>/g,'').replace(/\\\(|\\\)/g,''):STAT[step];
+    if(step===4)$('#wtStatus').innerHTML=W.end;
+    $('#wtPrev').disabled=step===0;$('#wtNext').disabled=step===4;
+    typeset($('#wtExpr'));typeset($('#wtStatus'));
+  }
+  $('#wtNext').onclick=()=>{step=Math.min(4,step+1);drawW();};
+  $('#wtPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#wtNew').onclick=newW;
+  newW();
+
+  new Drill({mount:'#drill-type1',section:'type1',goal:7,
+    ...mixDrill([Q.pIntegral,Q.pIntegral,Q.exponential,Q.exponential,Q.rationalArctan,Q.rationalArctan,Q.twoSided])});
+})();
+
+/* ============================================================ chapter 2: shrink toward the asymptote */
+(function(){
+  const plot=new Plot2D('#singPlot',{xmin:-0.08,xmax:1.12,ymin:-0.5,ymax:6.2});
+  const run=new Plot2D('#singRun',{xmin:-3.25,xmax:0.25,ymin:-0.4,ymax:4,grid:false});
+  let p=0.5,s=Math.log10(1/0.12)/3;
+  const tOf=v=>Math.pow(10,-3*v);
+  const Ft=t=>near(p,1)?-Math.log(t):(1-Math.pow(t,1-p))/(1-p);
+  const sb=$('#singSliders');
+  sliderRow(sb,{label:'p',min:0.2,max:2,step:0.05,value:p,onInput:v=>{p=v;draw();}});
+  const sT=sliderRow(sb,{label:'t',min:0,max:1,step:0.004,value:s,fmt:v=>fmtDec(tOf(v),5),onInput:v=>{s=v;draw();}});
+  const anim=animator('type2',dt=>{s+=dt*0.18;if(s>1)s=0;sT.set(s);draw();});
+  const btn=el('button',{class:'btn primary'},'▶ Play');
+  btn.onclick=()=>{anim.toggle();btn.textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  $('#singCtl').appendChild(btn);
+  function draw(){
+    const t=tOf(s),g=x=>Math.pow(x,-p);
+    plot.begin();
+    plot.region(t,1,()=>0,x=>Math.min(g(x),6.2),{fill:'rgba(217,119,6,.30)',stroke:'rgba(217,119,6,.5)'});
+    plot.fn(g,{color:'#2563eb',width:2.6,xmin:Math.max(1e-4,t/3),xmax:1.1});
+    plot.param(u=>[t,u],-0.4,6.1,{color:'#d97706',width:1.6,dash:[5,4],n:20});
+    plot.point([t,0],{color:'#d97706',r:4,label:'t'});
+    plot.point([1,1],{color:'#7c3aed',r:4,label:'(1, 1)'});
+    const lim=p<1?1/(1-p):null;
+    const top=lim!==null?Math.max(1.5,lim*1.7):12;
+    Object.assign(run.o,{ymin:-0.09*top,ymax:top});
+    run.begin();
+    if(lim!==null){run.fn(()=>lim,{color:'#16a34a',width:1.6,dash:[6,4],xmin:-3.3,xmax:0.3});
+      run.text([0.2,lim],'1/(1−p)',{color:'#16a34a',align:'right',dy:-7});}
+    run.param(u=>[u,Ft(Math.pow(10,u))],-3,0,{color:'#b9b5ab',width:1.8,n:500});
+    run.param(u=>[u,Ft(Math.pow(10,u))],Math.log10(t),0,{color:'#d97706',width:3.2,n:500});
+    run.point([Math.log10(t),Ft(t)],{color:'#d97706',r:5});
+    run.text([-3.1,-0.045*top],'log₁₀ t',{color:'#8b877e'});
+    $('#singOut').innerHTML=D(R`\int_{t}^{1}\frac{dx}{x^{p}}=`+(near(p,1)?R`-\ln t`:R`\frac{1-t^{1-p}}{1-p}`))+
+      `p = ${fmtDec(p,2)} &nbsp; t = ${fmtDec(t,6)} &nbsp; height at t: ${fmtDec(g(t),1)}<br>`+
+      `running value ∫<sub>t</sub>¹ = <b>${fmtDec(Ft(t),4)}</b><br>`+
+      (p<1?`as t → 0⁺ this tends to <b>1/(1 − p) = ${fmtDec(1/(1-p),4)}</b>, so the integral <b>converges</b>`
+          :`as t → 0⁺ this tends to <b>∞</b>, so the integral <b>diverges</b>`);
+    typeset($('#singOut'));
+  }
+  redrawOnShow('type2',draw);draw();
+
+  new Drill({mount:'#drill-type2',section:'type2',goal:6,
+    ...mixDrill([Q.endpointBlowup,Q.endpointBlowup,Q.hiddenPoint,Q.hiddenPoint,Q.pNearZero,Q.pCondition])});
+})();
+
+/* ============================================================ chapter 3: trapping a tail */
+(function(){
+  const plot=new Plot2D('#cmpPlot',{xmin:0.5,xmax:21,ymin:-0.12,ymax:1.3});
+  const PRE=[
+    {n:'(2 + sin x)/x²  vs  3/x²',f:x=>(2+Math.sin(x))/(x*x),g:x=>3/(x*x),
+     ftex:R`\frac{2+\sin x}{x^{2}}`,gtex:R`\frac{3}{x^{2}}`,gv:3,gvT:'3',ymax:3.4,conv:true},
+    {n:'1/√(x³+1)  vs  1/x^{3/2}',f:x=>1/Math.sqrt(Math.pow(x,3)+1),g:x=>Math.pow(x,-1.5),
+     ftex:R`\frac{1}{\sqrt{x^{3}+1}}`,gtex:R`\frac{1}{x^{3/2}}`,gv:2,gvT:'2',ymax:1.25,conv:true},
+    {n:'e^(−x²)  vs  e^(−x)',f:x=>Math.exp(-x*x),g:x=>Math.exp(-x),
+     ftex:'e^{-x^{2}}',gtex:'e^{-x}',gv:Math.exp(-1),gvT:'e^{-1}',ymax:0.45,conv:true},
+    {n:'sin²x/x²  vs  1/x²',f:x=>Math.pow(Math.sin(x),2)/(x*x),g:x=>1/(x*x),
+     ftex:R`\frac{\sin^{2}x}{x^{2}}`,gtex:R`\frac{1}{x^{2}}`,gv:1,gvT:'1',ymax:1.15,conv:true},
+    {n:'(1 + e^(−x))/x  vs  1/x',f:x=>(1+Math.exp(-x))/x,g:x=>1/x,
+     ftex:R`\frac{1+e^{-x}}{x}`,gtex:R`\frac{1}{x}`,gv:null,gvT:DIVTEX,ymax:1.5,conv:false}
+  ];
+  let cur=PRE[0],b=8;
+  const pb=$('#cmpPresets');
+  PRE.forEach(pr=>{const bt=el('button',{class:'btn small'},pr.n);
+    bt.onclick=()=>{cur=pr;$$('.btn',pb).forEach(x=>x.classList.remove('on'));bt.classList.add('on');draw();};pb.appendChild(bt);});
+  $$('.btn',pb)[0].classList.add('on');
+  sliderRow($('#cmpSliders'),{label:'b',min:1.2,max:20,step:0.1,value:b,onInput:v=>{b=v;draw();}});
+  function draw(){
+    Object.assign(plot.o,{ymin:-0.09*cur.ymax,ymax:cur.ymax});
+    plot.begin();
+    plot.region(1,b,()=>0,cur.g,{fill:'rgba(124,58,237,.16)',stroke:'rgba(124,58,237,.35)'});
+    plot.region(1,b,()=>0,cur.f,{fill:'rgba(37,99,235,.22)',stroke:'rgba(37,99,235,.4)'});
+    plot.fn(cur.g,{color:'#7c3aed',width:2.4,xmin:1,xmax:21});
+    plot.fn(cur.f,{color:'#2563eb',width:2.4,xmin:1,xmax:21});
+    plot.param(u=>[b,u],-0.09*cur.ymax,cur.ymax*0.98,{color:'#d97706',width:1.6,dash:[5,4],n:20});
+    plot.point([b,0],{color:'#d97706',r:4,label:'b'});
+    const If=simp(cur.f,1,b,600),Ig=simp(cur.g,1,b,600);
+    $('#cmpOut').innerHTML=D(`f(x)=${cur.ftex}\\qquad g(x)=${cur.gtex}`)+
+      `b = ${fmtDec(b,2)}<br>`+
+      `∫₁<sup>b</sup> f = <b>${fmtDec(If,4)}</b><br>`+
+      `∫₁<sup>b</sup> g = <b>${fmtDec(Ig,4)}</b><br>`+
+      (cur.conv?`∫₁<sup>∞</sup> g = ${fmtDec(cur.gv,4)}, finite, and f stays underneath it forever: <b>both converge</b>, with ∫f ≤ ${fmtDec(cur.gv,4)}`
+               :`∫₁<sup>∞</sup> g diverges, and here f sits <b>above</b> g, so <b>both diverge</b>`);
+    typeset($('#cmpOut'));
+  }
+  redrawOnShow('compare',draw);draw();
+
+  new Drill({mount:'#drill-compare',section:'compare',goal:6,
+    ...mixDrill([Q.dominantPower,Q.dominantPower,Q.compareFunction,Q.compareFunction,Q.compareValueBound])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.pIntegral,Q.exponential,Q.rationalArctan,Q.twoSided,
+  Q.endpointBlowup,Q.hiddenPoint,Q.pNearZero,Q.pCondition,
+  Q.dominantPower,Q.compareFunction,Q.compareValueBound]});
+
+/* ============================================================ know these cold */
+$('#memcard').replaceWith(memoryCard('c2-improper',[
+  R`Type 1: \(\displaystyle\int_a^{\infty}f=\lim_{t\to\infty}\int_a^{t}f\), and \(\displaystyle\int_{-\infty}^{b}f=\lim_{t\to-\infty}\int_t^{b}f\).`,
+  R`Type 2 (blow-up at \(b\)): \(\displaystyle\int_a^{b}f=\lim_{t\to b^{-}}\int_a^{t}f\); at an interior point \(c\), split and require <b>both</b> pieces to converge.`,
+  R`\(\displaystyle\int_1^{\infty}\frac{dx}{x^{p}}\) converges \(\iff p>1\), with value \(\dfrac{1}{p-1}\).`,
+  R`\(\displaystyle\int_0^{1}\frac{dx}{x^{p}}\) converges \(\iff p<1\), with value \(\dfrac{1}{1-p}\).`,
+  R`\(\displaystyle\int_0^{\infty}e^{-ax}dx=\dfrac1a\) for \(a>0\), and \(\displaystyle\int_c^{\infty}e^{-ax}dx=\dfrac{e^{-ac}}{a}\).`,
+  R`\(\displaystyle\int_{-\infty}^{\infty}\frac{dx}{1+x^{2}}=\pi\), and \(\displaystyle\int_0^{1}\ln x\,dx=-1\).`,
+  R`Comparison: if \(0\le f\le g\) on \([a,\infty)\), then \(\int g\) convergent \(\Rightarrow\) \(\int f\) convergent, and \(\int f\) divergent \(\Rightarrow\) \(\int g\) divergent.`,
+  R`The limits you need: \(t^{-k}\to0\), \(e^{-t}\to0\), \(te^{-t}\to0\), \(\dfrac{\ln t}{t}\to0\), \(\arctan t\to\dfrac{\pi}{2}\).`,
+  R`Split at the bad point, and split at \(0\) for a two-sided infinite interval. Symmetry is never a substitute for convergence.`
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'p-integral':q=>({v:q.ansStr}),
+  'exponential tails':q=>({v:q.ansStr}),
+  'rational and arctan tails':q=>({v:q.ansStr}),
+  'split a two-sided integral':q=>({v:q.ansStr}),
+  'vertical asymptote at an endpoint':q=>({v:q.ansStr}),
+  'find the bad point first':q=>({c:String(q.c),v:q.ansStr}),
+  'the p-test near zero':q=>({v:q.ansStr}),
+  'the p-test as a condition':q=>({p:q.condStr}),
+  'behaves like a power':q=>({p:String(q.p),_btn:q.conv?0:1}),
+  'choose a comparison function':q=>({g:q.gStr,_btn:q.conv?0:1}),
+  'bound the value':q=>({v:q.ansStr})
+};
+
+initModule({key:'c2-improper',title:'Improper Integrals',sub:'Module 8 · Stewart 7.8'});
+</script>
+</body>
+</html>
