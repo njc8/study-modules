@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sequences and Series</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 0 WELCOME -->
+<section data-id="welcome" data-title="Start here">
+  <p class="eyebrow">Module 9 · Stewart 11.1 to 11.3</p>
+  <h2>Sequences and series</h2>
+  <p class="lead">An infinite list either settles down or it does not. An infinite sum is nothing more exotic than the limit of its partial sums. This module gives you three families you can add up exactly, one test that catches most divergence, and one bridge back to integrals.</p>
+
+  <div class="card">
+    <h4>How to use this</h4>
+    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or play, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
+    <p>Formulas in \(n\) are typed the way you would write them: <code>(-1)^n/n!</code>, <code>2^n/(n+1)</code>, <code>n/(n+1)</code>, <code>3/2 - 1/(n+1) - 1/(n+2)</code>. Factorials work: <code>n!</code> and <code>(n+1)!</code>.</p>
+    <p>Limits take a number, the word <code>inf</code>, or <code>DNE</code>. Sums take an exact value (<code>3/2</code>, <code>pi/4</code>, <code>1/ln(2)</code>, <code>e</code>) or the word <code>diverges</code>. Answers are exact unless a problem asks for decimals. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
+    <p>Answer boxes work like WebAssign's calcPad: <code>/</code> makes a fraction, <code>^</code> an exponent, <code>sqrt</code> a radical, <code>pi</code> the symbol. Use the right arrow key to step out of a fraction or exponent before typing what comes next.</p>
+    <div class="legend" style="margin-top:12px">
+      <span><i class="dot" style="background:var(--a)"></i> the terms \(a_n\)</span>
+      <span><i class="dot" style="background:var(--b)"></i> the partial sums \(s_n\)</span>
+      <span><i class="dot" style="background:var(--c)"></i> the limit or the total</span>
+      <span><i class="dot" style="background:var(--d)"></i> curves, bands, and marked points</span>
+    </div>
+  </div>
+
+  <div class="card tint">
+    <h4>What you will be able to do at the end</h4>
+    <ul>
+      <li>Find the limit of a sequence, and write the \(n\)th term of a sequence from its first few values.</li>
+      <li>Decide whether a sequence is monotone and bounded, and read off its bounds.</li>
+      <li>Compute partial sums, and sum geometric and telescoping series exactly.</li>
+      <li>Apply the test for divergence, and say why it never proves convergence.</li>
+      <li>Apply the integral test and the \(p\)-series test, and bound the remainder after \(n\) terms.</li>
+      <li>Say how many terms you need for a given accuracy, and sharpen an estimate with the integral correction.</li>
+    </ul>
+  </div>
+  <div id="memcard"></div>
+</section>
+
+<!-- ============================================================ 1 SEQUENCES -->
+<section data-id="sequences" data-title="Sequences" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Stewart 11.1</p>
+  <h2>Sequences</h2>
+  <p class="lead">A sequence is a list of numbers with an address for each one. The only question that matters is where the list is heading.</p>
+
+  <p>A <b>sequence</b> \(\{a_n\}\) assigns a number \(a_n\) to each integer \(n=1,2,3,\dots\). You can give it by a formula (\(a_n=n/(n+1)\)), by a list (\(\{1,\tfrac12,\tfrac13,\dots\}\)), or by a recursion (\(a_1=1\), \(a_{n+1}=\sqrt{2+a_n}\)).</p>
+  <div class="formula">\(\displaystyle\lim_{n\to\infty}a_n=L\)<span class="cap">Read it as: eventually the terms stay as close to \(L\) as you like. Precisely, for every \(\varepsilon>0\) there is an \(N\) with \(|a_n-L|&lt;\varepsilon\) for all \(n>N\). If such an \(L\) exists the sequence <b>converges</b>; otherwise it <b>diverges</b>.</span></div>
+
+  <p>You already know how to find these limits. A sequence is a function sampled at the integers, so every limit rule for \(x\to\infty\) carries over.</p>
+  <ul>
+    <li><b>Divide by the highest power.</b> \(\dfrac{3n+5}{7n-2}=\dfrac{3+5/n}{7-2/n}\to\dfrac37\).</li>
+    <li><b>L'Hospital on the function.</b> If \(f(x)\to L\) and \(a_n=f(n)\), then \(a_n\to L\). That is how you get \(\dfrac{\ln n}{n}\to 0\): differentiate \(\ln x\) and \(x\).</li>
+    <li><b>Squeeze.</b> If \(b_n\le a_n\le c_n\) and both outer sequences go to \(L\), so does \(a_n\). And \(|a_n|\to 0\) forces \(a_n\to 0\), which is how \(\dfrac{\sin n}{n}\to 0\).</li>
+    <li><b>Continuous functions pass through.</b> If \(a_n\to L\) and \(f\) is continuous at \(L\), then \(f(a_n)\to f(L)\).</li>
+  </ul>
+
+  <div class="formula">\(\displaystyle\lim_{n\to\infty} r^{\,n}=\begin{cases}0 & -1&lt;r&lt;1\\ 1 & r=1\\ \text{does not exist} & \text{otherwise}\end{cases}\)<span class="cap">The geometric sequence. It converges exactly when \(-1&lt;r\le 1\). At \(r=-1\) it flips between \(1\) and \(-1\) forever; for \(|r|&gt;1\) it blows up.</span></div>
+
+  <div class="card">
+    <h4>Explore: the dot plot and the \(\varepsilon\) band</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene wide" id="seqPlot"></canvas>
+        <p class="plotcap">Each dot is one term \(a_n\), plotted against its index \(n\). The dashed line is the limit \(L\); the shaded strip is the band \(|a_n-L|&lt;\varepsilon\).</p>
+      </div>
+      <div>
+        <div class="presets" id="seqPresets"></div>
+        <div class="sliders" id="seqSliders"></div>
+        <div class="controls"><button class="btn primary" id="seqPlay">▶ Play</button><span class="status" id="seqStatus"></span></div>
+        <div class="readout" id="seqOut"></div>
+        <p class="hint">Shrink \(\varepsilon\) and watch \(N\) grow. Convergence means <b>every</b> band eventually captures all the terms, no matter how thin you make it. Now pick \((-1)^n\): the band around any candidate \(L\) always leaves half the terms outside, so no \(L\) works. Then push the ratio slider past \(1\) and past \(-1\) and see the two ways a geometric sequence can fail.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Monotone and bounded</h3>
+  <p>A sequence is <b>increasing</b> if \(a_n&lt;a_{n+1}\) for all \(n\), <b>decreasing</b> if \(a_n&gt;a_{n+1}\) for all \(n\), and <b>monotonic</b> if it is one or the other. It is <b>bounded above</b> if some \(M\) has \(a_n\le M\) for all \(n\), <b>bounded below</b> if some \(m\) has \(m\le a_n\), and <b>bounded</b> if both.</p>
+  <div class="formula">Monotonic + bounded \(\Longrightarrow\) convergent<span class="cap">The <b>Monotonic Sequence Theorem</b>. An increasing sequence that never passes a ceiling has to pile up against a least ceiling, and that number is the limit. This is the one convergence result you can use without knowing the limit.</span></div>
+  <p>To test monotonicity, compare \(a_{n+1}\) with \(a_n\) (subtract, or divide when everything is positive), or differentiate the matching function \(f(x)\) and look at the sign of \(f'\).</p>
+
+  <div class="note"><b>Where the bounds come from.</b> A monotone sequence is trapped between its first term and its limit. For \(a_n=\dfrac{n}{n+1}\), the terms climb from \(a_1=\tfrac12\) up toward \(1\), so \(\tfrac12\le a_n&lt;1\) and \(1\) is the least upper bound. That is the pair of numbers the practice below asks for.</div>
+
+  <h3>Recursively defined sequences</h3>
+  <p>When \(a_{n+1}=g(a_n)\) and you already know the sequence converges, the limit is easy: both \(a_n\) and \(a_{n+1}\) go to the same \(L\), so \(L=g(L)\). Solve that equation and pick the root the sequence can actually reach.</p>
+  <div class="formula">\(a_{n+1}=\sqrt{2+a_n}\;\Longrightarrow\; L=\sqrt{2+L}\;\Longrightarrow\; L^2-L-2=0\;\Longrightarrow\; L=2\)<span class="cap">The other root \(L=-1\) is thrown out: every term after the first is a square root, so \(L\ge 0\).</span></div>
+  <div class="warn"><b>Solve for the limit only after you know it exists.</b> Applying \(L=g(L)\) to a divergent recursion produces a number that means nothing. For \(a_{n+1}=2a_n\) with \(a_1=1\) the equation \(L=2L\) gives \(L=0\), and the sequence marches off to infinity.</div>
+
+  <h3>The growth hierarchy</h3>
+  <p>For large \(n\), each of these grows faster than everything to its left:</p>
+  <div class="formula">\(\ln n \;\ll\; n^{p}\;(p&gt;0) \;\ll\; b^{\,n}\;(b&gt;1) \;\ll\; n! \;\ll\; n^{n}\)<span class="cap">Read a ratio right to left: the faster one wins. So \(\dfrac{2^n}{n!}\to 0\), \(\dfrac{n!}{2^n}\to\infty\), \(\dfrac{\ln n}{n}\to 0\), and \(\dfrac{n^{10}}{1.01^{\,n}}\to 0\) even though it takes a very long time.</span></div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-sequences"></div>
+</section>
+
+<!-- ============================================================ 2 SERIES -->
+<section data-id="series" data-title="Series and partial sums" data-goal="8">
+  <p class="eyebrow">Chapter 2 · Stewart 11.2</p>
+  <h2>Series and partial sums</h2>
+  <p class="lead">You cannot add infinitely many numbers. You add finitely many and take a limit, and that limit is what the infinite sum means.</p>
+
+  <p>Given a sequence \(\{a_n\}\), build its <b>partial sums</b> \(s_n=a_1+a_2+\cdots+a_n\). The partial sums form a new sequence. The <b>series</b> is the limit of that sequence:</p>
+  <div class="formula">\(\displaystyle\sum_{n=1}^{\infty} a_n=\lim_{n\to\infty}s_n,\qquad s_n=\sum_{k=1}^{n}a_k\)<span class="cap">If the limit exists and equals \(s\), the series <b>converges</b> and its sum is \(s\). If not, the series <b>diverges</b>. Everything in this chapter and the next is a way of deciding which.</span></div>
+
+  <div class="card">
+    <h4>Explore: terms on the left, partial sums on the right</h4>
+    <div class="presets" id="serPresets"></div>
+    <div class="minis two">
+      <div><canvas class="scene short" id="termsPlot"></canvas><p class="cap">the terms \(a_n\)</p></div>
+      <div><canvas class="scene short" id="sumsPlot"></canvas><p class="cap">the partial sums \(s_n\)</p></div>
+    </div>
+    <div class="xf" style="margin-top:14px">
+      <div>
+        <div class="sliders" id="serSliders"></div>
+        <div class="controls"><button class="btn primary" id="serPlay">▶ Play</button><span class="status" id="serStatus"></span></div>
+      </div>
+      <div>
+        <div class="readout" id="serOut"></div>
+      </div>
+    </div>
+    <p class="hint">Compare the harmonic series with \(\sum 1/n^2\). On the left the two pictures look almost the same: both sets of terms slide down to zero. On the right they could not be more different, one levels off and the other keeps climbing. Terms going to zero is not enough.</p>
+  </div>
+
+  <h3>Geometric series</h3>
+  <p>A <b>geometric series</b> has a constant ratio between consecutive terms. Write the first term as \(a\) and the ratio as \(r\):</p>
+  <div class="formula">\(a+ar+ar^2+\cdots=\displaystyle\sum_{n=1}^{\infty}ar^{\,n-1}\)</div>
+  <p>Here is the trick that gives the closed form. Write \(s_n\), multiply by \(r\), and subtract. Everything in the middle cancels:</p>
+  <div class="formula">\(s_n-rs_n=a-ar^{\,n}\;\Longrightarrow\; s_n=\dfrac{a(1-r^{\,n})}{1-r}\quad (r\ne 1)\)<span class="cap">Now let \(n\to\infty\). If \(|r|&lt;1\) then \(r^{\,n}\to 0\) and the whole thing settles.</span></div>
+  <div class="formula">\(\displaystyle\sum_{n=1}^{\infty}ar^{\,n-1}=\frac{a}{1-r}\quad\text{for }|r|&lt;1,\qquad\text{diverges for }|r|\ge 1\)<span class="cap">The single most useful formula in the chapter. \(a\) is <b>whatever the first term actually is</b>, not the coefficient you happen to see in front.</span></div>
+
+  <div class="card">
+    <h4>Step-by-step: summing a geometric series</h4>
+    <div class="expr" id="wgExpr"></div>
+    <div class="controls">
+      <button class="btn" id="wgPrev">◀ Back</button>
+      <button class="btn primary" id="wgNext">Next step ▶</button>
+      <button class="btn" id="wgNew">New series</button>
+      <span class="status" id="wgStatus"></span>
+    </div>
+    <p class="hint">Step 1 is the only place you can go wrong. Plug \(n\) equal to the starting index into the general term and simplify: that number, and nothing else, is \(a\).</p>
+  </div>
+
+  <div class="warn"><b>The starting index changes \(a\), never \(r\).</b> \(\sum_{n=0}^{\infty}3\left(\tfrac12\right)^{n}\) has \(a=3\) and sums to \(6\). \(\sum_{n=1}^{\infty}3\left(\tfrac12\right)^{n}\) has \(a=\tfrac32\) and sums to \(3\). \(\sum_{n=2}^{\infty}3\left(\tfrac12\right)^{n}\) has \(a=\tfrac34\) and sums to \(\tfrac32\). Same ratio every time.</div>
+
+  <p>Mixed powers hide a geometric series. Force every exponent to be plain \(n\): \(\dfrac{3^{\,n+1}}{4^{\,n-1}}=\dfrac{3\cdot 3^{\,n}}{4^{\,n}/4}=12\left(\dfrac34\right)^{n}\), so \(r=\tfrac34\) and the first term (at \(n=1\)) is \(9\).</p>
+
+  <h3>Repeating decimals</h3>
+  <p>Every repeating decimal is a geometric series in disguise, which is why every one of them is a fraction:</p>
+  <div class="formula">\(0.\overline{27}=\dfrac{27}{100}+\dfrac{27}{100^2}+\cdots=\dfrac{27/100}{1-1/100}=\dfrac{27}{99}=\dfrac{3}{11}\)<span class="cap">The ratio is \(1/10^{d}\) where \(d\) is the number of repeating digits. Any non-repeating head is added on separately.</span></div>
+
+  <h3>Telescoping series</h3>
+  <p>The other family you can sum exactly is the one where the partial sum collapses. Split the term with partial fractions so that consecutive pieces cancel:</p>
+  <div class="formula">\(\displaystyle\sum_{n=1}^{\infty}\frac{1}{n(n+1)}=\sum_{n=1}^{\infty}\left(\frac1n-\frac1{n+1}\right),\qquad s_n=1-\frac{1}{n+1}\;\longrightarrow\; 1\)<span class="cap">Write out four or five terms and cross off pairs. What survives is a fixed head and a tail that goes to zero. The head is the sum.</span></div>
+  <p>Always find \(s_n\) first, then take its limit. That is the definition, and for telescoping series it is also the fastest route.</p>
+
+  <h3>The harmonic series</h3>
+  <p>\(\sum 1/n\) diverges, even though its terms go to zero. Group the terms in blocks of \(1,1,2,4,8,\dots\):</p>
+  <div class="formula">\(1+\tfrac12+\underbrace{\left(\tfrac13+\tfrac14\right)}_{&gt;\,1/2}+\underbrace{\left(\tfrac15+\cdots+\tfrac18\right)}_{&gt;\,1/2}+\cdots\)<span class="cap">Each block beats \(\tfrac12\), and there are infinitely many blocks, so the partial sums pass every bound. The growth is like \(\ln n\), which is slow but unstoppable.</span></div>
+
+  <h3>The test for divergence</h3>
+  <div class="formula">If \(\displaystyle\lim_{n\to\infty}a_n\ne 0\) or does not exist, then \(\displaystyle\sum a_n\) diverges.<span class="cap">Contrapositive of "convergent \(\Rightarrow a_n\to 0\)". It is the first thing to check on any series, and it costs one limit.</span></div>
+  <div class="warn"><b>The converse is false.</b> \(a_n\to 0\) proves nothing. The harmonic series is the standing counterexample. When the limit is \(0\), the test is <b>inconclusive</b> and you move on to another test.</div>
+
+  <h3>Properties</h3>
+  <p>If \(\sum a_n\) and \(\sum b_n\) both converge, then so do \(\sum ca_n\) and \(\sum (a_n\pm b_n)\), with \(\sum ca_n=c\sum a_n\) and \(\sum(a_n\pm b_n)=\sum a_n\pm\sum b_n\). That is what lets you split \(\sum\frac{2^n+3^n}{6^n}\) into two geometric series. Also, <b>changing or dropping finitely many terms never changes whether a series converges</b>, though it does change the sum.</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-series"></div>
+</section>
+
+<!-- ============================================================ 3 INTEGRAL TEST -->
+<section data-id="integraltest" data-title="The integral test and p-series" data-goal="7">
+  <p class="eyebrow">Chapter 3 · Stewart 11.3</p>
+  <h2>The integral test and \(p\)-series</h2>
+  <p class="lead">A sum of rectangle areas next to the area under a curve. If one is finite so is the other, and the gap between them tells you how much of the sum you are still missing.</p>
+
+  <p>Suppose \(a_n=f(n)\) where \(f\) is <b>positive</b>, <b>continuous</b>, and <b>decreasing</b> on \([m,\infty)\). Draw rectangles of width \(1\) over \([1,2],[2,3],\dots\). Using the <b>left</b> endpoint for the height gives rectangles that sit above the curve; using the <b>right</b> endpoint gives rectangles under it. Comparing the two pictures with the integral gives the test.</p>
+  <div class="formula">\(\displaystyle\sum_{n=m}^{\infty}a_n \text{ converges} \iff \int_m^{\infty} f(x)\,dx \text{ converges}\)<span class="cap">The <b>integral test</b>. The integral and the series are not equal, and the test never tells you the sum. It only tells you finite or infinite, and both answers come together.</span></div>
+
+  <div class="card">
+    <h4>Explore: rectangles against the curve</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene wide" id="rectPlot"></canvas>
+        <p class="plotcap">Blue curve \(y=1/x^{p}\). Orange rectangles use the left endpoint (heights \(a_1,\dots,a_n\), total \(s_n\)); green rectangles use the right endpoint (heights \(a_2,\dots,a_{n+1}\)).</p>
+      </div>
+      <div>
+        <div class="sliders" id="rectSliders"></div>
+        <div class="controls"><button class="btn primary" id="rectPlay">▶ Play</button><span class="status" id="rectStatus"></span></div>
+        <div class="readout" id="rectOut"></div>
+        <p class="hint">Set \(p=2\) and push \(n\): the orange total and the integral both level off, and the sum is pinned between two finite numbers. Now set \(p=1\) and push \(n\) again: the integral is \(\ln n\), which never levels off, and it drags the sum up with it. Somewhere between the two, at \(p=1\), the behaviour switches.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula">\(\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^{p}}\ \text{converges}\iff p&gt;1\)<span class="cap">The <b>\(p\)-series test</b>, and it is just the integral test applied to \(\int_1^\infty x^{-p}dx\). That integral is \(\left[\frac{x^{1-p}}{1-p}\right]_1^\infty\), finite exactly when \(1-p&lt;0\). At \(p=1\) the antiderivative is \(\ln x\), which diverges.</span></div>
+  <p>So \(\sum 1/n^2\) converges, \(\sum 1/\sqrt n\) diverges, and \(\sum 1/n\) is the borderline case that diverges. The first job on any \(p\)-series is to rewrite it as a single power: \(\dfrac{1}{n\sqrt n}=n^{-3/2}\), so \(p=\tfrac32\).</p>
+
+  <h3>How much is left over</h3>
+  <p>Once you know a series converges, the same rectangles bound the <b>remainder</b> \(R_n=s-s_n=a_{n+1}+a_{n+2}+\cdots\), the part you throw away when you stop after \(n\) terms:</p>
+  <div class="formula">\(\displaystyle\int_{n+1}^{\infty}f(x)\,dx\;\le\; R_n\;\le\;\int_{n}^{\infty}f(x)\,dx\)<span class="cap">The remainder is a sum of rectangles of width \(1\) starting at \(x=n\). Overshoot them with the integral from \(n\), undershoot them with the integral from \(n+1\).</span></div>
+  <p>The right-hand bound answers "how accurate am I?" and, solved for \(n\), answers "how many terms do I need?". Adding the bounds to \(s_n\) sharpens the estimate of the sum itself:</p>
+  <div class="formula">\(\displaystyle s_n+\int_{n+1}^{\infty}f\;\le\; s\;\le\; s_n+\int_{n}^{\infty}f\)<span class="cap">Two numbers you can actually compute, with the true sum trapped between them. The midpoint of the two is a far better estimate than \(s_n\) alone.</span></div>
+  <div class="note"><b>Check the hypotheses before you integrate.</b> \(f\) must be positive, continuous, and decreasing. \(f(x)=\dfrac{\ln x}{x}\) increases until \(x=e\), so start the test at \(n=3\). Dropping the first two terms cannot change convergence, only the sum.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-integraltest"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ shared helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const exprIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{wide:true,placeholder:ph}));
+const factn=n=>{let f=1;for(let k=2;k<=n;k++)f*=k;return f;};
+/* unreduced fraction, for showing the first terms of a pattern */
+function texRawFrac(n,d){if(d===1)return String(n);const s=n<0?'-':'';return `${s}\\frac{${Math.abs(n)}}{${d}}`;}
+/* a signed trailing term: sgnT(-3,'n') -> ' - 3n' ; sgnT(0,..) -> '' */
+const sgnT=(c,body)=>c===0?'':(c<0?' - ':' + ')+(Math.abs(c)===1&&body?'':String(Math.abs(c)))+body;
+const sgnFrac=(c,den)=>c===0?'':(c<0?' - ':' + ')+Math.abs(c)+'/'+den;
+const paren=t=>/^-/.test(t)?'\\left('+t+'\\right)':t;
+const linT=(a,b,v='n')=>`${a===1?'':a===-1?'-':String(a)}${v}${sgnT(b,'')}`;
+const sigTex=(from,body,to='\\infty')=>R`\sum_{n=${from}}^{${to}} ${body}`;
+const partSum=(t,from,to)=>{let s=0;for(let k=from;k<=to;k++)s+=t(k);return s;};
+const limStr=a=>(a==='inf'||a==='-inf'||a==='DNE')?a:String(a);
+const isDivAns=a=>(a==='inf'||a==='-inf'||a==='DNE');
+/* Simpson's rule, used to verify tail integrals numerically */
+function simpson(f,a,b,N=2000){if(N%2)N++;const h=(b-a)/N;let s=f(a)+f(b);for(let i=1;i<N;i++)s+=f(a+i*h)*(i%2?4:2);return s*h/3;}
+/* numeric derivative, used to verify that a stored antiderivative really is one */
+const ddx=(F,x,h=1e-5)=>(F(x+h)-F(x-h))/(2*h);
+/* exact rational form of a float (continued fractions), for printing answers as fractions */
+function ratOf(x,maxDen=2000000){
+  if(!Number.isFinite(x))return null;
+  const sgn=x<0?-1:1;x=Math.abs(x);
+  let h1=1,h0=0,k1=0,k0=1,b=x;
+  for(let i=0;i<40;i++){
+    const a=Math.floor(b);const h2=a*h1+h0,k2=a*k1+k0;
+    if(k2>maxDen)break;
+    h0=h1;h1=h2;k0=k1;k1=k2;
+    if(Math.abs(x-h1/k1)<1e-12*Math.max(1,x))break;
+    const f=b-a;if(f<1e-13)break;b=1/f;
+  }
+  if(k1===0)return null;
+  if(Math.abs(x-h1/k1)>1e-9*Math.max(1,x))return null;
+  return [sgn*h1,k1];
+}
+/* texQ(x): x as a simplified TeX fraction when it is rational, else a 4-place decimal */
+function texQ(x,tf=true){const r=ratOf(x);return r?texFrac(r[0],r[1],{tf}):fmtDec(x,4);}
+
+/* verify a stored sequence limit against the actual terms */
+function verifyLim(f,ans,Ns){
+  Ns=Ns||[200,2000,20000,200000];
+  const last=Ns[Ns.length-1];
+  if(ans==='inf'||ans==='-inf'){
+    const a=f(Ns[0]),b=f(last);
+    if(!Number.isFinite(a)||!Number.isFinite(b))return false;
+    return ans==='inf'?(b>1e3&&b>a):(b<-1e3&&b<a);
+  }
+  if(ans==='DNE'){const m=Ns[1];const a=f(m),b=f(m+1);return Number.isFinite(a)&&Number.isFinite(b)&&Math.abs(a-b)>0.5;}
+  const v=f(last);
+  return Number.isFinite(v)&&Math.abs(v-ans)<=1e-3*Math.max(1,Math.abs(ans));
+}
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 1 ---------- */
+const SEQ_FAMS=[
+  ()=>{const a=rint(2,7),c=rint(2,7),b=rint(-6,6),d=rint(1-c,6);
+    return {tex:R`\frac{${linT(a,b)}}{${linT(c,d)}}`,f:n=>(a*n+b)/(c*n+d),ans:a/c,
+      why:`Divide top and bottom by \\(n\\). The \\(1/n\\) pieces vanish and only the leading coefficients survive: \\(\\frac{${a}${sgnFrac(b,'n')}}{${c}${sgnFrac(d,'n')}}\\to ${texFrac(a,c)}\\).`};},
+  ()=>{const a=rint(2,6),c=rint(2,6),b=rint(-8,8),d=rint(1-c,6);
+    return {tex:R`\frac{${a}n^2${sgnT(b,'')}}{${c}n^2${sgnT(d,'n')}}`,f:n=>(a*n*n+b)/(c*n*n+d*n),ans:a/c,
+      why:`Divide by \\(n^2\\): \\(\\frac{${a}${sgnFrac(b,'n^2')}}{${c}${sgnFrac(d,'n')}}\\to ${texFrac(a,c)}\\).`};},
+  ()=>{const k=rint(1,9),a=rint(1,5);
+    return {tex:R`\frac{${a===1?'':a}n}{n^2 + ${k}}`,f:n=>a*n/(n*n+k),ans:0,
+      why:`The bottom grows like \\(n^2\\) and the top only like \\(n\\), so the quotient behaves like \\(${a}/n\\to 0\\).`};},
+  ()=>{const a=rint(1,4),b=rint(-4,4),c=rint(2,6),d=rint(1,9);
+    return {tex:R`\frac{${linT(a,b)}}{${c}n^2 + ${d}}`,f:n=>(a*n+b)/(c*n*n+d),ans:0,
+      why:`Divide by \\(n^2\\): the top becomes \\(${a}/n${sgnFrac(b,'n^2')}\\to 0\\) while the bottom tends to \\(${c}\\).`};},
+  ()=>{const sh=pick([0,1]);
+    return {tex:R`\frac{(-1)^{n${sh?'+1':''}}\,n}{n+1}`,f:n=>Math.pow(-1,n+sh)*n/(n+1),ans:'DNE',
+      why:`The size \\(\\frac{n}{n+1}\\) tends to \\(1\\), but the sign flips every step, so the terms bounce between values near \\(1\\) and near \\(-1\\). No single limit.`};},
+  ()=>({tex:R`\cos(n\pi)`,f:n=>Math.cos(n*Math.PI),ans:'DNE',
+    why:`\\(\\cos(n\\pi)=(-1)^n\\), which alternates \\(-1,1,-1,1,\\dots\\) forever. The sequence diverges by oscillation.`}),
+  ()=>{const [p,q]=pick([[1,2],[2,3],[-1,3],[3,4],[-2,5],[1,4],[-3,5],[4,5],[-1,2]]);const r=p/q;
+    return {tex:R`\left(${texFrac(p,q,{tf:true})}\right)^{n}`,f:n=>Math.pow(r,n),ans:0,
+      why:`A geometric sequence \\(r^n\\) with \\(|r|=${texFrac(Math.abs(p),q)}<1\\), so the powers shrink to \\(0\\).`};},
+  ()=>{const [p,q]=pick([[3,2],[5,3],[7,4],[5,2],[9,5]]);const r=p/q;
+    return {tex:R`\left(${texFrac(p,q,{tf:true})}\right)^{n}`,f:n=>Math.pow(r,n),ans:'inf',Ns:[20,40,80],
+      why:`A geometric sequence with \\(r=${texFrac(p,q)}>1\\), so the powers grow without bound.`};},
+  ()=>({tex:R`(-1)^{n}`,f:n=>Math.pow(-1,n),ans:'DNE',
+    why:`The terms are \\(-1,1,-1,1,\\dots\\). They never settle, so the limit does not exist.`}),
+  ()=>{const k=pick([1,1,2]);
+    return {tex:k===1?R`\frac{\ln n}{n}`:R`\frac{\ln n}{n^{2}}`,f:n=>Math.log(n)/Math.pow(n,k),ans:0,
+      why:`Apply L'Hospital to \\(f(x)=\\frac{\\ln x}{x^{${k}}}\\): the derivative ratio is \\(\\frac{1/x}{${k===1?'1':'2x'}}\\to 0\\). Powers beat logarithms.`};},
+  ()=>{const a=pick([1,2,3,-1,-2]);
+    return {tex:R`\left(1${a<0?'-\\frac{'+(-a)+'}{n}':'+\\frac{'+a+'}{n}'}\right)^{n}`,f:n=>Math.pow(1+a/n,n),ans:Math.exp(a),
+      why:`This is the definition of the exponential: \\(\\left(1+\\frac{x}{n}\\right)^{n}\\to e^{x}\\). Here \\(x=${a}\\), so the limit is \\(e^{${a}}\\approx ${fmtDec(Math.exp(a),4)}\\).`};},
+  ()=>({tex:R`n\sin\!\left(\frac{1}{n}\right)`,f:n=>n*Math.sin(1/n),ans:1,
+    why:`Put \\(x=1/n\\), so the expression is \\(\\frac{\\sin x}{x}\\) with \\(x\\to 0^{+}\\). That limit is \\(1\\).`}),
+  ()=>{const a=pick([1,2,3,4,5,6,8]);
+    return {tex:R`\sqrt{n^2+${a}n}-n`,f:n=>Math.sqrt(n*n+a*n)-n,ans:a/2,
+      why:`Multiply by the conjugate: \\(\\frac{(n^2+${a}n)-n^2}{\\sqrt{n^2+${a}n}+n}=\\frac{${a}n}{\\sqrt{n^2+${a}n}+n}\\to\\frac{${a}}{2}\\).`};},
+  ()=>({tex:R`\arctan n`,f:n=>Math.atan(n),ans:Math.PI/2,
+    why:`\\(\\arctan x\\) has the horizontal asymptote \\(y=\\pi/2\\), so the limit is \\(\\frac{\\pi}{2}\\approx ${fmtDec(Math.PI/2,4)}\\).`}),
+  ()=>{const b=pick([2,3]);
+    return {tex:R`\frac{${b}^{n}}{n!}`,f:n=>{let v=1;for(let k=1;k<=n;k++)v*=b/k;return v;},ans:0,Ns:[20,40,80],
+      why:`Once \\(k>${b}\\) every new factor \\(\\frac{${b}}{k}\\) is less than \\(1\\), and they keep shrinking. Factorials beat exponentials, so the ratio goes to \\(0\\).`};},
+  ()=>({tex:R`\frac{n!}{2^{n}}`,f:n=>{let v=1;for(let k=1;k<=n;k++)v*=k/2;return v;},ans:'inf',Ns:[20,40,80],
+    why:`Each new factor is \\(\\frac{n}{2}\\), which exceeds \\(1\\) from \\(n=3\\) on and keeps growing. Factorials beat exponentials, so the ratio blows up.`}),
+  ()=>{const a=rint(2,6),c=rint(2,6),b=rint(-6,6),d=rint(1-c,6);
+    return {tex:R`\frac{${a}n^2${sgnT(b,'')}}{${linT(c,d)}}`,f:n=>(a*n*n+b)/(c*n+d),ans:'inf',
+      why:`The top is degree \\(2\\) and the bottom is degree \\(1\\), so the quotient grows like \\(\\frac{${a}}{${c}}n\\to\\infty\\).`};},
+  ()=>{const k=pick([1,2,3]);
+    return {tex:R`\frac{(-1)^{n}}{${k===1?'n':'n^{'+k+'}'}}`,f:n=>Math.pow(-1,n)/Math.pow(n,k),ans:0,
+      why:`The size is \\(\\frac{1}{n^{${k}}}\\to 0\\), and a sequence whose absolute value goes to \\(0\\) goes to \\(0\\). Alternating signs do not matter here.`};},
+  ()=>({tex:R`\frac{\sin n}{n}`,f:n=>Math.sin(n)/n,ans:0,
+    why:`Squeeze: \\(-\\frac1n\\le\\frac{\\sin n}{n}\\le\\frac1n\\), and both outer sequences go to \\(0\\).`}),
+];
+Q.seqLimit={name:'limit of a sequence',
+  gen(){
+    for(let t=0;t<80;t++){const F=SEQ_FAMS[rint(0,SEQ_FAMS.length-1)]();
+      if(F.skip||!F.f)continue;
+      if(!verifyLim(F.f,F.ans,F.Ns))continue;
+      F.ansStr=limStr(F.ans);return F;}
+    return {tex:R`\frac{n}{n+1}`,f:n=>n/(n+1),ans:1,ansStr:'1',why:'Divide top and bottom by \\(n\\).'};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find ${M(R`\displaystyle\lim_{n\to\infty}a_n`)} for ${M(R`a_n=${q.tex}`)}. Enter a number, <code>inf</code>, or <code>DNE</code>.</p>`;
+    numIn(el,'L',M(R`\lim_{n\to\infty}a_n=`));},
+  check(q,el){return G(el,'L',checkLimit($('[data-k=L]',el).value,q.ans));},
+  solution(q){const a=isDivAns(q.ans)?(q.ans==='DNE'?R`\text{does not exist}`:R`\infty`):(Math.abs(q.ans-Math.PI/2)<1e-12?R`\frac{\pi}{2}`:ratOf(q.ans)?texQ(q.ans):fmtDec(q.ans,4));
+    return q.why+` So ${M(R`\lim_{n\to\infty}${q.tex}=${a}`)}.`;}
+};
+
+const NTH_PATS=[
+  ()=>({num:n=>(n%2?1:-1),den:n=>n,ref:'(-1)^(n+1)/n',
+    why:'The sizes are \\(1,\\tfrac12,\\tfrac13,\\dots\\), so the size is \\(1/n\\). The signs start positive and alternate, which is \\((-1)^{n+1}\\).'}),
+  ()=>{const b=pick([2,3,5]);return {num:n=>Math.pow(b,n),den:()=>1,ref:`${b}^n`,
+    why:`Each term is \\(${b}\\) times the one before and the first is \\(${b}\\), so \\(a_n=${b}^{\\,n}\\).`};},
+  ()=>({num:n=>n*n,den:()=>1,ref:'n^2',why:'These are the perfect squares \\(1,4,9,16,\\dots\\).'}),
+  ()=>({num:n=>n,den:n=>n+1,ref:'n/(n+1)',why:'The numerator counts \\(1,2,3,\\dots\\) and the denominator is always one more.'}),
+  ()=>{const c=pick([2,3,5]);return {num:n=>c*(n%2?1:-1),den:n=>n*n,ref:`${c}(-1)^(n+1)/n^2`,
+    why:`A constant \\(${c}\\) on top, squares on the bottom, and signs that start positive and alternate.`};},
+  ()=>({num:()=>1,den:n=>factn(n),ref:'1/n!',why:'The denominators are \\(1,2,6,24,120\\), which are \\(1!,2!,3!,4!,5!\\).'}),
+  ()=>({num:n=>n*(n+1),den:()=>1,ref:'n(n+1)',why:'Each term is a product of two consecutive integers: \\(1\\cdot 2,\\;2\\cdot 3,\\;3\\cdot 4,\\dots\\)'}),
+  ()=>{const a=rint(2,5),b=rint(-3,6);return {num:n=>a*n+b,den:()=>1,ref:`${a}n${b<0?'-'+(-b):'+'+b}`,
+    why:`The terms go up by \\(${a}\\) each step, so the formula is linear: \\(a_n=${linT(a,b)}\\).`};},
+  ()=>{const [p,q]=pick([[2,3],[1,2],[3,4],[2,5],[1,3],[3,5]]);
+    return {num:n=>Math.pow(p,n),den:n=>Math.pow(q,n),ref:`(${p}/${q})^n`,
+      why:`Every term is \\(${texFrac(p,q)}\\) times the one before, and the first term is \\(${texFrac(p,q)}\\), so \\(a_n=\\left(${texFrac(p,q,{tf:true})}\\right)^{n}\\).`};},
+  ()=>({num:n=>(n%2?-1:1)*n*n,den:()=>1,ref:'(-1)^n n^2',why:'Squares with signs that start negative and alternate: \\((-1)^n n^2\\).'}),
+  ()=>{const b=pick([-2,-3]);return {num:n=>Math.pow(b,n-1),den:()=>1,ref:`(${b})^(n-1)`,
+    why:`Each term is \\(${b}\\) times the one before and the first term is \\(1\\), so \\(a_n=(${b})^{\\,n-1}\\).`};},
+  ()=>({num:()=>1,den:n=>2*n-1,ref:'1/(2n-1)',why:'The denominators are the odd numbers \\(1,3,5,7,\\dots\\), which is \\(2n-1\\).'}),
+  ()=>({num:n=>n,den:n=>Math.pow(2,n),ref:'n/2^n',why:'The numerators count up and the denominators double: \\(a_n=n/2^{\\,n}\\).'}),
+  ()=>({num:n=>factn(n),den:()=>1,ref:'n!',why:'\\(1,2,6,24,120\\) are the factorials.'}),
+];
+Q.nthTerm={name:'find a formula for the nth term',
+  gen(){
+    for(let t=0;t<60;t++){
+      const P=NTH_PATS[rint(0,NTH_PATS.length-1)]();
+      let f;try{f=Expr.compile(P.ref);}catch(e){continue;}
+      let ok=true;const vals=[];
+      for(let n=1;n<=8;n++){const v=P.num(n)/P.den(n);vals.push(v);if(!Number.isFinite(v)||!near(f({n}),v,1e-9)){ok=false;break;}}
+      if(!ok)continue;
+      const shown=[];for(let n=1;n<=5;n++)shown.push(texRawFrac(P.num(n),P.den(n)));
+      if(new Set(shown).size<5)continue;
+      P.list=R`\left\{${shown.join(',\\;\\,')},\;\ldots\right\}`;P.fn=env=>P.num(env.n)/P.den(env.n);
+      return P;}
+    const P={num:n=>n,den:n=>n+1,ref:'n/(n+1)',why:'One more on the bottom than on top.'};
+    P.list=R`\left\{\frac{1}{2},\;\frac{2}{3},\;\frac{3}{4},\;\frac{4}{5},\;\frac{5}{6},\;\ldots\right\}`;P.fn=env=>env.n/(env.n+1);return P;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find a formula for the general term ${M('a_n')} of the sequence ${M(q.list)} Assume the pattern continues and that the list starts at ${M('n=1')}.</p>`;
+    exprIn(el,'a',M('a_n='),'a formula in n');},
+  check(q,el){return G(el,'a',checkExprInt($('[data-k=a]',el).value,q.fn,['n'],{domain:{n:[1,8]}}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox note';}
+    h.innerHTML=`Handle the three pieces separately: the sign, the numerator, and the denominator. Check your formula at ${M('n=1')} and ${M('n=2')} before you submit it.`;},
+  solution(q){return q.why+` So ${M(R`a_n=${previewTex(q.ref)||q.ref}`)}.`;}
+};
+
+const BOUND_FAMS=[
+  ()=>{const a=rint(1,5),c=rint(1,5),b=rint(0,6),d=rint(0,6);
+    if(a*d-b*c===0)return null;
+    return {tex:R`\frac{${linT(a,b)}}{${linT(c,d)}}`,f:n=>(a*n+b)/(c*n+d),L:a/c,
+      why:`Divide by \\(n\\): \\(a_n=\\frac{${a}${sgnFrac(b,'n')}}{${c}${sgnFrac(d,'n')}}\\to ${texFrac(a,c)}\\).`};},
+  ()=>{const k=pick([1,2,3,4,-1,-2,-3]);
+    return {tex:R`1${k<0?'-\\frac{'+(-k)+'}{n}':'+\\frac{'+k+'}{n}'}`,f:n=>1+k/n,L:1,
+      why:`The correction \\(${texFrac(k,1)}/n\\) shrinks to \\(0\\), so \\(a_n\\to 1\\).`};},
+  ()=>{const [p,q]=pick([[1,2],[1,3],[2,3],[1,4],[3,4]]);const r=p/q;
+    return {tex:R`1-\left(${texFrac(p,q,{tf:true})}\right)^{n}`,f:n=>1-Math.pow(r,n),L:1,
+      why:`\\(\\left(${texFrac(p,q,{tf:true})}\\right)^{n}\\to 0\\) because the ratio is between \\(-1\\) and \\(1\\), so \\(a_n\\to 1\\).`};},
+  ()=>{const a=rint(0,6),b=rint(0,6);if(a===b)return null;
+    return {tex:R`\frac{n^2${sgnT(a,'')}}{n^2${sgnT(b,'')}}`,f:n=>(n*n+a)/(n*n+b),L:1,
+      why:`Divide by \\(n^2\\): \\(a_n=\\frac{1${sgnFrac(a,'n^2')}}{1${sgnFrac(b,'n^2')}}\\to 1\\).`};},
+];
+Q.seqBounds={name:'bounds and limit of a monotone sequence',
+  gen(){
+    for(let t=0;t<80;t++){
+      const F=BOUND_FAMS[rint(0,BOUND_FAMS.length-1)]();
+      if(!F)continue;
+      const a1=F.f(1);
+      if(!Number.isFinite(a1))continue;
+      let mono=true,up=null,prev=a1;
+      for(let n=2;n<=3000;n++){const v=F.f(n);if(!Number.isFinite(v)){mono=false;break;}
+        const d=v-prev;if(Math.abs(d)<1e-14){mono=false;break;}
+        const s=d>0;if(up===null)up=s;else if(s!==up){mono=false;break;}prev=v;}
+      if(!mono)continue;
+      if(!verifyLim(F.f,F.L))continue;
+      if(Math.abs(a1-F.L)<1e-9)continue;
+      F.a1=a1;F.up=up;return F;}
+    return {tex:R`\frac{n}{n+1}`,f:n=>n/(n+1),L:1,a1:0.5,up:true,why:'Divide by \\(n\\).'};},
+  render(q,el){el.innerHTML=`<p class="prompt">The sequence ${M(R`a_n=${q.tex}`)} is monotone, so it is trapped between its first term and its limit. Give both exactly.</p>`;
+    numIn(el,'a1',M('a_1='));numIn(el,'L',M(R`\lim_{n\to\infty}a_n=`));},
+  check(q,el){return Gall(el,[['a1',checkNumber($('[data-k=a1]',el).value,q.a1)],['L',checkNumber($('[data-k=L]',el).value,q.L)]]);},
+  solution(q){return `Put ${M('n=1')} to get ${M(R`a_1=${texQ(q.a1)}`)}. `+q.why+
+    ` The sequence is ${q.up?'increasing':'decreasing'}, so every term satisfies ${M(q.up?R`${texQ(q.a1)}\le a_n&lt;${texQ(q.L)}`:R`${texQ(q.L)}&lt;a_n\le ${texQ(q.a1)}`)}, and ${M(texQ(q.L))} is the ${q.up?'least upper':'greatest lower'} bound. Monotone and bounded, so it converges, to ${M(texQ(q.L))}.`;}
+};
+
+const REC_FAMS=[
+  ()=>{const k=pick([2,6,12,20]);const L=(1+Math.sqrt(1+4*k))/2;const c=pick([0,1,2,3,4]);
+    return {tex:R`a_{n+1}=\sqrt{${k}+a_n}`,a1:c,step:x=>Math.sqrt(k+x),L,a2Tex:texSqrt(k+c),LTex:String(L),
+      why:`Let \\(L=\\lim a_n\\). Taking the limit of both sides gives \\(L=\\sqrt{${k}+L}\\), so \\(L^2-L-${k}=0\\) and \\(L=${L}\\) (the negative root is impossible, since every term after the first is a square root).`};},
+  ()=>{const k=pick([4,9,16,25,36]);const c=pick([1,2,3,4,5,6]);
+    return {tex:R`a_{n+1}=\frac{1}{2}\left(a_n+\frac{${k}}{a_n}\right)`,a1:c,step:x=>(x+k/x)/2,L:Math.sqrt(k),
+      a2Tex:texQ((c+k/c)/2),LTex:String(Math.sqrt(k)),
+      why:`The limit satisfies \\(L=\\frac12\\left(L+\\frac{${k}}{L}\\right)\\), so \\(2L^2=L^2+${k}\\), \\(L^2=${k}\\), and \\(L=${Math.sqrt(k)}\\). This is Newton's method for \\(\\sqrt{${k}}\\).`};},
+  ()=>{const c=pick([1,2,3,4]);
+    return {tex:R`a_{n+1}=3-\frac{1}{a_n}`,a1:c,step:x=>3-1/x,L:(3+Math.sqrt(5))/2,
+      a2Tex:texQ(3-1/c),LTex:R`\frac{3+\sqrt5}{2}`,
+      why:`The limit satisfies \\(L=3-\\frac1L\\), so \\(L^2-3L+1=0\\) and \\(L=\\frac{3\\pm\\sqrt5}{2}\\). The terms stay above \\(2\\), so the limit is the larger root.`};},
+  ()=>{const c=pick([0,-1,-2]);
+    return {tex:R`a_{n+1}=\frac{1}{2-a_n}`,a1:c,step:x=>1/(2-x),L:1,
+      a2Tex:texQ(1/(2-c)),LTex:'1',
+      why:`The limit satisfies \\(L=\\frac{1}{2-L}\\), so \\(L(2-L)=1\\), \\(L^2-2L+1=0\\), \\((L-1)^2=0\\), and \\(L=1\\).`};},
+];
+Q.recursive={name:'recursively defined sequence',
+  gen(){
+    for(let t=0;t<60;t++){
+      const F=REC_FAMS[rint(0,REC_FAMS.length-1)]();
+      const a2=F.step(F.a1);
+      if(!Number.isFinite(a2))continue;
+      let x=F.a1,bad=false;
+      for(let i=0;i<4000;i++){x=F.step(x);if(!Number.isFinite(x)){bad=true;break;}}
+      if(bad)continue;
+      if(Math.abs(x-F.L)>1e-3*Math.max(1,Math.abs(F.L)))continue;
+      F.a2=a2;return F;}
+    return {tex:R`a_{n+1}=\sqrt{2+a_n}`,a1:1,step:x=>Math.sqrt(2+x),L:2,a2:Math.sqrt(3),a2Tex:R`\sqrt{3}`,LTex:'2',why:'Solve \\(L=\\sqrt{2+L}\\).'};},
+  render(q,el){el.innerHTML=`<p class="prompt">A sequence is defined by ${M(R`a_1=${texNum(q.a1)}`)} and ${M(q.tex)} for ${M(R`n\ge 1`)}. Assume it converges. Find ${M('a_2')} and the limit, both exactly.</p>`;
+    numIn(el,'a2',M('a_2='));numIn(el,'L',M(R`\lim_{n\to\infty}a_n=`));},
+  check(q,el){return Gall(el,[['a2',checkNumber($('[data-k=a2]',el).value,q.a2)],['L',checkNumber($('[data-k=L]',el).value,q.L)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox note';}
+    h.innerHTML=`For ${M('a_2')}, put ${M(R`n=1`)} into the recursion. For the limit, replace both ${M('a_{n+1}')} and ${M('a_n')} by ${M('L')} and solve the resulting equation.`;},
+  solution(q){return `Put ${M('n=1')}: ${M(R`a_2=${q.a2Tex}`)}${Math.abs(q.a2-Math.round(q.a2))<1e-9?'':M(R`\approx ${fmtDec(q.a2,4)}`)}. `+q.why+` The limit is ${M(q.LTex)}${Math.abs(q.L-Math.round(q.L))<1e-9?'':M(R`\approx ${fmtDec(q.L,5)}`)}, and iterating the recursion does settle there.`;}
+};
+
+/* ---------- chapter 2 ---------- */
+function mkGeo(){
+  const kind=pick(['A0','A1m','A1','A2','PQ1','PQ2','PQ3']);
+  const conv=Math.random()<0.75;
+  let rn,rd;
+  if(kind.startsWith('PQ')){
+    const pairs=conv?[[2,3],[3,4],[1,2],[2,5],[3,5],[4,5],[1,3],[5,6],[3,8],[2,7]]:[[3,2],[5,3],[4,3],[7,4],[5,2]];
+    [rn,rd]=pick(pairs);
+  }else{
+    const pairs=conv?[[2,3],[1,2],[3,4],[-1,4],[-2,3],[3,5],[-3,5],[1,3],[4,5],[-1,2],[2,5],[5,6],[-1,3],[-3,4],[-2,5]]
+                    :[[3,2],[5,3],[-4,3],[-3,2],[7,4],[5,4],[-5,4],[-1,1],[-2,1],[2,1]];
+    [rn,rd]=pick(pairs);
+  }
+  const rT=texFrac(rn,rd,{tf:true});
+  const A=pick([1,1,2,3,4,5,6,8,9,10,12]);
+  const Ac=A===1?'':String(A);
+  let n0,t,term;
+  if(kind==='A0'){n0=0;term=R`${Ac}\left(${rT}\right)^{n}`;t=n=>A*Math.pow(rn/rd,n);}
+  else if(kind==='A1m'){n0=1;term=R`${Ac}\left(${rT}\right)^{n-1}`;t=n=>A*Math.pow(rn/rd,n-1);}
+  else if(kind==='A1'){n0=1;term=R`${Ac}\left(${rT}\right)^{n}`;t=n=>A*Math.pow(rn/rd,n);}
+  else if(kind==='A2'){n0=2;term=R`${Ac}\left(${rT}\right)^{n}`;t=n=>A*Math.pow(rn/rd,n);}
+  else if(kind==='PQ1'){n0=1;term=R`\frac{${rn}^{n}}{${rd}^{\,n+1}}`;t=n=>Math.pow(rn,n)/Math.pow(rd,n+1);}
+  else if(kind==='PQ2'){n0=1;term=R`\frac{(-${rn})^{n}}{${rd}^{\,n}}`;t=n=>Math.pow(-rn,n)/Math.pow(rd,n);}
+  else{n0=1;term=R`\frac{${rn}^{\,n+1}}{${rd}^{\,n-1}}`;t=n=>Math.pow(rn,n+1)/Math.pow(rd,n-1);}
+  return {n0,t,term,kind};
+}
+Q.geometricSum={name:'sum a geometric series',
+  gen(){
+    for(let k=0;k<80;k++){
+      const g=mkGeo();const {n0,t}=g;
+      const a=t(n0);if(!Number.isFinite(a)||Math.abs(a)<1e-12)continue;
+      const r=t(n0+1)/t(n0);
+      if(!Number.isFinite(r)||!near(t(n0+2)/t(n0+1),r,1e-9))continue;
+      const conv=Math.abs(r)<1-1e-9;
+      let S,ans;
+      if(conv){S=a/(1-r);
+        const partial=partSum(t,n0,n0+4000);
+        if(Math.abs(partial-S)>1e-6*Math.max(1,Math.abs(S)))continue;
+        ans=S;}
+      else{S=null;ans=r>=1?(a>0?'inf':'-inf'):'DNE';}
+      return {sig:sigTex(g.n0,g.term),n0:g.n0,a,r,conv,S,ans,ansStr:conv?String(S):'diverges'};}
+    return {sig:sigTex(0,R`\left(\tfrac{1}{2}\right)^{n}`),n0:0,a:1,r:0.5,conv:true,S:2,ans:2,ansStr:'2'};},
+  render(q,el){el.innerHTML=`<p class="prompt">For the series ${M(R`\displaystyle ${q.sig}`)}, give the first term ${M('a')}, the common ratio ${M('r')}, and the sum. Type <code>diverges</code> for the sum if the series diverges.</p>`;
+    numIn(el,'a',M('a='));numIn(el,'r',M('r='));numIn(el,'S',M(R`\text{sum}=`));},
+  check(q,el){return Gall(el,[['a',checkNumber($('[data-k=a]',el).value,q.a)],['r',checkNumber($('[data-k=r]',el).value,q.r)],
+    ['S',checkLimit($('[data-k=S]',el).value,q.ans)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox note';}
+    h.innerHTML=`Put the starting index ${M(R`n=${q.n0}`)} into the general term and simplify: that value is ${M('a')}. Then divide the next term by it to get ${M('r')}.`;},
+  solution(q){
+    const head=`Plug the starting index into the general term: ${M(R`a=${texQ(q.a)}`)}. Dividing consecutive terms gives ${M(R`r=${texQ(q.r)}`)}. `;
+    if(q.conv)return head+`Since ${M(R`|r|&lt;1`)}, the series converges to ${M(R`\frac{a}{1-r}=\frac{${texQ(q.a)}}{1-${paren(texQ(q.r))}}=${texQ(q.S)}`)}.`;
+    return head+`Since ${M(R`|r|\ge 1`)}, the terms do not go to zero and the series <b>diverges</b>.`;}
+};
+
+function harm(k){let s=0;for(let j=1;j<=k;j++)s+=1/j;return s;}
+const TELE_FAMS=[
+  ()=>{const g=pick([1,2,3]);
+    return {from:1,t:k=>g/(k*(k+g)),
+      aTex:g===1?R`\frac{1}{n(n+1)}`:R`\frac{${g}}{n(n+${g})}`,
+      s:n=>harm(g)-partSum(j=>1/(n+j),1,g),
+      sStr:['1','3/2','11/6'][g-1]+'-'+Array.from({length:g},(_,j)=>`1/(n+${j+1})`).join('-'),
+      sum:harm(g),
+      decomp:R`\frac{${g}}{k(k+${g})}=\frac{1}{k}-\frac{1}{k+${g}}`};},
+  ()=>{const a=rint(1,4);
+    return {from:1,t:k=>1/((k+a)*(k+a+1)),
+      aTex:R`\frac{1}{(n+${a})(n+${a+1})}`,
+      s:n=>1/(a+1)-1/(n+a+1),
+      sStr:`${a===0?'1':'1/'+(a+1)}-1/(n+${a+1})`,
+      sum:1/(a+1),
+      decomp:R`\frac{1}{(n+${a})(n+${a+1})}=\frac{1}{n+${a}}-\frac{1}{n+${a+1}}`};},
+  ()=>{const a=rint(0,3);
+    return {from:1,t:k=>1/(k+a)-1/(k+a+1),
+      aTex:a===0?R`\frac{1}{n}-\frac{1}{n+1}`:R`\frac{1}{n+${a}}-\frac{1}{n+${a+1}}`,
+      s:n=>1/(a+1)-1/(n+a+1),
+      sStr:`${a===0?'1':'1/'+(a+1)}-1/(n+${a+1})`,
+      sum:1/(a+1),
+      decomp:R`\text{already split: the }-\frac{1}{k+${a+1}}\text{ of one term cancels the }+\frac{1}{k+${a+1}}\text{ of the next}`};},
+  ()=>{const up=Math.random()<0.5;
+    return {from:1,t:k=>up?Math.log((k+1)/k):Math.log(k/(k+1)),
+      aTex:up?R`\ln\!\left(\frac{n+1}{n}\right)`:R`\ln\!\left(\frac{n}{n+1}\right)`,
+      s:n=>up?Math.log(n+1):-Math.log(n+1),
+      sStr:up?'ln(n+1)':'-ln(n+1)',
+      sum:up?'inf':'-inf',
+      decomp:up?R`\ln\!\left(\frac{k+1}{k}\right)=\ln(k+1)-\ln k`:R`\ln\!\left(\frac{k}{k+1}\right)=\ln k-\ln(k+1)`};},
+  ()=>{const rat=Math.random()<0.5;
+    return {from:1,t:k=>Math.sqrt(k+1)-Math.sqrt(k),
+      aTex:rat?R`\frac{1}{\sqrt{n+1}+\sqrt{n}}`:R`\sqrt{n+1}-\sqrt{n}`,
+      s:n=>Math.sqrt(n+1)-1,
+      sStr:'sqrt(n+1)-1',
+      sum:'inf',
+      decomp:rat?R`\frac{1}{\sqrt{k+1}+\sqrt{k}}=\sqrt{k+1}-\sqrt{k}\quad\text{(multiply by the conjugate)}`:R`\text{already split}`};},
+  ()=>({from:1,t:k=>Math.atan(k+1)-Math.atan(k),
+    aTex:R`\arctan(n+1)-\arctan n`,
+    s:n=>Math.atan(n+1)-Math.PI/4,
+    sStr:'arctan(n+1)-pi/4',
+    sum:Math.PI/4,
+    decomp:R`\text{already split, and }\arctan 1=\frac{\pi}{4}`}),
+  ()=>({from:1,t:k=>2/((2*k-1)*(2*k+1)),
+    aTex:R`\frac{2}{(2n-1)(2n+1)}`,
+    s:n=>1-1/(2*n+1),
+    sStr:'1-1/(2n+1)',
+    sum:1,
+    decomp:R`\frac{2}{(2k-1)(2k+1)}=\frac{1}{2k-1}-\frac{1}{2k+1}`}),
+  ()=>({from:1,t:k=>(2*k+1)/(k*k*(k+1)*(k+1)),
+    aTex:R`\frac{2n+1}{n^2(n+1)^2}`,
+    s:n=>1-1/((n+1)*(n+1)),
+    sStr:'1-1/(n+1)^2',
+    sum:1,
+    decomp:R`\frac{2k+1}{k^2(k+1)^2}=\frac{1}{k^2}-\frac{1}{(k+1)^2}`}),
+  ()=>({from:2,t:k=>2/(k*k-1),
+    aTex:R`\frac{2}{n^2-1}`,
+    s:n=>1.5-1/n-1/(n+1),
+    sStr:'3/2-1/n-1/(n+1)',
+    sum:1.5,
+    decomp:R`\frac{2}{k^2-1}=\frac{1}{k-1}-\frac{1}{k+1}`}),
+];
+Q.telescoping={name:'telescoping sum',
+  gen(){
+    for(let k=0;k<80;k++){
+      const F=TELE_FAMS[rint(0,TELE_FAMS.length-1)]();
+      let f;try{f=Expr.compile(F.sStr);}catch(e){continue;}
+      let ok=true;
+      for(let n=F.from;n<=F.from+12;n++){
+        const direct=partSum(F.t,F.from,n),closed=F.s(n),typed=f({n});
+        if(!Number.isFinite(direct)||Math.abs(direct-closed)>1e-9*Math.max(1,Math.abs(direct))||Math.abs(typed-closed)>1e-9*Math.max(1,Math.abs(closed))){ok=false;break;}}
+      if(!ok)continue;
+      if(!verifyLim(F.s,F.sum,[200,2000,20000,200000]))continue;
+      F.ansStr=limStr(F.sum);return F;}
+    const F={from:1,t:k=>1/(k*(k+1)),aTex:R`\frac{1}{n(n+1)}`,s:n=>1-1/(n+1),sStr:'1-1/(n+1)',sum:1,ansStr:'1',decomp:R`\frac{1}{k(k+1)}=\frac1k-\frac{1}{k+1}`};return F;},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle ${sigTex(q.from,q.aTex)}`)}, find the partial sum ${M(R`s_n=\sum_{k=${q.from}}^{n}a_k`)} in closed form (a formula in ${M('n')} with no sum sign), then give the sum of the series. Type <code>diverges</code> if it diverges.</p>`;
+    exprIn(el,'s',M('s_n='),'a formula in n');numIn(el,'S',M(R`\text{sum}=`));},
+  check(q,el){return Gall(el,[['s',checkExprInt($('[data-k=s]',el).value,e=>q.s(e.n),['n'],{domain:{n:[q.from,q.from+9]}})],
+    ['S',checkLimit($('[data-k=S]',el).value,q.sum)]]);},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox note';}
+    h.innerHTML=`Split the term first: ${M(q.decomp)} Now write out ${M(R`k=${q.from},${q.from+1},${q.from+2}`)} and see which pieces cancel.`;},
+  solution(q){
+    const S=isDivAns(q.sum)?(q.sum==='inf'?R`\infty`:q.sum==='-inf'?R`-\infty`:R`\text{DNE}`):texQ(q.sum);
+    return `Split the term: ${M(q.decomp)}. Writing out the partial sum, everything cancels except a fixed head and a tail, leaving ${M(R`s_n=${previewTex(q.sStr)||q.sStr}`)}. `+
+      (isDivAns(q.sum)?`That partial sum has no finite limit, so the series <b>diverges</b>.`
+        :`Letting ${M(R`n\to\infty`)} kills the tail, so the sum is ${M(S)}.`);}
+};
+
+const DIV_FAMS=[
+  ()=>{const a=rint(1,6),c=rint(1,6),b=rint(-5,5),d=rint(1-c,6);if(a*d===b*c)return null;
+    return {tex:R`\frac{${linT(a,b)}}{${linT(c,d)}}`,f:n=>(a*n+b)/(c*n+d),ans:a/c};},
+  ()=>({tex:R`(-1)^{n}`,f:n=>Math.pow(-1,n),ans:'DNE'}),
+  ()=>({tex:R`\cos\!\left(\frac{1}{n}\right)`,f:n=>Math.cos(1/n),ans:1}),
+  ()=>{const k=rint(1,9);return {tex:R`\frac{n^2}{n^2+${k}}`,f:n=>n*n/(n*n+k),ans:1};},
+  ()=>{const a=pick([1,2,3]);return {tex:R`\left(1+\frac{${a}}{n}\right)^{n}`,f:n=>Math.pow(1+a/n,n),ans:Math.exp(a)};},
+  ()=>({tex:R`\arctan n`,f:n=>Math.atan(n),ans:Math.PI/2}),
+  ()=>({tex:R`\frac{n}{\sqrt{n^2+1}}`,f:n=>n/Math.sqrt(n*n+1),ans:1}),
+  ()=>({tex:R`\frac{(-1)^{n}n}{n+1}`,f:n=>Math.pow(-1,n)*n/(n+1),ans:'DNE'}),
+  ()=>{const b=pick([2,3]);return {tex:R`\frac{${b}^{n}}{${b}^{n}+1}`,f:n=>Math.pow(b,n)/(Math.pow(b,n)+1),ans:1,Ns:[20,40,80]};},
+  ()=>({tex:R`\frac{1}{n}`,f:n=>1/n,ans:0}),
+  ()=>{const p=pick([2,3]);return {tex:R`\frac{1}{n^{${p}}}`,f:n=>1/Math.pow(n,p),ans:0};},
+  ()=>({tex:R`\frac{1}{\sqrt{n}}`,f:n=>1/Math.sqrt(n),ans:0}),
+  ()=>({tex:R`\frac{1}{n(n+1)}`,f:n=>1/(n*(n+1)),ans:0}),
+  ()=>{const k=rint(1,6);return {tex:R`\frac{n}{n^2+${k}}`,f:n=>n/(n*n+k),ans:0};},
+  ()=>({tex:R`\frac{\ln n}{n}`,f:n=>Math.log(n)/n,ans:0}),
+  ()=>{const b=pick([2,3,4]);return {tex:R`\frac{1}{${b}^{n}}`,f:n=>Math.pow(b,-n),ans:0};},
+];
+Q.divergenceTest={name:'test for divergence',
+  gen(){
+    for(let k=0;k<80;k++){
+      const F=DIV_FAMS[rint(0,DIV_FAMS.length-1)]();
+      if(!F)continue;
+      if(!verifyLim(F.f,F.ans,F.Ns))continue;
+      F.ansStr=limStr(F.ans);
+      F.verdict=(F.ans===0)?1:0;
+      return F;}
+    return {tex:R`\frac{1}{n}`,f:n=>1/n,ans:0,ansStr:'0',verdict:1};},
+  render(q,el){el.innerHTML=`<p class="prompt">Apply the test for divergence to ${M(R`\displaystyle ${sigTex(1,q.tex)}`)}. Give ${M(R`\lim_{n\to\infty}a_n`)} (a number, <code>inf</code>, or <code>DNE</code>) and then the conclusion.</p>`;
+    numIn(el,'lim',M(R`\lim_{n\to\infty}a_n=`));
+    q.get=choiceButtons(el,[{label:'the series diverges by this test',value:0},{label:'the test is inconclusive',value:1}]);},
+  check(q,el){
+    const r=G(el,'lim',checkLimit($('[data-k=lim]',el).value,q.ans));
+    const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a conclusion as well.'};
+    if(!r.ok)return r;
+    if(v!==q.verdict)return {ok:false,msg:q.verdict===0?'The limit is not zero, so the test does apply and the series diverges.':'The limit is zero, so this test says nothing at all. It is inconclusive.'};
+    return {ok:true};},
+  solution(q){
+    const L=isDivAns(q.ans)?(q.ans==='DNE'?R`\text{does not exist}`:R`\infty`):texQ(q.ans);
+    return `${M(R`\lim_{n\to\infty}${q.tex}=${L}`)}. `+(q.verdict===0
+      ?`The terms do not go to zero, so the series <b>diverges by the test for divergence</b>.`
+      :`The terms do go to zero, so the test for divergence is <b>inconclusive</b>. It never proves convergence, and you need another test.`);}
+};
+
+Q.repeatingDecimal={name:'repeating decimal as a fraction',
+  gen(){
+    for(let k=0;k<80;k++){
+      const kind=pick(['rep1','rep2','rep2','head1','head2','int2','rep3']);
+      let whole=0,head='',rep='';
+      if(kind==='rep1'){rep=String(rint(1,8));}
+      else if(kind==='rep2'){rep=String(rint(10,98));}
+      else if(kind==='rep3'){rep=String(rint(101,987));}
+      else if(kind==='head1'){head=String(rint(1,8));rep=String(rint(1,8));}
+      else if(kind==='head2'){head=String(rint(10,89));rep=String(rint(1,8));}
+      else {whole=rint(1,5);rep=String(rint(10,98));}
+      const d=rep.length,h=head.length;
+      const pow=Math.pow(10,d),hp=Math.pow(10,h);
+      const r=1/pow;
+      const first=parseInt(rep,10)/(hp*pow);
+      const val=whole+(h?parseInt(head,10)/hp:0)+first/(1-r);
+      /* verify by summing the geometric tail directly */
+      let s=whole+(h?parseInt(head,10)/hp:0);
+      for(let j=0;j<60;j++)s+=first*Math.pow(r,j);
+      if(Math.abs(s-val)>1e-13*Math.max(1,val))continue;
+      if(head&&parseInt(head,10)%10===parseInt(rep,10)&&d===1)continue;
+      const num=Math.round(val*hp*(pow-1)),den=hp*(pow-1);
+      if(Math.abs(num/den-val)>1e-12)continue;
+      const dec=`${whole}.${head}\\overline{${rep}}`;
+      return {dec,r,val,first,head,rep,whole,d,h,fracTex:texFrac(num,den)};}
+    return {dec:'0.\\overline{27}',r:0.01,val:3/11,first:0.27,head:'',rep:'27',whole:0,d:2,h:0,fracTex:'\\frac{3}{11}'};},
+  render(q,el){el.innerHTML=`<p class="prompt">Write ${M(q.dec)} as a geometric series and then as a fraction. Give the common ratio ${M('r')} of that series and the exact value as a fraction in lowest terms.</p>`;
+    numIn(el,'r',M('r='));numIn(el,'v',M(q.dec+'='));},
+  check(q,el){return Gall(el,[['r',checkNumber($('[data-k=r]',el).value,q.r)],['v',checkNumber($('[data-k=v]',el).value,q.val)]]);},
+  solution(q){
+    const headPart=(q.whole?String(q.whole):'')+(q.h?(q.whole?' + ':'')+`\\frac{${parseInt(q.head,10)}}{${Math.pow(10,q.h)}}`:'');
+    return `The repeating block has ${q.d} digit${q.d>1?'s':''}, so the ratio is ${M(R`r=\frac{1}{${Math.pow(10,q.d)}}`)}. The repeating tail is a geometric series with first term ${M(R`a=${texQ(q.first)}`)}, so it sums to ${M(R`\frac{a}{1-r}=${texQ(q.first/(1-q.r))}`)}. `+
+      (headPart?`Adding the non-repeating part ${M(headPart)} gives `:`So `)+M(R`${q.dec}=${q.fracTex}`)+`.`;}
+};
+
+Q.seriesOfSums={name:'combine two geometric series',
+  gen(){
+    for(let k=0;k<80;k++){
+      const d=rint(4,9);const p=rint(1,d-1);let qq=rint(1,d-1);
+      if(qq===p)continue;
+      const sign=pick([1,-1]);const n0=pick([0,1,1]);
+      const t=n=>(Math.pow(p,n)+sign*Math.pow(qq,n))/Math.pow(d,n);
+      const S=n0===1?(p/(d-p)+sign*qq/(d-qq)):(d/(d-p)+sign*d/(d-qq));
+      const chk=partSum(t,n0,n0+3000);
+      if(!Number.isFinite(S)||Math.abs(chk-S)>1e-8*Math.max(1,Math.abs(S)))continue;
+      const term=R`\frac{${p}^{n}${sign>0?'+':'-'}${qq}^{n}}{${d}^{n}}`;
+      return {sig:sigTex(n0,term),p,q2:qq,d,sign,n0,S,S1:n0===1?p/(d-p):d/(d-p),S2:n0===1?qq/(d-qq):d/(d-qq)};}
+    return {sig:sigTex(1,R`\frac{2^{n}+3^{n}}{6^{n}}`),p:2,q2:3,d:6,sign:1,n0:1,S:1.5,S1:0.5,S2:1};},
+  render(q,el){el.innerHTML=`<p class="prompt">Split ${M(R`\displaystyle ${q.sig}`)} into two geometric series and find its exact sum.</p>`;
+    numIn(el,'S',M(R`\text{sum}=`));},
+  check(q,el){return G(el,'S',checkNumber($('[data-k=S]',el).value,q.S));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox note';}
+    h.innerHTML=`Write ${M(R`\frac{${q.p}^{n}${q.sign>0?'+':'-'}${q.q2}^{n}}{${q.d}^{n}}=\left(\frac{${q.p}}{${q.d}}\right)^{n}${q.sign>0?'+':'-'}\left(\frac{${q.q2}}{${q.d}}\right)^{n}`)} and sum each piece separately.`;},
+  solution(q){
+    return `Split the fraction: ${M(R`\frac{${q.p}^{n}${q.sign>0?'+':'-'}${q.q2}^{n}}{${q.d}^{n}}=\left(${texFrac(q.p,q.d,{tf:true})}\right)^{n}${q.sign>0?'+':'-'}\left(${texFrac(q.q2,q.d,{tf:true})}\right)^{n}`)}. `+
+      `Both ratios are less than ${M('1')} in size, so each piece is a convergent geometric series: ${M(texQ(q.S1))} and ${M(texQ(q.S2))}. `+
+      `Combining, the sum is ${M(R`${texQ(q.S1)}${q.sign>0?'+':'-'}${texQ(q.S2)}=${texQ(q.S)}`)}.`;}
+};
+
+/* ---------- chapter 3 ---------- */
+const P_FAMS=[
+  ()=>{const [a,b]=pick([[3,2],[5,2],[5,3],[4,3],[7,4],[1,2],[2,3],[1,3],[3,4],[1,4],[5,4],[7,2]]);
+    return {tex:R`\frac{1}{n^{${texFrac(a,b,{tf:true})}}}`,p:a/b,f:n=>Math.pow(n,-a/b)};},
+  ()=>({tex:R`\frac{1}{\sqrt[3]{n}}`,p:1/3,f:n=>Math.pow(n,-1/3)}),
+  ()=>({tex:R`\frac{1}{\sqrt[3]{n^{2}}}`,p:2/3,f:n=>Math.pow(n,-2/3)}),
+  ()=>({tex:R`\frac{1}{\sqrt{n}}`,p:1/2,f:n=>Math.pow(n,-1/2)}),
+  ()=>{const d=pick([1.1,1.5,2.4,0.8,0.95,1.01,3.2]);
+    return {tex:R`n^{-${d}}`,p:d,f:n=>Math.pow(n,-d)};},
+  ()=>({tex:R`\frac{1}{n\sqrt{n}}`,p:3/2,f:n=>1/(n*Math.sqrt(n))}),
+  ()=>({tex:R`\frac{\sqrt{n}}{n^{2}}`,p:3/2,f:n=>Math.sqrt(n)/(n*n)}),
+  ()=>({tex:R`\frac{1}{n^{2}\sqrt{n}}`,p:5/2,f:n=>1/(n*n*Math.sqrt(n))}),
+  ()=>({tex:R`\frac{\sqrt[3]{n}}{n}`,p:2/3,f:n=>Math.cbrt(n)/n}),
+  ()=>{const a=rint(1,4),b=a+rint(1,4);
+    return {tex:R`\frac{n^{${a}}}{n^{${b}}}`,p:b-a,f:n=>Math.pow(n,a)/Math.pow(n,b)};},
+  ()=>({tex:R`\frac{1}{n}`,p:1,f:n=>1/n}),
+  ()=>({tex:R`\frac{n}{n^{3}}`,p:2,f:n=>n/(n*n*n)}),
+];
+Q.pSeries={name:'p-series',
+  gen(){
+    for(let k=0;k<60;k++){
+      const F=P_FAMS[rint(0,P_FAMS.length-1)]();
+      let ok=true;
+      for(const n of [2,5,17,40]){const v=F.f(n);if(!Number.isFinite(v)||Math.abs(v-Math.pow(n,-F.p))>1e-9*Math.max(1,v)){ok=false;break;}}
+      if(!ok)continue;
+      if(Math.abs(F.p-1)<1e-9&&Math.random()<0.5)continue;
+      F.conv=F.p>1+1e-12;return F;}
+    return {tex:R`\frac{1}{n^{2}}`,p:2,f:n=>1/(n*n),conv:true};},
+  render(q,el){el.innerHTML=`<p class="prompt">Rewrite ${M(R`\displaystyle ${sigTex(1,q.tex)}`)} as a ${M('p')}-series. Give ${M('p')} and then the verdict.</p>`;
+    numIn(el,'p',M('p='));
+    q.get=choiceButtons(el,[{label:'converges',value:0},{label:'diverges',value:1}]);},
+  check(q,el){
+    const r=G(el,'p',checkNumber($('[data-k=p]',el).value,q.p));
+    const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a verdict as well.'};
+    if(!r.ok)return r;
+    const want=q.conv?0:1;
+    if(v!==want)return {ok:false,msg:q.conv?'With p > 1 the p-series converges.':'With p ≤ 1 the p-series diverges. Remember p = 1 is the harmonic series, and it diverges.'};
+    return {ok:true};},
+  solution(q){return `Write the term as a single power of ${M('n')}: ${M(R`${q.tex}=n^{-${texQ(q.p)}}`)}, so ${M(R`p=${texQ(q.p)}`)}. `+
+    (q.conv?`Since ${M(R`p>1`)}, the series <b>converges</b>.`:(Math.abs(q.p-1)<1e-12?`This is exactly the harmonic series, so it <b>diverges</b>.`:`Since ${M(R`p\le 1`)}, the series <b>diverges</b>.`));}
+};
+
+const IT_FAMS=[
+  ()=>({m:2,ftex:R`\frac{1}{x\ln x}`,atex:R`\frac{1}{n\ln n}`,f:x=>1/(x*Math.log(x)),F:x=>Math.log(Math.log(x)),Finf:Infinity,
+    Ftex:R`\ln(\ln x)`,I:'inf'}),
+  ()=>({m:2,atex:R`\frac{1}{n(\ln n)^{2}}`,ftex:R`\frac{1}{x(\ln x)^{2}}`,f:x=>1/(x*Math.log(x)**2),F:x=>-1/Math.log(x),Finf:0,
+    Ftex:R`-\frac{1}{\ln x}`,I:1/Math.log(2),Itex:R`\frac{1}{\ln 2}`}),
+  ()=>({m:2,atex:R`\frac{1}{n(\ln n)^{3}}`,ftex:R`\frac{1}{x(\ln x)^{3}}`,f:x=>1/(x*Math.log(x)**3),F:x=>-1/(2*Math.log(x)**2),Finf:0,
+    Ftex:R`-\frac{1}{2(\ln x)^{2}}`,I:1/(2*Math.log(2)**2),Itex:R`\frac{1}{2(\ln 2)^{2}}`}),
+  ()=>({m:1,atex:R`n e^{-n^{2}}`,ftex:R`x e^{-x^{2}}`,f:x=>x*Math.exp(-x*x),F:x=>-Math.exp(-x*x)/2,Finf:0,
+    Ftex:R`-\tfrac12 e^{-x^{2}}`,I:Math.exp(-1)/2,Itex:R`\frac{1}{2e}`}),
+  ()=>({m:1,atex:R`\frac{1}{n^{2}+1}`,ftex:R`\frac{1}{x^{2}+1}`,f:x=>1/(x*x+1),F:x=>Math.atan(x),Finf:Math.PI/2,
+    Ftex:R`\arctan x`,I:Math.PI/4,Itex:R`\frac{\pi}{4}`}),
+  ()=>({m:3,atex:R`\frac{\ln n}{n}`,ftex:R`\frac{\ln x}{x}`,f:x=>Math.log(x)/x,F:x=>Math.log(x)**2/2,Finf:Infinity,
+    Ftex:R`\tfrac12(\ln x)^{2}`,I:'inf'}),
+  ()=>({m:1,atex:R`\frac{n}{n^{2}+1}`,ftex:R`\frac{x}{x^{2}+1}`,f:x=>x/(x*x+1),F:x=>Math.log(x*x+1)/2,Finf:Infinity,
+    Ftex:R`\tfrac12\ln(x^{2}+1)`,I:'inf'}),
+  ()=>{const k=pick([1,2,3]);
+    return {m:1,atex:k===1?R`e^{-n}`:R`e^{-${k}n}`,ftex:k===1?R`e^{-x}`:R`e^{-${k}x}`,f:x=>Math.exp(-k*x),F:x=>-Math.exp(-k*x)/k,Finf:0,
+      Ftex:k===1?R`-e^{-x}`:R`-\tfrac{1}{${k}}e^{-${k}x}`,I:Math.exp(-k)/k,Itex:k===1?R`\frac{1}{e}`:R`\frac{1}{${k}e^{${k}}}`};},
+  ()=>({m:1,atex:R`n e^{-n}`,ftex:R`x e^{-x}`,f:x=>x*Math.exp(-x),F:x=>-(x+1)*Math.exp(-x),Finf:0,
+    Ftex:R`-(x+1)e^{-x}`,I:2*Math.exp(-1),Itex:R`\frac{2}{e}`}),
+  ()=>({m:1,atex:R`\frac{\arctan n}{1+n^{2}}`,ftex:R`\frac{\arctan x}{1+x^{2}}`,f:x=>Math.atan(x)/(1+x*x),F:x=>Math.atan(x)**2/2,Finf:Math.PI*Math.PI/8,
+    Ftex:R`\tfrac12(\arctan x)^{2}`,I:3*Math.PI*Math.PI/32,Itex:R`\frac{3\pi^{2}}{32}`}),
+  ()=>({m:1,atex:R`\frac{2n}{(n^{2}+1)^{2}}`,ftex:R`\frac{2x}{(x^{2}+1)^{2}}`,f:x=>2*x/Math.pow(x*x+1,2),F:x=>-1/(x*x+1),Finf:0,
+    Ftex:R`-\frac{1}{x^{2}+1}`,I:0.5,Itex:R`\frac{1}{2}`}),
+  ()=>{const a=pick([1,3,5]);
+    return {m:1,atex:R`\frac{1}{${a}n+2}`,ftex:R`\frac{1}{${a}x+2}`,f:x=>1/(a*x+2),F:x=>Math.log(a*x+2)/a,Finf:Infinity,
+      Ftex:R`\tfrac{1}{${a}}\ln(${a}x+2)`,I:'inf'};},
+];
+Q.integralTestApply={name:'apply the integral test',
+  gen(){
+    for(let k=0;k<60;k++){
+      const F=IT_FAMS[rint(0,IT_FAMS.length-1)]();
+      /* the antiderivative really is one */
+      let ok=true;
+      for(const x of [F.m+0.7,F.m+1.3,F.m+3.1,F.m+9.4]){
+        const d=ddx(F.F,x),v=F.f(x);
+        if(!Number.isFinite(d)||!Number.isFinite(v)||Math.abs(d-v)>1e-5*Math.max(1e-3,Math.abs(v))){ok=false;break;}}
+      if(!ok)continue;
+      /* positive, decreasing on [m, inf) */
+      let prev=Infinity;
+      for(let x=F.m;x<=F.m+30;x+=0.5){const v=F.f(x);if(!(v>0)||v>=prev){ok=false;break;}prev=v;}
+      if(!ok)continue;
+      const conv=Number.isFinite(F.Finf);
+      const g12=F.F(1e12),g300=F.F(1e300);
+      if(conv){
+        if(!(Math.abs(g300-F.Finf)<=0.2*Math.abs(g12-F.Finf)+1e-9))continue;
+        if(Math.abs((F.Finf-F.F(F.m))-F.I)>1e-8*Math.max(1,Math.abs(F.I)))continue;
+      }else{
+        if(!(g300-g12>0.01))continue;
+      }
+      F.conv=conv;F.IStr=conv?String(F.I):'inf';return F;}
+    const F=IT_FAMS[4]();F.conv=true;F.IStr=String(F.I);return F;},
+  render(q,el){el.innerHTML=`<p class="prompt">The series ${M(R`\displaystyle ${sigTex(q.m,q.atex)}`)} comes from ${M(R`f(x)=${q.ftex}`)}, which is positive, continuous, and decreasing on ${M(R`[${q.m},\infty)`)}. Evaluate ${M(R`\displaystyle\int_{${q.m}}^{\infty}f(x)\,dx`)} exactly (type <code>inf</code> if it diverges), then give the verdict for the series.</p>`;
+    numIn(el,'I',M(R`\int_{${q.m}}^{\infty}f(x)\,dx=`));
+    q.get=choiceButtons(el,[{label:'the series converges',value:0},{label:'the series diverges',value:1}]);},
+  check(q,el){
+    const r=G(el,'I',checkLimit($('[data-k=I]',el).value,q.conv?q.I:'inf'));
+    const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a verdict as well.'};
+    if(!r.ok)return r;
+    const want=q.conv?0:1;
+    if(v!==want)return {ok:false,msg:q.conv?'A finite integral means the series converges.':'An infinite integral means the series diverges.'};
+    return {ok:true};},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox note';}
+    h.innerHTML=`An antiderivative is ${M(R`F(x)=${q.Ftex}`)}. Evaluate ${M(R`\lim_{b\to\infty}F(b)-F(${q.m})`)}.`;},
+  solution(q){
+    const anti=`With ${M(R`F(x)=${q.Ftex}`)}, ${M(R`\int_{${q.m}}^{\infty}f=\lim_{b\to\infty}\big[F(x)\big]_{${q.m}}^{b}`)}. `;
+    if(q.conv)return anti+`The upper limit is finite, so the integral equals ${M(q.Itex)}${M(R`\approx ${fmtDec(q.I,4)}`)}. A finite integral means the series <b>converges</b> (its sum is not this number, only its finiteness is shared).`;
+    return anti+`As ${M(R`b\to\infty`)} this grows without bound, so the integral is ${M(R`\infty`)} and the series <b>diverges</b>.`;}
+};
+
+Q.remainderBound={name:'bound the remainder',
+  gen(){
+    for(let k=0;k<40;k++){
+      const p=pick([2,3,4]),n=pick([5,10,20,25,50]);
+      const bound=Math.pow(n,1-p)/(p-1);
+      /* the tail integral, by Simpson in u = 1/x (exact for these integrands) */
+      const num=simpson(u=>Math.pow(u,p-2),1e-14,1/n,400);
+      if(Math.abs(num-bound)>1e-9*Math.max(1e-9,bound))continue;
+      /* the true remainder really is under the bound */
+      let rem=0;for(let j=n+1;j<=50000;j++)rem+=Math.pow(j,-p);
+      if(!(rem>0&&rem<=bound*(1+1e-9)))continue;
+      return {p,n,bound,rem};}
+    return {p:2,n:5,bound:0.2,rem:0.181};},
+  render(q,el){el.innerHTML=`<p class="prompt">You approximate ${M(R`\displaystyle ${sigTex(1,R`\frac{1}{n^{${q.p}}}`)}`)} by its first ${M(String(q.n))} terms. Use ${M(R`R_n\le\int_{n}^{\infty}f(x)\,dx`)} to bound the remainder ${M(R`R_{${q.n}}`)}. Give the bound exactly (a fraction is fine).</p>`;
+    numIn(el,'b',M(R`R_{${q.n}}\le`));},
+  check(q,el){return G(el,'b',checkNumber($('[data-k=b]',el).value,q.bound));},
+  solution(q){return `${M(R`\int_{${q.n}}^{\infty}\frac{dx}{x^{${q.p}}}=\left[\frac{x^{${1-q.p}}}{${1-q.p}}\right]_{${q.n}}^{\infty}=\frac{1}{${q.p-1}\cdot ${q.n}^{${q.p-1}}}=${texFrac(1,(q.p-1)*Math.pow(q.n,q.p-1))}`)}. `+
+    `So ${M(R`R_{${q.n}}\le ${texFrac(1,(q.p-1)*Math.pow(q.n,q.p-1))}\approx ${fmtDec(q.bound,6)}`)}. (The true remainder is about ${M(fmtDec(q.rem,6))}, comfortably underneath.)`;}
+};
+
+Q.termsNeeded={name:'how many terms are needed',
+  gen(){
+    for(let k=0;k<40;k++){
+      const p=pick([2,3,4]);const eps=pick([0.01,0.005,0.001,0.0005,0.0001]);const bt=p===2?'n':(p-1>1?String(p-1)+'\\,':'')+'n^{'+(p-1)+'}';
+      const bound=n=>Math.pow(n,1-p)/(p-1);
+      let n=Math.max(1,Math.ceil(Math.pow(1/((p-1)*eps),1/(p-1))));
+      let guard=0;
+      while(bound(n)>eps*(1+1e-12)&&guard++<1e6)n++;
+      while(n>1&&bound(n-1)<=eps*(1+1e-12)&&guard++<1e6)n--;
+      if(n<2||n>200000)continue;
+      if(!(bound(n)<=eps*(1+1e-12)&&bound(n-1)>eps*(1+1e-12)))continue;
+      return {p,eps,n,bt,bound:bound(n)};}
+    return {p:2,eps:0.001,n:1000,bt:'n',bound:0.001};},
+  render(q,el){el.innerHTML=`<p class="prompt">How many terms of ${M(R`\displaystyle ${sigTex(1,R`\frac{1}{n^{${q.p}}}`)}`)} must you add so that the estimate ${M(R`R_n\le\int_{n}^{\infty}f(x)\,dx`)} guarantees an error of at most ${M(String(q.eps))}? Give the smallest such ${M('n')}.</p>`;
+    numIn(el,'n',M('n='),'terms');},
+  check(q,el){return G(el,'n',checkNumber($('[data-k=n]',el).value,q.n));},
+  solution(q){return `The bound is ${M(R`R_n\le\frac{1}{${q.bt}}`)}. Setting ${M(R`\frac{1}{${q.bt}}\le ${q.eps}`)} gives ${M(q.p===2?R`n\ge \frac{1}{${q.eps}}`:R`n^{${q.p-1}}\ge \frac{1}{${q.p-1}\cdot ${q.eps}}`)}, so ${M(R`n\ge ${fmtDec(Math.pow(1/((q.p-1)*q.eps),1/(q.p-1)),4)}`)}. Round up: ${M(R`n=${q.n}`)}, where the bound is ${M(fmtDec(q.bound,8))}.`;}
+};
+
+Q.improvedEstimate={name:'estimate the sum with the integral correction',
+  gen(){
+    for(let k=0;k<40;k++){
+      const p=pick([2,3]),n=pick([3,4,5]);
+      const sn=partSum(j=>Math.pow(j,-p),1,n);
+      const T=m=>Math.pow(m,1-p)/(p-1);
+      const lo=sn+T(n+1),hi=sn+T(n);
+      const K=50000;
+      const sExact=partSum(j=>Math.pow(j,-p),1,K)+Math.pow(K+0.5,1-p)/(p-1);
+      if(!(lo<sExact&&sExact<hi))continue;
+      return {p,n,sn,lo,hi,sExact};}
+    return {p:2,n:3,sn:49/36,lo:49/36+0.25,hi:49/36+1/3,sExact:Math.PI*Math.PI/6};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle s=${sigTex(1,R`\frac{1}{n^{${q.p}}}`)}`)} with ${M(R`n=${q.n}`)} terms, ${M(R`s_{${q.n}}=${texQ(q.sn)}`)}. Use ${M(R`s_n+\int_{n+1}^{\infty}f\le s\le s_n+\int_{n}^{\infty}f`)} to trap the sum. Give both bounds to four decimal places.</p>`;
+    numIn(el,'lo','lower bound =');numIn(el,'hi','upper bound =');},
+  check(q,el){return Gall(el,[['lo',checkNumber($('[data-k=lo]',el).value,q.lo,{tol:5e-4})],['hi',checkNumber($('[data-k=hi]',el).value,q.hi,{tol:5e-4})]]);},
+  solution(q){const T=m=>Math.pow(m,1-q.p)/(q.p-1);
+    return `The tail integrals are ${M(R`\int_{${q.n+1}}^{\infty}\frac{dx}{x^{${q.p}}}=\frac{1}{${q.p-1}\cdot ${q.n+1}^{${q.p-1}}}=${fmtDec(T(q.n+1),6)}`)} and ${M(R`\int_{${q.n}}^{\infty}\frac{dx}{x^{${q.p}}}=${fmtDec(T(q.n),6)}`)}. `+
+      `Adding ${M(R`s_{${q.n}}=${fmtDec(q.sn,6)}`)} gives ${M(R`${fmtDec(q.lo,4)}\le s\le ${fmtDec(q.hi,4)}`)}. The true sum is ${M(fmtDec(q.sExact,6))}, and the midpoint ${M(fmtDec((q.lo+q.hi)/2,4))} is a much better estimate than ${M(fmtDec(q.sn,4))} alone.`;}
+};
+
+/* ============================================================ chapter 1 widget: dot plot with an epsilon band */
+(function(){
+  const N=40;
+  const PRESETS=[
+    {n:'(-1)ⁿ/n',tex:R`a_n=\frac{(-1)^n}{n}`,L:0,f:n=>Math.pow(-1,n)/n},
+    {n:'n/(n+1)',tex:R`a_n=\frac{n}{n+1}`,L:1,f:n=>n/(n+1)},
+    {n:'1 + (-1)ⁿ/n',tex:R`a_n=1+\frac{(-1)^n}{n}`,L:1,f:n=>1+Math.pow(-1,n)/n},
+    {n:'(-1)ⁿ',tex:R`a_n=(-1)^n`,L:null,f:n=>Math.pow(-1,n)},
+    {n:'ln n / n',tex:R`a_n=\frac{\ln n}{n}`,L:0,f:n=>Math.log(n)/n},
+    {n:'rⁿ',tex:R`a_n=r^{\,n}`,L:'r',useR:true,f:(n,r)=>Math.pow(r,n)},
+    {n:'n!/nⁿ',tex:R`a_n=\frac{n!}{n^{\,n}}`,L:0,f:n=>{let v=1;for(let k=1;k<=n;k++)v*=k/n;return v;}},
+    {n:'√(2+aₙ)',tex:R`a_1=0,\quad a_{n+1}=\sqrt{2+a_n}`,L:2,rec:true},
+  ];
+  let cur=PRESETS[0],rv=0.8,eps=0.3,mark=0;
+  const plot=new Plot2D('#seqPlot',{xmin:-1,xmax:N+2,ymin:-1.6,ymax:1.6,grid:false,labels:true});
+  const sl=$('#seqSliders');
+  const epsS=sliderRow(sl,{label:'ε',min:0.02,max:1.2,step:0.02,value:eps,onInput:v=>{eps=v;draw();}});
+  const rS=sliderRow(sl,{label:'r (for rⁿ)',min:-1.3,max:1.3,step:0.05,value:rv,onInput:v=>{rv=v;draw();}});
+  PRESETS.forEach(P=>{const b=document.createElement('button');b.className='btn small';b.textContent=P.n;
+    b.onclick=()=>{cur=P;mark=0;$$('#seqPresets .btn').forEach(x=>x.classList.remove('picked'));b.classList.add('picked');draw();};
+    $('#seqPresets').appendChild(b);});
+  $('#seqPresets').firstChild.classList.add('picked');
+  function terms(){
+    const out=[];
+    if(cur.rec){let a=0;for(let i=0;i<N;i++){out.push(a);a=Math.sqrt(2+a);}}
+    else for(let i=1;i<=N;i++)out.push(cur.f(i,rv));
+    return out;
+  }
+  function limitOf(){
+    if(cur.L!=='r')return cur.L;
+    if(Math.abs(rv)<1-1e-9)return 0;
+    if(Math.abs(rv-1)<1e-9)return 1;
+    return null;
+  }
+  const anim=animator('sequences',dt=>{mark+=dt*9;if(mark>N+6)mark=0;draw();});
+  $('#seqPlay').onclick=()=>{anim.toggle();$('#seqPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  function draw(){
+    const a=terms(),L=limitOf();
+    let lo=Math.min(...a.filter(Number.isFinite)),hi=Math.max(...a.filter(Number.isFinite));
+    if(L!==null){lo=Math.min(lo,L-eps);hi=Math.max(hi,L+eps);}
+    const pad=0.18*Math.max(0.6,hi-lo);
+    plot.o.ymin=lo-pad;plot.o.ymax=hi+pad;
+    plot.begin();
+    if(L!==null){
+      plot.region(-1,N+2,()=>L-eps,()=>L+eps,{fill:'rgba(124,58,237,.13)',stroke:'rgba(124,58,237,.35)'});
+      plot.fn(()=>L,{color:'#7c3aed',width:1.6,dash:[6,5]});
+      plot.text([N+1.6,L],'L',{color:'#7c3aed',align:'right',dy:-8});
+    }
+    const idx=Math.floor(mark);
+    a.forEach((v,i)=>{if(!Number.isFinite(v))return;
+      const inside=L!==null&&Math.abs(v-L)<eps;
+      plot.point([i+1,v],{color:inside?'#16a34a':'#d97706',r:anim.running&&i+1===idx?6.5:3.6,ring:anim.running&&i+1===idx});});
+    /* smallest N with every later term inside the band */
+    let Nn=null;
+    if(L!==null){
+      for(let s=1;s<=400;s++){let good=true;
+        for(let n=s;n<=Math.max(400,s+80);n++){
+          const v=cur.rec?null:cur.f(n,rv);
+          const val=cur.rec?recAt(n):v;
+          if(!Number.isFinite(val)||Math.abs(val-L)>=eps){good=false;break;}}
+        if(good){Nn=s;break;}}
+    }
+    const cell=(i)=>Number.isFinite(a[i])?fmtDec(a[i],4):'-';
+    $('#seqOut').innerHTML=
+      `a₁ = ${cell(0)}, a₂ = ${cell(1)}, a₅ = ${cell(4)}, a₂₀ = ${cell(19)}, a₄₀ = ${cell(39)}<br>`+
+      (L===null?`no limit: the terms never settle, so <b>no band ever captures the tail</b>`
+        :`L = ${fmtDec(L,4)}, ε = ${fmtDec(eps,2)}<br>`+
+         (Nn?`all terms beyond <b>n = ${Nn}</b> are inside the band`:`no term index up to 400 works: shrink ε less, or the sequence does not converge`))+
+      (anim.running&&idx>=1&&idx<=N?`<br>now showing n = ${idx}, a<sub>${idx}</sub> = ${cell(idx-1)}`:'');
+    $('#seqStatus').textContent=cur.n+(cur.useR?`  (r = ${fmtDec(rv,2)})`:'');
+  }
+  function recAt(n){let a=0;for(let i=1;i<n;i++)a=Math.sqrt(2+a);return a;}
+  redrawOnShow('sequences',draw);draw();
+  new Drill({mount:'#drill-sequences',section:'sequences',goal:7,
+    ...mixDrill([Q.seqLimit,Q.seqLimit,Q.seqLimit,Q.nthTerm,Q.nthTerm,Q.seqBounds,Q.recursive])});
+})();
+
+/* ============================================================ chapter 2 widget: terms vs partial sums */
+(function(){
+  const PRESETS=[
+    {n:'geometric rⁿ',useR:true,f:(n,r)=>Math.pow(r,n),sum:r=>Math.abs(r)<1?r/(1-r):null,tex:R`a_n=r^{\,n}`},
+    {n:'harmonic 1/n',f:n=>1/n,sum:()=>null,tex:R`a_n=\frac1n`,note:'diverges (slowly, like ln n)'},
+    {n:'1/n²',f:n=>1/(n*n),sum:()=>Math.PI*Math.PI/6,tex:R`a_n=\frac{1}{n^2}`,note:'sum = π²/6 ≈ 1.644934'},
+    {n:'1/√n',f:n=>1/Math.sqrt(n),sum:()=>null,tex:R`a_n=\frac{1}{\sqrt n}`,note:'diverges (p = 1/2)'},
+    {n:'(-1)ⁿ',f:n=>Math.pow(-1,n),sum:()=>null,tex:R`a_n=(-1)^n`,note:'terms do not go to 0: diverges'},
+    {n:'1/(n(n+1))',f:n=>1/(n*(n+1)),sum:()=>1,tex:R`a_n=\frac{1}{n(n+1)}`,note:'telescoping, sum = 1'},
+    {n:'(-1)ⁿ⁺¹/n',f:n=>Math.pow(-1,n+1)/n,sum:()=>Math.log(2),tex:R`a_n=\frac{(-1)^{n+1}}{n}`,note:'sum = ln 2 ≈ 0.693147'},
+  ];
+  let cur=PRESETS[0],rv=0.7,NN=24;
+  const pt=new Plot2D('#termsPlot',{xmin:-1,xmax:26,ymin:-1.2,ymax:1.2,grid:false});
+  const ps=new Plot2D('#sumsPlot',{xmin:-1,xmax:26,ymin:-1.2,ymax:1.2,grid:false});
+  const sl=$('#serSliders');
+  const nS=sliderRow(sl,{label:'N (terms shown)',min:4,max:60,step:1,value:NN,fmt:v=>String(Math.round(v)),onInput:v=>{NN=Math.round(v);draw();}});
+  const rS=sliderRow(sl,{label:'r (geometric)',min:-1.2,max:1.2,step:0.05,value:rv,onInput:v=>{rv=v;draw();}});
+  PRESETS.forEach(P=>{const b=document.createElement('button');b.className='btn small';b.textContent=P.n;
+    b.onclick=()=>{cur=P;$$('#serPresets .btn').forEach(x=>x.classList.remove('picked'));b.classList.add('picked');draw();};
+    $('#serPresets').appendChild(b);});
+  $('#serPresets').firstChild.classList.add('picked');
+  const anim=animator('series',dt=>{NN=NN+dt*14;if(NN>60)NN=4;nS.set(Math.round(NN));draw();});
+  $('#serPlay').onclick=()=>{anim.toggle();$('#serPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  function draw(){
+    const N=Math.max(4,Math.round(NN));
+    const a=[],s=[];let acc=0;
+    for(let n=1;n<=N;n++){const v=cur.f(n,rv);a.push(v);acc+=v;s.push(acc);}
+    const fit=(p,arr,extra)=>{
+      const vals=arr.filter(Number.isFinite).concat(extra===null||extra===undefined?[]:[extra]);
+      let lo=Math.min(0,...vals),hi=Math.max(0,...vals);
+      if(hi-lo<0.6){hi+=0.3;lo-=0.3;}
+      const pad=0.15*(hi-lo);p.o.ymin=lo-pad;p.o.ymax=hi+pad;p.o.xmax=N+2;p.begin();};
+    const S=cur.sum(rv);
+    fit(pt,a,0);
+    pt.fn(()=>0,{color:'#b9b5ab',width:1.2,dash:[5,4]});
+    a.forEach((v,i)=>{if(Number.isFinite(v))pt.point([i+1,v],{color:'#d97706',r:3.2});});
+    pt.text([N+1.7,0],'aₙ → ' + (cur.useR?(Math.abs(rv)<1?'0':(rv>=1?'∞':'no limit')):(Math.abs(a[a.length-1])<0.05?'0':fmtDec(a[a.length-1],3))),{color:'#8b877e',align:'right',dy:-8});
+    fit(ps,s,S);
+    if(S!==null&&Number.isFinite(S)){
+      ps.fn(()=>S,{color:'#16a34a',width:1.6,dash:[6,5]});
+      ps.text([N+1.7,S],'s',{color:'#16a34a',align:'right',dy:-8});
+    }
+    s.forEach((v,i)=>{if(Number.isFinite(v))ps.point([i+1,v],{color:'#2563eb',r:3.2});});
+    const last=s[s.length-1];
+    $('#serOut').innerHTML=
+      `N = ${N}<br>a<sub>N</sub> = ${fmtDec(a[a.length-1],6)}<br>s<sub>N</sub> = <b>${fmtDec(last,6)}</b><br>`+
+      (S!==null&&Number.isFinite(S)
+        ? `exact sum = ${fmtDec(S,6)}<br>still missing: ${fmtDec(S-last,6)}`
+        : `the series <b>diverges</b>: the partial sums have no limit`)+
+      (cur.note?`<br><span class="muted">${cur.note}</span>`:'')+
+      (cur.useR?`<br><span class="muted">${Math.abs(rv)<1?`geometric with |r| &lt; 1, sum = r/(1 − r)`:'geometric with |r| ≥ 1, diverges'}</span>`:'');
+    $('#serStatus').textContent=cur.n+(cur.useR?`  (r = ${fmtDec(rv,2)})`:'');
+  }
+  redrawOnShow('series',draw);draw();
+
+  /* ---- walkthrough: summing a geometric series ---- */
+  let wA,wP,wQ,wStep=0;
+  function wNew(){
+    wA=pick([1,2,3,4,5,6,8]);
+    const rr=pick([[1,2],[2,3],[1,3],[3,4],[2,5],[-1,2],[-1,3],[-2,3],[3,5],[-1,4]]);
+    wP=rr[0];wQ=rr[1];wStep=0;wDraw();
+  }
+  function wDraw(){
+    const rT=texFrac(wP,wQ,{tf:true}),r=wP/wQ,A=wA;
+    const sumN=A*wQ,sumD=wQ-wP;
+    const L=[];
+    L.push(`<span class="t b">${M(R`\displaystyle\sum_{n=1}^{\infty}${A===1?'':A}\left(${rT}\right)^{\,n-1}`)}</span>`);
+    L.push(`<span class="${wStep>=1?'':'faint'}">→ <span class="t ${wStep===1?'now':''} a">${M(R`a=${A},\qquad r=${rT}`)}</span></span>`);
+    L.push(`<span class="${wStep>=2?'':'faint'}">→ <span class="t ${wStep===2?'now':''} a">${M(R`s_n=${A}+${A}r+\cdots+${A}r^{\,n-1}`)}</span></span>`);
+    L.push(`<span class="${wStep>=3?'':'faint'}">→ <span class="t ${wStep===3?'now':''} b">${M(R`s_n-rs_n=${A}-${A}r^{\,n}\;\Longrightarrow\; s_n=\frac{${A}\left(1-r^{\,n}\right)}{1-r}`)}</span></span>`);
+    L.push(`<span class="${wStep>=4?'':'faint'}">→ <span class="t ${wStep===4?'now':''} c">${M(R`|r|<1\Rightarrow r^{\,n}\to 0,\quad s=\frac{${A}}{1-${rT}}=${texFrac(sumN,sumD)}`)}</span></span>`);
+    $('#wgExpr').innerHTML=L.join('<br>');
+    const st=['A geometric series: each term is a fixed multiple of the one before. Press Next.',
+      'Read off the first term and the ratio. The starting index here is n = 1, and the exponent is n − 1, so the first term is the coefficient itself.',
+      'Write the nth partial sum. It has n terms, ending at the exponent n − 1.',
+      'Multiply by r and subtract. Every middle term cancels, and solving for sₙ gives the closed form.',
+      'Because |r| < 1, the rⁿ term dies and the partial sums settle at a/(1 − r).'];
+    $('#wgStatus').textContent=st[wStep];
+    $('#wgPrev').disabled=wStep===0;$('#wgNext').disabled=wStep===4;
+    typeset($('#wgExpr'));
+  }
+  $('#wgNext').onclick=()=>{wStep=Math.min(4,wStep+1);wDraw();};
+  $('#wgPrev').onclick=()=>{wStep=Math.max(0,wStep-1);wDraw();};
+  $('#wgNew').onclick=wNew;
+  wNew();
+
+  new Drill({mount:'#drill-series',section:'series',goal:8,
+    ...mixDrill([Q.geometricSum,Q.geometricSum,Q.telescoping,Q.telescoping,Q.divergenceTest,Q.divergenceTest,Q.repeatingDecimal,Q.seriesOfSums])});
+})();
+
+/* ============================================================ chapter 3 widget: rectangles against the curve */
+(function(){
+  let p=2,n=6;
+  const plot=new Plot2D('#rectPlot',{xmin:0,xmax:12,ymin:-0.15,ymax:1.25,grid:false});
+  const sl=$('#rectSliders');
+  const pS=sliderRow(sl,{label:'p',min:0.4,max:3,step:0.1,value:p,onInput:v=>{p=v;draw();}});
+  const nS=sliderRow(sl,{label:'n (terms)',min:1,max:10,step:1,value:n,fmt:v=>String(Math.round(v)),onInput:v=>{n=Math.round(v);draw();}});
+  const f=x=>Math.pow(x,-p);
+  const Ip=(a,b)=>Math.abs(p-1)<1e-9?Math.log(b/a):(Math.pow(b,1-p)-Math.pow(a,1-p))/(1-p);
+  const anim=animator('integraltest',dt=>{n=n+dt*2.2;if(n>10.9)n=1;nS.set(Math.round(n));draw();});
+  $('#rectPlay').onclick=()=>{anim.toggle();$('#rectPlay').textContent=anim.running?'❚❚ Pause':'▶ Play';};
+  function draw(){
+    const N=Math.max(1,Math.round(n));
+    plot.o.xmax=Math.max(8,N+3);plot.begin();
+    /* left-endpoint rectangles, heights a_k = f(k), total s_N: they sit above the curve */
+    for(let k=1;k<=N;k++)plot.poly([[k,0],[k+1,0],[k+1,f(k)],[k,f(k)]],{fill:'rgba(217,119,6,.16)',stroke:'rgba(217,119,6,.55)',width:1});
+    /* right-endpoint rectangles, heights a_{k+1}: they sit under the curve */
+    for(let k=1;k<=N;k++)plot.poly([[k,0],[k+1,0],[k+1,f(k+1)],[k,f(k+1)]],{fill:'rgba(22,163,74,.20)',stroke:'rgba(22,163,74,.6)',width:1});
+    plot.fn(f,{color:'#2563eb',width:2.6,xmin:0.62,xmax:plot.o.xmax});
+    for(let k=1;k<=Math.min(N+1,10);k++)plot.point([k,f(k)],{color:'#7c3aed',r:3.4});
+    plot.text([0.7,1.12],'y = 1/x^'+fmtDec(p,1),{color:'#2563eb'});
+    const sN=partSum(k=>Math.pow(k,-p),1,N);
+    const I1n=Ip(1,N),I1n1=Ip(1,N+1);
+    const conv=p>1+1e-9;
+    $('#rectOut').innerHTML=
+      `p = ${fmtDec(p,1)}, n = ${N}<br>`+
+      `s<sub>n</sub> = ${fmtDec(sN,6)} &nbsp;(orange total)<br>`+
+      `∫₁ⁿ f = ${fmtDec(I1n,6)}<br>∫₁ⁿ⁺¹ f = ${fmtDec(I1n1,6)}<br>`+
+      `<b>${fmtDec(I1n1,4)} ≤ ${fmtDec(sN,4)} ≤ ${fmtDec(1+I1n,4)}</b><br>`+
+      `<span class="muted">${conv?`p &gt; 1: ∫₁<sup>∞</sup> f = ${fmtDec(1/(p-1),6)} is finite, so s<sub>n</sub> is bounded and the series converges`:`p ≤ 1: ∫₁<sup>∞</sup> f = ∞, and it pushes s<sub>n</sub> up with it, so the series diverges`}</span>`;
+    $('#rectStatus').textContent=conv?'converges':'diverges';
+  }
+  redrawOnShow('integraltest',draw);draw();
+  new Drill({mount:'#drill-integraltest',section:'integraltest',goal:7,
+    ...mixDrill([Q.pSeries,Q.pSeries,Q.integralTestApply,Q.integralTestApply,Q.remainderBound,Q.termsNeeded,Q.improvedEstimate])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.seqLimit,Q.nthTerm,Q.seqBounds,Q.recursive,
+  Q.geometricSum,Q.telescoping,Q.divergenceTest,Q.repeatingDecimal,Q.seriesOfSums,
+  Q.pSeries,Q.integralTestApply,Q.remainderBound,Q.termsNeeded,Q.improvedEstimate]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-series',[
+  R`\(r^n\) converges exactly when \(-1&lt;r\le 1\): the limit is \(0\) for \(|r|<1\) and \(1\) at \(r=1\).`,
+  R`Monotonic and bounded \(\Rightarrow\) convergent (the Monotonic Sequence Theorem).`,
+  R`Geometric series: \(\sum_{n=1}^{\infty}ar^{n-1}=\dfrac{a}{1-r}\) for \(|r|<1\), and it diverges for \(|r|\ge 1\).`,
+  R`The harmonic series \(\sum \dfrac1n\) diverges, even though \(\dfrac1n\to 0\).`,
+  R`\(p\)-series: \(\sum \dfrac{1}{n^{p}}\) converges exactly when \(p>1\).`,
+  R`Test for divergence: \(a_n\not\to 0\Rightarrow \sum a_n\) diverges. The converse is false.`,
+  R`Integral test hypotheses: \(f\) positive, continuous, and decreasing, with \(a_n=f(n)\).`,
+  R`Remainder bounds: \(\displaystyle\int_{n+1}^{\infty}f\le R_n\le \int_{n}^{\infty}f\).`,
+  R`\(\displaystyle\sum_{n=1}^{\infty}\frac{1}{n(n+1)}=1\) (telescoping) and \(\displaystyle\sum_{n=0}^{\infty}\frac{1}{n!}=e\).`,
+  R`\(\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^{2}}=\frac{\pi^{2}}{6}\) (worth knowing, proved much later).`,
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'limit of a sequence':q=>({L:q.ansStr}),
+  'find a formula for the nth term':q=>({a:q.ref}),
+  'bounds and limit of a monotone sequence':q=>({a1:String(q.a1),L:String(q.L)}),
+  'recursively defined sequence':q=>({a2:String(q.a2),L:String(q.L)}),
+  'sum a geometric series':q=>({a:String(q.a),r:String(q.r),S:q.conv?String(q.S):'diverges'}),
+  'telescoping sum':q=>({s:q.sStr,S:q.ansStr}),
+  'test for divergence':q=>({lim:q.ansStr,_btn:q.verdict}),
+  'repeating decimal as a fraction':q=>({r:String(q.r),v:String(q.val)}),
+  'combine two geometric series':q=>({S:String(q.S)}),
+  'p-series':q=>({p:String(q.p),_btn:q.conv?0:1}),
+  'apply the integral test':q=>({I:q.IStr,_btn:q.conv?0:1}),
+  'bound the remainder':q=>({b:String(q.bound)}),
+  'how many terms are needed':q=>({n:String(q.n)}),
+  'estimate the sum with the integral correction':q=>({lo:String(q.lo),hi:String(q.hi)}),
+};
+
+initModule({key:'c2-series',title:'Sequences and Series',sub:'Module 9 · Stewart 11.1 to 11.3'});
+</script>
+</body>
+</html>
