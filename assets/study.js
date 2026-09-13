@@ -108,7 +108,7 @@ const Expr=(()=>{
         if(c==='e'){toks.push({t:'const',n:'e'});i++;continue;}
         toks.push({t:'var',n:c});i++;continue;
       }
-      if('+-*/^(),|'.includes(c)){toks.push({t:'op',v:c});i++;continue;}
+      if('+-*/^(),|!'.includes(c)){toks.push({t:'op',v:c});i++;continue;}
       if(c==='['||c==='{'){toks.push({t:'op',v:'('});i++;continue;}
       if(c===']'||c==='}'){toks.push({t:'op',v:')'});i++;continue;}
       throw new Error('Unexpected character "'+c+'"');
@@ -129,7 +129,7 @@ const Expr=(()=>{
       else break;}
       return a;}
     function unary(){if(isOp('-')){next();return {t:'neg',a:unary()};}if(isOp('+')){next();return unary();}return power();}
-    function power(){const base=primary();if(isOp('^')){next();const e=unary();return {t:'pow',a:base,b:e};}return base;}
+    function power(){let base=primary();while(isOp('!')){next();base={t:'fn',n:'fact',a:base};}if(isOp('^')){next();const e=unary();return {t:'pow',a:base,b:e};}return base;}
     function primary(){
       const t=next();if(!t)throw new Error('The expression ends too early');
       if(t.t==='num')return {t:'num',v:t.v};
@@ -182,7 +182,8 @@ const Expr=(()=>{
         case 'sinh':return Math.sinh(x);case 'cosh':return Math.cosh(x);case 'tanh':return Math.tanh(x);
         case 'sqrt':return Math.sqrt(x);case 'cbrt':return Math.cbrt(x);case 'ln':return Math.log(x);
         case 'log':return n.base?Math.log(x)/Math.log(ev(n.base,env)):Math.log10(x);
-        case 'exp':return Math.exp(x);case 'abs':return Math.abs(x);}return NaN;}
+        case 'exp':return Math.exp(x);case 'abs':return Math.abs(x);
+        case 'fact':{if(x<0||Math.abs(x-Math.round(x))>1e-9||x>170)return NaN;let f=1;for(let k=2;k<=Math.round(x);k++)f*=k;return f;}}return NaN;}
     }
     return NaN;
   }
@@ -384,7 +385,7 @@ function toTex(n){
     case 'neg':return '-'+(n.a.t==='div'||n.a.t==='fn'||n.a.t==='abs'?toTex(n.a):wrap(n.a,3));
     case 'pow':return `${wrap(n.a,5)}^{${toTex(n.b)}}`;
     case 'abs':return `\\left|${toTex(n.a)}\\right|`;
-    case 'fn':{if(n.n==='sqrt')return `\\sqrt{${toTex(n.a)}}`;if(n.n==='cbrt')return `\\sqrt[3]{${toTex(n.a)}}`;if(n.n==='abs')return `\\left|${toTex(n.a)}\\right|`;if(n.n==='exp')return `e^{${toTex(n.a)}}`;
+    case 'fn':{if(n.n==='fact')return `${wrap(n.a,5)}!`;if(n.n==='sqrt')return `\\sqrt{${toTex(n.a)}}`;if(n.n==='cbrt')return `\\sqrt[3]{${toTex(n.a)}}`;if(n.n==='abs')return `\\left|${toTex(n.a)}\\right|`;if(n.n==='exp')return `e^{${toTex(n.a)}}`;
       const name=n.n==='log'&&n.base?`\\log_{${toTex(n.base)}}`:'\\'+n.n;return `${name}\\left(${toTex(n.a)}\\right)`;}
   }
   return '';
