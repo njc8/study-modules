@@ -50,6 +50,8 @@ main{max-width:1040px}
 .fc-done .result{margin-top:4px}
 .fc-list{margin:10px 0 0;padding-left:20px}
 .fc-list li{margin:6px 0}
+.navgroup{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 10px 4px}
+.pickhead{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:26px 0 0}
 .pickgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:16px}
 .pickgrid a{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);text-decoration:none;color:var(--ink)}
 .pickgrid a:hover{background:#f3f1ec}
@@ -81,14 +83,16 @@ let mod=null,queue=[],i=0,flipped=false,known=[],miss=[],mode='all',busy=false;
 function buildNav(){
   const nav=$('#nav');
   nav.innerHTML=`<a class="hub" href="index.html">◀ MATH 102 modules</a><h1>Flashcards</h1><p class="sub">${CARDS.length} cards, by unit</p><div id="navlinks"></div>`;
-  const box=$('#navlinks');
-  MODS.forEach(m=>{const n=CARDS.filter(c=>c.mod===m.key).length;const k=missedOf(m.key).length;
+  const box=$('#navlinks');let g=null;
+  MODS.forEach(m=>{if(m.group&&m.group!==g){g=m.group;box.appendChild(el('div',{class:'navgroup'},g));}
+    const n=CARDS.filter(c=>c.mod===m.key).length;const k=missedOf(m.key).length;
     const a=el('a',{href:'#mod='+m.key,class:m.key===mod?'active':''});a.innerHTML=`<span class="n">${n}</span><span>${short(m.title)}${k?` <span class="muted small">(${k} missed)</span>`:''}</span>`;box.appendChild(a);});
 }
 function home(){
   mod=null;$('#eyebrow').textContent='Flashcards';$('#title').textContent='Pick a unit';$('#lead').textContent='Each unit is the set of facts its module expects you to know cold. Write the answer in your notebook, flip the card, and be honest when you mark it.';
   buildNav();
-  $('#box').innerHTML=`<div class="pickgrid">${MODS.map(m=>{const n=CARDS.filter(c=>c.mod===m.key).length;return `<a href="#mod=${m.key}"><span class="n">${n}</span><span>${short(m.title)}</span></a>`;}).join('')}</div>`;
+  const groups=[];let gl='';MODS.forEach(m=>{const g=m.group||gl;gl=g;let G=groups.find(x=>x.name===g);if(!G){G={name:g,mods:[]};groups.push(G);}G.mods.push(m);});
+  $('#box').innerHTML=groups.map(G=>`${G.name?`<h3 class="pickhead">${G.name}</h3>`:''}<div class="pickgrid">${G.mods.map(m=>{const n=CARDS.filter(c=>c.mod===m.key).length;return `<a href="#mod=${m.key}"><span class="n">${n}</span><span>${short(m.title)}</span></a>`;}).join('')}</div>`).join('');
 }
 function start(key,which='all'){
   const m=MODS.find(x=>x.key===key);if(!m)return home();

@@ -2,9 +2,15 @@
    Card schema is documented at the top of assets/memory.js. Write TeX in prompts as \( ... \); `show` and `why` are HTML.
    Keep ids stable: the schedule is stored by id. Prefix ids with the module key's short name. */
 window.MEM_MODULES=[
-  {key:'c2-identities',title:'Identities · Trig, log, and exponent rules'},
-  {key:'c2-tricks',title:'Tricks · Moves that unlock integrals'},
-  {key:'c2-found',title:'Module 0 · Integration foundations'},
+  {key:'id-sincos',group:'Identities',title:'Identities · Sine and cosine'},
+  {key:'id-tansec',group:'Identities',title:'Identities · Tangent, secant, and friends'},
+  {key:'id-circle',group:'Identities',title:'Identities · Unit circle values'},
+  {key:'id-inverse',group:'Identities',title:'Identities · Inverse trig values'},
+  {key:'id-logs',group:'Identities',title:'Identities · Logarithms'},
+  {key:'id-exp',group:'Identities',title:'Identities · Exponents'},
+  {key:'id-algebra',group:'Identities',title:'Identities · Algebra'},
+  {key:'c2-tricks',group:'Tricks',title:'Tricks · Moves that unlock integrals'},
+  {key:'c2-found',group:'By module',title:'Module 0 · Integration foundations'},
   {key:'c2-usub',title:'Module 1 · Substitution'},
   {key:'c2-parts',title:'Module 2 · Integration by parts'},
   {key:'c2-pf',title:'Module 3 · Partial fractions'},
@@ -644,7 +650,8 @@ MEM_CARDS.push(
 
 /* ============================================================ Identities · one identity per card, answer only */
 (function(){
-  const ID=(id,q,a)=>({id:'id-'+id,mod:'c2-identities',kind:'recall',prompt:R_`\(${q}\)`,show:R_`\(${a}\)`});
+  const DECK={"pyth": "id-sincos", "sin2x": "id-sincos", "cos2x": "id-sincos", "sinxcosx": "id-sincos", "sin-sq": "id-sincos", "cos-sq": "id-sincos", "one-plus-cos": "id-sincos", "one-minus-cos": "id-sincos", "sin-sum": "id-sincos", "sin-diff": "id-sincos", "cos-sum": "id-sincos", "cos-diff": "id-sincos", "sincos-prod": "id-sincos", "sinsin-prod": "id-sincos", "coscos-prod": "id-sincos", "sin-neg": "id-sincos", "cos-neg": "id-sincos", "sin-cofn": "id-sincos", "cos-cofn": "id-sincos", "sin-pi-minus": "id-sincos", "cos-pi-minus": "id-sincos", "pyth-tan": "id-tansec", "pyth-cot": "id-tansec", "tan": "id-tansec", "cot": "id-tansec", "sec": "id-tansec", "csc": "id-tansec", "tan-sq": "id-tansec", "sin-pi6": "id-circle", "sin-pi4": "id-circle", "sin-pi3": "id-circle", "cos-pi6": "id-circle", "cos-pi4": "id-circle", "cos-pi3": "id-circle", "tan-pi6": "id-circle", "tan-pi4": "id-circle", "tan-pi3": "id-circle", "sin-pi2": "id-circle", "cos-pi": "id-circle", "arctan-1": "id-inverse", "arctan-sqrt3": "id-inverse", "arctan-inv-sqrt3": "id-inverse", "arcsin-half": "id-inverse", "arccos-half": "id-inverse", "ln-prod": "id-logs", "ln-quot": "id-logs", "ln-pow": "id-logs", "e-ln": "id-logs", "ln-ex": "id-logs", "ln-recip": "id-logs", "ln-sqrt": "id-logs", "log-base": "id-logs", "a-to-x": "id-logs", "exp-prod": "id-exp", "exp-quot": "id-exp", "exp-pow": "id-exp", "exp-neg": "id-exp", "exp-root": "id-exp", "exp-frac": "id-exp", "e-neg": "id-exp", "diff-squares": "id-algebra", "diff-cubes": "id-algebra", "square-sum": "id-algebra", "complete-square": "id-algebra"};
+  const ID=(id,q,a)=>({id:'id-'+id,mod:DECK[id],kind:'recall',prompt:R_`\(${q}\)`,show:R_`\(${a}\)`});
   MEM_CARDS.push(
     /* Pythagorean and reciprocals */
     ID('pyth',String.raw`\sin^2x+\cos^2x=`,'1'),
@@ -715,16 +722,11 @@ MEM_CARDS.push(
     ID('exp-neg',String.raw`a^{-n}=`,String.raw`\dfrac{1}{a^n}`),
     ID('exp-root',String.raw`a^{1/n}=`,String.raw`\sqrt[n]{a}`),
     ID('exp-frac',String.raw`a^{m/n}=`,String.raw`\sqrt[n]{a^m}=\left(\sqrt[n]{a}\right)^m`),
-    ID('inv-sqrt',String.raw`\dfrac{1}{\sqrt x}=x^{\,?}`,String.raw`x^{-1/2}`),
     ID('e-neg',String.raw`e^{-x}=`,String.raw`\dfrac{1}{e^x}`),
     /* factorials and algebra */
-    ID('fact-ratio',String.raw`\dfrac{(n+1)!}{n!}=`,String.raw`n+1`),
-    ID('fact-ratio2',String.raw`\dfrac{(2n+2)!}{(2n)!}=`,String.raw`(2n+2)(2n+1)`),
-    ID('fact-0',String.raw`0!=`,'1'),
     ID('diff-squares',String.raw`a^2-b^2=`,String.raw`(a-b)(a+b)`),
     ID('diff-cubes',String.raw`a^3-b^3=`,String.raw`(a-b)(a^2+ab+b^2)`),
     ID('square-sum',String.raw`(a+b)^2=`,String.raw`a^2+2ab+b^2`),
-    ID('quad-formula',String.raw`x^2+bx+c=0\ \Rightarrow\ x=`,String.raw`\dfrac{-b\pm\sqrt{b^2-4c}}{2}`),
     ID('complete-square',String.raw`x^2+bx+c=\left(x+\,?\right)^2+\,?`,String.raw`\left(x+\tfrac b2\right)^2+\left(c-\tfrac{b^2}{4}\right)`)
   );
 })();
