@@ -276,7 +276,7 @@ function build(){
     if(m.image){const im=document.createElement('img');im.src=m.image;im.alt='attached screenshot';im.className='shot';d.appendChild(im);}
     const b=document.createElement('div');b.className='body';d.appendChild(b);
     if(m.role==='user'){b.textContent=m.text;}
-    else{b.innerHTML=mdToHtml(m.text||'');typesetEl(b);}
+    else{b.innerHTML=thoughtNote(m.thinkMs)+mdToHtml(m.text||'');typesetEl(b);}
     msgs.appendChild(d);scroll();return b;
   }
   function renderAll(){
@@ -284,6 +284,9 @@ function build(){
     if(!history.length){const w=document.createElement('div');w.className='welcome';w.innerHTML='<p>Ask about the lesson you are on, a practice problem, or paste your own work. I can see the current section.</p><p class="hint">'+(canSnip?'Snip a region of the page, or paste a screenshot, to ask about exactly what you are looking at.':'Paste or upload a screenshot to ask about exactly what you are looking at.')+'</p>';msgs.appendChild(w);}
     history.forEach(addMsg);
   }
+  /* the model's hidden reasoning: a live one-line glimpse while it thinks, then a small note */
+  const thoughtNote=ms=>ms?`<div class="thought">Thought for ${Math.max(1,Math.round(ms/1000))} s</div>`:'';
+  const thinkingLine=text=>`<div class="thinking"><i class="pulse"></i><span class="lbl">Thinking</span><span class="peek"><span>${esc(text.replace(/\s+/g,' ').slice(-200))}</span></span></div>`;
   function setPending(url,label){pending=url;attach.hidden=!url;if(url){attach.querySelector('img').src=url;attach.querySelector('strong').textContent=label||'Image attached';}ta.focus();if(url)ta.placeholder='Ask about the screenshot, or press Enter to send it as is';else ta.placeholder='Ask about this section, a problem, or your work…';}
   function open(){panel.hidden=false;fab.hidden=true;updateCtx();scroll();ta.focus();}
   function close(){panel.hidden=true;fab.hidden=false;}
@@ -311,10 +314,10 @@ function build(){
     history.push(userMsg);save();
     if(!history.length||msgs.querySelector('.welcome'))msgs.innerHTML='';
     addMsg(userMsg);ta.value='';autosize();setPending(null);
-    const reply={role:'assistant',text:''};
-    const body=addMsg(reply);body.classList.add('streaming');body.innerHTML='<span class="thinking">Thinking…</span>';
+    const reply={role:'assistant',text:''};let reason='',thinkStart=0;
+    const body=addMsg(reply);body.innerHTML=thinkingLine('');
     busy=new AbortController();stopBtn.hidden=false;sendBtn.disabled=true;
-    let raf=0;const paint=()=>{raf=0;body.innerHTML=mdToHtml(reply.text);scroll();};
+    let raf=0;const paint=()=>{raf=0;body.innerHTML=reply.text?thoughtNote(reply.thinkMs)+mdToHtml(reply.text):thinkingLine(reason);scroll();};
     try{
       const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:apiMessages(),context:buildContext()}),signal:busy.signal});
       if(!res.ok){let msg='The tutor is unavailable right now ('+res.status+').';try{const j=await res.json();if(j.error)msg=j.error;}catch(e){}throw new Error(msg);}
@@ -328,17 +331,20 @@ function build(){
           const data=line.slice(5).trim();if(data==='[DONE]')continue;
           let j;try{j=JSON.parse(data);}catch(e){continue;}
           if(j.error)throw new Error(j.error.message||'The model returned an error.');
-          const d=j.choices&&j.choices[0]&&j.choices[0].delta;if(!d||!d.content)continue;
+          const d=j.choices&&j.choices[0]&&j.choices[0].delta;if(!d)continue;
+          if(typeof d.reasoning==='string'&&d.reasoning){reason+=d.reasoning;if(!thinkStart)thinkStart=Date.now();if(!reply.text&&!raf)raf=requestAnimationFrame(paint);}
+          if(!d.content)continue;
+          if(!reply.text){if(thinkStart)reply.thinkMs=Date.now()-thinkStart;body.classList.add('streaming');}
           reply.text+=d.content;if(!raf)raf=requestAnimationFrame(paint);
         }
       }
       if(raf)cancelAnimationFrame(raf);
       if(!reply.text.trim())reply.text='(The model returned an empty reply. Try asking again.)';
-      body.innerHTML=mdToHtml(reply.text);await typesetEl(body);
+      body.innerHTML=thoughtNote(reply.thinkMs)+mdToHtml(reply.text);await typesetEl(body);
     }catch(e){
       if(raf)cancelAnimationFrame(raf);
-      if(e.name==='AbortError'){if(!reply.text.trim())reply.text='(stopped)';body.innerHTML=mdToHtml(reply.text);typesetEl(body);}
-      else{reply.text=reply.text||'';body.innerHTML=mdToHtml(reply.text)+'<p class="err">'+esc(e.message||String(e))+'</p>';}
+      if(e.name==='AbortError'){if(!reply.text.trim())reply.text='(stopped)';body.innerHTML=thoughtNote(reply.thinkMs)+mdToHtml(reply.text);typesetEl(body);}
+      else{reply.text=reply.text||'';body.innerHTML=thoughtNote(reply.thinkMs)+mdToHtml(reply.text)+'<p class="err">'+esc(e.message||String(e))+'</p>';}
     }finally{
       body.classList.remove('streaming');history.push(reply);save();busy=null;stopBtn.hidden=true;sendBtn.disabled=false;scroll();
     }
