@@ -4,5 +4,8 @@ compatibility_date = "2026-09-01"
 
 [vars]
 CHAT_MODEL = "z-ai/glm-5.3-flash"
+# "high" is the fast, still-accurate setting for this model: it thinks for a few hundred tokens instead of
+# ~1000 by default (first word in ~3 s instead of ~10 s). "low" cut TTFT further but produced arithmetic errors.
+CHAT_REASONING = "high"
 # ALLOWED_ORIGINS = "https://njc8.github.io"
 # The API key is a secret, not a var:  npx wrangler secret put OPENROUTER_API_KEY
