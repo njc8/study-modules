@@ -12,7 +12,7 @@
 (function(){
 if(typeof window==='undefined'||typeof document==='undefined')return;
 
-const HOSTED_ENDPOINT='';   /* paste the https://....workers.dev URL here after `npx wrangler deploy` (see tools/chat-proxy/worker.js) */
+const HOSTED_ENDPOINT='https://study-chat.njc8-study.workers.dev';   /* the deployed tools/chat-proxy Worker; change after `npx wrangler deploy` prints a new URL */
 const MAX_IMAGE_EDGE=1800;  /* screenshots are downscaled to this before upload */
 const IMAGES_KEPT=4;        /* only the newest N images are re-sent with each turn */
 const ICON={
