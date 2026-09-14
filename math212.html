@@ -24,10 +24,6 @@ body{padding:0}
   <p class="lead">Interactive lessons for MATH 212 (Multivariable Calculus, Stewart chapters 12 to 16, Fall 2026, Gwaltney). Each module teaches, lets you explore, then drills. Progress is saved in this browser.</p>
   <p class="hint">Answer boxes work like WebAssign's calcPad: typing <code>sqrt</code>, <code>/</code>, <code>^</code>, <code>pi</code>, or <code>&lt; &gt;</code> builds the math as you type. Use the right arrow key to step out of a radical, fraction, or exponent.</p>
   <div class="group">
-    <h3>Prerequisite</h3>
-    <div class="hub-grid" id="g0"></div>
-  </div>
-  <div class="group">
     <h3>Midterm 1 material: vectors, curves, scalar line integrals, partial derivatives</h3>
     <div class="hub-grid" id="g1"></div>
   </div>
@@ -39,11 +35,16 @@ body{padding:0}
     <h3>Final material: vector calculus</h3>
     <div class="hub-grid" id="g3"></div>
   </div>
+  <div class="group">
+    <h3>Auxiliary: matrices</h3>
+    <p>Not part of the course sequence. Built for CMOR 220, kept here because a little matrix fluency helps with cross products, Jacobians, and the Hessian test.</p>
+    <div class="hub-grid" id="g0"></div>
+  </div>
   <p class="hint" style="margin-top:36px">Module files live in the top folder. Open any module directly, or come back here with the "All modules" link in each module's sidebar.</p>
 </div>
 <script>
 const MODULES=[
-  {g:'g0',num:'Module 0',file:'matrix-foundations.html',key:'mf',title:'Matrix Foundations',desc:'Matrices, multiplication, determinants, and matrices as transformations. Useful background for cross products, Jacobians, and the Hessian test.',sections:11},
+  {g:'g0',num:'Auxiliary',file:'matrix-foundations.html',key:'mf',title:'Matrix Foundations',desc:'Matrices, multiplication, determinants, and matrices as transformations. Optional side reading for the places MATH 212 leans on matrices.',sections:11},
   {g:'g1',num:'Module 1',file:'01-vectors.html',key:'vectors',title:'Vectors in Space',desc:'3D coordinates, vector arithmetic, the dot product with angles and projections, and the cross product with areas and normals. Stewart 12.1 to 12.4.'},
   {g:'g1',num:'Module 2',file:'02-lines-planes-surfaces.html',key:'lines-planes',title:'Lines, Planes, and Surfaces',desc:'Parametric and symmetric lines, plane equations (including planes perpendicular to a given plane), intersections, every distance formula including skew lines, and the quadric surface zoo. Stewart 12.5 to 12.6.'},
   {g:'g1',num:'Module 3',file:'03-vector-functions.html',key:'curves',title:'Vector Functions and Space Curves',desc:'Parametrized curves and intersection curves, tangent vectors and lines, comparing parametrizations of one curve, arc length, curvature, velocity and acceleration, then scalar line integrals along segments, circles, graphs, and helices. Stewart 13.1 to 13.4, then 16.2.'},
