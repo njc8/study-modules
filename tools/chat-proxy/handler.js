@@ -16,7 +16,8 @@ Teach, do not just answer. For every problem: name the idea or theorem being use
 
 Write math in LaTeX: \\( ... \\) for inline and \\[ ... \\] for display. Use short paragraphs and lists. Do not pad answers with restatements or pleasantries.`;
 
-const DEFAULT_ORIGINS=['https://njc8.github.io','http://localhost:8787','http://127.0.0.1:8787'];
+/* 'null' is what a module opened straight from disk (file://) sends, so local copies work too. */
+const DEFAULT_ORIGINS=['https://njc8.github.io','http://localhost:8787','http://127.0.0.1:8787','null'];
 const MAX_BODY=8*1024*1024, MAX_MESSAGES=40, MAX_CONTEXT=8000, MAX_TEXT=20000;
 
 export function createHandler(env){
@@ -25,7 +26,7 @@ export function createHandler(env){
   const cors=req=>{
     const o=req.headers.get('origin');
     const h={'Vary':'Origin','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Access-Control-Max-Age':'86400'};
-    if(o&&origins.includes(o))h['Access-Control-Allow-Origin']=o;
+    if(o&&origins.includes(o))h['Access-Control-Allow-Origin']=o==='null'?'*':o;
     return h;
   };
   const json=(req,status,obj)=>new Response(JSON.stringify(obj),{status,headers:{'Content-Type':'application/json',...cors(req)}});
