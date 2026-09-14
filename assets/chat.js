@@ -23,7 +23,72 @@ const ICON={
   stop:'<svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><rect x="3" y="3" width="10" height="10" rx="1.5"/></svg>',
   close:'<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>',
   fresh:'<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8a5 5 0 1 1-1.5-3.6"/><path d="M13 2.5v3h-3"/></svg>',
+  draw:'<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 13.5l.8-3.2 7.4-7.4 2.4 2.4-7.4 7.4z"/><path d="M9.5 4.1l2.4 2.4"/></svg>',
+  eraser:'<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.5l-3.3-3.3a1 1 0 0 1 0-1.4L8.6 2.9a1 1 0 0 1 1.4 0l3.1 3.1a1 1 0 0 1 0 1.4L7 13.5z"/><path d="M4.2 8.4l3.4 3.4"/><path d="M6 13.5h7.5"/></svg>',
+  undo:'<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5h6.5a3 3 0 0 1 0 6H6"/><path d="M5.5 4L3 6.5 5.5 9"/></svg>',
+  trash:'<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h10M6.5 2.5h3M4.5 4.5l.6 9h5.8l.6-9"/></svg>',
+  expand:'<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5L9.5 6.5M2.5 13.5l4-4"/></svg>',
+  shrink:'<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 6.5h-4v-4M2.5 9.5h4v4M9.5 6.5l4-4M6.5 9.5l-4 4"/></svg>',
 };
+
+/* ------------------------------------------------------------ whiteboard */
+const BOARD_W=1600,BOARD_H=1000;   /* drawing space in world units; exported at this size */
+const BOARD_COLORS=[['Black','#1c1b1a'],['Red','#dc2626'],['Orange','#ea7a0b'],['Yellow','#eab308'],['Green','#16a34a'],['Blue','#2563eb'],['Purple','#7c3aed']];
+/* A small whiteboard with colored pens and an eraser. Strokes live in world units so the
+   same drawing renders in the panel, in full screen, and in the exported PNG. */
+function makeBoard(root,{onAttach}){
+  root.innerHTML=`
+    <div class="bar">
+      <div class="pens">${BOARD_COLORS.map(([n,c],i)=>`<button type="button" class="pen${i===0?' on':''}" data-color="${c}" title="${n}" aria-label="${n} pen"><i style="background:${c}"></i></button>`).join('')}<button type="button" class="pen tool" data-tool="eraser" title="Eraser" aria-label="Eraser">${ICON.eraser}</button></div>
+      <div class="acts">
+        <button type="button" class="btn small icon only" data-b="undo" title="Undo last stroke" aria-label="Undo">${ICON.undo}</button>
+        <button type="button" class="btn small icon only" data-b="clear" title="Clear the board" aria-label="Clear">${ICON.trash}</button>
+        <button type="button" class="btn small icon only" data-b="full" title="Full screen" aria-label="Full screen">${ICON.expand}</button>
+        <button type="button" class="btn small icon only" data-b="close" title="Close the board" aria-label="Close">${ICON.close}</button>
+      </div>
+    </div>
+    <div class="stage"><canvas></canvas><button type="button" class="btn small primary icon attach" data-b="attach" title="Attach the drawing to your message" disabled>${ICON.image}<span>Attach drawing</span></button></div>`;
+  const stage=root.querySelector('.stage'),canvas=root.querySelector('canvas'),ctx=canvas.getContext('2d'),attachBtn=root.querySelector('[data-b=attach]'),fullBtn=root.querySelector('[data-b=full]');
+  let strokes=[],cur=null,color=BOARD_COLORS[0][1],eraser=false,scale=1;
+  const paint=(c,s,k)=>{c.strokeStyle=s.color;c.lineWidth=s.width*k;c.lineCap='round';c.lineJoin='round';c.beginPath();const p=s.points;c.moveTo(p[0][0]*k,p[0][1]*k);if(p.length===1)c.lineTo(p[0][0]*k,p[0][1]*k);for(let i=1;i<p.length;i++)c.lineTo(p[i][0]*k,p[i][1]*k);c.stroke();};
+  function redraw(){const dpr=window.devicePixelRatio||1;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);for(const s of strokes)paint(ctx,s,scale);if(cur)paint(ctx,cur,scale);attachBtn.disabled=!strokes.length;}
+  function fit(){
+    const r=stage.getBoundingClientRect();if(!r.width||!r.height)return;
+    const pad=root.classList.contains('full')?24:0;
+    scale=Math.min((r.width-pad*2)/BOARD_W,(r.height-pad*2)/BOARD_H);
+    const w=Math.round(BOARD_W*scale),h=Math.round(BOARD_H*scale),dpr=window.devicePixelRatio||1;
+    canvas.style.width=w+'px';canvas.style.height=h+'px';canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);redraw();
+  }
+  const pt=e=>{const b=canvas.getBoundingClientRect();return [Math.max(0,Math.min(BOARD_W,(e.clientX-b.left)/scale)),Math.max(0,Math.min(BOARD_H,(e.clientY-b.top)/scale))];};
+  canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();canvas.setPointerCapture(e.pointerId);cur={color:eraser?'#fff':color,width:eraser?44:5,points:[pt(e)]};redraw();});
+  canvas.addEventListener('pointermove',e=>{if(!cur)return;const p=pt(e);cur.points.push(p);const dpr=window.devicePixelRatio||1;ctx.setTransform(dpr,0,0,dpr,0,0);const n=cur.points.length;paint(ctx,{color:cur.color,width:cur.width,points:cur.points.slice(Math.max(0,n-2))},scale);});
+  const end=()=>{if(!cur)return;strokes.push(cur);cur=null;redraw();};
+  canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+  root.addEventListener('click',e=>{
+    const pen=e.target.closest('.pen');
+    if(pen){root.querySelectorAll('.pen').forEach(b=>b.classList.toggle('on',b===pen));eraser=pen.dataset.tool==='eraser';if(!eraser)color=pen.dataset.color;return;}
+    const b=e.target.closest('[data-b]');if(!b)return;
+    switch(b.dataset.b){
+      case 'undo':strokes.pop();redraw();break;
+      case 'clear':strokes=[];redraw();break;
+      case 'full':setFull(!root.classList.contains('full'));break;
+      case 'close':api.hide();break;
+      case 'attach':if(!strokes.length)return;onAttach(exportPng());api.hide();break;
+    }
+  });
+  function setFull(on){root.classList.toggle('full',on);fullBtn.innerHTML=on?ICON.shrink:ICON.expand;fullBtn.title=on?'Exit full screen':'Full screen';fit();requestAnimationFrame(fit);}
+  function exportPng(){const c=document.createElement('canvas');c.width=BOARD_W;c.height=BOARD_H;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,BOARD_W,BOARD_H);for(const s of strokes)paint(g,s,1);return c.toDataURL('image/png');}
+  if(window.ResizeObserver)new ResizeObserver(()=>fit()).observe(stage);else window.addEventListener('resize',fit);
+  const api={
+    show(){root.hidden=false;fit();requestAnimationFrame(fit);},
+    hide(){setFull(false);root.hidden=true;},
+    toggle(){root.hidden?api.show():api.hide();},
+    get open(){return !root.hidden;},
+    get full(){return root.classList.contains('full');},
+    exitFull(){setFull(false);},
+  };
+  return api;
+}
 
 function endpoint(){
   if(window.STUDY_CHAT_ENDPOINT)return window.STUDY_CHAT_ENDPOINT;
@@ -182,12 +247,14 @@ function build(){
     </div>
     <div class="msgs"></div>
     <div class="compose">
+      <div class="board" hidden></div>
       <div class="attach" hidden><img alt="attached screenshot"><div class="meta"><strong></strong><span>Sent with your next message</span></div><button type="button" class="x" title="Remove image" aria-label="Remove image">${ICON.close}</button></div>
       <div class="notice" hidden></div>
       <textarea rows="1" placeholder="Ask about this section, a problem, or your work…"></textarea>
       <div class="tools">
         ${canSnip?`<button type="button" class="btn small icon" data-act="snip" title="Screenshot part of this page and attach it">${ICON.snip}<span>Snip</span></button>`:''}
         <button type="button" class="btn small icon" data-act="upload" title="Attach an image from your device">${ICON.image}<span>Image</span></button>
+        <button type="button" class="btn small icon" data-act="draw" title="Draw something for the tutor">${ICON.draw}<span>Draw</span></button>
         <input type="file" accept="image/*" hidden>
         <span class="spacer"></span>
         <button type="button" class="btn small icon" data-act="stop" hidden>${ICON.stop}<span>Stop</span></button>
@@ -197,6 +264,7 @@ function build(){
   document.body.appendChild(fab);document.body.appendChild(panel);
   const q=s=>panel.querySelector(s);
   const msgs=q('.msgs'),ta=q('textarea'),attach=q('.attach'),notice=q('.notice'),file=q('input[type=file]'),stopBtn=q('[data-act=stop]'),sendBtn=q('[data-act=send]');
+  const board=makeBoard(q('.board'),{onAttach:url=>{setPending(url,'Drawing attached');}});
 
   const save=()=>{try{sessionStorage.setItem(storeKey,JSON.stringify(history));}catch(e){try{sessionStorage.setItem(storeKey,JSON.stringify(history.map(m=>({...m,image:undefined}))));}catch(e2){}}};
   const setNotice=t=>{notice.hidden=!t;notice.textContent=t||'';};
@@ -291,6 +359,7 @@ function build(){
       case 'send':send();break;
       case 'stop':if(busy)busy.abort();break;
       case 'upload':file.click();break;
+      case 'draw':board.toggle();break;
       case 'snip':close();fab.hidden=true;try{await takeImage(async()=>{const shot=await snipScreen();return shot?normalizeImage(shot):null;},'capture the screen','Screenshot attached');}finally{open();}break;
     }
   });
@@ -300,7 +369,7 @@ function build(){
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
   ta.addEventListener('input',autosize);
   fab.onclick=open;
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden&&!document.querySelector('.tutor-snip'))close();});
+  document.addEventListener('keydown',e=>{if(e.key!=='Escape'||panel.hidden||document.querySelector('.tutor-snip'))return;if(board.full)board.exitFull();else if(board.open)board.hide();else close();});
   if(typeof onShow==='function')onShow('*',updateCtx);
   renderAll();
 }
