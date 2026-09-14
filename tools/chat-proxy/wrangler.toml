@@ -1,0 +1,8 @@
+name = "study-chat"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+CHAT_MODEL = "z-ai/glm-5.3-flash"
+# ALLOWED_ORIGINS = "https://njc8.github.io"
+# The API key is a secret, not a var:  npx wrangler secret put OPENROUTER_API_KEY

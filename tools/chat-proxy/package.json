@@ -1,0 +1,10 @@
+{
+  "name": "chat-proxy",
+  "private": true,
+  "type": "module",
+  "description": "Keeps the OpenRouter key server-side and forwards tutor chat requests from the study modules.",
+  "scripts": {
+    "start": "node server.js",
+    "deploy": "npx wrangler deploy"
+  }
+}
