@@ -9,6 +9,8 @@
 if(typeof window!=='undefined'){
   window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],packages:{'[+]':['ams']}},svg:{fontCache:'global'},options:{enableMenu:false,renderActions:{addMenu:[]}},startup:{typeset:false}};
 }
+/* tutor chat (assets/chat.js) rides along on every page that loads study.js from a file */
+(function(){if(typeof document==='undefined')return;const s=document.currentScript;if(!s||!s.src)return;const t=document.createElement('script');t.src=s.src.replace(/study\.js(\?.*)?$/,'chat.js');t.defer=true;document.head.appendChild(t);})();
 function typeset(el){
   if(typeof MathJax==='undefined'||!MathJax.startup)return Promise.resolve();
   return MathJax.startup.promise.then(()=>MathJax.typesetPromise([el||document.body])).catch(e=>console.warn('typeset',e));
