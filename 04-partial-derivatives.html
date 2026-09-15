@@ -326,7 +326,7 @@ const DOM=[
     wrong:[`all \\((x,y)\\) with \\(y>x\\)`,`all \\((x,y)\\) with \\(x\\ne 0\\) and \\(y\\ne 0\\)`,`all of \\(\\mathbb{R}^2\\)`],
     why:`Only the denominator can fail. \\(x-y=0\\) exactly on the line \\(y=x\\), so the domain is the whole plane with that line removed.`};},
   ()=>({fTex:R`\ln(y-x)`,right:`all \\((x,y)\\) with \\(y>x\\)`,
-    wrong:[`all \\((x,y)\\) with \\(y\\ge x\\)`,`all \\((x,y)\\) with \\(y<x\\)`,`all \\((x,y)\\) with \\(y\\ne x\\)`],
+    wrong:[`all \\((x,y)\\) with \\(y\\ge x\\)`,`all \\((x,y)\\) with \\(y\\lt x\\)`,`all \\((x,y)\\) with \\(y\\ne x\\)`],
     why:`\\(\\ln\\) needs \\(y-x>0\\), so \\(y>x\\): the open half-plane strictly above the line \\(y=x\\).`}),
   ()=>{const t=rpoly(3);return {fTex:pStr(t,true),right:`all of \\(\\mathbb{R}^2\\)`,
     wrong:[`all \\((x,y)\\) with \\(x\\ne 0\\)`,`all \\((x,y)\\) with \\(x\\ge 0\\) and \\(y\\ge 0\\)`,`all \\((x,y)\\) with \\(x^2+y^2>0\\)`],
