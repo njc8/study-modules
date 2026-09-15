@@ -162,10 +162,12 @@ function mdToHtml(src,{streaming=false}={}){
   let gi=0;
   src=src.replace(FENCE_RE,(m,lang,c)=>keep(isGraphFence(lang,c)?`<div class="graph" data-gi="${gi++}"></div>`:'<pre><code>'+esc(c.replace(/\n$/,''))+'</code></pre>'));
   src=src.replace(/```[ \t]*([\w-]*)[^\n]*\n?([\s\S]*)$/,(m,lang,c)=>isGraphFence(lang,c)?keep('<p class="gcut">The graph was cut off before it finished.</p>'):m);
-  src=src.replace(/\\\[([\s\S]*?)\\\]/g,(m,t)=>keep('<div class="tex-d">\\['+esc(t)+'\\]</div>'));
-  src=src.replace(/\$\$([\s\S]*?)\$\$/g,(m,t)=>keep('<div class="tex-d">\\['+esc(t)+'\\]</div>'));
-  src=src.replace(/\\\(([\s\S]*?)\\\)/g,(m,t)=>keep('\\('+esc(t)+'\\)'));
-  src=src.replace(/(^|[^\\$\w])\$(?!\s)([^$\n]+?)(?<!\s)\$(?![\w$])/g,(m,pre,t)=>pre+keep('\\('+esc(t)+'\\)'));
+  const dmath=t=>keep('<div class="tex-d">'+(mathCache.get('D'+t)||'\\['+esc(t)+'\\]')+'</div>');
+  const imath=t=>keep(mathCache.get('I'+t)||'\\('+esc(t)+'\\)');
+  src=src.replace(/\\\[([\s\S]*?)\\\]/g,(m,t)=>dmath(t));
+  src=src.replace(/\$\$([\s\S]*?)\$\$/g,(m,t)=>dmath(t));
+  src=src.replace(/\\\(([\s\S]*?)\\\)/g,(m,t)=>imath(t));
+  src=src.replace(/(^|[^\\$\w])\$(?!\s)([^$\n]+?)(?<!\s)\$(?![\w$])/g,(m,pre,t)=>pre+imath(t));
   src=src.replace(/`([^`\n]+)`/g,(m,c)=>keep('<code>'+esc(c)+'</code>'));
   src=esc(src);
   src=src.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/(^|[^*\w])\*(?!\s)([^*\n]+?)(?<!\s)\*(?!\w)/g,'$1<em>$2</em>');
@@ -192,6 +194,44 @@ function mdToHtml(src,{streaming=false}={}){
   return html.replace(/\u0000(\d+)\u0000/g,(m,i)=>slots[+i]);
 }
 function typesetEl(el){if(typeof typeset==='function')return typeset(el);return Promise.resolve();}
+function typesetNodes(nodes){if(!nodes.length||typeof MathJax==='undefined'||!MathJax.startup)return Promise.resolve();return MathJax.startup.promise.then(()=>MathJax.typesetPromise(nodes)).catch(e=>console.warn('typeset',e));}
+function clearMath(node){try{if(node.nodeType===1&&window.MathJax&&MathJax.typesetClear)MathJax.typesetClear([node]);}catch(e){}}
+
+/* ---- incremental rendering while a reply streams
+   Every typeset formula is remembered by its TeX, so the next repaint of a paragraph that is still
+   growing gets the finished SVG straight away instead of raw TeX that flashes and re-renders. */
+const mathCache=new Map();
+function harvestMath(){
+  try{if(!(window.MathJax&&MathJax.startup&&MathJax.startup.document))return;
+    for(const item of MathJax.startup.document.math){const r=item.typesetRoot;if(!r)continue;const k=(item.display?'D':'I')+item.math;if(!mathCache.has(k))mathCache.set(k,r.outerHTML);}
+  }catch(e){}
+}
+/* Replace only the top-level blocks whose source html changed. Blocks that are the same keep their
+   DOM node, so typeset math, running animations, and mounted graph widgets are left alone. */
+function patch(container,html){
+  const t=document.createElement('template');t.innerHTML=html;
+  const fresh=[...t.content.childNodes],old=[...container.childNodes];
+  fresh.forEach((f,i)=>{
+    const src=f.nodeType===1?f.outerHTML:f.nodeValue;const o=old[i];
+    if(o&&o._src===src)return;
+    if(o&&o.nodeType===1&&f.nodeType===1&&o.classList.contains('thinking')&&f.classList.contains('thinking')){const a=o.querySelector('.peek span'),c=f.querySelector('.peek span');if(a&&c){if(a.textContent!==c.textContent)a.textContent=c.textContent;o._src=src;return;}}
+    f._src=src;
+    if(o){clearMath(o);container.replaceChild(f,o);}else{if(f.nodeType===1&&container.childNodes.length)f.classList.add('in');container.appendChild(f);}
+  });
+  for(let i=old.length-1;i>=fresh.length;i--){clearMath(old[i]);old[i].remove();}
+}
+/* Typeset whatever still holds raw TeX, one job at a time; repaints that land mid-job queue one more pass. */
+function typesetLive(b){
+  if(b._tsBusy){b._tsDirty=true;return;}
+  b._tsBusy=true;
+  (async()=>{
+    do{b._tsDirty=false;
+      const nodes=[...b.children].filter(n=>!n.classList.contains('graph')&&/\\[(\[]/.test(n.textContent));
+      if(nodes.length){await typesetNodes(nodes);harvestMath();}
+    }while(b._tsDirty&&b.isConnected);
+    b._tsBusy=false;
+  })();
+}
 
 /* ------------------------------------------------------------ interactive graphs
    A ```graph block is one JSON object:
@@ -333,7 +373,7 @@ function mountGraphs(body,text,msg){
   const phs=body.querySelectorAll('.graph[data-gi]');if(!phs.length)return;
   let cache=graphCache.get(msg);if(!cache){cache=[];graphCache.set(msg,cache);}
   const specs=[];String(text||'').replace(FENCE_RE,(m,lang,c)=>{if(isGraphFence(lang,c))specs.push(c);});
-  phs.forEach(ph=>{const i=+ph.dataset.gi;if(!(i in specs))return;let w=cache[i];if(!w)w=cache[i]=makeGraph(specs[i]);ph.replaceWith(w.el);w.draw();});
+  phs.forEach(ph=>{const i=+ph.dataset.gi;if(!(i in specs))return;let w=cache[i];if(!w)w=cache[i]=makeGraph(specs[i]);w.el._src=ph._src;ph.replaceWith(w.el);w.draw();});
 }
 const graphApi=new WeakMap();   /* widget element -> api, so Esc can find the enlarged one */
 function openGraph(){const el=document.querySelector('#tutor .graph.full');return el?graphApi.get(el):null;}
@@ -436,7 +476,18 @@ function build(){
   const save=()=>{try{sessionStorage.setItem(storeKey,JSON.stringify(history));}catch(e){try{sessionStorage.setItem(storeKey,JSON.stringify(history.map(m=>({...m,image:undefined}))));}catch(e2){}}};
   const setNotice=t=>{notice.hidden=!t;notice.textContent=t||'';};
   const updateCtx=()=>{const sec=document.querySelector('main > section.active');q('.ctx').textContent=sec?(sec.dataset.title||''):'';};
-  const scroll=()=>{msgs.scrollTop=msgs.scrollHeight;};
+  /* Auto-scroll only while the reader is at the bottom. A new reply is placed with the question at
+     the top of the panel and then left alone, so the text can be read as it streams; scrolling to
+     the bottom by hand turns following back on. */
+  let follow=true,prog=0;
+  const scroll=()=>{prog=Date.now();msgs.scrollTop=msgs.scrollHeight;};
+  const scrollIfFollowing=()=>{if(follow)scroll();};
+  msgs.addEventListener('scroll',()=>{if(Date.now()-prog<80)return;follow=msgs.scrollHeight-msgs.scrollTop-msgs.clientHeight<24;});
+  function placeReply(userEl,replyEl){
+    /* give the reply room so the question can sit at the top even before any text has arrived */
+    replyEl.style.minHeight=Math.max(0,msgs.clientHeight-userEl.offsetHeight-44)+'px';
+    prog=Date.now();msgs.scrollTop+=userEl.getBoundingClientRect().top-msgs.getBoundingClientRect().top-16;follow=false;
+  }
 
   function addMsg(m){
     const d=document.createElement('div');d.className='m '+m.role;
@@ -448,8 +499,9 @@ function build(){
   }
   /* an assistant bubble: the thought note, the markdown, and any graphs mounted into place */
   function renderReply(b,m,{streaming=false,extra=''}={}){
-    b.innerHTML=thoughtNote(m.thinkMs)+mdToHtml(m.text||'',{streaming})+extra;
+    patch(b,thoughtNote(m.thinkMs)+mdToHtml(m.text||'',{streaming})+extra);
     mountGraphs(b,m.text,m);
+    if(streaming)typesetLive(b);
   }
   function renderAll(){
     msgs.innerHTML='';
@@ -485,11 +537,12 @@ function build(){
     const userMsg={role:'user',text:text||'Here is a screenshot from the module. Help me with what is shown.',image:image||undefined};
     history.push(userMsg);save();
     if(!history.length||msgs.querySelector('.welcome'))msgs.innerHTML='';
-    addMsg(userMsg);ta.value='';autosize();setPending(null);
+    const userBody=addMsg(userMsg);ta.value='';autosize();setPending(null);
     const reply={role:'assistant',text:''};let reason='',thinkStart=0;
     const body=addMsg(reply);body.innerHTML=thinkingLine('');
+    placeReply(userBody.parentElement,body.parentElement);
     busy=new AbortController();stopBtn.hidden=false;sendBtn.disabled=true;
-    let raf=0;const paint=()=>{raf=0;if(reply.text)renderReply(body,reply,{streaming:true});else body.innerHTML=thinkingLine(reason);scroll();};
+    let raf=0;const paint=()=>{raf=0;if(reply.text)renderReply(body,reply,{streaming:true});else patch(body,thinkingLine(reason));scrollIfFollowing();};
     try{
       const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:apiMessages(),context:buildContext()}),signal:busy.signal});
       if(!res.ok){let msg='The tutor is unavailable right now ('+res.status+').';try{const j=await res.json();if(j.error)msg=j.error;}catch(e){}throw new Error(msg);}
@@ -518,7 +571,7 @@ function build(){
       if(e.name==='AbortError'){if(!reply.text.trim())reply.text='(stopped)';renderReply(body,reply);typesetEl(body);}
       else{reply.text=reply.text||'';renderReply(body,reply,{extra:'<p class="err">'+esc(e.message||String(e))+'</p>'});}
     }finally{
-      body.classList.remove('streaming');history.push(reply);save();busy=null;stopBtn.hidden=true;sendBtn.disabled=false;scroll();
+      body.classList.remove('streaming');body.parentElement.style.minHeight='';history.push(reply);save();busy=null;stopBtn.hidden=true;sendBtn.disabled=false;scrollIfFollowing();requestAnimationFrame(scrollIfFollowing);
     }
   }
 
