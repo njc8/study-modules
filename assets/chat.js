@@ -143,13 +143,25 @@ function buildContext(){
 
 /* ------------------------------------------------------------ markdown + math rendering */
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-/* streaming: an unclosed ```graph fence is the model still writing a graph, so show a skeleton;
-   otherwise (final render, reload, stopped) it is a cut-off graph. */
+/* A graph is a fenced block tagged graph, or an untagged / json block whose content is a graph spec. */
+const FENCE_RE=/```[ \t]*([\w-]*)[^\n]*\n?([\s\S]*?)```/g;
+function isGraphFence(lang,content){return lang==='graph'||((lang===''||lang==='json')&&/^\s*\{/.test(content)&&/"(kind|items|params)"\s*:/.test(content));}
+/* streaming: everything before the first graph fence streams as usual; from the moment the fence
+   opens, the rest of the reply is held back behind a shimmering skeleton and the whole thing is
+   rendered at once when the stream ends. Outside streaming an unclosed graph fence is a cut-off graph. */
 function mdToHtml(src,{streaming=false}={}){
+  if(streaming){
+    const re=/```[ \t]*([\w-]*)[^\n]*\n?/g;let m;
+    while((m=re.exec(src))){
+      const rest=src.slice(m.index+m[0].length),end=rest.indexOf('```'),content=end<0?rest:rest.slice(0,end);
+      if(isGraphFence(m[1],content))return mdToHtml(src.slice(0,m.index))+graphSkeleton(content);
+      if(end<0)break;re.lastIndex=m.index+m[0].length+end+3;
+    }
+  }
   const slots=[];const keep=s=>{slots.push(s);return '\u0000'+(slots.length-1)+'\u0000';};
   let gi=0;
-  src=src.replace(/```([\w-]*)[^\n]*\n?([\s\S]*?)```/g,(m,lang,c)=>keep(lang==='graph'?`<div class="graph" data-gi="${gi++}"></div>`:'<pre><code>'+esc(c.replace(/\n$/,''))+'</code></pre>'));
-  src=src.replace(/```graph[^\n]*\n?([\s\S]*)$/,(m,partial)=>keep(streaming?graphSkeleton(partial):'<p class="gcut">The graph was cut off before it finished.</p>'));
+  src=src.replace(FENCE_RE,(m,lang,c)=>keep(isGraphFence(lang,c)?`<div class="graph" data-gi="${gi++}"></div>`:'<pre><code>'+esc(c.replace(/\n$/,''))+'</code></pre>'));
+  src=src.replace(/```[ \t]*([\w-]*)[^\n]*\n?([\s\S]*)$/,(m,lang,c)=>isGraphFence(lang,c)?keep('<p class="gcut">The graph was cut off before it finished.</p>'):m);
   src=src.replace(/\\\[([\s\S]*?)\\\]/g,(m,t)=>keep('<div class="tex-d">\\['+esc(t)+'\\]</div>'));
   src=src.replace(/\$\$([\s\S]*?)\$\$/g,(m,t)=>keep('<div class="tex-d">\\['+esc(t)+'\\]</div>'));
   src=src.replace(/\\\(([\s\S]*?)\\\)/g,(m,t)=>keep('\\('+esc(t)+'\\)'));
@@ -197,7 +209,7 @@ const gtext=v=>v==null?'':String(v);
 
 function graphSkeleton(partial){
   let title='';const m=/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(partial||'');if(m){try{title=JSON.parse('"'+m[1]+'"');}catch(e){title=m[1];}}
-  return `<div class="graph skel"><div class="gh"><strong>${title?esc(title):'Drawing a graph'}</strong><span class="thinking"><i class="pulse"></i></span></div><div class="ph stage"></div><div class="ph-row"><i></i><i></i><i></i></div><div class="ph line"></div></div>`;
+  return `<div class="graph skel"><div class="gh"><strong>${title?esc(title):'Drawing a graph'}</strong><span class="thinking"><i class="pulse"></i><span class="lbl">Drawing</span></span></div><div class="ph stage"></div><div class="ph-row"><i></i><i></i><i></i></div><div class="ph line"></div></div>`;
 }
 function graphError(msg){const d=document.createElement('div');d.className='graph gerr';d.textContent=msg;return {el:d,draw(){}};}
 function makeGraph(json){
@@ -320,7 +332,7 @@ const graphCache=new WeakMap();
 function mountGraphs(body,text,msg){
   const phs=body.querySelectorAll('.graph[data-gi]');if(!phs.length)return;
   let cache=graphCache.get(msg);if(!cache){cache=[];graphCache.set(msg,cache);}
-  const specs=[];String(text||'').replace(/```graph[^\n]*\n?([\s\S]*?)```/g,(m,j)=>{specs.push(j);});
+  const specs=[];String(text||'').replace(FENCE_RE,(m,lang,c)=>{if(isGraphFence(lang,c))specs.push(c);});
   phs.forEach(ph=>{const i=+ph.dataset.gi;if(!(i in specs))return;let w=cache[i];if(!w)w=cache[i]=makeGraph(specs[i]);ph.replaceWith(w.el);w.draw();});
 }
 const graphApi=new WeakMap();   /* widget element -> api, so Esc can find the enlarged one */

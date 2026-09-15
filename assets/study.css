@@ -291,7 +291,7 @@ table.simple.mono td{font-family:ui-monospace,Menlo,monospace}
 #tutor .graph{border:1px solid var(--line);border-radius:12px;background:#fbfaf6;padding:12px 14px;margin:10px 0}
 #tutor .graph .gh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px}
 #tutor .graph .gh strong{font-size:14px}
-#tutor .graph .gh .thinking{gap:0}
+#tutor .graph .gh .thinking{gap:6px;font-size:13px}
 #tutor .graph .gx{display:flex;flex-direction:column;gap:10px}
 #tutor .graph .gstage{min-width:0}
 #tutor .graph canvas.scene{aspect-ratio:1/1;max-height:70vh}
