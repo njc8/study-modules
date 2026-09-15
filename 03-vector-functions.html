@@ -690,7 +690,7 @@ Q.vecInt={name:'definite integral of a vector function',
     }
     const a=rint(1,4);
     const items=shuffle([
-      {tex:coefT(a,'t'),val:a*Math.PI*Math.PI/2,vtex:R`\tfrac{${a}\pi^2}{2}`},
+      {tex:coefT(a,'t'),val:a*Math.PI*Math.PI/2,vtex:a%2===0?(a===2?'':a/2)+R`\pi^2`:R`\tfrac{${a===1?'':a}\pi^2}{2}`},
       {tex:R`\sin t`,val:2,vtex:'2'},
       {tex:R`\cos t`,val:0,vtex:'0'}]);
     return {lo:'0',hi:R`\pi`,tex:R`\langle `+items.map(i=>i.tex).join(',\\ ')+R` \rangle`,
