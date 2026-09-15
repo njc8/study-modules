@@ -37,42 +37,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 2 · Stewart 7.1</p>
-  <h2>Integration by parts</h2>
-  <p class="lead">The product rule, run backwards. It trades the integral you cannot do for one you can, and the whole skill is choosing the trade well.</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Answers are exact unless a problem says otherwise. Antiderivatives are graded up to a constant, so <code>+ C</code> is optional. Type things like <code>x*ln(x)-x</code>, <code>(x-1)e^x</code>, <code>pi/4-ln(2)/2</code>, <code>2ln(2)-3/4</code>, or <code>1-5e^(-4)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <p>Answer boxes work like WebAssign's calcPad: type <code>sqrt</code> and a radical appears, <code>/</code> makes a fraction, <code>^</code> an exponent, <code>pi</code> the symbol, <code>|</code> absolute value. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the part you call \(u\)</span>
-      <span><i class="dot" style="background:var(--b)"></i> the part you call \(dv\)</span>
-      <span><i class="dot" style="background:var(--c)"></i> the finished answer</span>
-      <span><i class="dot" style="background:var(--d)"></i> curves and marked points</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Split an integrand into \(u\) and \(dv\) with LIATE, and say why the other split is worse.</li>
-      <li>Run the formula cleanly: write \(du\) and \(v\), assemble \(uv-\int v\,du\), finish the leftover integral.</li>
-      <li>Repeat parts when one round is not enough, and use the tabular shortcut for \(x^n\) against \(e^{ax}\), \(\sin bx\), \(\cos bx\).</li>
-      <li>Close the loop on \(\int e^{ax}\sin bx\,dx\), where the original integral comes back and you solve for it.</li>
-      <li>Do definite integrals by parts, and combine a substitution with parts when the integrand has an inner function.</li>
-      <li>Turn a velocity into a distance and an integrand into an area.</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 THE FORMULA -->
 <section data-id="formula" data-title="The formula and the choice of u" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 7.1</p>
   <h2>The formula and the choice of \(u\)</h2>
   <p class="lead">Substitution undoes the chain rule. Integration by parts undoes the product rule.</p>
+  <div id="memcard"></div>
 
   <p>Start from the product rule for two differentiable functions \(u(x)\) and \(v(x)\):</p>
   <div class="formula">\(\dfrac{d}{dx}\big[u v\big]=u'v+uv'\)<span class="cap">The derivative of a product differentiates one factor at a time.</span></div>

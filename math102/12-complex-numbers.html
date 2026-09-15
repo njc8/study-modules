@@ -18,42 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 12 · Stewart Appendix H</p>
-  <h2>Complex numbers</h2>
-  <p class="lead">Add one new number, \(i\), with \(i^2=-1\), and three things happen at once: every polynomial gets all of its roots, multiplication becomes rotation, and \(e^{i\theta}\) walks around the unit circle.</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or slide, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Type a complex number any way you would write it: <code>3-4i</code>, <code>(1+2i)(3-i)</code> (the checker multiplies it out), <code>2e^(i pi/3)</code>, <code>2(cos(pi/3)+i sin(pi/3))</code>, <code>sqrt(3)+i</code>, or <code>(1+7i)/10</code>. Lists of roots are comma separated and any order is accepted. Angles are always in radians, so type <code>3pi/4</code> or <code>-pi/6</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <p>Answer boxes work like WebAssign's calcPad: type <code>sqrt</code> and a radical appears, <code>/</code> makes a fraction, <code>^</code> an exponent, <code>pi</code> the symbol. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the number \(z\) you control</span>
-      <span><i class="dot" style="background:var(--b)"></i> the second number \(w\), and the imaginary steps</span>
-      <span><i class="dot" style="background:var(--c)"></i> the result: a product, a sum, a limit point</span>
-      <span><i class="dot" style="background:var(--d)"></i> powers, roots, and marked points</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Add, subtract, multiply, divide, and conjugate complex numbers, and find the modulus of one.</li>
-      <li>Solve a quadratic whose discriminant is negative and write both roots.</li>
-      <li>Convert between \(a+bi\), \(r(\cos\theta+i\sin\theta)\), and \(re^{i\theta}\), with the argument in the principal range.</li>
-      <li>Multiply and divide in polar form, and take powers with De Moivre's theorem.</li>
-      <li>Find all \(n\) of the \(n\)th roots of a complex number and place them on their circle.</li>
-      <li>State Euler's formula, derive it from the Maclaurin series of \(e^x\), and explain why \(e^{i\pi}+1=0\).</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 ARITHMETIC -->
 <section data-id="arith" data-title="Arithmetic and the complex plane" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart Appendix H</p>
   <h2>Arithmetic and the complex plane</h2>
   <p class="lead">A complex number is a point in the plane that you can also multiply. That one extra ability is what the whole appendix is about.</p>
+  <div id="memcard"></div>
 
   <p>A <b>complex number</b> is \(z=a+bi\) where \(a\) and \(b\) are real and \(i^2=-1\). Call \(a=\operatorname{Re}z\) the <b>real part</b> and \(b=\operatorname{Im}z\) the <b>imaginary part</b>. Note that the imaginary part is a real number: the imaginary part of \(3-4i\) is \(-4\), not \(-4i\).</p>
   <p>Plot \(a+bi\) as the point \((a,b)\). The horizontal axis is the <b>real axis</b>, the vertical axis is the <b>imaginary axis</b>, and the picture is the <b>complex plane</b>. Addition is then exactly vector addition, tip to tail:</p>

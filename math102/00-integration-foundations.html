@@ -18,44 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 0 · Stewart 5.3 to 5.4</p>
-  <h2>Integration foundations</h2>
-  <p class="lead">Everything in MATH 102 is an integral or a limit of integrals. This module makes the antiderivative table and the Fundamental Theorem automatic, so the new techniques have something solid to stand on.</p>
-
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or drag, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Antiderivatives may be typed with or without <code>+ C</code>: both are accepted. Type <code>|</code> for absolute value, so <code>ln|x|</code> works, and so does <code>ln(abs(x))</code>. Numbers are exact unless a problem says otherwise: <code>32/3</code>, <code>pi/4</code>, <code>e^2-1</code>, <code>ln(3)</code>, <code>sqrt(3)</code>, <code>9/2-8/ln(9)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <p>Answer boxes work like WebAssign's calcPad: typing <code>sqrt</code> builds a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>pi</code> the symbol. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--b)"></i> the integrand \(f\)</span>
-      <span><i class="dot" style="background:var(--a)"></i> the antiderivative \(F\)</span>
-      <span><i class="dot" style="background:var(--c)"></i> the accumulated value</span>
-      <span><i class="dot" style="background:var(--d)"></i> tangent lines and marked points</span>
-    </div>
-  </div>
-
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Write down the antiderivative of every function in the basic table, without hesitating.</li>
-      <li>Evaluate a definite integral with FTC2, including limits like \(\pi/3\), \(\ln 2\), and \(e\).</li>
-      <li>Differentiate an integral whose limits move, using FTC1 with the chain rule.</li>
-      <li>Turn a rate into a total with the Net Change Theorem, and separate displacement from distance.</li>
-      <li>Integrate with respect to \(y\), and read an integral off a picture as a signed area.</li>
-    </ul>
-  </div>
-
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 THE TABLE -->
 <section data-id="table" data-title="The antiderivative table" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 5.4</p>
   <h2>The antiderivative table</h2>
   <p class="lead">An antiderivative is a derivative read backwards. There is no new theory here, only a table you should be able to write from memory in two minutes.</p>
+  <div id="memcard"></div>
 
   <p>A function \(F\) is an <b>antiderivative</b> of \(f\) if \(F'=f\). If \(F\) is one antiderivative, so is \(F+C\) for every constant \(C\), and on an interval those are the only ones: two functions with the same derivative differ by a constant. That whole family is what the <b>indefinite integral</b> names:</p>
   <div class="formula">\(\displaystyle\int f(x)\,dx = F(x) + C \quad\text{means}\quad F'(x)=f(x)\)<span class="cap">The \(+\,C\) is not decoration. It is the statement that a derivative forgets constants, so integrating cannot recover one.</span></div>

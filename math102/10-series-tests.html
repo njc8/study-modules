@@ -18,41 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 10 · Stewart 11.4 to 11.7</p>
-  <h2>Series tests</h2>
-  <p class="lead">Five tests, each built for a shape. The skill is matching the series to the test, then producing the one number that settles it.</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches a test, gives you something to slide or animate, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>On an exam the question is always the same: <b>does it converge, and how do you know?</b> So every drill here asks for the evidence first and the verdict second. You type the comparison series, the limit, or the ratio, and then press a verdict button. A verdict with no evidence behind it is worth nothing, and this module will not let you give one.</p>
-    <p>Answer formats: a comparison series is a formula in \(n\), typed like <code>1/n^2</code>, <code>1/sqrt(n)</code>, <code>(2/3)^n</code>, or <code>1/n!</code>, and any positive constant multiple is accepted. Limits are numbers (<code>0</code>, <code>2/3</code>, <code>e</code>, <code>pi/2</code>) or the word <code>inf</code> when the limit is infinite. Conditions on \(p\) are typed like <code>p &gt; 1</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the series you are testing, \(a_n\)</span>
-      <span><i class="dot" style="background:var(--b)"></i> the comparison series \(b_n\)</span>
-      <span><i class="dot" style="background:var(--c)"></i> the number that settles it: \(c\), \(L\), the bound</span>
-      <span><i class="dot" style="background:var(--d)"></i> partial sums and the sum itself</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Choose and apply the comparison test and the limit comparison test, including picking \(b_n\) from the dominant terms.</li>
-      <li>Apply the alternating series test, and bound the error of an alternating partial sum with \(|R_N|\le b_{N+1}\).</li>
-      <li>Distinguish absolute convergence from conditional convergence, and say why absolute convergence is stronger.</li>
-      <li>Compute the ratio and root limits cleanly, including factorials and \(n\)th powers, and know that \(L=1\) tells you nothing.</li>
-      <li>Follow a strategy for an unfamiliar series: read its shape, pick the test that shape was built for, produce the evidence.</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 COMPARISON -->
 <section data-id="comparison" data-title="Comparison and limit comparison" data-goal="8">
   <p class="eyebrow">Chapter 1 · Stewart 11.4</p>
   <h2>Comparison and limit comparison</h2>
   <p class="lead">You already know two families cold: \(\sum 1/n^p\) and \(\sum r^n\). Every comparison test says the same thing: your series behaves like the family member it sits next to.</p>
+  <div id="memcard"></div>
 
   <p>Both tests in this chapter require <b>positive terms</b>. That is what makes partial sums increasing, and an increasing sequence either climbs to a finite limit or runs off to infinity, with nothing in between.</p>
 

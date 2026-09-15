@@ -18,45 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 9 · Stewart 11.1 to 11.3</p>
-  <h2>Sequences and series</h2>
-  <p class="lead">An infinite list either settles down or it does not. An infinite sum is nothing more exotic than the limit of its partial sums. This module gives you three families you can add up exactly, one test that catches most divergence, and one bridge back to integrals.</p>
-
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or play, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Formulas in \(n\) are typed the way you would write them: <code>(-1)^n/n!</code>, <code>2^n/(n+1)</code>, <code>n/(n+1)</code>, <code>3/2 - 1/(n+1) - 1/(n+2)</code>. Factorials work: <code>n!</code> and <code>(n+1)!</code>.</p>
-    <p>Limits take a number, the word <code>inf</code>, or <code>DNE</code>. Sums take an exact value (<code>3/2</code>, <code>pi/4</code>, <code>1/ln(2)</code>, <code>e</code>) or the word <code>diverges</code>. Answers are exact unless a problem asks for decimals. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <p>Answer boxes work like WebAssign's calcPad: <code>/</code> makes a fraction, <code>^</code> an exponent, <code>sqrt</code> a radical, <code>pi</code> the symbol. Use the right arrow key to step out of a fraction or exponent before typing what comes next.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the terms \(a_n\)</span>
-      <span><i class="dot" style="background:var(--b)"></i> the partial sums \(s_n\)</span>
-      <span><i class="dot" style="background:var(--c)"></i> the limit or the total</span>
-      <span><i class="dot" style="background:var(--d)"></i> curves, bands, and marked points</span>
-    </div>
-  </div>
-
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Find the limit of a sequence, and write the \(n\)th term of a sequence from its first few values.</li>
-      <li>Decide whether a sequence is monotone and bounded, and read off its bounds.</li>
-      <li>Compute partial sums, and sum geometric and telescoping series exactly.</li>
-      <li>Apply the test for divergence, and say why it never proves convergence.</li>
-      <li>Apply the integral test and the \(p\)-series test, and bound the remainder after \(n\) terms.</li>
-      <li>Say how many terms you need for a given accuracy, and sharpen an estimate with the integral correction.</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 SEQUENCES -->
 <section data-id="sequences" data-title="Sequences" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 11.1</p>
   <h2>Sequences</h2>
   <p class="lead">A sequence is a list of numbers with an address for each one. The only question that matters is where the list is heading.</p>
+  <div id="memcard"></div>
 
   <p>A <b>sequence</b> \(\{a_n\}\) assigns a number \(a_n\) to each integer \(n=1,2,3,\dots\). You can give it by a formula (\(a_n=n/(n+1)\)), by a list (\(\{1,\tfrac12,\tfrac13,\dots\}\)), or by a recursion (\(a_1=1\), \(a_{n+1}=\sqrt{2+a_n}\)).</p>
   <div class="formula">\(\displaystyle\lim_{n\to\infty}a_n=L\)<span class="cap">Read it as: eventually the terms stay as close to \(L\) as you like. Precisely, for every \(\varepsilon>0\) there is an \(N\) with \(|a_n-L|&lt;\varepsilon\) for all \(n>N\). If such an \(L\) exists the sequence <b>converges</b>; otherwise it <b>diverges</b>.</span></div>

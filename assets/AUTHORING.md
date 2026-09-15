@@ -24,7 +24,6 @@ Match it closely.
 <div class="app">
 <nav class="side" id="nav"></nav>
 <main>
-<section data-id="welcome" data-title="Start here"> ... </section>
 <section data-id="ch1" data-title="Short chapter name" data-goal="6"> ... </section>
 ...
 <section data-id="quiz" data-title="Mastery quiz"> <div class="card" id="quizBox"></div> </section>
@@ -40,7 +39,7 @@ initModule({key:'module-key',title:'Module title',sub:'Module N · Stewart 14.1 
 
 Rules:
 - `initModule` must be the last call. It builds the sidebar from the `<section>` elements, wires hash routing and pagers, loads progress under `sm-progress-<key>`, and typesets the page.
-- Section order is chapter order. Every module has a `welcome` section first and a `quiz` section last.
+- Section order is chapter order. The first section is chapter 1 and the last is the `quiz` section.
 - Static TeX goes straight in the HTML as `\( ... \)` (inline) or `\[ ... \]` (display). Dynamic TeX built in JS uses `M('tex')` for inline and `D('tex')` for display; write TeX in JS with `String.raw` (`const R=String.raw;` then `` M(R`\mathbf{a}\cdot\mathbf{b}`) ``).
 - `Drill` and `makeQuiz` call `typeset()` for you after rendering questions and feedback. If you inject TeX anywhere else at runtime (a walkthrough, a readout), call `typeset(element)` afterward.
 - Never use browser automation tools while authoring. Test with `node --check` on the extracted script (see Testing). The orchestrator runs the browser tests.
@@ -54,7 +53,7 @@ Rules:
 5. Where a procedure has steps, a step-by-step walkthrough card with Back / Next / New buttons and an `.expr` or `.steps` display (see the determinant walkthrough in module 1).
 6. `<h3>Practice</h3>` and `<div class="card" id="drill-<id>"></div>` driven by a `Drill` with 4 to 8 question types.
 
-Length target: 5 to 7 sections including welcome and quiz, roughly 900 to 1500 lines total. Prefer fewer, deeper widgets over many shallow ones.
+Length target: 4 to 6 sections including the quiz, roughly 900 to 1500 lines total. Prefer fewer, deeper widgets over many shallow ones.
 
 Writing style: plain, direct, second person, short sentences. No em dashes (use a plain dash or a comma). Explain the why behind each formula in one line. Name the common mistake. Bold the term when it is defined.
 

@@ -514,7 +514,7 @@ let __sections=[],__onShow={};
 function markDone(id){if(Progress.data[id])return;Progress.data[id]=true;Progress.save();renderNav();}
 function renderNav(){
   const box=$('#navlinks');if(!box)return;box.innerHTML='';
-  __sections.forEach((s,i)=>{const a=el('a',{href:'#'+s.dataset.id,class:(s.classList.contains('active')?'active':'')+(Progress.data[s.dataset.id]?' done':'')});a.innerHTML=`<span class="n">${Progress.data[s.dataset.id]?'✓':i}</span><span>${s.dataset.title}</span>`;box.appendChild(a);});
+  __sections.forEach((s,i)=>{const a=el('a',{href:'#'+s.dataset.id,class:(s.classList.contains('active')?'active':'')+(Progress.data[s.dataset.id]?' done':'')});a.innerHTML=`<span class="n">${Progress.data[s.dataset.id]?'✓':i+1}</span><span>${s.dataset.title}</span>`;box.appendChild(a);});
 }
 function show(id){
   let s=__sections.find(x=>x.dataset.id===id)||__sections[0];
@@ -528,8 +528,7 @@ function onShow(id,fn){(__onShow[id]=__onShow[id]||[]).push(fn);}
 function initModule({key,title,sub,hub='index.html'}){
   Progress.load(key);
   __sections=$$('main > section');
-  /* the hub divides completed sections by this count, so leave out 'Start here', which has nothing to complete */
-  try{localStorage.setItem('sm-sections-'+key,String(__sections.filter(s=>s.dataset.id!=='welcome').length));}catch(e){}
+  try{localStorage.setItem('sm-sections-'+key,String(__sections.length));}catch(e){}
   const nav=$('#nav');
   nav.innerHTML=`<a class="hub" href="${hub}">◀ All modules</a><h1>${title}</h1><p class="sub">${sub||''}</p><div id="navlinks"></div><button class="reset" id="resetProgress">Reset progress</button>`;
   $('#resetProgress').onclick=()=>{Progress.data={};Progress.save();renderNav();};

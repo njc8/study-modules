@@ -157,36 +157,6 @@ table.dims td{padding:6px 12px;border:1px solid var(--line)}
 
 <main id="main">
 
-<!-- ===================================================== 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Welcome</p>
-  <h2>Matrices, built from the ground up</h2>
-  <p class="lead">Ten short chapters. Each one teaches an idea, lets you poke at it, then drills it until it sticks.</p>
-  <div class="card">
-    <h4 style="margin-top:0">How to use this</h4>
-    <p>Work through the chapters in order using the sidebar or the Next button. Every practice box generates fresh random problems forever, so you can drill as long as you like. Hitting the goal for a chapter marks it complete. Progress is saved in this browser.</p>
-    <p>In practice boxes, press <kbd>Enter</kbd> to check an answer and <kbd>Enter</kbd> again for a new question. Fractions like <code>1/2</code> and negatives like <code>-3</code> are accepted anywhere.</p>
-    <h4>Color code used everywhere</h4>
-    <div class="legend">
-      <span><i class="dot" style="background:var(--row)"></i> a row of the left matrix</span>
-      <span><i class="dot" style="background:var(--col)"></i> a column of the right matrix</span>
-      <span><i class="dot" style="background:var(--cell)"></i> the entry they produce</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4 style="margin-top:0">What you will be able to do at the end</h4>
-    <ul style="margin:0;padding-left:20px">
-      <li>Read any matrix: its size, its entries, and what a<sub>ij</sub> means.</li>
-      <li>Add, scale, and transpose matrices without hesitation.</li>
-      <li>Decide instantly whether two matrices can be multiplied and what size comes out.</li>
-      <li>Multiply matrices reliably by hand using the row-times-column rule.</li>
-      <li>Explain why AB is usually not BA, and what the identity matrix does.</li>
-      <li>See a 2×2 matrix as a transformation of the plane, and read its determinant as an area factor.</li>
-      <li>Compute 2×2 determinants and inverses.</li>
-    </ul>
-  </div>
-</section>
-
 <!-- ===================================================== 1 WHAT IS A MATRIX -->
 <section data-id="basics" data-title="What is a matrix?" data-goal="6">
   <p class="eyebrow">Chapter 1</p>
@@ -635,7 +605,7 @@ function renderNav(){
   sections.forEach((s,i)=>{
     const a=document.createElement('a');a.href='#'+s.dataset.id;
     a.className=(s.classList.contains('active')?'active':'')+(progress[s.dataset.id]?' done':'');
-    a.innerHTML=`<span class="n">${progress[s.dataset.id]?'✓':i}</span><span>${s.dataset.title}</span>`;
+    a.innerHTML=`<span class="n">${progress[s.dataset.id]?'✓':i+1}</span><span>${s.dataset.title}</span>`;
     box.appendChild(a);
   });
 }
@@ -1167,7 +1137,7 @@ drawMain();
 })();
 
 /* boot */
-show(location.hash.slice(1)||'welcome');
+show(location.hash.slice(1)||sections[0].dataset.id);
 </script>
 </body>
 </html>

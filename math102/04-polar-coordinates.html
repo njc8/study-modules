@@ -18,41 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 4 · Stewart 10.3 to 10.4</p>
-  <h2>Polar coordinates</h2>
-  <p class="lead">A second address system for the plane. Circles and spirals that need two ugly Cartesian equations become one line, and area stops being a height times a width: it becomes half of an integral of \(r^2\).</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to drag or sweep, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Angles are radians, typed as <code>pi/4</code>, <code>7pi/6</code>, <code>-pi/3</code>. Points are typed with parentheses: a polar point is <code>(r, theta)</code> and a Cartesian point is <code>(x, y)</code>. Answers are exact unless a problem says otherwise, so write <code>3sqrt(3)/2</code>, <code>pi - 3sqrt(3)/2</code>, or <code>pi/4 + 3sqrt(3)/4</code> rather than a decimal. A Cartesian equation may be typed in any equivalent form, like <code>x^2+y^2=2y</code>. Lists are comma separated: <code>2pi/3, 4pi/3</code>.</p>
-    <p>Answer boxes work like WebAssign's calcPad: <code>sqrt</code> makes a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>pi</code> and <code>theta</code> the Greek letters. Use the right arrow key to step out of a radical or fraction, and press <kbd>Enter</kbd> to check.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the moving piece: the sweeping ray, one sector, the tangent</span>
-      <span><i class="dot" style="background:var(--b)"></i> the second curve or the comparison</span>
-      <span><i class="dot" style="background:var(--c)"></i> the result: an area, a length, a value</span>
-      <span><i class="dot" style="background:var(--d)"></i> the polar curve and marked points</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Convert points and equations between Cartesian and polar, in both directions, with the quadrant handled correctly.</li>
-      <li>Recognize the standard curves on sight: circles through the origin, cardioids, limaçons with and without an inner loop, roses, lemniscates.</li>
-      <li>Say where a curve passes through the pole, and use those angles as the tangent directions there and as the limits of a loop.</li>
-      <li>Find \(dy/dx\) on a polar curve and locate the horizontal and vertical tangents.</li>
-      <li>Set up and evaluate areas: one petal, an inner loop, inside one curve and outside another, inside both. Also arc length.</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 POINTS -->
 <section data-id="points" data-title="Points and conversions" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 10.3</p>
   <h2>Points and conversions</h2>
   <p class="lead">A Cartesian address says how far right and how far up. A polar address says how far out and in which direction.</p>
+  <div id="memcard"></div>
 
   <p>The polar point \((r,\theta)\) means: face in the direction \(\theta\) measured counterclockwise from the positive \(x\)-axis, then walk a <b>signed distance</b> \(r\). Signed is the whole subtlety. If \(r<0\) you walk backwards, so the point lands in the opposite direction.</p>
   <div class="formula">\(x=r\cos\theta,\qquad y=r\sin\theta,\qquad r^2=x^2+y^2,\qquad \tan\theta=\dfrac{y}{x}\)<span class="cap">Left to right: polar to Cartesian, which is always a plug-in. Right to left: Cartesian to polar, which needs care, because the last two equations do not determine \(r\) and \(\theta\) by themselves.</span></div>

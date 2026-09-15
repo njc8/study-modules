@@ -18,41 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 5 · Stewart 7.2</p>
-  <h2>Trigonometric integrals</h2>
-  <p class="lead">Four identities and two "save one factor" moves handle every product of sines, cosines, tangents, and secants you will meet.</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Antiderivatives can be written with or without <code>+ C</code>. Powers are typed either way: <code>sin(x)^3</code> or <code>sin^3(x)</code>, and the <kbd>^</kbd> key builds the exponent for you. Absolute values come from the <kbd>|</kbd> key, so <code>ln|sec x|</code> types straight through. Numbers can be exact: <code>pi/6</code>, <code>3/8</code>, <code>2/15</code>, <code>1 - pi/4</code>, <code>3/2 - ln(2)</code>, <code>sqrt(3)</code>.</p>
-    <p>The checker compares your answer to the reference numerically, so <b>any equivalent form is accepted</b>, including forms that differ by a constant. If you get \(-\tfrac12\cos^2x\) and the book prints \(\tfrac12\sin^2x\), both are marked correct: they differ by the constant \(\tfrac12\). Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the factor you save, the rewritten form</span>
-      <span><i class="dot" style="background:var(--b)"></i> the integrand and the area under it</span>
-      <span><i class="dot" style="background:var(--c)"></i> the result</span>
-      <span><i class="dot" style="background:var(--d)"></i> marked points and moving bounds</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Rewrite any even power of sine or cosine with the half-angle identities, so it can be integrated on sight.</li>
-      <li>Integrate \(\sin^m x\cos^n x\) for any \(m\) and \(n\), by saving one factor when a power is odd and by half-angle identities when both are even.</li>
-      <li>Integrate \(\tan^m x\sec^n x\), and produce the four standard antiderivatives \(\int\tan x\,dx\), \(\int\cot x\,dx\), \(\int\sec x\,dx\), \(\int\csc x\,dx\) from memory.</li>
-      <li>Turn a product of two different frequencies into a sum with the product-to-sum identities, and use it to integrate.</li>
-      <li>Evaluate the definite versions that show up in polar area and in Fourier series, including the orthogonality integrals.</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 IDENTITIES -->
 <section data-id="identities" data-title="The identities that do the work" data-goal="6">
   <p class="eyebrow">Chapter 1 · Stewart 7.2</p>
   <h2>The identities that do the work</h2>
   <p class="lead">Every trigonometric integral in this module is one of two moves: trade an even power for a lower frequency, or save one factor and substitute.</p>
+  <div id="memcard"></div>
 
   <p>Three <b>Pythagorean identities</b> convert one squared function into another. They are the reason an even power can always be traded away:</p>
   <div class="formula">\(\sin^2x+\cos^2x=1 \qquad 1+\tan^2x=\sec^2x \qquad 1+\cot^2x=\csc^2x\)<span class="cap">Divide the first by \(\cos^2x\) to get the second, by \(\sin^2x\) to get the third. You never need to memorize all three separately.</span></div>

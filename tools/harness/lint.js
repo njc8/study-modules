@@ -22,8 +22,8 @@ const canv=[...src.matchAll(/new (?:Plot2D|Scene3D)\('#([^']+)'\s*[,)]/g)].map(m
 canv.forEach(c=>{if(!new RegExp(`id="${c}"`).test(src))problems.push(`canvas #${c} not in HTML`);});
 if(!/initModule\(\{[^\n]*\}\);\s*<\/script>/.test(src))problems.push('initModule is not the last statement before </script>');
 if(!/window\.__solvers/.test(src))problems.push('no window.__solvers');
-const first=secs[0]&&secs[0].id,last=secs[secs.length-1]&&secs[secs.length-1].id;
-if(first!=='welcome')problems.push('first section is not welcome');if(last!=='quiz')problems.push('last section is not quiz');
+const last=secs[secs.length-1]&&secs[secs.length-1].id;
+if(last!=='quiz')problems.push('last section is not quiz');
 console.log(`lint ${path.basename(file)}: ${secs.length} sections, ${drills.length} drills, ${canv.length} canvases`);
 problems.forEach(p=>console.log('  ',p));
 console.log(problems.length?`LINT FAILED (${problems.length})`:'LINT OK');

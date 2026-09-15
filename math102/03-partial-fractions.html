@@ -18,41 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 3 · Stewart 7.4</p>
-  <h2>Partial fractions</h2>
-  <p class="lead">Every rational function is a sum of pieces you already know how to integrate. The work is algebra, and it happens in a fixed order.</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches a step of the procedure, gives you something to drag or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Answers are exact unless a problem says otherwise. Decompositions may be typed as sums of fractions, like <code>3/(x-1) - 2/(x+4)</code>. When a problem asks for the <b>form</b> of a decomposition, use capital letters <code>A</code>, <code>B</code>, <code>C</code>, ... for the unknown constants and do not solve for them. Antiderivatives may be written with <code>ln|x-2|</code> or <code>ln(abs(x-2))</code>, and <code>+ C</code> is optional. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <p>Answer boxes work like WebAssign's calcPad: type <code>sqrt</code> and a radical appears, <code>/</code> makes a fraction, <code>^</code> an exponent, <code>|</code> absolute value bars. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the first piece of the decomposition</span>
-      <span><i class="dot" style="background:var(--b)"></i> the second piece</span>
-      <span><i class="dot" style="background:var(--c)"></i> the finished result</span>
-      <span><i class="dot" style="background:var(--d)"></i> the original rational function</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Recognize an improper rational function and divide before doing anything else.</li>
-      <li>Write the correct form of the decomposition for any denominator: distinct linear, repeated linear, irreducible quadratic, repeated quadratic.</li>
-      <li>Solve for the constants two ways: the cover-up trick for linear factors, equating coefficients for everything else.</li>
-      <li>Integrate each piece, giving logs, powers, and arctangents, and combine logs into a single exact answer.</li>
-      <li>Turn an integrand with a radical into a rational one with the substitution \(u=\sqrt{ax+b}\).</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 DIVIDE -->
 <section data-id="divide" data-title="Proper first: long division" data-goal="5">
   <p class="eyebrow">Chapter 1 · Stewart 7.4</p>
   <h2>Proper first: polynomial long division</h2>
   <p class="lead">Partial fractions only works on a <b>proper</b> fraction. If the top is not smaller than the bottom, divide.</p>
+  <div id="memcard"></div>
 
   <p>A rational function \(f(x)=P(x)/Q(x)\) is <b>proper</b> when \(\deg P&lt;\deg Q\), and <b>improper</b> otherwise. Improper fractions have no decomposition into simple pieces, because the pieces all die off at infinity and an improper fraction does not. The fix is division:</p>
   <div class="formula">\(\dfrac{P(x)}{Q(x)}=S(x)+\dfrac{R(x)}{Q(x)},\qquad \deg R&lt;\deg Q\)<span class="cap">\(S\) is the quotient, \(R\) the remainder. \(S\) is a polynomial, so you integrate it on sight. Only \(R/Q\) needs partial fractions, and it is proper by construction.</span></div>

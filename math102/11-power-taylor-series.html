@@ -18,41 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 11 · Stewart 11.8 to 11.11</p>
-  <h2>Power series and Taylor series</h2>
-  <p class="lead">A polynomial that never stops. Written correctly it does not just approximate \(e^x\), \(\sin x\), \(\ln(1+x)\) or \(\arctan x\), it equals them, and an error bound tells you exactly how many terms you need.</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or play, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Answer formats here: a <b>general term</b> is a formula in \(n\) and \(x\), typed like <code>(-1)^n x^(2n+1)/(2n+1)!</code> or <code>x^n/3^(n+1)</code>. An <b>interval of convergence</b> is typed like <code>[-1, 1)</code>, <code>(-inf, inf)</code>, or <code>{2}</code> for a single point. A <b>Taylor polynomial</b> is typed like <code>1 - x^2/2 + x^4/24</code>. Exact numbers are expected unless the problem asks for decimals: <code>pi/4</code>, <code>ln(3/2)</code>, <code>sqrt(3)/2</code>, <code>e^3</code>, <code>1/384</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <p>The answer boxes work like WebAssign's calcPad: <code>/</code> makes a fraction, <code>^</code> an exponent, <code>n!</code> a factorial, <code>sqrt</code> a radical, <code>pi</code> the symbol. Use the right arrow key to step out of a fraction or an exponent before typing what comes next.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the partial sum, the polynomial you actually compute</span>
-      <span><i class="dot" style="background:var(--b)"></i> the function the series is trying to be</span>
-      <span><i class="dot" style="background:var(--c)"></i> the interval of convergence, the error bound</span>
-      <span><i class="dot" style="background:var(--d)"></i> the center and marked points</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Find the radius and the interval of convergence of a power series, endpoints tested separately.</li>
-      <li>Build new power series out of the geometric series by substitution, multiplication, differentiation, and integration.</li>
-      <li>Write a Taylor or Maclaurin series from the definition \(c_n=f^{(n)}(a)/n!\), and much faster from the table of seven.</li>
-      <li>Write Taylor polynomials \(T_n\) and bound the error with Taylor's inequality or the alternating series estimate.</li>
-      <li>Use series to evaluate limits, to integrate functions with no elementary antiderivative, and to recognize a number hiding inside a series.</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 POWER SERIES -->
 <section data-id="power" data-title="Power series and where they converge" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 11.8</p>
   <h2>Power series and where they converge</h2>
   <p class="lead">A power series is a series whose terms contain a variable. For some \(x\) it converges, for others it blows up, and the ratio test draws the line between them.</p>
+  <div id="memcard"></div>
 
   <p>A <b>power series centered at \(a\)</b> is</p>
   <div class="formula">\(\displaystyle\sum_{n=0}^{\infty} c_n (x-a)^n = c_0 + c_1(x-a) + c_2(x-a)^2 + \cdots\)<span class="cap">The \(c_n\) are constants, the <b>coefficients</b>. The number \(a\) is the <b>center</b>. Plug in a number for \(x\) and you have an ordinary series, which either converges or diverges.</span></div>

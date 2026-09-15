@@ -18,44 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 8 · Stewart 7.8</p>
-  <h2>Improper integrals</h2>
-  <p class="lead">Stretch an integral to infinity, or run it into a vertical asymptote, and it stops being a sum of finitely many finite pieces. It becomes a limit. Sometimes that limit is a finite number, and sometimes it is not, and usually a single exponent decides which.</p>
-
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or animate, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Answers are exact. Type <code>diverges</code> whenever the integral diverges (<code>inf</code> and <code>DNE</code> are also accepted). Convergent values are typed exactly: <code>1/2</code>, <code>pi/2</code>, <code>e^(-2)</code>, <code>ln(2)</code>, <code>2sqrt(3)/3</code>, <code>(1/2)ln(3)</code>. When a question asks for a comparison exponent, give the number <code>p</code> alone. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <p>Answer boxes work like WebAssign's calcPad: <code>/</code> makes a fraction, <code>^</code> an exponent, <code>sqrt</code> a radical, <code>pi</code> the symbol. Use the right arrow key to step out of a fraction or an exponent before typing what comes next.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the moving bound: \(t\), \(b\), the shaded tail</span>
-      <span><i class="dot" style="background:var(--b)"></i> the integrand and its graph</span>
-      <span><i class="dot" style="background:var(--c)"></i> the value the running integral settles on</span>
-      <span><i class="dot" style="background:var(--d)"></i> the comparison function and marked points</span>
-    </div>
-  </div>
-
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Rewrite any improper integral as a limit of ordinary definite integrals, with the limit written correctly.</li>
-      <li>Evaluate type 1 integrals (infinite interval) and type 2 integrals (infinite integrand), including the ones that need parts or partial fractions.</li>
-      <li>Spot a hidden discontinuity inside the interval before you integrate, and split there.</li>
-      <li>Use both \(p\)-tests: at infinity large \(p\) wins, near zero small \(p\) wins, and \(p=1\) fails both ways.</li>
-      <li>Decide convergence by comparison when there is no usable antiderivative.</li>
-    </ul>
-  </div>
-
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 TYPE 1 -->
 <section data-id="type1" data-title="Infinite intervals" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 7.8</p>
   <h2>Infinite intervals</h2>
   <p class="lead">You cannot substitute \(\infty\) into an antiderivative. You substitute \(t\), then let \(t\) run.</p>
+  <div id="memcard"></div>
 
   <p>An integral over an unbounded interval is a <b>type 1 improper integral</b>. It is defined as a limit of ordinary integrals:</p>
   <div class="formula">\(\displaystyle\int_a^{\infty} f(x)\,dx=\lim_{t\to\infty}\int_a^{t} f(x)\,dx,\qquad \int_{-\infty}^{b} f(x)\,dx=\lim_{t\to-\infty}\int_{t}^{b} f(x)\,dx\)<span class="cap">If the limit exists as a finite number, the integral <b>converges</b> and that number is its value. Otherwise it <b>diverges</b>. "Diverges" covers both \(\pm\infty\) and a limit that simply fails to exist.</span></div>

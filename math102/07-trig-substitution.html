@@ -18,41 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 7 · Stewart 7.3</p>
-  <h2>Trigonometric substitution</h2>
-  <p class="lead">A square root of a quadratic is unintegrable as it stands. Make \(x\) a trig function of a new angle and the root disappears. A reference triangle brings the answer back to \(x\).</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Antiderivatives are answered <b>in \(x\)</b>, not in \(\theta\), unless the question asks for the trig form. Type roots as <code>sqrt(9-x^2)</code>, inverse trig as <code>arcsin(x/3)</code>, logs as <code>ln|x + sqrt(x^2-4)|</code> or <code>ln(abs(x+sqrt(x^2-4)))</code>. The <code>+ C</code> is optional. Definite integrals want an exact value like <code>pi/6</code>, <code>9pi/4</code>, or <code>1/(9sqrt(2))</code>. Where an answer is in the new angle, type <code>theta</code> for \(\theta\).</p>
-    <p>Answer boxes work like WebAssign's calcPad: <code>sqrt</code> makes a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>|</code> absolute value, <code>theta</code> the symbol. Use the right arrow key to step out of a radical or fraction before typing what comes next. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the moving piece: \(x\), the angle \(\theta\), a limit</span>
-      <span><i class="dot" style="background:var(--b)"></i> the integrand and the region under it</span>
-      <span><i class="dot" style="background:var(--c)"></i> the result: a value, an antiderivative</span>
-      <span><i class="dot" style="background:var(--d)"></i> the triangle and its labeled sides</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Pick the substitution from the shape of the radical, and write \(dx\) correctly.</li>
-      <li>Simplify the radical to a single trig function using the three Pythagorean identities.</li>
-      <li>Convert a \(\theta\)-answer back to \(x\) by reading the reference triangle.</li>
-      <li>Handle a definite integral by turning the limits into angles and never coming back.</li>
-      <li>Complete the square first when the quadratic has a middle term, and tell that case apart from partial fractions.</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 THE THREE SUBSTITUTIONS -->
 <section data-id="three" data-title="The three substitutions" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 7.3</p>
   <h2>The three substitutions</h2>
   <p class="lead">Three radicals, three substitutions, three identities. Everything in this module comes from this table.</p>
+  <div id="memcard"></div>
 
   <p>Ordinary substitution fails on \(\sqrt{a^2-x^2}\) because the derivative of the inside is not sitting there as a factor. The fix is to run substitution <b>backwards</b>: instead of setting a new variable equal to something in \(x\), set \(x\) equal to a function of a new variable \(\theta\). Choose that function so the Pythagorean identity collapses the radical.</p>
 

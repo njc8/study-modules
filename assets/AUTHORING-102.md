@@ -26,14 +26,6 @@ Reference modules to read before writing: `01-vectors.html` (tone, pacing, drill
 <div class="app">
 <nav class="side" id="nav"></nav>
 <main>
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module N · Stewart 7.1</p>
-  <h2>Title</h2>
-  <p class="lead">One-sentence hook.</p>
-  <div class="card"> How to use this + answer formats (copy the wording from 01-vectors.html, adapted) </div>
-  <div class="card tint"> What you will be able to do at the end </div>
-  <div id="memcard"></div>
-</section>
 <section data-id="ch1" data-title="Short chapter name" data-goal="6"> ... </section>
 ...
 <section data-id="quiz" data-title="Mastery quiz"> <div class="card" id="quizBox"></div> </section>
@@ -52,7 +44,7 @@ initModule({key:'c2-xxx',title:'Module title',sub:'Module N · Stewart 7.1'});
 
 - Module keys are fixed: `c2-found`, `c2-usub`, `c2-parts`, `c2-pf`, `c2-polar`, `c2-trigint`, `c2-param`, `c2-trigsub`, `c2-improper`, `c2-series`, `c2-tests`, `c2-taylor`, `c2-complex`. The key is the progress key and the memory deck tag.
 - `hub` defaults to `index.html`, which inside `math102/` is the MATH 102 hub. Do not pass `hub`.
-- `memoryCard(modKey, facts)` (from `calc102.js`) builds the "Know these cold" card: a list of the facts the module expects from memory, with a button into the flashcards for that unit. List 4 to 10 facts as short HTML strings with TeX. This card belongs in the welcome section only.
+- `memoryCard(modKey, facts)` (from `calc102.js`) builds the "Know these cold" card: a list of the facts the module expects from memory, with a button into the flashcards for that unit. List 4 to 10 facts as short HTML strings with TeX. Mount it with `<div id="memcard"></div>` directly under the lead paragraph of chapter 1, and nowhere else.
 
 ## Extra engine API (assets/calc102.js)
 

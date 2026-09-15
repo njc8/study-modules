@@ -24,44 +24,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 1 · Stewart 5.5</p>
-  <h2>Substitution</h2>
-  <p class="lead">The chain rule run backwards. It is the single most used technique in this course: every other method you learn this semester ends with a substitution somewhere in the middle.</p>
-
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide or step through, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Answers are exact unless a problem says otherwise. Antiderivatives are graded up to a constant, so <code>+ C</code> is optional. Type numbers like <code>16pi</code>, <code>32/3</code>, <code>(e-1)/2</code>, <code>ln(5)</code>, <code>4sqrt(3)</code>. Type expressions like <code>(x^2+1)^4/8</code>, <code>e^(x^2)/2</code>, <code>ln|cos x|</code>, <code>sqrt(x+2)</code>. Press <kbd>Enter</kbd> to check, and <kbd>Enter</kbd> again for a new question.</p>
-    <p>Answer boxes work like WebAssign's calcPad: typing <code>sqrt</code> makes a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>pi</code> the symbol, <code>|</code> absolute value. Use the right arrow key to step out of a radical, fraction, or exponent before typing what comes after it.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the integral in \(x\), and the inside function \(u\)</span>
-      <span><i class="dot" style="background:var(--b)"></i> the integral in \(u\), and \(du\)</span>
-      <span><i class="dot" style="background:var(--c)"></i> the value, the answer</span>
-      <span><i class="dot" style="background:var(--d)"></i> curves and marked points</span>
-    </div>
-  </div>
-
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Look at an integrand and spot \(u\) in one pass: the inside function whose derivative is already sitting outside.</li>
-      <li>Finish an indefinite integral, including the constant adjustment, and check it by differentiating.</li>
-      <li>Change the limits of a definite integral instead of substituting back, and know why that is the safer habit.</li>
-      <li>Use odd and even symmetry on \([-a,a]\) to kill a term or halve the work.</li>
-      <li>Split an integral so that one piece is a known area, the way Stewart 5.5.83 wants you to.</li>
-    </ul>
-  </div>
-
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 SPOTTING u -->
 <section data-id="spot" data-title="Spotting u" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 5.5</p>
   <h2>Spotting \(u\)</h2>
   <p class="lead">The chain rule says \(\frac{d}{dx}F(g(x))=F'(g(x))\,g'(x)\). Read that right to left and you have the whole technique.</p>
+  <div id="memcard"></div>
 
   <p>If an integrand looks like <b>a function of something, times the derivative of that something</b>, then it is a chain rule derivative in disguise. Undo it by naming the something \(u\).</p>
   <div class="formula">\(\displaystyle\int f(g(x))\,g'(x)\,dx=\int f(u)\,du \qquad\text{where } u=g(x),\; du=g'(x)\,dx\)<span class="cap">The whole content of the rule: replace \(g(x)\) by \(u\) and replace \(g'(x)\,dx\) by \(du\). What is left must be an integral you already know.</span></div>

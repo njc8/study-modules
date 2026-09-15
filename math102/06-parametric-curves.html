@@ -18,41 +18,12 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 0 WELCOME -->
-<section data-id="welcome" data-title="Start here">
-  <p class="eyebrow">Module 6 · Stewart 10.1 to 10.2</p>
-  <h2>Parametric curves</h2>
-  <p class="lead">A curve as a motion: time goes in, a position comes out. Loops, self-crossings, and vertical tangents stop being a problem, because nothing has to be a function of \(x\) any more.</p>
-  <div class="card">
-    <h4>How to use this</h4>
-    <p>Work through the chapters in order. Each one teaches an idea, gives you something to slide, play, and watch, then drills you with fresh random problems until you hit the goal. Progress is saved in this browser.</p>
-    <p>Answer formats: a parametrization is typed as <code>&lt;x(t), y(t)&gt;</code>, for example <code>&lt;3cos(t), 3sin(t)&gt;</code>. A point is <code>(a, b)</code>, a list of points is <code>(1,2), (3,-1)</code>, and <code>DNE</code> means there are none. Cartesian equations are typed as equations: <code>y = x^2 - 1</code> or <code>x^2/4 + y^2/9 = 1</code>. Numbers are exact unless the problem says otherwise: <code>24/5</code>, <code>2(2sqrt(2)-1)</code>, <code>pi/3</code>, <code>6pi</code>.</p>
-    <p>Answer boxes work like WebAssign's calcPad: <code>sqrt</code> makes a radical, <code>/</code> a fraction, <code>^</code> an exponent, <code>pi</code> the symbol, <code>&lt;</code> and <code>&gt;</code> the vector brackets. Use the right arrow key to step out of a radical, fraction, or exponent, and press <kbd>Enter</kbd> to check, then <kbd>Enter</kbd> again for a new question.</p>
-    <div class="legend" style="margin-top:12px">
-      <span><i class="dot" style="background:var(--a)"></i> the moving point, the first particle</span>
-      <span><i class="dot" style="background:var(--b)"></i> the velocity vector, the second particle</span>
-      <span><i class="dot" style="background:var(--c)"></i> the result: a tangent line, a length, an area</span>
-      <span><i class="dot" style="background:var(--d)"></i> the curve itself</span>
-    </div>
-  </div>
-  <div class="card tint">
-    <h4>What you will be able to do at the end</h4>
-    <ul>
-      <li>Sketch a parametric curve with its orientation, and eliminate the parameter to get a Cartesian equation.</li>
-      <li>Write parametric equations for a circle described in words (which way, from where, how many times) and for a line segment.</li>
-      <li>Decide whether two particles collide, and where, or only cross paths.</li>
-      <li>Compute \(dy/dx\) and \(d^2y/dx^2\), find horizontal and vertical tangents, and say where the curve is concave up.</li>
-      <li>Compute the area between a parametric curve and an axis, the area enclosed by a closed curve, arc length, and surface area of revolution.</li>
-    </ul>
-  </div>
-  <div id="memcard"></div>
-</section>
-
 <!-- ============================================================ 1 CURVES -->
 <section data-id="curves" data-title="Curves that are not graphs" data-goal="7">
   <p class="eyebrow">Chapter 1 · Stewart 10.1</p>
   <h2>Curves that are not graphs</h2>
   <p class="lead">Give \(x\) and \(y\) each their own formula in a third variable and you can draw anything: circles, loops, spirals, the track of a point on a rolling wheel.</p>
+  <div id="memcard"></div>
 
   <p>A <b>parametric curve</b> is a pair of equations</p>
   <div class="formula">\(x=f(t),\qquad y=g(t),\qquad t\in[\alpha,\beta]\)<span class="cap">As \(t\) runs through the interval, the point \((f(t),g(t))\) traces the curve. Think of \(t\) as time and the point as a particle: the pair of formulas is a motion, and the curve is its track.</span></div>
