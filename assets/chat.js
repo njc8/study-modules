@@ -5,6 +5,12 @@
    of the page; the image goes to the model with the question. The current module and section
    (with the real TeX of every formula on screen) ride along as context.
 
+   The model can answer with an interactive graph: a fenced ```graph block holding a JSON spec
+   (documented in tools/chat-proxy/handler.js). While the block streams in, a skeleton card holds its
+   place; once it closes, the spec is drawn with the modules' own Plot2D / Scene3D widgets and
+   sliders. The spec stays in the message text, so it survives reloads and goes back to the model
+   as part of the conversation.
+
    Endpoint resolution:
      window.STUDY_CHAT_ENDPOINT  if a page sets it,
      /chat                       when served by tools/chat-proxy/server.js on localhost,
@@ -137,9 +143,13 @@ function buildContext(){
 
 /* ------------------------------------------------------------ markdown + math rendering */
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-function mdToHtml(src){
+/* streaming: an unclosed ```graph fence is the model still writing a graph, so show a skeleton;
+   otherwise (final render, reload, stopped) it is a cut-off graph. */
+function mdToHtml(src,{streaming=false}={}){
   const slots=[];const keep=s=>{slots.push(s);return '\u0000'+(slots.length-1)+'\u0000';};
-  src=src.replace(/```[\w-]*\n?([\s\S]*?)```/g,(m,c)=>keep('<pre><code>'+esc(c.replace(/\n$/,''))+'</code></pre>'));
+  let gi=0;
+  src=src.replace(/```([\w-]*)[^\n]*\n?([\s\S]*?)```/g,(m,lang,c)=>keep(lang==='graph'?`<div class="graph" data-gi="${gi++}"></div>`:'<pre><code>'+esc(c.replace(/\n$/,''))+'</code></pre>'));
+  src=src.replace(/```graph[^\n]*\n?([\s\S]*)$/,(m,partial)=>keep(streaming?graphSkeleton(partial):'<p class="gcut">The graph was cut off before it finished.</p>'));
   src=src.replace(/\\\[([\s\S]*?)\\\]/g,(m,t)=>keep('<div class="tex-d">\\['+esc(t)+'\\]</div>'));
   src=src.replace(/\$\$([\s\S]*?)\$\$/g,(m,t)=>keep('<div class="tex-d">\\['+esc(t)+'\\]</div>'));
   src=src.replace(/\\\(([\s\S]*?)\\\)/g,(m,t)=>keep('\\('+esc(t)+'\\)'));
@@ -170,6 +180,151 @@ function mdToHtml(src){
   return html.replace(/\u0000(\d+)\u0000/g,(m,i)=>slots[+i]);
 }
 function typesetEl(el){if(typeof typeset==='function')return typeset(el);return Promise.resolve();}
+
+/* ------------------------------------------------------------ interactive graphs
+   A ```graph block is one JSON object:
+     {kind:'2d'|'3d', title, x:[lo,hi], y:[lo,hi] (2d window), range (3d), params:[{name,label,min,max,step,value}],
+      presets:[{label,values:{name:value}}], items:[...], readout:[lines with {expr}], caption, hint}
+   Any number in an item may be an expression string in the params (and the item's own variable),
+   evaluated with the modules' Expr. Items map one-to-one onto Plot2D / Scene3D calls. */
+const GCOLOR={a:'#d97706',b:'#2563eb',c:'#16a34a',d:'#7c3aed',e:'#db2777'};
+const GBASE={a:'orange',b:'blue',c:'green',d:'purple',e:'pink'};
+const gcolor=(c,dflt)=>c==null||c===''?dflt:(GCOLOR[String(c).toLowerCase()]||String(c));
+function gfill(c,a){const m=/^#([0-9a-f]{6})$/i.exec(c);if(!m)return c;const n=parseInt(m[1],16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`;}
+const gnum=(v,d)=>typeof v==='number'&&Number.isFinite(v)?v:d;
+const grange=(r,d)=>Array.isArray(r)&&r.length===2&&r.every(x=>typeof x==='number'&&Number.isFinite(x))&&r[1]>r[0]?r:d;
+const gtext=v=>v==null?'':String(v);
+
+function graphSkeleton(partial){
+  let title='';const m=/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(partial||'');if(m){try{title=JSON.parse('"'+m[1]+'"');}catch(e){title=m[1];}}
+  return `<div class="graph skel"><div class="gh"><strong>${title?esc(title):'Drawing a graph'}</strong><span class="thinking"><i class="pulse"></i></span></div><div class="ph stage"></div><div class="ph-row"><i></i><i></i><i></i></div><div class="ph line"></div></div>`;
+}
+function graphError(msg){const d=document.createElement('div');d.className='graph gerr';d.textContent=msg;return {el:d,draw(){}};}
+function makeGraph(json){
+  let spec;try{spec=JSON.parse(json);}catch(e){return graphError('The tutor drew a graph that could not be read. Ask it to try again.');}
+  try{return buildGraph(spec);}catch(e){console.warn('graph',e);return graphError('The tutor drew a graph that could not be shown. Ask it to try again.');}
+}
+function buildGraph(spec){
+  if(!spec||typeof spec!=='object')throw new Error('bad spec');
+  const items=(Array.isArray(spec.items)?spec.items:[]).filter(it=>it&&typeof it==='object'&&typeof it.type==='string').slice(0,40);
+  const is3=spec.kind==='3d'||(spec.kind!=='2d'&&items.some(it=>/^(surface|curve|plane)$/.test(it.type)||(Array.isArray(it.to)&&it.to.length===3)||(Array.isArray(it.at)&&it.at.length===3)));
+  const params=(Array.isArray(spec.params)?spec.params:[]).filter(p=>p&&typeof p.name==='string'&&/^[a-zA-Z][a-zA-Z0-9]*$/.test(p.name)&&!/^(x|y|z|t|u|v|e|pi)$/.test(p.name)).slice(0,8);
+  const names=params.map(p=>p.name);
+  /* one shared environment: the params plus whichever local variable an item is sweeping */
+  const E={};params.forEach(p=>{E[p.name]=gnum(p.value,0);});
+  const compiled=new Map();
+  const fnOf=v=>{
+    if(typeof v==='number')return ()=>v;
+    if(typeof v!=='string')return ()=>NaN;
+    let f=compiled.get(v);
+    if(!f){try{f=Expr.compile(v,names);}catch(e){f=()=>NaN;}compiled.set(v,f);}
+    return f;
+  };
+  const ev=v=>fnOf(v)(E);
+  const vec=(arr,n,dflt)=>{if(!Array.isArray(arr))return dflt;const out=[];for(let i=0;i<n;i++)out.push(ev(arr[i]));return out;};
+  const dash=it=>it.dash?(Array.isArray(it.dash)?it.dash:[6,4]):undefined;
+
+  const root=document.createElement('div');root.className='graph gw'+(is3?' three':'');
+  root.innerHTML=`<div class="gh"><strong></strong><button type="button" class="btn small icon only" data-g="full" title="Enlarge" aria-label="Enlarge">${ICON.expand}</button></div>
+    <div class="gx"><div class="gstage"><canvas class="scene"></canvas><p class="plotcap" hidden></p></div>
+    <div class="gside"><div class="sliders" hidden></div><div class="presets" hidden></div><div class="readout" hidden></div><div class="hint" hidden></div></div></div>`;
+  root.querySelector('strong').textContent=gtext(spec.title)||(is3?'Explore in 3D':'Explore');
+  const canvas=root.querySelector('canvas'),cap=root.querySelector('.plotcap'),sl=root.querySelector('.sliders'),pr=root.querySelector('.presets'),ro=root.querySelector('.readout'),hint=root.querySelector('.hint'),fullBtn=root.querySelector('[data-g=full]');
+  if(spec.caption){cap.hidden=false;cap.innerHTML=mdToHtml(gtext(spec.caption));}
+  if(spec.hint){hint.hidden=false;hint.innerHTML=mdToHtml(gtext(spec.hint));}
+  const readLines=Array.isArray(spec.readout)?spec.readout.filter(l=>typeof l==='string'):(typeof spec.readout==='string'?[spec.readout]:[]);
+  if(readLines.length)ro.hidden=false;
+
+  let plot;
+  if(is3){
+    const range=Math.max(0.5,Math.min(50,gnum(spec.range,3)));
+    plot=new Scene3D(canvas,{range,azim:gnum(spec.azim,-55),elev:gnum(spec.elev,24)});
+  }else{
+    const [xmin,xmax]=grange(spec.x,[-4,4]),[ymin,ymax]=grange(spec.y,[-4,4]);
+    plot=new Plot2D(canvas,{xmin,xmax,ymin,ymax});
+    canvas.style.aspectRatio=String(Math.max(0.9,Math.min(1.8,(xmax-xmin)/(ymax-ymin))));
+  }
+
+  function draw2d(){
+    const p=plot,o=p.o;p.begin();
+    for(const it of items){
+      const col=gcolor(it.color,it.type==='vector'?GCOLOR.a:it.type==='point'?'#1c1b1a':it.type==='field'?'#6b6862':it.type==='text'?'#57534e':'#3b5bdb');
+      const width=gnum(it.width,undefined);
+      switch(it.type){
+        case 'fn':{const f=fnOf(it.expr);const [a,b]=grange(it.x,[o.xmin,o.xmax]);p.fn(x=>{E.x=x;return f(E);},{color:col,width,xmin:a,xmax:b,dash:dash(it)});
+          if(it.label){const x=a+(b-a)*0.82;E.x=x;const y=f(E);if(Number.isFinite(y))p.text([x,clamp(y,o.ymin,o.ymax)],gtext(it.label),{color:col,font:'600 13px -apple-system,Segoe UI,sans-serif',dx:4,dy:-6});}break;}
+        case 'param':{const fx=fnOf(it.x),fy=fnOf(it.y);const [t0,t1]=grange(it.t,[0,2*Math.PI]);p.param(t=>{E.t=t;return [fx(E),fy(E)];},t0,t1,{color:col,width,dash:dash(it),arrow:!!it.arrow});break;}
+        case 'vector':{const from=vec(it.from,2,[0,0]),to=vec(it.to,2,[1,0]);if(from.concat(to).every(Number.isFinite))p.vector(from,to,{color:col,width,label:gtext(it.label)||undefined,dash:dash(it)});break;}
+        case 'point':{const at=vec(it.at,2,[0,0]);if(at.every(Number.isFinite))p.point(at,{color:col,label:gtext(it.label)||undefined,ring:!!it.ring,r:gnum(it.r,5)});break;}
+        case 'polygon':{const pts=(Array.isArray(it.points)?it.points:[]).map(q=>vec(q,2,[NaN,NaN])).filter(q=>q.every(Number.isFinite));if(pts.length>=2)p.poly(pts,{fill:it.fill===false?null:gfill(col,.15),stroke:col,close:it.close!==false});break;}
+        case 'region':{const [a,b]=grange(it.x,[o.xmin,o.xmax]);const lo=fnOf(it.lo==null?0:it.lo),hi=fnOf(it.hi==null?0:it.hi);p.region(a,b,x=>{E.x=x;return lo(E);},x=>{E.x=x;return hi(E);},{fill:gfill(col,.15),stroke:col});break;}
+        case 'contour':{const f=fnOf(it.expr);const levels=(Array.isArray(it.levels)?it.levels:[-2,-1,0,1,2]).map(ev).filter(Number.isFinite).slice(0,24);p.contour((x,y)=>{E.x=x;E.y=y;return f(E);},levels,{color:col,width,labels:it.labels!==false});break;}
+        case 'field':{const P=fnOf(it.P==null?it.x:it.P),Q=fnOf(it.Q==null?it.y:it.Q);p.field((x,y)=>{E.x=x;E.y=y;return [P(E),Q(E)];},{color:col,step:Math.max(0.1,gnum(it.step,1)),scale:gnum(it.scale,0.35),normalize:!!it.normalize});break;}
+        case 'text':{const at=vec(it.at,2,[0,0]);if(at.every(Number.isFinite))p.text(at,gtext(it.text||it.label),{color:col});break;}
+      }
+    }
+  }
+  function draw3d(){
+    const s=plot;s.clear();
+    for(const it of items){
+      const col=gcolor(it.color,it.type==='vector'?GCOLOR.a:it.type==='point'?'#1c1b1a':it.type==='curve'||it.type==='polyline'?GCOLOR.d:it.type==='text'?'#57534e':'#3b5bdb');
+      const width=gnum(it.width,undefined);
+      const base=GBASE[String(it.color||'').toLowerCase()]?SURF[GBASE[String(it.color).toLowerCase()]]:SURF.blue;
+      switch(it.type){
+        case 'vector':{const from=vec(it.from,3,[0,0,0]),to=vec(it.to,3,[1,0,0]);if(from.concat(to).every(Number.isFinite))s.vector(from,to,{color:col,width,label:gtext(it.label)||undefined,dash:dash(it)});break;}
+        case 'point':{const at=vec(it.at,3,[0,0,0]);if(at.every(Number.isFinite))s.point(at,{color:col,label:gtext(it.label)||undefined,drop:!!it.drop,ring:!!it.ring,r:gnum(it.r,5)});break;}
+        case 'curve':{const fx=fnOf(it.x),fy=fnOf(it.y),fz=fnOf(it.z);const [t0,t1]=grange(it.t,[0,2*Math.PI]);s.curve(t=>{E.t=t;return [fx(E),fy(E),fz(E)];},t0,t1,{color:col,width,dash:dash(it),arrow:!!it.arrow,n:200});break;}
+        case 'polyline':{const pts=(Array.isArray(it.points)?it.points:[]).map(q=>vec(q,3,[NaN,NaN,NaN]));if(pts.length>=2)s.polyline(pts,{color:col,width,dash:dash(it),arrow:!!it.arrow});break;}
+        case 'surface':{const f=fnOf(it.expr);const xr=grange(it.x,[-s.o.range,s.o.range]),yr=grange(it.y,[-s.o.range,s.o.range]);s.surface((x,y)=>{E.x=x;E.y=y;return f(E);},xr,yr,{n:Math.max(6,Math.min(40,gnum(it.n,24))),base,alpha:gnum(it.alpha,0.6)});break;}
+        case 'param':{const fx=fnOf(it.x),fy=fnOf(it.y),fz=fnOf(it.z);const ur=grange(it.u,[0,2*Math.PI]),vr=grange(it.v,[0,1]);s.param((u,v)=>{E.u=u;E.v=v;return [fx(E),fy(E),fz(E)];},ur,vr,{n:Math.max(6,Math.min(40,gnum(it.n,24))),base,alpha:gnum(it.alpha,0.6)});break;}
+        case 'plane':{const pt=vec(it.point,3,[0,0,0]),n=vec(it.normal,3,[0,0,1]);if(pt.concat(n).every(Number.isFinite)&&norm(n)>1e-9)s.plane(pt,n,{size:gnum(it.size,1.6),fill:gfill(col,.16),stroke:col});break;}
+        case 'polygon':{const pts=(Array.isArray(it.points)?it.points:[]).map(q=>vec(q,3,[NaN,NaN,NaN])).filter(q=>q.every(Number.isFinite));if(pts.length>=3)s.polygon(pts,{fill:gfill(col,.15),stroke:col});break;}
+        case 'text':{const at=vec(it.at,3,[0,0,0]);if(at.every(Number.isFinite))s.text(at,gtext(it.text||it.label),{color:col});break;}
+      }
+    }
+    s.render();
+  }
+  function readout(){
+    if(!readLines.length)return;
+    ro.innerHTML=readLines.map(l=>esc(l.replace(/\{([^{}]+)\}/g,(m,x)=>{const v=ev(x);return Number.isFinite(v)?fmtDec(v,3):'undefined';}))).join('<br>');
+  }
+  let raf=0;
+  function draw(){
+    if(raf)return;
+    raf=requestAnimationFrame(()=>{raf=0;try{if(is3)draw3d();else draw2d();readout();}catch(e){console.warn('graph draw',e);}});
+  }
+  /* controls */
+  const sliders={};
+  if(params.length){
+    sl.hidden=false;
+    for(const p of params){
+      const min=gnum(p.min,-5),max=gnum(p.max,5);
+      sliders[p.name]=sliderRow(sl,{label:gtext(p.label)||p.name,min:Math.min(min,max),max:Math.max(min,max),step:Math.max(1e-6,gnum(p.step,0.1)),value:E[p.name],onInput:v=>{E[p.name]=v;draw();}});
+    }
+  }
+  const presets=(Array.isArray(spec.presets)?spec.presets:[]).filter(q=>q&&typeof q==='object'&&q.values&&typeof q.values==='object').slice(0,8);
+  if(presets.length){
+    pr.hidden=false;
+    presets.forEach((q,i)=>{const b=el('button',{class:'btn small',type:'button'},esc(gtext(q.label)||('Preset '+(i+1))));
+      b.onclick=()=>{for(const [k,v] of Object.entries(q.values)){if(!(k in sliders))continue;const val=typeof v==='number'?v:ev(v);if(!Number.isFinite(val))continue;E[k]=val;sliders[k].set(val);}draw();};pr.appendChild(b);});
+  }
+  if(window.ResizeObserver)new ResizeObserver(()=>draw()).observe(canvas);
+  const setFull=on=>{root.classList.toggle('full',on);fullBtn.innerHTML=on?ICON.shrink:ICON.expand;fullBtn.title=on?'Exit full screen (Esc)':'Enlarge';draw();};
+  fullBtn.onclick=()=>setFull(!root.classList.contains('full'));
+  const api={el:root,draw,get full(){return root.classList.contains('full');},exitFull(){setFull(false);}};
+  graphApi.set(root,api);return api;
+}
+/* Place each message's graphs into the placeholders that mdToHtml left, reusing widgets already
+   built for that message so slider state survives the repaints that streaming causes. */
+const graphCache=new WeakMap();
+function mountGraphs(body,text,msg){
+  const phs=body.querySelectorAll('.graph[data-gi]');if(!phs.length)return;
+  let cache=graphCache.get(msg);if(!cache){cache=[];graphCache.set(msg,cache);}
+  const specs=[];String(text||'').replace(/```graph[^\n]*\n?([\s\S]*?)```/g,(m,j)=>{specs.push(j);});
+  phs.forEach(ph=>{const i=+ph.dataset.gi;if(!(i in specs))return;let w=cache[i];if(!w)w=cache[i]=makeGraph(specs[i]);ph.replaceWith(w.el);w.draw();});
+}
+const graphApi=new WeakMap();   /* widget element -> api, so Esc can find the enlarged one */
+function openGraph(){const el=document.querySelector('#tutor .graph.full');return el?graphApi.get(el):null;}
 
 /* ------------------------------------------------------------ images */
 function loadImage(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src;});}
@@ -276,8 +431,13 @@ function build(){
     if(m.image){const im=document.createElement('img');im.src=m.image;im.alt='attached screenshot';im.className='shot';d.appendChild(im);}
     const b=document.createElement('div');b.className='body';d.appendChild(b);
     if(m.role==='user'){b.textContent=m.text;}
-    else{b.innerHTML=thoughtNote(m.thinkMs)+mdToHtml(m.text||'');typesetEl(b);}
+    else{renderReply(b,m);typesetEl(b);}
     msgs.appendChild(d);scroll();return b;
+  }
+  /* an assistant bubble: the thought note, the markdown, and any graphs mounted into place */
+  function renderReply(b,m,{streaming=false,extra=''}={}){
+    b.innerHTML=thoughtNote(m.thinkMs)+mdToHtml(m.text||'',{streaming})+extra;
+    mountGraphs(b,m.text,m);
   }
   function renderAll(){
     msgs.innerHTML='';
@@ -317,7 +477,7 @@ function build(){
     const reply={role:'assistant',text:''};let reason='',thinkStart=0;
     const body=addMsg(reply);body.innerHTML=thinkingLine('');
     busy=new AbortController();stopBtn.hidden=false;sendBtn.disabled=true;
-    let raf=0;const paint=()=>{raf=0;body.innerHTML=reply.text?thoughtNote(reply.thinkMs)+mdToHtml(reply.text):thinkingLine(reason);scroll();};
+    let raf=0;const paint=()=>{raf=0;if(reply.text)renderReply(body,reply,{streaming:true});else body.innerHTML=thinkingLine(reason);scroll();};
     try{
       const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:apiMessages(),context:buildContext()}),signal:busy.signal});
       if(!res.ok){let msg='The tutor is unavailable right now ('+res.status+').';try{const j=await res.json();if(j.error)msg=j.error;}catch(e){}throw new Error(msg);}
@@ -340,11 +500,11 @@ function build(){
       }
       if(raf)cancelAnimationFrame(raf);
       if(!reply.text.trim())reply.text='(The model returned an empty reply. Try asking again.)';
-      body.innerHTML=thoughtNote(reply.thinkMs)+mdToHtml(reply.text);await typesetEl(body);
+      renderReply(body,reply);await typesetEl(body);
     }catch(e){
       if(raf)cancelAnimationFrame(raf);
-      if(e.name==='AbortError'){if(!reply.text.trim())reply.text='(stopped)';body.innerHTML=thoughtNote(reply.thinkMs)+mdToHtml(reply.text);typesetEl(body);}
-      else{reply.text=reply.text||'';body.innerHTML=thoughtNote(reply.thinkMs)+mdToHtml(reply.text)+'<p class="err">'+esc(e.message||String(e))+'</p>';}
+      if(e.name==='AbortError'){if(!reply.text.trim())reply.text='(stopped)';renderReply(body,reply);typesetEl(body);}
+      else{reply.text=reply.text||'';renderReply(body,reply,{extra:'<p class="err">'+esc(e.message||String(e))+'</p>'});}
     }finally{
       body.classList.remove('streaming');history.push(reply);save();busy=null;stopBtn.hidden=true;sendBtn.disabled=false;scroll();
     }
@@ -375,7 +535,7 @@ function build(){
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
   ta.addEventListener('input',autosize);
   fab.onclick=open;
-  document.addEventListener('keydown',e=>{if(e.key!=='Escape'||panel.hidden||document.querySelector('.tutor-snip'))return;if(board.full)board.exitFull();else if(board.open)board.hide();else close();});
+  document.addEventListener('keydown',e=>{if(e.key!=='Escape'||panel.hidden||document.querySelector('.tutor-snip'))return;const g=openGraph();if(g)g.exitFull();else if(board.full)board.exitFull();else if(board.open)board.hide();else close();});
   if(typeof onShow==='function')onShow('*',updateCtx);
   renderAll();
 }
