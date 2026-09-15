@@ -528,7 +528,8 @@ function onShow(id,fn){(__onShow[id]=__onShow[id]||[]).push(fn);}
 function initModule({key,title,sub,hub='index.html'}){
   Progress.load(key);
   __sections=$$('main > section');
-  try{localStorage.setItem('sm-sections-'+key,String(__sections.length));}catch(e){}
+  /* the hub divides completed sections by this count, so leave out 'Start here', which has nothing to complete */
+  try{localStorage.setItem('sm-sections-'+key,String(__sections.filter(s=>s.dataset.id!=='welcome').length));}catch(e){}
   const nav=$('#nav');
   nav.innerHTML=`<a class="hub" href="${hub}">◀ All modules</a><h1>${title}</h1><p class="sub">${sub||''}</p><div id="navlinks"></div><button class="reset" id="resetProgress">Reset progress</button>`;
   $('#resetProgress').onclick=()=>{Progress.data={};Progress.save();renderNav();};
