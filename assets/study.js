@@ -84,9 +84,12 @@ const Expr=(()=>{
   const INV_OF={sin:'arcsin',cos:'arccos',tan:'arctan'};
   const MULTI_VARS=['theta','phi','rho','lambda','alpha','beta'];
   const GREEK={'θ':'theta','φ':'phi','ϕ':'phi','ρ':'rho','λ':'lambda','α':'alpha','β':'beta'};
-  function tokenize(src){
+  /* extra: optional list of multi-letter variable names (a1, b2, k0) that a caller declares, for
+     specs whose parameters are not single letters. Matched before functions and single letters. */
+  function tokenize(src,extra){
     let s=normalizeInput(String(src)).replace(/[−–]/g,'-').replace(/[·×∙⋅]/g,'*').replace(/÷/g,'/').replace(/π/g,'pi').replace(/√/g,'sqrt').replace(/²/g,'^2').replace(/³/g,'^3').replace(/⁻¹/g,'^-1').replace(/\*\*/g,'^');
     s=s.replace(/[θφϕρλαβ]/g,ch=>' '+GREEK[ch]+' ');
+    const names=Array.isArray(extra)?extra.filter(v=>typeof v==='string'&&v.length>1).sort((a,b)=>b.length-a.length):[];
     const toks=[];let i=0;
     while(i<s.length){
       const c=s[i];
@@ -96,6 +99,8 @@ const Expr=(()=>{
         const sci=/^[eE][+-]?\d+(?![a-zA-Z0-9.^(])/.exec(s.slice(j));if(sci){str+=sci[0];j+=sci[0].length;}
         toks.push({t:'num',v:parseFloat(str)});i=j;continue;}
       if(/[a-zA-Z]/.test(c)){
+        const ex=names.find(nm=>s.startsWith(nm,i)&&!/[0-9]/.test(s[i+nm.length]||''));
+        if(ex){toks.push({t:'var',n:ex});i+=ex.length;continue;}
         let m=null;for(const nm of FN_LIST){if(s.startsWith(nm,i)&&!/[a-zA-Z]/.test(s[i+nm.length]||'')||s.startsWith(nm,i)&&['sqrt','ln','log','exp','abs','sin','cos','tan','sec','csc','cot','sinh','cosh','tanh','arcsin','arccos','arctan','asin','acos','atan','cbrt'].includes(nm)&&!/[a-zA-Z]/.test(s[i+nm.length]||'')){m=nm;break;}}
         if(!m){for(const nm of FN_LIST){if(s.startsWith(nm,i)){m=nm;break;}}}
         if(m){i+=m.length;const tk={t:'fn',n:FN_CANON[m]||m};
@@ -117,9 +122,9 @@ const Expr=(()=>{
     }
     return toks;
   }
-  function parse(src){
+  function parse(src,extra){
     if(src==null||String(src).trim()==='')throw new Error('Empty answer');
-    const toks=tokenize(src);let p=0,absDepth=0;
+    const toks=tokenize(src,extra);let p=0,absDepth=0;
     const peek=()=>toks[p];const next=()=>toks[p++];
     const isOp=v=>{const t=peek();return !!t&&t.t==='op'&&t.v===v;};
     function expect(v,msg){if(!isOp(v))throw new Error(msg);next();}
@@ -190,8 +195,8 @@ const Expr=(()=>{
     return NaN;
   }
   function vars(n,set=new Set()){if(!n)return set;if(n.t==='var')set.add(n.n);['a','b','base'].forEach(k=>{if(n[k])vars(n[k],set);});return set;}
-  /* compile: returns env => number, or throws with a friendly message */
-  function compile(src){const ast=parse(src);return env=>ev(ast,env);}
+  /* compile: returns env => number, or throws with a friendly message. extra = declared multi-letter variables. */
+  function compile(src,extra){const ast=parse(src,extra);return env=>ev(ast,env);}
   function evalNumber(src){const ast=parse(src);const v=ev(ast,{});if(!Number.isFinite(v))throw new Error('That does not evaluate to a number');return v;}
   return {tokenize,parse,ev,vars,compile,evalNumber};
 })();
