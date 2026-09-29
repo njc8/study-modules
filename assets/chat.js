@@ -605,5 +605,8 @@ function build(){
   renderAll();
 }
 
+/* shared with pages that talk to the proxy themselves (the gauntlet's grader) */
+window.TutorKit={endpoint,mdToHtml};
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
 })();
