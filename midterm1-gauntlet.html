@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midterm 1 Gauntlet</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/gauntlet.js"></script>
+<script src="assets/gauntlet-m1.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<section data-id="vec" data-title="Vectors, dot and cross">
+  <p class="eyebrow">Topic 1 · Stewart 12.1 to 12.4</p>
+  <h2>Vectors, dot products, cross products</h2>
+  <p class="lead">What the two products measure, and how to use them for angles, projections, areas, and normals.</p>
+  <div class="note">Every item has two steps. First, explain an idea in your own words, and the tutor grades your explanation. Then do a real problem from your homework, or a practice problem where the homework skipped a topic. An item passes when the explanation is <b>Got it</b> and the problem is right on the first check. Anything else comes back at the end of the run, and stays on <b>Weak spots</b> until you pass it. No calculators on the exam, so none here either.</div>
+  <div class="gx" data-mode="topic" data-topic="vec"></div>
+</section>
+
+<section data-id="lps" data-title="Lines, planes, surfaces">
+  <p class="eyebrow">Topic 2 · Stewart 12.5 to 12.6</p>
+  <h2>Lines, planes, and surfaces</h2>
+  <p class="lead">Building planes from what lies in them, distances by projecting onto a normal, intersection curves, and the quadric surfaces.</p>
+  <div class="gx" data-mode="topic" data-topic="lps"></div>
+</section>
+
+<section data-id="curves" data-title="Curves and motion">
+  <p class="eyebrow">Topic 3 · Stewart 13.1 to 13.4, 16.2</p>
+  <h2>Space curves, arc length, and motion</h2>
+  <p class="lead">Parametrizations and what changes between them, tangent vectors, arc length, curvature, velocity and acceleration, and scalar line integrals.</p>
+  <div class="gx" data-mode="topic" data-topic="curves"></div>
+</section>
+
+<section data-id="partials" data-title="Partial derivatives">
+  <p class="eyebrow">Topic 4 · Stewart 14.2 to 14.4</p>
+  <h2>Limits, partial derivatives, tangent planes</h2>
+  <p class="lead">Path-dependent limits, what a partial derivative measures, Clairaut, tangent planes, and linear approximation.</p>
+  <div class="gx" data-mode="topic" data-topic="partials"></div>
+</section>
+
+<section data-id="grad" data-title="Gradient and chain rule">
+  <p class="eyebrow">Topic 5 · Stewart 14.5 to 14.6</p>
+  <h2>The gradient, directional derivatives, the chain rule</h2>
+  <p class="lead">Steepest ascent, reading a contour map, normals to level surfaces, tangent lines to intersections, and the chain rule.</p>
+  <div class="gx" data-mode="topic" data-topic="grad"></div>
+</section>
+
+<section data-id="exam" data-title="Shuffled exam">
+  <p class="eyebrow">All topics</p>
+  <h2>Shuffled exam</h2>
+  <p class="lead">The same items, dealt across every topic in random order, the way the midterm will mix them.</p>
+  <div class="gx" data-mode="exam"></div>
+</section>
+
+<section data-id="weak" data-title="Weak spots">
+  <p class="eyebrow">Review</p>
+  <h2>Weak spots</h2>
+  <p class="lead">Every item you have not yet passed cleanly, from any run. Clear this list before the exam.</p>
+  <div class="gx" data-mode="weak"></div>
+</section>
+
+</main>
+</div>
+<script>
+initGauntlet({key:'m1',items:window.GAUNTLET_M1,topics:[{id:'vec'},{id:'lps'},{id:'curves'},{id:'partials'},{id:'grad'}]});
+initModule({key:'gauntlet-m1',title:'Midterm 1 Gauntlet',sub:'Concept first, then the real problem · Stewart 12 to 14.6'});
+</script>
+</body>
+</html>
