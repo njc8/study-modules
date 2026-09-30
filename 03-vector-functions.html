@@ -283,25 +283,68 @@ select.pick{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--l
 <section data-id="lineint" data-title="Scalar line integrals" data-goal="6">
   <p class="eyebrow">Chapter 6 · Stewart 16.2</p>
   <h2>Scalar line integrals</h2>
-  <p class="lead">Ordinary integrals add up \(f\) along a straight interval. Line integrals add up \(f\) along a curve, and the arc length element \(ds\) from Chapter 4 does all the work.</p>
+  <p class="lead">An ordinary integral adds up \(f\) along an interval of the \(x\)-axis. A line integral adds up \(f\) along a curve. The picture to keep in mind is a fence standing on the curve.</p>
 
-  <p>Let \(C\) be a smooth curve parametrized by \(\mathbf{r}(t)=\langle x(t),y(t)\rangle\) for \(a\le t\le b\). Chop the curve into tiny pieces of length \(\Delta s\), multiply each by the value of \(f\) there, and add. In the limit:</p>
-  <div class="formula">\(\displaystyle\int_C f(x,y)\,ds=\int_a^b f\big(\mathbf{r}(t)\big)\,\big|\mathbf{r}'(t)\big|\,dt\)<span class="cap">Substitute the curve into \(f\), multiply by the speed, integrate over the parameter. The answer is an ordinary single-variable integral.</span></div>
-  <p>The factor \(|\mathbf{r}'(t)|\) is the whole idea, and it is nothing new: it is the same <b>arc length element</b> you integrated in Chapter 4 to get the length of a curve.</p>
-  <div class="formula">\(ds=\big|\mathbf{r}'(t)\big|\,dt=\sqrt{\left(\dfrac{dx}{dt}\right)^{2}+\left(\dfrac{dy}{dt}\right)^{2}}\;dt\)<span class="cap">Speed times elapsed time equals distance travelled. In space add \((dz/dt)^2\) under the root.</span></div>
+  <h3>The picture: a fence on the curve</h3>
+  <p>Lay the curve \(C\) on the floor, the \(xy\)-plane. At every point \((x,y)\) of \(C\), stand a wall straight up to height \(f(x,y)\). Because the wall follows the curve, it is a fence, and the line integral is its area:</p>
+  <div class="formula">\(\displaystyle\int_C f(x,y)\,ds=\text{area of the fence}\)<span class="cap">\(ds\) is a tiny length measured along \(C\). A thin sliver of fence has height \(f\) and width \(ds\), so its area is \(f\,ds\). The integral adds up the slivers.</span></div>
+  <p>The same number has two other readings. If \(C\) is a wire and \(f\) is its density (mass per unit length), \(\int_C f\,ds\) is the mass of the wire. If \(f=1\), the fence has height 1 everywhere, so its area equals its length: \(\int_C 1\,ds\) is the arc length of \(C\).</p>
 
-  <h3>The four parametrizations you need</h3>
+  <h3>From the picture to a formula</h3>
   <div class="card tint">
-    <ul>
-      <li><b>Segment from \(P\) to \(Q\):</b> \(\mathbf{r}(t)=(1-t)P+tQ\), \(0\le t\le 1\). Equivalently \(\mathbf{r}(t)=P+t(Q-P)\). Then \(\mathbf{r}'(t)=Q-P\) is constant, so \(|\mathbf{r}'|=|Q-P|\) is the length of the segment.</li>
-      <li><b>Circle of radius \(a\) about the origin:</b> \(\mathbf{r}(t)=\langle a\cos t,\,a\sin t\rangle\), \(0\le t\le 2\pi\). Then \(|\mathbf{r}'(t)|=a\), so \(ds=a\,dt\). Use \(0\le t\le\pi\) for the upper half, \(-\pi/2\le t\le \pi/2\) for the right half, \(0\le t\le \pi/2\) for the first-quadrant quarter.</li>
-      <li><b>Graph \(y=g(x)\):</b> use \(x\) itself as the parameter, \(\mathbf{r}(x)=\langle x,\,g(x)\rangle\). Then \(ds=\sqrt{1+g'(x)^{2}}\,dx\).</li>
-      <li><b>Helix:</b> \(\mathbf{r}(t)=\langle \cos t,\,\sin t,\,t\rangle\). Then \(\mathbf{r}'=\langle -\sin t,\cos t,1\rangle\) and \(|\mathbf{r}'|=\sqrt{2}\), a constant, which is why helices show up in every problem set.</li>
-    </ul>
+    <ol>
+      <li><b>Chop.</b> Cut \(C\) into short pieces. Piece \(i\) has length \(\Delta s_i\), and \(P_i\) is a point on it.</li>
+      <li><b>Approximate.</b> Over a short piece the fence is nearly a rectangle, height \(f(P_i)\) and width \(\Delta s_i\). So the fence area is about \(\sum f(P_i)\,\Delta s_i\), and in the limit of tiny pieces it is exactly \(\int_C f\,ds\).</li>
+      <li><b>Switch to the parameter.</b> You cannot integrate "along \(s\)" directly, because the curve comes to you as \(\mathbf{r}(t)=\langle x(t),y(t)\rangle\) for \(a\le t\le b\). In a short time \(dt\), the point \(\mathbf{r}(t)\) moves at speed \(|\mathbf{r}'(t)|\), so it covers a length \(ds=|\mathbf{r}'(t)|\,dt\). Speed times time is distance.</li>
+    </ol>
+  </div>
+  <p>Put the three steps together and every line integral becomes an ordinary integral in \(t\):</p>
+  <div class="formula">\(\displaystyle\int_C f(x,y)\,ds=\int_a^b f\big(\mathbf{r}(t)\big)\,\big|\mathbf{r}'(t)\big|\,dt\)<span class="cap">\(f(\mathbf{r}(t))\) is the height of the fence at the point \(\mathbf{r}(t)\). \(|\mathbf{r}'(t)|\,dt\) is the width of the sliver that the time step \(dt\) sweeps out.</span></div>
+  <div class="formula">\(ds=\big|\mathbf{r}'(t)\big|\,dt=\sqrt{\left(\dfrac{dx}{dt}\right)^{2}+\left(\dfrac{dy}{dt}\right)^{2}}\;dt\)<span class="cap">The arc length element from Chapter 4. For a curve in space, add \((dz/dt)^2\) under the root.</span></div>
+
+  <div class="card">
+    <h4>Explore: build the fence</h4>
+    <div class="two">
+      <div><canvas class="scene wide" id="fenScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The purple curve \(C\) lies on the floor. The green fence stands on it, up to height \(f\). The orange post is the height at the current point \(\mathbf{r}(t)\).</p></div>
+      <div>
+        <p class="small muted" style="margin:0">Curve \(C\)</p><div class="presets" id="fenCurve"></div>
+        <p class="small muted" style="margin:0">Height \(f(x,y)\)</p><div class="presets" id="fenF"></div>
+        <p class="small muted" style="margin:0">Fence</p><div class="presets" id="fenN"></div>
+        <div class="presets" id="fenOpt"></div>
+        <div class="sliders" id="fenSl"></div>
+        <div class="readout" id="fenOut"></div>
+        <p class="hint">Pick <b>8 panels</b> to see the sum \(\sum f(P_i)\,\Delta s_i\): each panel is a rectangle, height \(f\) at its middle and width the length of its piece. Go to 16 panels and the sum closes in on the exact area. With \(f=1\), the fence area equals the length of \(C\).</p>
+      </div>
+    </div>
+    <h4>Unroll the fence</h4>
+    <div class="two">
+      <div><canvas class="scene short" id="fenFlat"></canvas><div class="presets" id="fenView"></div><p class="plotcap" id="fenFlatCap"></p></div>
+      <div>
+        <p>Cut the fence off the curve and lay it flat. Measured <b>along the curve</b>, by arc length \(s\), it is the region under height \(f\), and its width is the length of \(C\).</p>
+        <p>The formula measures <b>along the parameter</b> \(t\) instead. Switch views: the same fence gets squeezed or stretched sideways, because one unit of \(t\) covers \(|\mathbf{r}'(t)|\) units of curve. To keep the area the same, every height is multiplied by that speed. The new height, \(f(\mathbf{r}(t))\,|\mathbf{r}'(t)|\), is exactly the integrand.</p>
+        <p>The dashed curve is \(f\) alone. Integrating it in \(t\) gives the wrong area, and that is the most common mistake in this chapter.</p>
+      </div>
+    </div>
   </div>
 
-  <p><b>What it means.</b> If \(f\ge 0\), then \(\int_C f\,ds\) is the area of the curtain, or fence, that stands on \(C\) and reaches up to height \(f\). If instead \(C\) is a wire and \(f\) is its density, the same integral is the mass of the wire. Set \(f=1\) and you get the arc length formula from Chapter 4 back.</p>
-  <p><b>Orientation does not matter.</b> Walking the curve backwards gives the same pieces \(\Delta s\) with the same values of \(f\), so \(\int_{-C}f\,ds=\int_C f\,ds\). Lengths are positive no matter which way you walk. <b>Piecewise curves add:</b> if \(C\) is \(C_1\) followed by \(C_2\), integrate over each and add.</p>
+  <h3>Every problem is three moves</h3>
+  <div class="card tint">
+    <ol>
+      <li><b>Parametrize</b> \(C\): write \(\mathbf{r}(t)\) and the interval \(a\le t\le b\).</li>
+      <li><b>Find the speed</b> \(|\mathbf{r}'(t)|\). Then \(ds=|\mathbf{r}'(t)|\,dt\).</li>
+      <li><b>Substitute and integrate:</b> put \(x(t)\) and \(y(t)\) into \(f\), multiply by the speed, and integrate from \(a\) to \(b\).</li>
+    </ol>
+  </div>
+  <p>Step 1 is the only one that takes thought, and almost every curve you will meet is one of these four:</p>
+  <div class="card">
+    <ul>
+      <li><b>Segment from \(P\) to \(Q\):</b> \(\mathbf{r}(t)=(1-t)P+tQ=P+t(Q-P)\), \(0\le t\le 1\). The velocity \(\mathbf{r}'(t)=Q-P\) is constant, so the speed is \(|Q-P|\), the length of the segment.</li>
+      <li><b>Circle of radius \(a\) about the origin:</b> \(\mathbf{r}(t)=\langle a\cos t,\,a\sin t\rangle\), \(0\le t\le 2\pi\). The speed is \(a\), so \(ds=a\,dt\). Use \(0\le t\le\pi\) for the upper half, \(-\pi/2\le t\le \pi/2\) for the right half, and \(0\le t\le \pi/2\) for the first-quadrant quarter.</li>
+      <li><b>Graph \(y=g(x)\):</b> let \(x\) be the parameter, \(\mathbf{r}(x)=\langle x,\,g(x)\rangle\). Then \(ds=\sqrt{1+g'(x)^{2}}\,dx\).</li>
+      <li><b>Helix:</b> \(\mathbf{r}(t)=\langle \cos t,\,\sin t,\,t\rangle\). Then \(\mathbf{r}'=\langle -\sin t,\cos t,1\rangle\) and the speed is the constant \(\sqrt{2}\).</li>
+    </ul>
+  </div>
+  <p><b>Direction does not matter.</b> A fence has the same area whichever end you start walking from, so \(\int_{-C}f\,ds=\int_C f\,ds\). <b>Pieces add.</b> If \(C\) is \(C_1\) followed by \(C_2\), integrate over each piece and add the results. <b>Curves in space</b> use the same formula with \(z(t)\) included. There is no floor to stand a fence on, so read the answer as the mass of a wire with density \(f\).</p>
 
   <div class="card">
     <h4>Step by step: \(\int_C xy\,ds\) over a segment</h4>
@@ -312,25 +355,10 @@ select.pick{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--l
       <button class="btn" id="swkNew">New problem</button>
       <span class="status" id="swkStatus"></span>
     </div>
-    <p class="hint">Notice that step 2 does all the work. Once the curve is parametrized, the rest is a one-variable integral you could have done in Calculus I.</p>
+    <p class="hint">Once the curve is parametrized, the rest is a one-variable integral you could have done in Calculus I.</p>
   </div>
 
-  <div class="card">
-    <h4>Explore: the fence under \(f\)</h4>
-    <div class="two">
-      <div><canvas class="scene" id="fenPlot"></canvas><p class="plotcap">The heat map is \(f\) (darker means larger). The purple curve is \(C\). Each green picket is drawn perpendicular to \(C\) with height proportional to \(f\) at its base.</p></div>
-      <div>
-        <div class="presets" id="fenCurve"></div>
-        <div class="presets" id="fenF"></div>
-        <div class="sliders" id="fenSl"></div>
-        <div class="readout" id="fenOut"></div>
-        <p class="hint">Drag the slider and watch the running total grow fastest where the pickets are tall and where the curve is moving quickly. Switch to the quarter circle: the speed \(|\mathbf{r}'|\) is constant there, so the growth rate depends only on \(f\). On the parabola the speed increases with \(t\), and the total climbs faster near the end even where \(f\) is flat.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="note"><b>Parametrize first, always.</b> There is one formula, \(\int_a^b f(\mathbf{r}(t))|\mathbf{r}'(t)|\,dt\), and every line integral problem is the same three moves: write \(\mathbf{r}(t)\), compute \(|\mathbf{r}'(t)|\), substitute. If the curve is given as \(y=g(x)\) or as a circle, use the standard parametrization above instead of inventing one.</div>
-  <div class="warn"><b>\(ds\) is not \(dt\).</b> Dropping the factor \(|\mathbf{r}'(t)|\) is the most common error in this chapter (and on the homework). It is harmless only when \(|\mathbf{r}'|=1\), which almost never happens unless the curve is parametrized by arc length. Check: on the circle \(\langle a\cos t,a\sin t\rangle\), \(ds=a\,dt\), and \(\int_C 1\,ds=2\pi a\) as it should be.</div>
+  <div class="warn"><b>\(ds\) is not \(dt\).</b> Dropping the speed \(|\mathbf{r}'(t)|\) integrates the dashed curve in the unrolled view instead of the real one. It is only harmless when the speed is 1. Quick check on the circle \(\langle a\cos t,a\sin t\rangle\): \(ds=a\,dt\), and \(\int_C 1\,ds=\int_0^{2\pi}a\,dt=2\pi a\), the circumference, as it should be.</div>
 
   <h3>Practice</h3>
   <div class="card" id="drill-lineint"></div>
@@ -1270,43 +1298,116 @@ const stepUI=(mountId,statusId,prevId,nextId)=>({
 })();
 
 (function(){
-  const plot=new Plot2D('#fenPlot',{xmin:-2,xmax:2,ymin:-1.6,ymax:2.4});
+  /* The fence: C on the floor, a wall up to height f. Linked to a flat "unrolled" view against s or t. */
+  const sc=new Scene3D('#fenScene',{range:2,azim:-28,elev:24,zoom:1.45});
+  const flat=new Plot2D('#fenFlat',{xmin:0,xmax:4,ymin:0,ymax:4,grid:false,axes:false,labels:false});
   const CURVES=[
-    {n:'segment',r:t=>[-1.5+3*t,-1+2*t],rp:()=>[3,2],t0:0,t1:1},
-    {n:'quarter circle',r:t=>[1.6*Math.cos(t),1.6*Math.sin(t)],rp:t=>[-1.6*Math.sin(t),1.6*Math.cos(t)],t0:0,t1:Math.PI/2},
-    {n:'parabola y = x²',r:t=>[t,t*t],rp:t=>[1,2*t],t0:0,t1:1.4}];
-  const FS=[{n:'f = x² + y²',f:(x,y)=>x*x+y*y},{n:'f = 2 + x',f:(x,y)=>2+x},
-    {n:'f = 2 + y',f:(x,y)=>2+y},{n:'f = 3 − xy',f:(x,y)=>3-x*y}];
-  let ci=0,fi=0,s=0.6;
+    /* az: a camera azimuth that looks across the fence rather than along it */
+    {n:'segment',r:t=>[-1.5+3*t,-1+2*t],rp:()=>[3,2],t0:0,t1:1,az:-22},
+    {n:'quarter circle',r:t=>[1.5*Math.cos(t),1.5*Math.sin(t)],rp:t=>[-1.5*Math.sin(t),1.5*Math.cos(t)],t0:0,t1:Math.PI/2,az:32},
+    {n:'parabola y = x²',r:t=>[t,t*t],rp:t=>[1,2*t],t0:-1,t1:1,az:-28}];
+  const FS=[{n:'f = 1',f:()=>1},{n:'f = x² + y²',f:(x,y)=>x*x+y*y},{n:'f = 2 + x',f:(x,y)=>2+x},{n:'f = 1 + y',f:(x,y)=>1+y}];
+  const NS=[{n:'smooth',k:0},{n:'4 panels',k:4},{n:'8 panels',k:8},{n:'16 panels',k:16}];
+  const VIEWS=[{n:'along the curve (s)',v:'s'},{n:'along the parameter (t)',v:'t'}];
+  let ci=2,fi=3,ni=0,vi=0,s=0.6,surf=false,lastCap='';
+  const GREEN='rgba(22,163,74,.36)',GHOST='rgba(22,163,74,.06)',EDGE='#15803d',POST='#d97706',CURVE='#7c3aed';
+  const speed=t=>{const v=CURVES[ci].rp(t);return Math.hypot(v[0],v[1]);};
+  const height=t=>{const p=CURVES[ci].r(t);return FS[fi].f(p[0],p[1]);};
+  /* arc length and fence area between two parameter values (trapezoid rule) */
+  const quad=(g,a,b,n=200)=>{let acc=0;for(let i=0;i<n;i++){const u1=a+(b-a)*i/n,u2=a+(b-a)*(i+1)/n;acc+=(g(u1)+g(u2))/2*(u2-u1);}return acc;};
+  const arc=(a,b)=>quad(speed,a,b);
+  const area=(a,b)=>quad(u=>height(u)*speed(u),a,b);
+  const panels=k=>{const C=CURVES[ci],out=[];for(let i=0;i<k;i++){const a=C.t0+(C.t1-C.t0)*i/k,b=C.t0+(C.t1-C.t0)*(i+1)/k,m=(a+b)/2;out.push({a,b,m,h:height(m),ds:arc(a,b)});}return out;};
   const mkBtns=(mount,list,get,set)=>{const box=$(mount);box.innerHTML='';
     list.forEach((it,i)=>{const b=el('button',{class:'btn small'+(get()===i?' on':'')},it.n);
       b.onclick=()=>{set(i);$$('.btn',box).forEach((x,j)=>x.classList.toggle('on',j===i));draw();};box.appendChild(b);});};
-  const speed=t=>{const v=CURVES[ci].rp(t);return Math.hypot(v[0],v[1]);};
-  const integ=(a,b)=>{const C=CURVES[ci],f=FS[fi].f,n=240;let acc=0;
-    const g=u=>{const p=C.r(u);return f(p[0],p[1])*speed(u);};
-    for(let i=0;i<n;i++){const u1=a+(b-a)*i/n,u2=a+(b-a)*(i+1)/n;acc+=(g(u1)+g(u2))/2*(b-a)/n;}return acc;};
-  function draw(){
-    const C=CURVES[ci],f=FS[fi].f,t=C.t0+(C.t1-C.t0)*s;
-    plot.begin();
-    plot.heat((x,y)=>f(x,y),{n:48,colorFn:v=>`rgba(59,91,219,${clamp(v/8,0,1)*0.22})`});
-    const N=44,tips=[];
-    for(let i=0;i<=N;i++){
-      const u=C.t0+(C.t1-C.t0)*i/N,p=C.r(u),v=C.rp(u),nr=unit([-v[1],v[0]]);
-      const h=f(p[0],p[1])*0.22,tip=[p[0]+nr[0]*h,p[1]+nr[1]*h];tips.push(tip);
-      plot.poly([p,tip],{fill:null,stroke:u<=t?'rgba(22,163,74,.8)':'rgba(22,163,74,.25)',width:1.4,close:false});
+
+  function draw3D(tc){
+    const C=CURVES[ci],f=FS[fi].f,k=NS[ni].k;const r3=(t,z=0)=>{const p=C.r(t);return [p[0],p[1],z];};
+    sc.clear();
+    /* frame the curve and its fence: aim at the middle of the curve, halfway up the tallest post */
+    const pts=[];for(let i=0;i<=60;i++){const u=C.t0+(C.t1-C.t0)*i/60,p=C.r(u);pts.push([p[0],p[1],height(u)]);}
+    const mid=j=>(Math.min(...pts.map(p=>p[j]))+Math.max(...pts.map(p=>p[j])))/2;
+    sc.o.center=[mid(0),mid(1),0.45*Math.max(...pts.map(p=>p[2]),1)];
+    if(surf){
+      /* a ribbon of the graph z = f(x, y) along C: the fence's top edge lies on it */
+      sc.param((u,w)=>{const p=C.r(u),v=C.rp(u),nr=unit([-v[1],v[0]]),x=p[0]+w*nr[0],y=p[1]+w*nr[1];return [x,y,f(x,y)];},[C.t0,C.t1],[-0.7,0.7],{n:40,m:8,alpha:.16,stroke:'rgba(59,91,219,.18)'});
     }
-    plot.poly(tips,{fill:null,stroke:'#16a34a',width:1.6,close:false});
-    plot.param(C.r,C.t0,C.t1,{color:'#7c3aed',width:3});
-    const p=C.r(t);plot.point(p,{color:'#7c3aed',r:6,ring:true});
-    $('#fenOut').innerHTML=`C: ${C.n} &nbsp;&nbsp; ${FS[fi].n}<br>t = ${fmtDec(t,3)} &nbsp; r(t) = (${fmtDec(p[0],2)}, ${fmtDec(p[1],2)})<br>`+
-      `f(r(t)) = ${fmtDec(f(p[0],p[1]),3)} &nbsp; |r′(t)| = ${fmtDec(speed(t),3)}<br>`+
-      `running total ∫ f ds = <b>${fmtDec(integ(C.t0,t),4)}</b><br>whole curve ∫<sub>C</sub> f ds = ${fmtDec(integ(C.t0,C.t1),4)} = area of the fence`;
+    if(!k){
+      /* smooth fence: one strip surface up to the current point, a ghosted one after it */
+      const wall=(a,b,color)=>{if(b-a>1e-9)sc.param((u,w)=>r3(u,w*height(u)),[a,b],[0,1],{n:Math.max(2,Math.round(70*(b-a)/(C.t1-C.t0))),m:1,color,stroke:null});};
+      wall(C.t0,tc,GREEN);wall(tc,C.t1,GHOST);
+    }else{
+      panels(k).forEach(P=>{const on=P.m<=tc;
+        sc.polygon([r3(P.a),r3(P.b),r3(P.b,P.h),r3(P.a,P.h)],{fill:on?GREEN:GHOST,stroke:on?EDGE:'rgba(21,128,61,.28)',lineWidth:1.2});});
+    }
+    /* the top edge of the true fence: solid where built, dashed beyond */
+    const top=(a,b,o)=>{if(b>a)sc.curve(t=>r3(t,height(t)),a,b,{n:120,...o});};
+    top(C.t0,tc,{color:EDGE,width:k?1.4:2.2,dash:k?[5,4]:null});top(tc,C.t1,{color:'rgba(21,128,61,.45)',width:1.4,dash:[5,4]});
+    sc.curve(t=>r3(t),C.t0,C.t1,{color:CURVE,width:3.2});
+    const h=height(tc);
+    sc.polyline([r3(tc),r3(tc,h)],{color:POST,width:3.2});
+    sc.point(r3(tc),{color:CURVE,r:6,ring:true});sc.point(r3(tc,h),{color:POST,r:4.5});
+    sc.text(r3(tc,h),'f = '+fmtDec(h,2),{color:'#b45309',dx:8,dy:-6,font:'600 13px -apple-system,Segoe UI,sans-serif'});
+    sc.render();
   }
-  mkBtns('#fenCurve',CURVES,()=>ci,i=>ci=i);
-  mkBtns('#fenF',FS,()=>fi,i=>fi=i);
+
+  function drawFlat(tc){
+    const C=CURVES[ci],k=NS[ni].k,v=VIEWS[vi].v,N=240;
+    const ts=[],S=[0];for(let i=0;i<=N;i++)ts.push(C.t0+(C.t1-C.t0)*i/N);
+    for(let i=1;i<=N;i++)S.push(S[i-1]+arc(ts[i-1],ts[i]));
+    const L=S[N],fv=ts.map(height),gv=ts.map((t,i)=>fv[i]*speed(t));
+    const X=i=>v==='s'?S[i]:ts[i],Y=i=>v==='s'?fv[i]:gv[i];
+    /* one shared frame for both views, so switching shows the same area changing shape */
+    const hi=Math.max(...fv,...gv,1),x0=Math.min(0,C.t0),x1=Math.max(L,C.t1);
+    Object.assign(flat.o,{xmin:x0-0.08*(x1-x0),xmax:x1+0.06*(x1-x0),ymin:-0.1*hi,ymax:1.14*hi});
+    flat.begin();
+    const step=hi<=5?1:hi<=10?2:5;flat.grid(step);flat.axes();
+    for(let y=step;y<=flat.o.ymax;y+=step)flat.text([flat.o.xmin,y],String(y),{color:'#8b877e',font:'12px -apple-system,Segoe UI,sans-serif',dx:4,dy:4});
+    for(let x=Math.ceil(flat.o.xmin);x<=flat.o.xmax;x++)if(x)flat.text([x,0],String(x),{color:'#8b877e',font:'12px -apple-system,Segoe UI,sans-serif',align:'center',dy:14});
+    const sAt=t=>arc(C.t0,t),xAt=t=>v==='s'?sAt(t):t;
+    if(!k){
+      const on=[];for(let i=0;i<=N&&ts[i]<=tc;i++)on.push([X(i),Y(i)]);
+      const hc=v==='s'?height(tc):height(tc)*speed(tc);on.push([xAt(tc),hc]);
+      flat.poly([[X(0),0],...on,[xAt(tc),0]],{fill:'rgba(22,163,74,.3)',stroke:null});
+      flat.poly([[X(0),0],...ts.map((_,i)=>[X(i),Y(i)]),[X(N),0]],{fill:GHOST,stroke:null});
+    }else{
+      panels(k).forEach(P=>{const on=P.m<=tc,xa=xAt(P.a),xb=xAt(P.b),y=v==='s'?P.h:P.h*speed(P.m);
+        flat.poly([[xa,0],[xb,0],[xb,y],[xa,y]],{fill:on?GREEN:GHOST,stroke:on?EDGE:'rgba(21,128,61,.28)',width:1.2});});
+    }
+    if(v==='t'){flat.fn(height,{xmin:C.t0,xmax:C.t1,color:'#8b877e',width:1.6,dash:[6,5]});const j=Math.round(N*0.9);flat.text([X(j),fv[j]],'f alone',{color:'#6b6862',dy:18,align:'center'});}
+    flat.poly(ts.map((_,i)=>[X(i),Y(i)]),{fill:null,stroke:EDGE,width:2.2,close:false});
+    const xc=xAt(tc),yc=v==='s'?height(tc):height(tc)*speed(tc);
+    flat.poly([[xc,0],[xc,yc]],{fill:null,stroke:POST,width:2.6,close:false});flat.point([xc,yc],{color:POST,r:4.5});
+    flat.text([flat.o.xmax,0],v,{color:'#57534e',font:'italic 600 14px -apple-system,Segoe UI,sans-serif',align:'right',dx:-4,dy:-6});
+    const tot=fmtDec(area(C.t0,C.t1),3);
+    const cap=v==='s'?`Green area ${tot}: the whole fence. Width: the length of \\(C\\), ${fmtDec(L,3)}. Height: \\(f\\).`
+      :`Green area ${tot}: the same fence. Width: ${fmtDec(C.t1-C.t0,3)} units of \\(t\\). Height: \\(f(\\mathbf{r}(t))\\,|\\mathbf{r}'(t)|\\).`;
+    if(cap!==lastCap){lastCap=cap;$('#fenFlatCap').innerHTML=cap;typeset($('#fenFlatCap'));}
+  }
+
+  function draw(){
+    const C=CURVES[ci],k=NS[ni].k,tc=C.t0+(C.t1-C.t0)*s,p=C.r(tc);
+    draw3D(tc);drawFlat(tc);
+    const total=area(C.t0,C.t1);
+    let out=`t = ${fmtDec(tc,3)} &nbsp; r(t) = (${fmtDec(p[0],2)}, ${fmtDec(p[1],2)})<br>`+
+      `height f(r(t)) = ${fmtDec(height(tc),3)}<br>speed |r′(t)| = ${fmtDec(speed(tc),3)}<br>`+
+      `fence built so far = <b>${fmtDec(area(C.t0,tc),3)}</b><br>`;
+    if(k){const P=panels(k),sum=P.reduce((a,q)=>a+q.h*q.ds,0);out+=`${k} panels: Σ f(Pᵢ) Δsᵢ = <b>${fmtDec(sum,3)}</b><br>`;}
+    out+=`whole fence ∫<sub>C</sub> f ds = <b>${fmtDec(total,3)}</b><br>length of C = ${fmtDec(arc(C.t0,C.t1),3)}`;
+    $('#fenOut').innerHTML=out;
+  }
+  /* reset the camera when the fence changes: look across it, and zoom out for tall fences */
+  const frame=()=>{const C=CURVES[ci];let hmax=0;for(let i=0;i<=60;i++)hmax=Math.max(hmax,height(C.t0+(C.t1-C.t0)*i/60));sc.o.azim=C.az;sc.o.zoom=Math.min(1.45,4.1/Math.max(hmax,1));};
+  mkBtns('#fenCurve',CURVES,()=>ci,i=>{ci=i;frame();});
+  mkBtns('#fenF',FS,()=>fi,i=>{fi=i;frame();});
+  mkBtns('#fenN',NS,()=>ni,i=>ni=i);
+  mkBtns('#fenView',VIEWS,()=>vi,i=>vi=i);
+  const sb=el('button',{class:'btn small'},'show the surface z = f(x, y)');
+  sb.onclick=()=>{surf=!surf;sb.classList.toggle('on',surf);draw();};$('#fenOpt').appendChild(sb);
   $('#fenSl').style.gridTemplateColumns='1fr';
-  sliderRow($('#fenSl'),{label:'position along C',min:0,max:1,step:0.01,value:s,onInput:v=>{s=v;draw();}});
-  redrawOnShow('lineint',draw);draw();
+  sliderRow($('#fenSl'),{label:'how far along C',min:0,max:1,step:0.01,value:s,onInput:v=>{s=v;draw();}});
+  frame();redrawOnShow('lineint',draw);draw();
   new Drill({mount:'#drill-lineint',section:'lineint',goal:6,...mixDrill([Q.paramSeg,Q.paramSeg,Q.segScalar,Q.segScalar,Q.circleScalar,Q.helixScalar,Q.graphScalar])});
 })();
 
