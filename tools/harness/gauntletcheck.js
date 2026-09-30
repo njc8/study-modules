@@ -5,7 +5,9 @@
      every non-written part has a sol (or a valid choice ans), and a written part is the only part;
    - checkers: each part's sol passes its checker, and a wrong answer ("7919" or a flipped choice) fails;
    - flow: drives the topic runner through the item (skip the concept, fill the sols, check, next) and
-     confirms it is recorded as a pass; then fails one item and confirms it is requeued and listed as weak.
+     confirms it is recorded as a pass; then fails one item and confirms it is requeued and listed as weak;
+   - mixed: runs every problem with no concept step, checks no title leaks before an item is finished,
+     that a miss lands on Weak spots, and that a later clean solve clears it.
    Also flags em dashes and bare "<letter" inside TeX in the item bank. Exit code 1 on any failure. */
 const fs=require('fs'),path=require('path');
 const {JSDOM,VirtualConsole}=require('jsdom');
@@ -54,9 +56,12 @@ function main(){
   /* ---- flow: run every topic end to end with correct answers */
   const click=el=>el.dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
   const answerCurrent=(runner,correct)=>{
-    const m=runner.mount;click(m.querySelector('[data-a=idk]'));
-    runner.cur.c='got';                                   /* stand in for a GOT IT verdict from the tutor */
-    click(m.querySelector('[data-a=cont]'));
+    const m=runner.mount;
+    if(!runner.blind){
+      click(m.querySelector('[data-a=idk]'));
+      runner.cur.c='got';                                 /* stand in for a GOT IT verdict from the tutor */
+      click(m.querySelector('[data-a=cont]'));
+    }
     const app=m.querySelector('.gx-app');const it=runner.cur.it;
     if(it.app.parts[0].kind==='written'){click(app.querySelector('[data-a=sol]'));}
     else{
@@ -85,6 +90,29 @@ function main(){
   if(r0.run.queue.filter(id=>id===first).length!==2)fails.push('flow: a failed item was not requeued');
   const weak=G.runners.weak;weak.render();
   if(!weak.mount.textContent.includes(G.byId[first].title))fails.push('flow: a failed item is not listed under Weak spots');
+  /* ---- flow: mixed practice, problems only */
+  const mx=G.runners.mixed;
+  if(!mx)fails.push('mixed: no mixed runner on the page');
+  else{
+    mx.mount.querySelector('.gx-len .btn:last-child').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));click(mx.mount.querySelector('[data-a=start]'));
+    if(mx.run.queue.length!==items.length)fails.push(`mixed: "All" dealt ${mx.run.queue.length} of ${items.length}`);
+    const before=JSON.parse(JSON.stringify(G.store.rec));
+    const target=mx.run.queue.find(id=>G.byId[id].app.parts[0].kind!=='written');let guard=0,k=0;
+    while(mx.run&&mx.run.pos<mx.run.queue.length&&guard++<200){
+      const it=G.byId[mx.run.queue[mx.run.pos]];
+      if(mx.mount.querySelector('.gx-concept'))bad(it,'mixed: concept step shown');
+      if(mx.mount.innerHTML.includes(it.title))bad(it,'mixed: title visible before the problem is finished');
+      const miss=it.id===target&&k++===0;answerCurrent(mx,!miss);
+      if(miss){
+        const rec=G.store.rec[target];
+        if(!rec||rec.pass||rec.c!==null)fails.push('mixed: a missed problem was not recorded as a mixed miss');
+        weak.render();if(!weak.mount.textContent.includes(G.byId[target].title))fails.push('mixed: a missed problem is not listed under Weak spots');
+      }
+    }
+    if(!mx.mount.querySelector('.result'))fails.push('mixed: no summary after the run');
+    if(!(G.store.rec[target]||{}).pass)fails.push('mixed: a clean retry did not clear the mixed miss');
+    for(const it of items)if(it.id!==target&&it.app.parts[0].kind!=='written'&&before[it.id]&&JSON.stringify(before[it.id])!==JSON.stringify(G.store.rec[it.id]))bad(it,'mixed: a clean solve changed a topic-run record');
+  }
   /* ---- text rules */
   const src=bankSrc.join('\n');
   if(/\u2014/.test(src))fails.push('item bank contains an em dash');

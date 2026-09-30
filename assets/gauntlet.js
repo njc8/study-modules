@@ -7,9 +7,12 @@
      Step 2  the real problem: answer boxes checked locally, or a written argument graded by the tutor.
    An item is passed when the concept is GOT IT and the problem is right on the first check.
    Anything else goes back to the end of the run (at most twice), and stays on the Weak spots list until passed.
+   Mixed mode (data-mode="mixed") skips Step 1 and hides each item's title and source until the problem is done,
+   so the student has to recognize the method cold. A miss there puts the item on Weak spots; a clean solve only
+   clears a miss that mixed mode itself recorded, since it says nothing about the concept.
 
    Page markup: one <section> per topic holding <div class="gx" data-mode="topic" data-topic="vec">,
-   plus sections holding data-mode="exam" and data-mode="weak". Call
+   plus sections holding data-mode="exam", data-mode="mixed" and data-mode="weak". Call
      initGauntlet({key, items, topics:[{id, title}]})
    right before initModule. Section ids must equal topic ids.
 
@@ -103,8 +106,9 @@ class GxRunner{
   set run(r){if(r)GX.store.runs[this.section]=r;else delete GX.store.runs[this.section];gxSave();}
   pool(){return this.mode==='topic'?GX.items.filter(i=>i.topic===this.topic):this.mode==='weak'?gxWeak():GX.items;}
   render(){const r=this.run;if(r&&r.pos<r.queue.length)this.renderItem();else if(r)this.renderSummary();else this.renderIntro();}
+  get blind(){return this.mode==='mixed';}
   mapHtml(ids,cur){
-    return `<div class="gx-map">${ids.map((id,k)=>{const it=GX.byId[id];return `<button type="button" class="${gxState(id)}${id===cur?' cur':''}" data-jump="${id}" title="${k+1}. ${it.title}"></button>`;}).join('')}</div>`;
+    return `<div class="gx-map">${ids.map((id,k)=>{const it=GX.byId[id];return `<button type="button" class="${gxState(id)}${id===cur?' cur':''}" data-jump="${id}" title="${k+1}${this.blind?'':'. '+it.title}"></button>`;}).join('')}</div>`;
   }
   start(queue){this.run={queue,pos:0,first:{},tries:{}};this.render();this.focusTop();}
   focusTop(){const s=this.mount.closest('section');if(s&&s.classList.contains('active'))this.mount.scrollIntoView({block:'start',behavior:'smooth'});}
@@ -124,10 +128,17 @@ class GxRunner{
         <div class="drill-bar"><button class="btn primary" data-a="start">Start the shuffled exam ▶</button></div></div>`;
       let n=10;$$('.gx-len .btn',m).forEach(b=>b.onclick=()=>{n=+b.dataset.n;$$('.gx-len .btn',m).forEach(x=>x.classList.toggle('picked',x===b));});
       $('[data-a=start]',m).onclick=()=>this.start(gxExamQueue(n));
+    }else if(this.mode==='mixed'){
+      const N=GX.items.length;
+      m.innerHTML=`<div class="card"><p>Problems only, drawn from every topic in random order. No concept step, and no title or homework source until you finish, so the first job on each one is deciding which idea it needs. Misses come back at the end and go on the Weak spots list.</p>
+        <div class="gx-top"><b>Length</b></div><div class="choice gx-len">${[10,20,N].map((n,i)=>`<button class="btn${i===0?' picked':''}" data-n="${n}">${n===N?'All '+N:n+' problems'}</button>`).join('')}</div>
+        <div class="drill-bar"><button class="btn primary" data-a="start">Start mixed practice ▶</button></div></div>`;
+      let n=10;$$('.gx-len .btn',m).forEach(b=>b.onclick=()=>{n=+b.dataset.n;$$('.gx-len .btn',m).forEach(x=>x.classList.toggle('picked',x===b));});
+      $('[data-a=start]',m).onclick=()=>this.start(gxExamQueue(n));
     }else{
       const weak=gxWeak();const unseen=GX.items.filter(i=>!GX.store.rec[i.id]).length;
       m.innerHTML=`<div class="card">${weak.length?`<div class="gx-top"><b>${weak.length} weak item${weak.length>1?'s':''}</b><span class="muted">not yet passed cleanly</span></div>
-        <ol class="gx-list">${weak.map(it=>{const r=GX.store.rec[it.id];return `<li><i class="gx-dot ${gxState(it.id)}"></i>${it.title}<span class="muted small"> · concept ${GX_VERDICT[r.c].toLowerCase()}, problem ${GX_APP[r.a]}</span></li>`;}).join('')}</ol>
+        <ol class="gx-list">${weak.map(it=>{const r=GX.store.rec[it.id];return `<li><i class="gx-dot ${gxState(it.id)}"></i>${it.title}<span class="muted small"> · ${r.c?`concept ${GX_VERDICT[r.c].toLowerCase()}, problem`:'mixed practice, problem'} ${GX_APP[r.a]}</span></li>`;}).join('')}</ol>
         <div class="drill-bar"><button class="btn primary" data-a="start">Run the weak spots ▶</button></div>`
         :`<p>${unseen?`Nothing weak yet. ${unseen} of ${GX.items.length} items have not been attempted: run the topics first.`:'No weak spots. Every item is passed.'}</p>`}</div>`;
       if(weak.length)$('[data-a=start]',m).onclick=()=>this.start(weak.map(i=>i.id));
@@ -146,9 +157,9 @@ class GxRunner{
     const r=this.run,m=this.mount;this.drawFig=null;
     const ids=[...new Set(r.queue)];const f=id=>r.first[id]||{};
     const first=ids.filter(id=>f(id).pass).length,cleared=ids.filter(id=>!f(id).pass&&gxState(id)==='pass').length,weak=ids.filter(id=>gxState(id)!=='pass').length;
-    if(this.mode==='exam'&&first>=0.8*ids.length)markDone('exam');
+    if((this.mode==='exam'||this.mode==='mixed')&&first>=0.8*ids.length)markDone(this.mode);
     m.innerHTML=`<div class="card"><div class="result">${first} / ${ids.length}</div><p>passed on the first attempt${cleared?`, ${cleared} more cleared on a retry`:''}.${weak?` ${weak} still weak: they are on the Weak spots page.`:' Nothing left weak from this run.'}</p>
-      <ul class="gx-sum">${ids.map(id=>{const x=f(id);return `<li><i class="gx-dot ${gxState(id)}"></i><span>${GX.byId[id].title}</span><span class="muted small">first try: concept ${x.c?GX_VERDICT[x.c].toLowerCase():'-'}, problem ${x.a?GX_APP[x.a]:'-'}</span></li>`;}).join('')}</ul>
+      <ul class="gx-sum">${ids.map(id=>{const x=f(id);return `<li><i class="gx-dot ${gxState(id)}"></i><span>${GX.byId[id].title}</span><span class="muted small">first try: ${this.blind?'':`concept ${x.c?GX_VERDICT[x.c].toLowerCase():'-'}, `}problem ${x.a?GX_APP[x.a]:'-'}</span></li>`;}).join('')}</ul>
       <div class="drill-bar"><button class="btn primary" data-a="again">Run it again</button>${weak?'<a class="btn" href="#weak">Go to Weak spots</a>':''}</div></div>`;
     $('[data-a=again]',m).onclick=()=>{this.run=null;this.render();};
   }
@@ -158,14 +169,13 @@ class GxRunner{
     const r=this.run,id=r.queue[r.pos],it=GX.byId[id],m=this.mount;
     const retry=r.queue.indexOf(id)<r.pos;
     const mapIds=this.mode==='topic'?this.pool().map(i=>i.id):[...new Set(r.queue)];
-    m.innerHTML=`<div class="quiz-head"><span>Item ${r.pos+1} of ${r.queue.length}${retry?' · second look':''}</span><span><button class="gx-link" data-a="end">End run</button></span></div>
+    m.innerHTML=`<div class="quiz-head"><span>${this.blind?'Problem':'Item'} ${r.pos+1} of ${r.queue.length}${retry?' · second look':''}</span><span><button class="gx-link" data-a="end">End run</button></span></div>
       <div class="qbar"><i style="width:${100*r.pos/r.queue.length}%"></i></div>${this.mapHtml(mapIds,id)}
-      <h3 class="gx-title">${it.title}</h3>
-      <div class="card gx-step gx-concept"></div><div class="card gx-step gx-app" hidden></div>`;
+      ${this.blind?'':`<h3 class="gx-title">${it.title}</h3><div class="card gx-step gx-concept"></div>`}<div class="card gx-step gx-app"${this.blind?'':' hidden'}></div>`;
     $('[data-a=end]',m).onclick=()=>{r.queue=r.queue.slice(0,r.pos);this.run=r;this.render();};
     this.wireJumps();
     this.cur={it,c:null,a:null,tried:false};
-    this.renderConcept($('.gx-concept',m));
+    if(this.blind)this.renderApp($('.gx-app',m));else this.renderConcept($('.gx-concept',m));
     typeset(m);
   }
   renderConcept(box){
@@ -207,7 +217,8 @@ class GxRunner{
   }
   renderApp(box){
     const it=this.cur.it,app=it.app;const written=app.parts.length===1&&app.parts[0].kind==='written';
-    box.innerHTML=`<p class="eyebrow">Step 2 · Apply it</p><div class="wa-tag"><span class="wa-dot"></span>${app.source==='Practice'?'Practice problem':'From '+app.source}</div>
+    const src=app.source==='Practice'?'Practice problem':'From '+app.source;
+    box.innerHTML=`${this.blind?'':`<p class="eyebrow">Step 2 · Apply it</p><div class="wa-tag"><span class="wa-dot"></span>${src}</div>`}
       <div class="drill"><div class="q"><div class="prompt">${app.prompt}</div></div><div class="fb"></div>
       <div class="drill-bar"><button class="btn primary" data-a="check">${written?'Grade my argument':'Check'}</button><button class="btn" data-a="sol">Show solution</button><button class="btn primary" data-a="next" hidden>Next item ▶</button></div></div>`;
     const q=$('.q',box),fb=$('.fb',box);
@@ -224,7 +235,12 @@ class GxRunner{
     const finish=(kind,note)=>{
       this.cur.a=kind;$('[data-a=check]',box).hidden=true;$('[data-a=sol]',box).hidden=true;$('[data-a=next]',box).hidden=false;
       fb.className='fb'+(kind==='revealed'?'':' good');
-      fb.innerHTML=(note||'')+'<div class="sol">'+app.solution+'</div>';typeset(fb);if(this.drawFig)this.drawFig();
+      fb.innerHTML=(note||'')+'<div class="sol">'+app.solution+'</div>';
+      if(this.blind){
+        const rv=el('div',{class:'gx-reveal'});rv.innerHTML=`<p><span class="muted small">This was</span> <b>${it.title}</b> <span class="muted small">· ${src}</span> <button class="gx-link" data-a="idea">Show the key idea</button></p><div class="gx-model" hidden><h4>Key idea</h4>${it.concept.model}</div>`;
+        fb.after(rv);$('[data-a=idea]',rv).onclick=e=>{e.target.hidden=true;const mo=$('.gx-model',rv);mo.hidden=false;typeset(mo);};
+      }
+      typeset(fb);if(this.drawFig)this.drawFig();
       $('[data-a=next]',box).focus({preventScroll:true});
     };
     const check=async()=>{
@@ -258,8 +274,11 @@ class GxRunner{
     const f=$('input',q);if(f)setTimeout(()=>focusInput(f),0);
   }
   next(){
-    const r=this.run,{it,c,a}=this.cur;const pass=c==='got'&&a==='clean';
-    GX.store.rec[it.id]={c,a,pass,t:Date.now()};
+    const r=this.run,{it,c,a}=this.cur;const pass=this.blind?a==='clean':c==='got'&&a==='clean';
+    const prev=GX.store.rec[it.id];
+    if(!this.blind)GX.store.rec[it.id]={c,a,pass,t:Date.now()};
+    else if(!pass)GX.store.rec[it.id]={c:null,a,pass,t:Date.now()};
+    else if(prev&&!prev.c)GX.store.rec[it.id]={c:null,a,pass,t:Date.now()};
     if(!r.first[it.id])r.first[it.id]={c,a,pass};
     r.tries[it.id]=(r.tries[it.id]||0)+1;
     if(!pass&&r.tries[it.id]<3)r.queue.push(it.id);
