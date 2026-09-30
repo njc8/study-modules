@@ -754,7 +754,7 @@ class Scene3D{
   plane(p,nrm,opts={}){const s=opts.size||1.6;const n=unit(nrm);let a=Math.abs(n[0])<0.9?[1,0,0]:[0,1,0];const u=unit(cross(n,a)),v=cross(n,u);const pts=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vadd(p,vadd(vscale(i*s,u),vscale(j*s,v))));return this.polygon(pts,{fill:opts.fill||'rgba(59,91,219,.16)',stroke:opts.stroke||'#3b5bdb',...opts});}
   /* projection */
   proj(p){const o=this.o;const az=o.azim*Math.PI/180,elv=o.elev*Math.PI/180;
-    const x=p[0],y=p[1],z=p[2];
+    const c=o.center||[0,0,0];const x=p[0]-c[0],y=p[1]-c[1],z=p[2]-c[2];
     const x1=x*Math.cos(az)-y*Math.sin(az),y1=x*Math.sin(az)+y*Math.cos(az);
     const y2=y1*Math.cos(elv)-z*Math.sin(elv),z2=y1*Math.sin(elv)+z*Math.cos(elv);
     const depth=y2;const s=this.s;return [this.W/2+x1*s,this.H/2-z2*s,depth];}
