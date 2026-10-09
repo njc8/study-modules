@@ -2,6 +2,7 @@
    usage: node run.js <module.html> [rounds=25] [typeFilter]
    Loads the page in jsdom (without MathJax / MathQuill / jQuery), then for every Drill and every question type:
    generate, render, fill the inputs from window.__solvers[type.name], click choice buttons for _btn keys, check.
+   Then renders every WebAssign problem (assets/webassign-data.js) filed under a drilled chapter, fills it from WA.solve, and checks it.
    Reports types that fail, throw, or lack a solver. Exit code 1 on any failure. */
 const fs=require('fs'),path=require('path');
 const {JSDOM,VirtualConsole}=require('jsdom');
@@ -59,6 +60,22 @@ setTimeout(()=>{
       if(r.bad||r.err)fails++;
     });
   });
+  /* every WebAssign problem for a drilled chapter: rendered, filled from WA.solve, and checked */
+  let WAx=null;try{WAx=w.eval('WA');}catch(e){}
+  if(WAx&&!filter){const mod=WAx.currentModule();
+    drills.forEach(d=>{const sec=d.o&&d.o.section;if(!sec)return;
+      WAx.pool(mod,sec).forEach(p=>{
+        const r=results['from WebAssign: '+p.id]={ok:0,bad:0,err:0,nosolver:false,examples:[]};
+        try{
+          const t=WAx.type(mod,sec);const q={p,type:t,tried:false};d.q=q;d.cur=t;d.done=false;d.qEl.innerHTML='';d.fb.innerHTML='';
+          t.render(q,d.qEl,d);fill(d.qEl,WAx.solve(q));d.check();
+          if(d.done)r.ok++;else{r.bad++;r.examples.push({prompt:d.qEl.textContent.replace(/\s+/g,' ').slice(0,300),fb:d.fb.textContent.slice(0,200)});}
+          const sol=t.solution(q);if(typeof sol!=='string'||!sol.trim())throw new Error('empty solution');
+        }catch(e){r.err++;r.examples.push({error:String(e.stack||e).split('\n').slice(0,3).join(' | ')});}
+        if(r.bad||r.err)fails++;
+      });
+    });
+  }
   /* solvers with no matching type (typo in the name) */
   const typeNames=new Set([...seen].map(t=>t.name));const orphan=Object.keys(solvers).filter(n=>!typeNames.has(n)&&n!=='from WebAssign');
   console.log(`== ${path.basename(file)}: ${drills.length} drills, ${seen.size} question types, ${rounds} rounds each`);
