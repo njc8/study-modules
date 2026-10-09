@@ -215,7 +215,7 @@
 <section data-id="quiz" data-title="Mastery quiz">
   <p class="eyebrow">Chapter 5</p>
   <h2>Mastery quiz</h2>
-  <p class="lead">Twelve mixed questions, one from every kind of problem in the module. Score 10 or more to complete it.</p>
+  <p class="lead">Twelve mixed questions, drawn from every kind of problem in the module. Score 10 or more to complete it.</p>
   <div class="card" id="quizBox"></div>
 </section>
 
@@ -1310,13 +1310,12 @@ Q.planeArea={name:'surface area of a plane',
 })();
 
 /* ============================================================ quiz */
-/* twelve types, one draw each: every attempt covers all four chapters */
+/* sixteen types across the four chapters; each attempt draws twelve of them without repeats */
 makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
-  Q.rectPoly,Q.rectProduct,
-  Q.setupI,Q.reverse,Q.evalRegion,
+  Q.rectPoly,Q.rectProduct,Q.riemannCorner,Q.signContour,Q.avgValue,
+  Q.setupI,Q.reverse,Q.evalRegion,Q.avgRegion,Q.reverseEval,
   Q.polarEval,Q.polarLimits,Q.polarArea,
-  Q.massRect,Q.comRect,
-  Q.avgValue,Q.planeArea]});
+  Q.massRect,Q.comRect,Q.planeArea]});
 
 /* ============================================================ test hook */
 window.__solvers={
