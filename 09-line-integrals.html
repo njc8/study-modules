@@ -358,10 +358,13 @@ const GTEST=[
   {tex:R`\langle y,\; x\rangle`,ok:true,Py:'1',Qx:'1',f:'f=xy'},
   {tex:R`\langle e^{y},\; xe^{y}\rangle`,ok:true,Py:'e^{y}',Qx:'e^{y}',f:'f=xe^{y}'},
   {tex:R`\langle 2x+y,\; x+2y\rangle`,ok:true,Py:'1',Qx:'1',f:'f=x^{2}+xy+y^{2}'},
+  {tex:R`\langle ye^{x},\; e^{x}+y\rangle`,ok:true,Py:'e^{x}',Qx:'e^{x}',f:'f=ye^{x}+\\tfrac{y^{2}}{2}'},
   {tex:R`\langle -y,\; x\rangle`,ok:false,Py:'-1',Qx:'1',f:''},
   {tex:R`\langle y,\; 0\rangle`,ok:false,Py:'1',Qx:'0',f:''},
   {tex:R`\langle x^{2},\; xy\rangle`,ok:false,Py:'0',Qx:'y',f:''},
   {tex:R`\langle y^{2},\; x\rangle`,ok:false,Py:'2y',Qx:'1',f:''},
+  {tex:R`\langle xe^{y},\; xe^{y}\rangle`,ok:false,Py:'xe^{y}',Qx:'e^{y}',f:''},
+  {tex:R`\langle 2xy+y^{3},\; x^{2}+2xy^{2}\rangle`,ok:false,Py:'2x+3y^{2}',Qx:'2x+2y^{2}',f:''},
 ];
 Q.isGradient={name:'is F a gradient field',
   gen(){return {...pick(GTEST)};},
@@ -618,7 +621,25 @@ const P2f=()=>{const a=rint(1,3),b=rnz(-3,3),c=rint(1,3);
   const f=sumTex([[a,'x^{3}'],[b,'xy'],[c,'y^{3}']]),P=sumTex([[3*a,'x^{2}'],[b,'y']]),Qq=sumTex([[b,'x'],[3*c,'y^{2}']]);
   return {vars:['x','y'],poly:true,fTex:f,fStr:sumStr([[a,'x^3'],[b,'x*y'],[c,'y^3']]),Ftex:[P,Qq],
     sol:sol2(P,Qq,sumTex([[a,'x^{3}'],[b,'xy']]),sumTex([[b,'x']]),sumTex([[3*c,'y^{2}']]),sumTex([[c,'y^{3}']]),f)};};
-const POT2=[P2a,P2b,P2c,P2d,P2e,P2f],POT2P=[P2a,P2d,P2e,P2f];
+const P2g=()=>{const k=pick([2,3]);
+  const f=sumTex([[1,`xe^{${k}y}`]]),P=sumTex([[1,`e^{${k}y}`]]),Qq=sumTex([[k,`xe^{${k}y}`]]);
+  return {vars:['x','y'],poly:false,fTex:f,fStr:`x*e^(${k}*y)`,Ftex:[P,Qq],sol:sol2(P,Qq,f,Qq,'0','',f)};};
+const P2h=()=>{
+  const f=sumTex([[1,'y^{2}e^{x}'],[1,'x']]),P=sumTex([[1,'y^{2}e^{x}'],[1,'']]),Qq=sumTex([[2,'ye^{x}']]);
+  return {vars:['x','y'],poly:false,fTex:f,fStr:'y^2*e^x+x',Ftex:[P,Qq],
+    sol:sol2(P,Qq,f,sumTex([[2,'ye^{x}']]),'0','',f)};};
+const P2i=()=>{const k=pick([1,2]),ky=k===1?'y':'2y';
+  const f=sumTex([[1,`x\\sin(${ky})`],[1,'y']]),P=sumTex([[1,`\\sin(${ky})`]]),Qq=sumTex([[k,`x\\cos(${ky})`],[1,'']]);
+  return {vars:['x','y'],poly:false,fTex:f,fStr:`x*sin(${k}*y)+y`,Ftex:[P,Qq],
+    sol:sol2(P,Qq,sumTex([[1,`x\\sin(${ky})`]]),sumTex([[k,`x\\cos(${ky})`]]),'1','y',f)};};
+const P2j=()=>{
+  const f=sumTex([[1,'e^{xy}'],[1,'y^{2}']]),P=sumTex([[1,'ye^{xy}']]),Qq=sumTex([[1,'xe^{xy}'],[2,'y']]);
+  return {vars:['x','y'],poly:false,fTex:f,fStr:'e^(x*y)+y^2',Ftex:[P,Qq],
+    sol:sol2(P,Qq,sumTex([[1,'e^{xy}']]),sumTex([[1,'xe^{xy}']]),sumTex([[2,'y']]),'y^{2}',f)};};
+const P2k=()=>{
+  const f=sumTex([[1,'x^{2}y^{3}'],[-3,'x']]),P=sumTex([[2,'xy^{3}'],[-3,'']]),Qq=sumTex([[3,'x^{2}y^{2}']]);
+  return {vars:['x','y'],poly:true,fTex:f,fStr:'x^2*y^3-3*x',Ftex:[P,Qq],sol:sol2(P,Qq,f,Qq,'0','',f)};};
+const POT2=[P2a,P2b,P2c,P2d,P2e,P2f,P2g,P2h,P2i,P2j,P2k],POT2P=[P2a,P2d,P2e,P2f,P2k];
 
 const P3a=()=>{const a=rint(1,3);
   const f=sumTex([[a,'xyz']]),P=sumTex([[a,'yz']]),Qq=sumTex([[a,'xz']]),Rr=sumTex([[a,'xy']]);
