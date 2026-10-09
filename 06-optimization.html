@@ -757,8 +757,60 @@ Q.lag3={name:'Lagrange in three variables',
   check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx,{tol:0.005})],['mn',checkNumber($('[data-k=mn]',el).value,q.mn,{tol:0.005})]]);},
   solution(q){return q.work+` Maximum <b>${q.mx==='DNE'?'DNE':fmt(q.mx)}</b>, minimum <b>${q.mn==='DNE'?'DNE':fmt(q.mn)}</b>.`;}
 };
+/* exact fraction n/d as TeX, for answers whose denominators are too big for texNum */
+const fr=(n,d)=>{const g=gcd(n,d);n/=g;d/=g;return d===1?String(n):R`\tfrac{${n}}{${d}}`;};
+const dotLine=(col,body)=>`<li><i class="dot" style="background:${col};width:10px;height:10px;border-radius:50%"></i> ${body}</li>`;
+Q.lagEndpoint={name:'Lagrange on a curve with endpoints',
+  gen(){let o;
+    if(Math.random()<0.5){let p,q;do{p=rint(1,6);q=rint(1,6);}while(p===q);const c=rint(1,4),s=(p+q)*(p+q),c2=c*c;
+      const pt=p>q?[c2,0]:[0,c2];
+      o={fam:'V1',mx:Math.max(p,q)*c2,mn:p*q*c2/(p+q),pt,ftex:poly([[p,'x'],[q,'y']]),
+        gtex:R`\sqrt{x}+\sqrt{y}=${c}`,
+        lag:{tex:R`\left(${fr(q*q*c2,s)},\ ${fr(p*p*c2,s)}\right)`,vt:fr(p*q*c2,p+q)},
+        e1:{tex:`(${c2},\\,0)`,vt:String(p*c2)},e2:{tex:`(0,\\,${c2})`,vt:String(q*c2)},
+        work:`Write ${M(R`g=\sqrt x+\sqrt y`)}, so ${M(R`\nabla g=\Big\langle \tfrac{1}{2\sqrt x},\tfrac{1}{2\sqrt y}\Big\rangle`)}. The equations ${M(R`\nabla f=\lambda\nabla g`)} read ${M(R`${p}=\tfrac{\lambda}{2\sqrt x}`)} and ${M(R`${q}=\tfrac{\lambda}{2\sqrt y}`)}, so ${M(R`\sqrt x=\tfrac{\lambda}{${2*p}}`)} and ${M(R`\sqrt y=\tfrac{\lambda}{${2*q}}`)}, which gives ${M(R`${p}\sqrt x=${q}\sqrt y`)}, that is ${M(R`\sqrt x:\sqrt y=${q}:${p}`)}. The constraint then gives ${M(R`\sqrt x=${fr(q*c,p+q)}`)} and ${M(R`\sqrt y=${fr(p*c,p+q)}`)}, so the single Lagrange point is ${M(R`\left(${fr(q*q*c2,s)},\ ${fr(p*p*c2,s)}\right)`)} with ${M(R`f=${fr(p*q*c2,p+q)}`)}. The curve ends at ${M(`(${c2},\\,0)`)} and ${M(`(0,\\,${c2})`)}, where ${M(`f=${p*c2}`)} and ${M(`f=${q*c2}`)}.`,
+        why:`The maximum sits at an endpoint, where \\(\\nabla f\\) is not parallel to \\(\\nabla g\\) (for this curve \\(\\nabla g\\) does not even exist there), so Lagrange multipliers alone never find it.`};}
+    else{const k=pick([2,3]),c=pick([2,4,6,10]),s=1+k*k;
+      o={fam:'V2',mx:c*c,mn:c*c/s,pt:[c,0],ftex:'x^2+y^2',gtex:`x+${k}y=${c}`,
+        lag:{tex:R`\left(${fr(c,s)},\ ${fr(k*c,s)}\right)`,vt:fr(c*c,s)},
+        e1:{tex:`(${c},\\,0)`,vt:String(c*c)},e2:{tex:R`\left(0,\ ${fr(c,k)}\right)`,vt:fr(c*c,k*k)},
+        work:`With ${M(R`g=x+${k}y`)}, ${M(R`\langle 2x,2y\rangle=\lambda\langle 1,${k}\rangle`)} gives ${M(R`x=\tfrac{\lambda}{2}`)} and ${M(R`y=\tfrac{${k}\lambda}{2}`)}, so ${M(R`y=${k}x`)}. The constraint ${M(R`x+${k}y=${c}`)} becomes ${M(R`${s}x=${c}`)}, so the single Lagrange point is ${M(R`\left(${fr(c,s)},\ ${fr(k*c,s)}\right)`)} with ${M(R`f=${fr(c*c,s)}`)}. The segment ends at ${M(`(${c},\\,0)`)} and ${M(R`\left(0,\ ${fr(c,k)}\right)`)}, where ${M(`f=${c*c}`)} and ${M(R`f=${fr(c*c,k*k)}`)}.`,
+        why:`The maximum sits at the endpoint ${M(`(${c},\\,0)`)}, where \\(\\nabla f=\\langle ${2*c},0\\rangle\\) is not parallel to \\(\\nabla g=\\langle 1,${k}\\rangle\\), so Lagrange multipliers alone never find it.`};}
+    return o;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the maximum and minimum values of ${M('f(x,y)='+q.ftex)} subject to ${M(q.gtex)} with ${M(R`x\ge0,\ y\ge0`)}, and the point where the maximum occurs. Fractions like 3/2 are fine.</p>`;
+    numIn(el,'mx','maximum =');numIn(el,'mn','minimum =');wideIn(el,'pt','point of the maximum:','(a, b)');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx)],['mn',checkNumber($('[data-k=mn]',el).value,q.mn)],
+    ['pt',checkVector($('[data-k=pt]',el).value,q.pt)]]);},
+  solution(q){return q.work+`<ul class="small" style="list-style:none;padding:0;margin:8px 0;line-height:1.9">`+
+      dotLine('var(--c)',`${M(q.lag.tex)} <span class="muted">(Lagrange point)</span>: ${M('f='+q.lag.vt)}`)+
+      dotLine('#a8a29e',`${M(q.e1.tex)} <span class="muted">(endpoint)</span>: ${M('f='+q.e1.vt)}`)+
+      dotLine('#a8a29e',`${M(q.e2.tex)} <span class="muted">(endpoint)</span>: ${M('f='+q.e2.vt)}`)+`</ul>`+
+      `Comparing: maximum <b>${fmt(q.mx)}</b> at ${M(PTX(q.pt))}, minimum <b>${isNice(q.mn)?fmt(q.mn):fmtDec(q.mn,3)}</b>. `+q.why;}
+};
+const NORMALS=[[1,2,2],[2,1,2],[2,2,1],[2,3,6],[1,4,8],[2,6,9],[3,4,12]];
+Q.lagDistance={name:'closest point on a surface',
+  gen(){if(Math.random()<0.5){
+      const n=pick(NORMALS).map(v=>v*pick([1,-1])),len=Math.sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2]),m=pick([1,2]);
+      const d=m*len*len;
+      return {fam:'V1',n,len,m,dv:d,pt:n.map(v=>m*v),dist:m*len,tex:poly([[n[0],'x'],[n[1],'y'],[n[2],'z']])+'='+d,
+        work:`Minimize the squared distance ${M(R`f=x^2+y^2+z^2`)} (same minimizer as the distance, and no square roots) subject to ${M(R`g=${poly([[n[0],'x'],[n[1],'y'],[n[2],'z']])}=${d}`)}. Then ${M(R`\langle 2x,2y,2z\rangle=\lambda\langle ${n.map(texNum).join(',')}\rangle`)}, so ${M(R`(x,y,z)=\tfrac{\lambda}{2}(${n.map(texNum).join(',\\,')})`)}. The constraint gives ${M(R`\tfrac{\lambda}{2}\cdot ${len*len}=${d}`)}, so ${M(R`\tfrac{\lambda}{2}=${m}`)} and the point is ${M(PTX(n.map(v=>m*v)))}. Its distance from the origin is ${M(R`${m}\sqrt{${len*len}}=${m*len}`)}.`};}
+    const lone=pick(['z','x']),k=pick([4,9,16,25,36,49]),s=Math.sqrt(k);
+    const [v,w]=lone==='z'?['x','y']:['y','z'];
+    const pts=lone==='z'?[[0,0,s],[0,0,-s]]:[[s,0,0],[-s,0,0]];
+    return {fam:'V2',lone,k,s,pts,dist:s,tex:lone==='z'?`z^2=xy+${k}`:`x^2=yz+${k}`,
+      work:`Minimize ${M(R`f=x^2+y^2+z^2`)} (the squared distance) subject to ${M(R`g=${lone}^2-${v}${w}=${k}`)}. Then ${M(R`\nabla f=\lambda\nabla g`)} reads${D(R`2${lone}=2\lambda ${lone},\qquad 2${v}=-\lambda ${w},\qquad 2${w}=-\lambda ${v}`)}`+
+        `The first equation gives ${M(`${lone}=0`)} or ${M(R`\lambda=1`)}. If ${M(R`\lambda=1`)}, then ${M(R`2${v}=-${w}`)} and ${M(R`2${w}=-${v}`)} together force ${M(`${v}=${w}=0`)}, so ${M(`${lone}^2=${k}`)} and the squared distance is ${M(String(k))}. If ${M(`${lone}=0`)}, then ${M(R`${v}${w}=-${k}`)}; multiplying the other two equations by ${M(v)} and ${M(w)} gives ${M(R`2${v}^2=-\lambda ${v}${w}=2${w}^2`)}, so ${M(`${w}=-${v}`)} and ${M(`${v}^2=${k}`)}, with squared distance ${M(String(2*k))}. The smaller wins: the squared distance is ${M(String(k))}, the distance is ${M(String(s))}, at ${M(PTX(pts[0]))} and ${M(PTX(pts[1]))}.`};},
+  render(q,el){
+    if(q.fam==='V1'){el.innerHTML=`<p class="prompt">Find the point on the plane ${M(q.tex)} that is closest to the origin, and its distance from the origin.</p>`;
+      wideIn(el,'pt','closest point:','(a, b, c)');numIn(el,'d','distance =');}
+    else{el.innerHTML=`<p class="prompt">Find the points on the surface ${M(q.tex)} that are closest to the origin, and the distance from the origin to the surface. Enter both points as a comma separated list.</p>`;
+      wideIn(el,'pts','closest points:','(a, b, c), (d, e, f)');numIn(el,'d','distance =');}},
+  check(q,el){const dr=['d',checkNumber($('[data-k=d]',el).value,q.dist)];
+    return Gall(el,[q.fam==='V1'?['pt',checkVector($('[data-k=pt]',el).value,q.pt)]:['pts',checkPointList($('[data-k=pts]',el).value,q.pts)],dr]);},
+  solution(q){return q.work;}
+};
 Q.lagWord={name:'optimization word problem',
-  gen(){const which=pick(['noTop','closed','postal']);
+  gen(){const which=pick(['noTop','closed','postal','octantBox','leastPlane']);
     if(which==='noTop'){const k=pick([1,2,3,4]);const S=12*k*k;
       return {which,k,S,
         prompt:`A rectangular box with <b>no top</b> is built from ${S} square centimeters of cardboard. Find the dimensions that maximize its volume, and that maximum volume.`,
@@ -769,6 +821,17 @@ Q.lagWord={name:'optimization word problem',
         prompt:`A <b>closed</b> rectangular box must hold exactly ${V} cubic meters. Find the dimensions that use the least material, and that minimum surface area.`,
         inputs:[['a','each side =',k,'m'],['v','minimum surface area =',6*k*k,'m²']],
         work:`Minimize ${M('S=2xy+2xz+2yz')} subject to ${M(R`xyz=${V}`)}. The system gives ${M(R`2(y+z)=\lambda yz,\ 2(x+z)=\lambda xz,\ 2(x+y)=\lambda xy`)}. Multiply the first by ${M('x')}, the second by ${M('y')}: both right sides become ${M(R`\lambda xyz`)}, so ${M(R`x(y+z)=y(x+z)`)} and therefore ${M('x=y')}. The same trick on the second and third gives ${M('y=z')}. So the box is a cube: ${M(R`x^3=${V}`)}, ${M(R`x=${k}`)}, and ${M(R`S=6(${k})^2=${6*k*k}`)}.`};}
+    if(which==='octantBox'){let p,q,r;do{p=rint(1,3);q=rint(1,3);r=rint(1,3);}while(p===1&&q===2&&r===3);
+      const d=pick([6,12,18,24]),pl=poly([[p,'x'],[q,'y'],[r,'z']]);
+      return {which,p,q,r,d,
+        prompt:`Find the volume of the largest rectangular box in the first octant that has three faces in the coordinate planes and one vertex on the plane ${M(pl+'='+d)}.`,
+        inputs:[['v','maximum volume =',d*d*d/(27*p*q*r),'cubic units']],
+        work:`The box with opposite corners at the origin and ${M('(x,y,z)')} has volume ${M('V=xyz')}. Maximize it subject to ${M(R`g=${pl}=${d}`)}: ${D(R`yz=\lambda ${p===1?'':p},\qquad xz=\lambda ${q===1?'':q},\qquad xy=\lambda ${r===1?'':r}`)}Multiply the equations by ${M('x')}, ${M('y')}, ${M('z')} in turn: all three left sides become ${M('xyz')}, which is positive, so ${M(R`\lambda\ne0`)} and ${M(R`${p===1?'':p}x=${q===1?'':q}y=${r===1?'':r}z`)}. Each of these equals one third of ${M(pl+'='+d)}, namely ${M(String(d/3))}. So ${M(R`(x,y,z)=\left(${fr(d,3*p)},\ ${fr(d,3*q)},\ ${fr(d,3*r)}\right)`)} and ${M(R`V=${fr(d*d*d,27*p*q*r)}`)}.`};}
+    if(which==='leastPlane'){const [a,b,c]=pick([[1,1,1],[1,1,2],[2,1,1],[1,2,2],[2,2,1],[1,3,1],[3,1,2]]);
+      return {which,a,b,c,
+        prompt:`Find the plane through the point ${M(PTX([a,b,c]))} that cuts the least volume from the first octant. Give its ${M('x')}-, ${M('y')}-, and ${M('z')}-intercepts and that least volume.`,
+        inputs:[['A','x-intercept =',3*a,'units'],['B','y-intercept =',3*b,'units'],['C','z-intercept =',3*c,'units'],['v','least volume =',9*a*b*c/2,'cubic units']],
+        work:`Let the plane be ${M(R`\tfrac xA+\tfrac yB+\tfrac zC=1`)}. It cuts off a tetrahedron of volume ${M(R`\tfrac{ABC}{6}`)}, so minimize ${M('ABC')} subject to ${M(R`g=\tfrac{${a}}{A}+\tfrac{${b}}{B}+\tfrac{${c}}{C}=1`)} (the plane passes through ${M(PTX([a,b,c]))}). Then ${M(R`\langle BC,AC,AB\rangle=\lambda\big\langle -\tfrac{${a}}{A^2},-\tfrac{${b}}{B^2},-\tfrac{${c}}{C^2}\big\rangle`)}. Multiply the equations by ${M('A')}, ${M('B')}, ${M('C')} in turn: the left sides all equal ${M('ABC')}, so ${M(R`\tfrac{${a}}{A}=\tfrac{${b}}{B}=\tfrac{${c}}{C}`)}. The constraint says these three add to 1, so each is ${M(R`\tfrac13`)}. Hence ${M(R`A=${3*a},\ B=${3*b},\ C=${3*c}`)} and ${M(R`V=\tfrac{${3*a}\cdot ${3*b}\cdot ${3*c}}{6}=${texNum(9*a*b*c/2)}`)}.`};}
     const L=pick([60,72,108,120]);
     return {which,L,
       prompt:`A parcel service accepts a rectangular package only if its length plus its girth (the perimeter of the cross section perpendicular to the length) is at most ${L} inches. Find the dimensions of the largest package by volume, and that volume.`,
@@ -800,6 +863,14 @@ const LAGCONCEPT=[
    right:'The maximum of \\(f\\) on the circle is 7 and the minimum is \\(-3\\)',
    wrong:['Only that 7 is a local maximum along the curve','Nothing until you run the second derivative test','That \\(\\lambda\\) must equal 7 at the first point'],
    why:'A circle is closed and bounded and \\(f\\) is continuous, so the extremes exist and must be among the candidates. Comparing the values settles it.'},
+  {q:'You use Lagrange multipliers for a function on the curve \\(\\sqrt{x}+\\sqrt{y}=3\\), \\(x,y\\ge0\\), and get exactly one candidate. What else must you check?',
+   right:'The endpoints \\((9,0)\\) and \\((0,9)\\), where the curve stops',
+   wrong:['Nothing, since Lagrange finds every extreme point','The point where \\(\\lambda=0\\)','The second derivative test at the candidate'],
+   why:'Lagrange only catches points where the curve continues on both sides. A curve with endpoints is like a closed interval: the endpoints are always candidates, and one of them is often the answer.'},
+  {q:'Let \\(C\\) be the ellipse \\(x^2+\\tfrac{y^2}{9}=1\\) and \\(f\\) any differentiable function. Must there be a point of \\(C\\) where \\(\\nabla f\\) is perpendicular to \\(C\\)?',
+   right:'Yes: \\(f\\) has a maximum on \\(C\\), since \\(C\\) is closed and bounded, and there \\(\\nabla f=\\lambda\\nabla g\\) (the zero vector counts)',
+   wrong:['No, only if \\(f\\) is linear','No, only if \\(f\\) has a critical point on \\(C\\)','Yes, but only at the four vertices of the ellipse'],
+   why:'The restriction of \\(f\\) to the ellipse attains a maximum. At that point \\(\\nabla f\\) is a multiple of \\(\\nabla g\\), which is normal to \\(C\\).'},
 ];
 Q.lagConcept={name:'the meaning of the Lagrange condition',
   gen(){const it=pick(LAGCONCEPT);const opts=shuffle([it.right,...it.wrong]);
@@ -1083,14 +1154,14 @@ Q.lagConcept={name:'the meaning of the Lagrange condition',
   })();
 
   new Drill({mount:'#drill-lagrange',section:'lagrange',goal:6,
-    ...mixDrill([Q.lagLine,Q.lagLine,Q.lagCurve,Q.lagCurve,Q.lag3,Q.lag3,Q.lagWord,Q.lagConcept])});
+    ...mixDrill([Q.lagLine,Q.lagCurve,Q.lagCurve,Q.lagEndpoint,Q.lagEndpoint,Q.lag3,Q.lagDistance,Q.lagWord,Q.lagConcept])});
 })();
 
 /* ============================================================ quiz */
 makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
   Q.critFind,Q.critClassify,Q.critExtremes,Q.critTestNums,
   Q.absRect,Q.absDisk,Q.absEllipse,Q.absTri,Q.absWhere,
-  Q.lagLine,Q.lagCurve,Q.lag3,Q.lagWord,Q.lagConcept]});
+  Q.lagLine,Q.lagCurve,Q.lagEndpoint,Q.lag3,Q.lagWord,Q.lagConcept]});
 
 /* ============================================================ test hook */
 window.__solvers={
@@ -1106,6 +1177,8 @@ window.__solvers={
   'where absolute extrema can occur':q=>({_btn:q.ci}),
   'Lagrange: a linear function on a circle':q=>({mx:String(q.mx),mn:String(q.mn)}),
   'Lagrange: maximum and minimum on a curve':q=>({mx:q.mx==='DNE'?'DNE':String(q.mx),mn:q.mn==='DNE'?'DNE':String(q.mn)}),
+  'Lagrange on a curve with endpoints':q=>({mx:String(q.mx),mn:String(q.mn),pt:`(${q.pt[0]}, ${q.pt[1]})`}),
+  'closest point on a surface':q=>q.fam==='V1'?{pt:`<${q.pt.join(',')}>`,d:String(q.dist)}:{pts:q.pts.map(p=>`(${p.join(', ')})`).join(', '),d:String(q.dist)},
   'Lagrange in three variables':q=>({mx:q.mx==='DNE'?'DNE':String(q.mx),mn:q.mn==='DNE'?'DNE':String(q.mn)}),
   'optimization word problem':q=>q.inputs.reduce((o,i)=>(o[i[0]]=String(i[2]),o),{}),
   'the meaning of the Lagrange condition':q=>({_btn:q.ci}),
