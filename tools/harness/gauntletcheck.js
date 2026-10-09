@@ -32,7 +32,7 @@ const fails=[];const bad=(it,msg)=>fails.push(`${it.id}: ${msg}`);
 
 setTimeout(()=>{try{main();}catch(e){console.log('HARNESS CRASH',e.stack);errors.forEach(x=>console.log('page error: '+x));process.exit(1);}},300);
 function main(){
-  const items=w.GAUNTLET_M1||[];const G=w.eval('GX');
+  const G=w.eval('GX');const items=G.items||[];
   const topics=new Set(G.topics.map(t=>t.id));const ids=new Set();
   /* ---- static + checkers */
   for(const it of items){
