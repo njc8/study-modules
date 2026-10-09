@@ -12,11 +12,11 @@ const signFig={style:'aspect-ratio:1;max-width:420px',opts:{xmin:-3.5,xmax:3.5,y
     const lv=[-4,-3,-2,-1,0,1,2,3,4];
     p.contour((x,y)=>x*x-y*y,lv,{colors:lv.map(l=>l<0?C.b:l>0?C.a:C.ink),width:1.3});
     const disk=(c,r)=>p.poly(Array.from({length:81},(_,i)=>[c[0]+r*Math.cos(i/80*2*Math.PI),c[1]+r*Math.sin(i/80*2*Math.PI)]),{fill:'rgba(124,58,237,.22)',stroke:C.d,width:1.6});
-    disk([2,0],1);disk([0,0],1.5);disk([0,2],1);
+    disk([2,0],1);disk([0,0],0.8);disk([0,2],1);
     p.param(t=>[Math.cos(t),2+Math.sin(t)],0,2*Math.PI,{color:'#3b0764',width:3.2,n:120});
     const bold='600 14px -apple-system,Segoe UI,sans-serif';
-    p.text([2,0],'D₁',{color:C.d,font:bold,align:'center',dy:5});p.text([0,0],'D₂',{color:C.d,font:bold,align:'center',dy:5});
-    p.text([0,2],'D₃',{color:C.d,font:bold,align:'center',dy:5});p.text([1.05,2.95],'C',{color:'#3b0764',font:bold});
+    p.text([2.4,0.35],'D₁',{color:C.d,font:bold,align:'center',dy:5});p.text([-0.4,0.3],'D₂',{color:C.d,font:bold,align:'center',dy:5});
+    p.text([-0.45,2.35],'D₃',{color:C.d,font:bold,align:'center',dy:5});p.text([1.05,2.95],'C',{color:'#3b0764',font:bold});
     if(solved){p.text([-3.4,-3.2],'f = x² − y²',{color:C.ink,font:bold});}
   }};
 

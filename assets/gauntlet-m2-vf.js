@@ -17,7 +17,8 @@ const signFig={style:'max-width:420px',opts:{xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:2
     p.param(t=>[-2+4*t,1],0,1,{color:C.d,width:2.6,arrow:true});
     p.param(t=>[2*t,2*t],0,1,{color:C.d,width:2.6,arrow:true});
     p.point([2,0],{color:C.d,r:4});p.point([-2,1],{color:C.d,r:4});p.point([0,0],{color:C.d,r:4});
-    p.text([1.5,1.65],'C₁',{color:C.d});p.text([0.9,1.25],'C₂',{color:C.d});p.text([1.75,1.4],'C₃',{color:C.d});
+    const bold='600 15px -apple-system,Segoe UI,sans-serif';
+    p.text([-1.55,1.95],'C₁',{color:C.d,font:bold});p.text([-0.95,1.28],'C₂',{color:C.d,font:bold});p.text([0.62,0.22],'C₃',{color:C.d,font:bold});
   }};
 
 window.GAUNTLET_M2.push(
