@@ -118,10 +118,25 @@
   <h3>Reducing the boundary</h3>
   <p><b>Rectangle</b> \([p,q]\times[r,s]\): four edges. On the bottom edge \(y=r\), the function is \(g(x)=f(x,r)\) for \(p\le x\le q\). Do the same on the other three. The four corners are the endpoints shared by two edges, so they always land on the candidate list.</p>
   <p><b>Disk</b> \(x^2+y^2\le r^2\): the boundary is the circle \(x^2+y^2=r^2\). Either parametrize it, \(x=r\cos t,\ y=r\sin t\) with \(0\le t\le 2\pi\), or substitute \(y^2=r^2-x^2\) when \(f\) only involves \(y^2\), which turns the boundary into a one-variable problem on \([-r,r]\). Lagrange multipliers (Chapter 3) handle the same job.</p>
+  <p><b>Ellipse or shifted disk</b>: for \(\tfrac{x^2}{a^2}+\tfrac{y^2}{b^2}\le1\) use \(x=a\cos t,\ y=b\sin t\); for \((x-h)^2+y^2\le r^2\) use \(x=h+r\cos t,\ y=r\sin t\), or substitute \(y^2\) from the boundary equation, or use Lagrange multipliers on the boundary curve. Either way the boundary becomes a function of one variable on a closed interval.</p>
   <p><b>Triangle</b>: three edges, each a segment. Parametrize the slanted one, for instance \((x,y)=(1-t)P+tQ\) for \(0\le t\le 1\), and include the three vertices.</p>
 
   <div class="note"><b>No second derivative test here.</b> Once the region is closed and bounded, you never classify anything. You build a candidate list and compare numbers. An interior saddle point still belongs on the list; it simply will not win.</div>
   <div class="warn"><b>Three things get dropped.</b> Forgetting the corners, forgetting to check that the interior critical point actually lies inside \(R\), and forgetting the endpoints of each boundary piece. Any one of them can hide the true maximum. Write the candidate list out in full before you compare.</div>
+
+  <h3>One critical point is not enough</h3>
+  <p>In one variable, a continuous function on an interval whose only critical point is a local minimum has its absolute minimum there. To go lower, the graph would have to turn around, and turning around makes a second critical point.</p>
+  <p>In two variables that argument fails, because the surface can go around the valley instead of over it. Take \(f(x,y)=x^2(1+y)^3+y^2\). Then \(f_x=2x(1+y)^3\) and \(f_y=3x^2(1+y)^2+2y\). The only solution of \(f_x=f_y=0\) is \((0,0)\): if \(x=0\) then \(f_y=2y=0\) gives \(y=0\), and if \(1+y=0\) then \(f_y=-2\ne0\). There \(f_{xx}=2\), \(f_{yy}=2\), \(f_{xy}=0\), so \(D=4&gt;0\) and the origin is a local minimum with \(f=0\). But along the line \(y=-2\), \(f(x,-2)=-x^2+4\), which goes to \(-\infty\). So the local minimum is not absolute, and \(f\) has no absolute minimum at all.</p>
+
+  <div class="card">
+    <h4>Explore: a lone local minimum that is not the lowest point</h4>
+    <canvas class="scene" id="oneScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The blue surface is \(f=x^2(1+y)^3+y^2\), heights compressed by a monotone rescaling so it fits the box. Green: the local minimum at the origin. Purple: the path along \(y=-2\).</p>
+    <div class="sliders" id="oneSliders" style="grid-template-columns:1fr"></div>
+    <div class="readout" id="oneOut"></div>
+    <p class="hint">Slide past \(|x|=2\) and the path along \(y=-2\) drops below the valley floor at the origin, even though the origin is the only flat spot anywhere.</p>
+  </div>
+
+  <div class="note"><b>Closed and bounded is what saves you.</b> On a closed bounded region you compare candidates, and the Extreme Value Theorem guarantees the winner is on your list. On an unbounded region such as the whole plane, one local extremum says nothing about absolute extrema.</div>
 
   <div class="card">
     <h4>Explore: the candidate list</h4>
@@ -804,6 +819,28 @@ Q.lagConcept={name:'the meaning of the Lagrange condition',
 
   new Drill({mount:'#drill-absolute',section:'absolute',goal:5,
     ...mixDrill([Q.absRect,Q.absRect,Q.absDisk,Q.absDisk,Q.absTri,Q.absWhere])});
+})();
+
+/* ---- chapter 2: a lone local minimum that is not absolute */
+(function(){
+  const f=(x,y)=>x*x*Math.pow(1+y,3)+y*y;
+  /* f reaches 73 at the corner of the window, so compress against a much smaller scale to keep the valley readable */
+  const L=2.6,Z=v=>squash(v,12,L);
+  const sc=new Scene3D('#oneScene',{range:L,azim:-58,elev:26,center:[0,-0.75,0]});
+  let x0=0;
+  sliderRow($('#oneSliders'),{label:'x along y = -2',min:-3,max:3,step:0.05,value:0,
+    fmt:v=>fmtDec(v,2),onInput:v=>{x0=Math.round(v*20)/20;draw();}});
+  function draw(){
+    sc.clear();
+    sc.surface((x,y)=>Z(f(x,y)),[-3,3],[-2.5,1],{n:40,base:SURF.blue,alpha:0.4,stroke:'rgba(30,40,80,.10)'});
+    sc.curve(x=>[x,-2,Z(4-x*x)+0.06],-3,3,{color:'#7c3aed',width:3,n:120});
+    sc.point([0,0,0.05],{color:'#16a34a',r:7,label:'local min, f = 0'});
+    sc.point([x0,-2,Z(4-x0*x0)+0.06],{color:'#d97706',r:7});
+    sc.render();
+    const v=4-x0*x0;
+    $('#oneOut').innerHTML=`f(${fmtDec(x0,2)}, -2) = 4 - (${fmtDec(x0,2)})² = <b>${fmtDec(v,2)}</b><br>f(0, 0) = 0`+
+      (v<-1e-9?`<br><b>${fmtDec(v,2)} is lower than the local minimum.</b>`:'');}
+  redrawOnShow('absolute',draw);draw();
 })();
 
 /* ============================================================ chapter 3 widgets */
