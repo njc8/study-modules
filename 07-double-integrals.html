@@ -27,16 +27,28 @@
   <div class="formula">\(\displaystyle\iint_R f(x,y)\,dA=\lim_{m,n\to\infty}\sum_{i=1}^{m}\sum_{j=1}^{n} f(x_{ij}^*,y_{ij}^*)\,\Delta A\)<span class="cap">Read it as: height times cell area, summed. When \(f\ge 0\) this is the volume under the surface \(z=f(x,y)\) and above \(R\).</span></div>
   <p>The <b>midpoint rule</b> takes the sample point at the center of each cell. It is the estimate you compute by hand:</p>
   <div class="formula">\(\displaystyle\iint_R f\,dA\approx\sum_{i=1}^{m}\sum_{j=1}^{n} f(\bar x_i,\bar y_j)\,\Delta A,\qquad \Delta A=\frac{(b-a)(d-c)}{mn}\)<span class="cap">\(\bar x_i\) is the midpoint of the \(i\)th \(x\)-subinterval, \(\bar y_j\) the midpoint of the \(j\)th \(y\)-subinterval. With \(m=n=2\) there are four cells and four midpoints.</span></div>
+  <p>The sample point can be <b>any</b> point of each cell, and problems name it. Number the cells by \((i,j)\) with \(x_i=a+i\,\Delta x\) and \(y_j=c+j\,\Delta y\). Then the <b>upper right</b> corner of cell \((i,j)\) is \((x_i,y_j)\), the <b>lower left</b> corner is \((x_{i-1},y_{j-1})\), and the <b>midpoint</b> is \(\big(\tfrac{x_{i-1}+x_i}{2},\tfrac{y_{j-1}+y_j}{2}\big)\).</p>
+  <div class="card">
+    <h4>Recipe: a Riemann sum on an \(m\times n\) grid</h4>
+    <ol class="steps">
+      <li>Compute \(\Delta x=(b-a)/m\), \(\Delta y=(d-c)/n\), and \(\Delta A=\Delta x\,\Delta y\).</li>
+      <li>List the sample \(x\)-values (one per column of cells) and the sample \(y\)-values (one per row of cells) for the corner the problem names.</li>
+      <li>Evaluate \(f\) at all \(mn\) pairs of one sample \(x\) with one sample \(y\).</li>
+      <li>Add the \(mn\) values and multiply the total by \(\Delta A\) once, at the end.</li>
+    </ol>
+  </div>
+  <div class="note"><b>Products factor.</b> When \(f(x,y)=g(x)h(y)\), the double sum splits: \(\sum_i\sum_j g(x_i)h(y_j)=\big(\sum_i g(x_i)\big)\big(\sum_j h(y_j)\big)\). A \(3\times2\) grid is then two short sums and one product, instead of six separate evaluations.</div>
 
   <div class="card">
     <h4>Explore: the Riemann sum becomes the integral</h4>
     <div class="xf">
-      <div><canvas class="scene" id="rsScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The blue sheet is \(z=f(x,y)\); the orange boxes are the midpoint columns over the rectangle.</p></div>
+      <div><canvas class="scene" id="rsScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The blue sheet is \(z=f(x,y)\); the orange boxes are the columns over the rectangle, each as tall as \(f\) at its sample point (the purple dots on the floor).</p></div>
       <div>
         <div class="presets" id="rsPresets"></div>
+        <div class="presets" id="rsSample"></div>
         <div class="sliders" id="rsSliders"></div>
         <div class="readout" id="rsOut"></div>
-        <p class="hint">Push \(n\) from 1 to 8 and watch the error column shrink. With \(n=1\) you are estimating the whole volume with a single box of height \(f\) at the center of the rectangle, and it is often surprisingly good: the overshoot on one side cancels the undershoot on the other. Try the saddle \(z=xy+4\), where the cancellation is exact.</p>
+        <p class="hint">Pick the <b>upper right</b> sample point on an increasing surface such as \(z=x^2+y^2\) and every column overshoots; switch to <b>lower left</b> and every column undershoots. Push \(m\) and \(n\) up and both errors shrink toward 0. The <b>midpoint</b> rule is usually far better at the same grid size, because the overshoot and undershoot inside each cell nearly cancel. Try the saddle \(z=xy+4\), where the midpoint cancellation is exact.</p>
       </div>
     </div>
   </div>
@@ -68,6 +80,8 @@
   <h3>Average value</h3>
   <p>The <b>average value</b> of \(f\) over \(R\) is the total divided by the area, exactly as for one variable:</p>
   <div class="formula">\(\displaystyle f_{\text{avg}}=\frac{1}{A(R)}\iint_R f(x,y)\,dA,\qquad A(R)=(b-a)(d-c)\)<span class="cap">It is the height of the flat box with the same volume over the same base.</span></div>
+
+  <p><b>Signed volume.</b> \(\iint_R f\,dA\) counts volume above the \(xy\)-plane as positive and volume below it as negative, so you can often read the sign off a contour map. If \(f>c\) on all of a region \(D\), then \(\iint_D(f-c)\,dA>0\). An odd function over a region symmetric about the matching axis integrates to 0, because the positive and negative halves cancel.</p>
 
   <h3>Practice</h3>
   <div class="card" id="drill-rect"></div>
@@ -726,31 +740,38 @@ Q.planeArea={name:'surface area of a plane',
   ];
   const exactOf=p=>{const N=200,dx=(p.X[1]-p.X[0])/N,dy=(p.Y[1]-p.Y[0])/N;let s=0;
     for(let i=0;i<N;i++)for(let j=0;j<N;j++)s+=p.f(p.X[0]+(i+0.5)*dx,p.Y[0]+(j+0.5)*dy);return s*dx*dy;};
-  let cur=PR[0],n=2,exact=exactOf(PR[0]);
-  const box=$('#rsPresets');
+  const SAMPLES=[['midpoint',.5,.5],['upper right',1,1],['lower left',0,0],['upper left',0,1],['lower right',1,0]];
+  let cur=PR[0],m=2,n=2,exact=exactOf(PR[0]),smp=SAMPLES[0];
+  const box=$('#rsPresets'),sbx=$('#rsSample');
   PR.forEach(pr=>{const b=el('button',{class:'btn small'},pr.n);b.onclick=()=>{cur=pr;exact=exactOf(pr);
     $$('.btn',box).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};box.appendChild(b);});
   $$('.btn',box)[0].classList.add('on');
-  sliderRow($('#rsSliders'),{label:'n (cells per side)',min:1,max:8,step:1,value:2,fmt:v=>String(v),onInput:v=>{n=v;draw();}});
+  SAMPLES.forEach(sp=>{const b=el('button',{class:'btn small'},sp[0]);b.onclick=()=>{smp=sp;
+    $$('.btn',sbx).forEach(x=>x.classList.remove('on'));b.classList.add('on');draw();};sbx.appendChild(b);});
+  $$('.btn',sbx)[0].classList.add('on');
+  sliderRow($('#rsSliders'),{label:'m (cells in x)',min:1,max:8,step:1,value:2,fmt:v=>String(v),onInput:v=>{m=v;draw();}});
+  sliderRow($('#rsSliders'),{label:'n (cells in y)',min:1,max:8,step:1,value:2,fmt:v=>String(v),onInput:v=>{n=v;draw();}});
   function draw(){
     scene.o.range=cur.range;scene.clear();
     scene.polygon([[cur.X[0],cur.Y[0],0],[cur.X[1],cur.Y[0],0],[cur.X[1],cur.Y[1],0],[cur.X[0],cur.Y[1],0]],
       {fill:'rgba(37,99,235,.10)',stroke:'#2563eb'});
     scene.surface(cur.f,cur.X,cur.Y,{n:20,base:SURF.blue,alpha:0.5,stroke:'rgba(30,40,80,.12)'});
-    const dx=(cur.X[1]-cur.X[0])/n,dy=(cur.Y[1]-cur.Y[0])/n;let S=0;
-    for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+    const dx=(cur.X[1]-cur.X[0])/m,dy=(cur.Y[1]-cur.Y[0])/n;let S=0;
+    for(let i=0;i<m;i++)for(let j=0;j<n;j++){
       const a0=cur.X[0]+i*dx,a1=a0+dx,b0=cur.Y[0]+j*dy,b1=b0+dy;
-      const h=cur.f(a0+dx/2,b0+dy/2);S+=h;
+      const sx=a0+smp[1]*dx,sy=b0+smp[2]*dy;
+      const h=cur.f(sx,sy);S+=h;
       const c=[[a0,b0],[a1,b0],[a1,b1],[a0,b1]];
       for(let k=0;k<4;k++){const u=c[k],w=c[(k+1)%4];
         scene.polygon([[u[0],u[1],0],[w[0],w[1],0],[w[0],w[1],h],[u[0],u[1],h]],
           {fill:'rgba(217,119,6,.13)',stroke:'rgba(217,119,6,.45)'});}
       scene.polygon(c.map(pt=>[pt[0],pt[1],h]),{fill:'rgba(217,119,6,.26)',stroke:'rgba(217,119,6,.6)'});
+      scene.point([sx,sy,0],{color:'#7c3aed',r:3});
     }
     scene.render();
     const dA=dx*dy,sum=S*dA,err=sum-exact;
-    $('#rsOut').innerHTML=`n = ${n} &rarr; ${n*n} cell${n>1?'s':''}, ΔA = ${fmtDec(dA,4)}<br>`+
-      `midpoint sum = <b>${fmtDec(sum,4)}</b><br>exact integral = ${fmtDec(exact,4)}<br>`+
+    $('#rsOut').innerHTML=`m = ${m}, n = ${n} &rarr; ${m*n} cell${m*n>1?'s':''}, ΔA = ${fmtDec(dA,4)}<br>`+
+      `${smp[0]} sum = <b>${fmtDec(sum,4)}</b><br>exact integral = ${fmtDec(exact,4)}<br>`+
       `error = ${fmtDec(err,4)} (${fmtDec(100*Math.abs(err)/Math.abs(exact||1),2)}%)`;
   }
   redrawOnShow('rect',draw);draw();
