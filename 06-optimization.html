@@ -388,8 +388,12 @@ function sanityPoly(f,verts,mx,mn){
 function sanityDisk(f,r,mx,mn){const N=26,M=200;
   for(let i=0;i<=N;i++)for(let j=0;j<M;j++){const rr=r*i/N,t=2*Math.PI*j/M;
     const v=f(rr*Math.cos(t),rr*Math.sin(t));if(v>mx+1e-6||v<mn-1e-6){console.warn('disk candidate list missed a value',v,mx,mn);return;}}}
+/* region (x-cx)^2/a^2 + y^2/b^2 <= 1: a polar grid must not beat the candidate list */
+function sanityEllipse(f,cx,a,b,mx,mn){const NR=26,NT=200;
+  for(let i=0;i<=NR;i++)for(let j=0;j<NT;j++){const rr=i/NR,t=2*Math.PI*j/NT;
+    const v=f(cx+rr*a*Math.cos(t),rr*b*Math.sin(t));if(v>mx+1e-6||v<mn-1e-6){console.warn('ellipse candidate list missed a value',v,mx,mn);return;}}}
 
-const candLine=c=>`<li><i class="dot" style="background:${c.kind==='interior'?'var(--c)':c.kind==='edge'?'var(--b)':'#a8a29e'};width:10px;height:10px;border-radius:50%"></i> ${M(PTX(c.p))} <span class="muted">(${c.kind==='interior'?'interior critical point':c.kind==='edge'?'boundary':'corner'})</span>: ${M('f='+num(c.v))}</li>`;
+const candLine=c=>`<li><i class="dot" style="background:${c.kind==='interior'?'var(--c)':c.kind==='edge'?'var(--b)':'#a8a29e'};width:10px;height:10px;border-radius:50%"></i> ${M(c.tex||PTX(c.p))} <span class="muted">(${c.kind==='interior'?'interior critical point':c.kind==='edge'?'boundary':'corner'})</span>: ${M('f='+num(c.v))}</li>`;
 /* contour levels placed at quantiles of f over the window, so a steep function
    still gets evenly spread level curves instead of a dozen bunched at one corner */
 function quantLevels(f,x0,x1,y0,y1,n){const v=[],N=44;
@@ -600,6 +604,14 @@ const ABSWHERE=[
    right:'The open square \\(0\\lt x\\lt 1,\\ 0\\lt y\\lt 1\\)',
    wrong:['The disk \\(x^2+y^2\\le 1\\)','The triangle with vertices \\((0,0),(2,0),(0,2)\\) including its edges','The rectangle \\(0\\le x\\le 2,\\ 1\\le y\\le 4\\)'],
    why:'It is bounded but not closed: it is missing its boundary. On it, \\(f(x,y)=x\\) gets arbitrarily close to 1 without ever reaching a maximum.'},
+  {q:'On all of \\(\\mathbb{R}^2\\), \\(f\\) is differentiable, has exactly one critical point, and the second derivative test says it is a local minimum. What follows?',
+   right:'Nothing about absolute extrema: \\(f\\) can still take smaller values far away, as \\(f=x^2(1+y)^3+y^2\\) does',
+   wrong:['It is the absolute minimum, because going lower would need a second critical point','It is the absolute minimum, because a local minimum on \\(\\mathbb{R}^2\\) is always absolute','It cannot be a minimum, since a lone critical point on \\(\\mathbb{R}^2\\) is always a saddle'],
+   why:'In one variable a lone local minimum is absolute, because the graph would have to turn around. In two variables the surface can go around the valley. For \\(f=x^2(1+y)^3+y^2\\) the origin is the only critical point and a local minimum, yet \\(f(x,-2)=4-x^2\\to-\\infty\\).'},
+  {q:'\\(f\\) is differentiable on the closed disk \\(x^2+y^2\\le1\\), and its only critical point inside is a local maximum. Is that point the absolute maximum on the disk?',
+   right:'Not necessarily: the absolute maximum can be on the boundary circle',
+   wrong:['Yes, a lone interior local maximum is always the absolute maximum','Yes, by the Extreme Value Theorem','No, a local maximum is never an absolute maximum'],
+   why:'The Extreme Value Theorem promises an absolute maximum exists, not that it is interior. On the boundary \\(\\nabla f\\) need not be zero, so compare the interior candidate with the best boundary value.'},
 ];
 Q.absWhere={name:'where absolute extrema can occur',
   gen(){const it=pick(ABSWHERE);const opts=shuffle([it.right,...it.wrong]);
@@ -609,6 +621,83 @@ Q.absWhere={name:'where absolute extrema can occur',
   check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
     return v===q.ci?{ok:true,msg:q.it.why}:{ok:false,msg:'Not that one. Think about what the procedure actually requires.'};},
   solution(q){return `<b>${q.it.right}.</b> ${q.it.why}`;}
+};
+
+/* regions with a curved or slanted boundary: ellipses, shifted disks, slanted polygons */
+Q.absEllipse={name:'absolute extrema on an ellipse or shifted disk',
+  gen(){const fam=pick(['E1','E2','E3']);let o;
+    if(fam==='E3'){let h,r,p;
+      do{h=pick([-2,-1,1,2]);r=pick([1,2,3]);p=2*rint(-3,3);}while(2*h+p===0);
+      const f=(x,y)=>x*x+y*y+p*x;const x0=(-p/2)||0,inside=Math.abs(x0-h)<r-1e-12;
+      const cands=[];
+      if(inside)cands.push({p:[x0,0],kind:'interior',v:-p*p/4});
+      [h-r,h+r].forEach(x=>cands.push({p:[x,0],kind:'edge',v:f(x,0)}));
+      const k0=r*r-h*h,cf=2*h+p;
+      o={fam,f,cands,cx:h,a:r,b:r,
+        tex:poly([[1,'x^2'],[1,'y^2'],[p,'x']]),fxT:poly([[2,'x'],[p,'']]),fyT:'2y',
+        region:`${poly([[1,'x^2'],[-2*h,'x'],[1,'y^2']])}\\le ${texNum(k0)}`,
+        inter:`Setting both to zero gives ${M(R`(x,y)=${PTX([x0,0])}`)}. It is ${inside?'':'<b>not</b> '}in the region: its squared distance from the center ${M(PTX([h,0]))} is ${M(R`(${texNum(x0)}-(${texNum(h)}))^2=${num((x0-h)*(x0-h))}`)}, which is ${inside?'less than':'not less than'} ${M(R`r^2=${r*r}`)}.${inside?'':' Drop it.'} `,
+        red:`The region is the disk ${M(R`(${poly([[1,'x'],[-h,'']])})^2+y^2\le ${r*r}`)}, centered at ${M(PTX([h,0]))} with radius ${r}. On its boundary ${M(R`x^2+y^2=${poly([[k0,''],[2*h,'x']])}`)}, so ${M(R`f=${poly([[k0,''],[cf,'x']])}`)}, which is linear in ${M('x')} on ${M(R`${texNum(h-r)}\le x\le ${texNum(h+r)}`)}. A linear function is extreme at the ends of its interval, so the boundary candidates are ${M(PTX([h-r,0]))} and ${M(PTX([h+r,0]))}.`};}
+    else{let a,b;do{a=pick([1,2,3]);b=pick([1,2,3]);}while(a===b);
+      const region=`${poly([[b*b,'x^2'],[a*a,'y^2']])}\\le ${a*a*b*b}`;
+      const ellipseWords=`The region is the ellipse ${M(R`\frac{x^2}{${a*a}}+\frac{y^2}{${b*b}}\le1`)}, so parametrize its boundary by ${M(R`x=${a===1?'':a}\cos t,\ y=${b===1?'':b}\sin t`)}.`;
+      if(fam==='E1'){const c=pick([1,2,3,4]);const m=c*a*b/2,rt=a/Math.SQRT2,st=b/Math.SQRT2;
+        const f=(x,y)=>c*x*y;
+        const cands=[{p:[0,0],kind:'interior',v:0},
+          {p:[rt,st],kind:'edge',v:m,tex:R`\left(\pm\tfrac{${a}}{\sqrt2},\ \pm\tfrac{${b}}{\sqrt2}\right)\text{ (same signs)}`},
+          {p:[rt,-st],kind:'edge',v:-m,tex:R`\left(\pm\tfrac{${a}}{\sqrt2},\ \mp\tfrac{${b}}{\sqrt2}\right)\text{ (opposite signs)}`}];
+        o={fam,f,cands,cx:0,a,b,tex:poly([[c,'xy']]),fxT:poly([[c,'y']]),fyT:poly([[c,'x']]),region,
+          inter:`Setting both to zero gives the single critical point ${M('(0,\\,0)')}, which is inside the ellipse, with ${M('f=0')}. `,
+          red:`${ellipseWords} Then ${M(R`f=${texNum(c*a*b)}\cos t\sin t=${texNum(m)}\sin 2t`)}, whose largest and smallest values are ${M(R`\pm${texNum(m)}`)}, reached when ${M(R`\sin 2t=\pm1`)}, that is at ${M(R`t=\tfrac{\pi}{4},\tfrac{3\pi}{4},\tfrac{5\pi}{4},\tfrac{7\pi}{4}`)}.`};}
+      else{const k=rint(-2,3);const f=(x,y)=>x*x-y*y+k;
+        const cands=[{p:[0,0],kind:'interior',v:k},
+          {p:[a,0],kind:'edge',v:a*a+k,tex:R`(\pm${a},\,0)`},
+          {p:[0,b],kind:'edge',v:k-b*b,tex:R`(0,\,\pm${b})`}];
+        o={fam,f,cands,cx:0,a,b,tex:poly([[1,'x^2'],[-1,'y^2'],[k,'']]),fxT:'2x',fyT:'-2y',region,
+          inter:`Setting both to zero gives the single critical point ${M('(0,\\,0)')}, which is inside the ellipse, with ${M('f='+texNum(k))}. `,
+          red:`${ellipseWords} Then ${M(R`f=${a*a===1?'':a*a}\cos^2 t-${b*b===1?'':b*b}\sin^2 t${k?(k<0?'':'+')+texNum(k):''}`)}. Using ${M(R`\cos^2t=1-\sin^2t`)} this is ${M(R`${texNum(a*a+k)}-${a*a+b*b}\sin^2 t`)}, which is largest (${M(R`${texNum(a*a+k)}`)}) when ${M(R`\sin t=0`)}, at ${M(PTX([a,0]))} and ${M(PTX([-a,0]))}, and smallest (${M(R`${texNum(k-b*b)}`)}) when ${M(R`\sin^2t=1`)}, at ${M(PTX([0,b]))} and ${M(PTX([0,-b]))}.`};}}
+    const {mx,mn}=bestOf(o.cands);sanityEllipse(o.f,o.cx,o.a,o.b,mx,mn);
+    return {...o,mx,mn};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the absolute maximum and minimum values of ${M('f(x,y)='+q.tex)} on the region ${M(q.region)}. Fractions like 3/2 are fine.</p>`;
+    numIn(el,'mx','absolute maximum value =');numIn(el,'mn','absolute minimum value =');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx)],['mn',checkNumber($('[data-k=mn]',el).value,q.mn)]]);},
+  solution(q){return `${M(R`f_x=${q.fxT}`)} and ${M(R`f_y=${q.fyT}`)}. ${q.inter}${q.red} The full list:${candList(q.cands)}Comparing: absolute maximum <b>${fmt(q.mx)}</b> and absolute minimum <b>${fmt(q.mn)}</b>.`;}
+};
+const POLYS=[[[-2,0],[2,0],[0,2]],[[0,0],[4,0],[2,4]],[[0,-2],[3,1],[0,4]],
+  [[0,0],[4,0],[4,2],[0,4]],[[0,0],[3,0],[4,2],[1,2]]];
+const POLYFALL={verts:POLYS[0],fam:'sq',x0:0,y0:1};
+function polyCo(fam,x0,y0){
+  if(fam==='sq')return {A:1,B:1,C:0,D:-2*x0,E:-2*y0,F:0};
+  if(fam==='neg')return {A:-1,B:-1,C:0,D:2*x0,E:2*y0,F:0};
+  return {A:1,B:1,C:1,D:-(2*x0+y0),E:-(x0+2*y0),F:0};}
+Q.absPoly={name:'absolute extrema on a slanted polygon',
+  gen(){let best=null;
+    for(let t=0;t<400;t++){
+      const verts=pick(POLYS),fam=pick(['sq','neg','cross']);
+      const xs=verts.map(v=>v[0]),ys=verts.map(v=>v[1]);
+      const x0=rint(Math.min(...xs),Math.max(...xs)),y0=rint(Math.min(...ys),Math.max(...ys));
+      const co=polyCo(fam,x0,y0);const cands=quadCands(co,verts);const {mx,mn}=bestOf(cands);
+      if(mx===mn||!isNice(mx)||!isNice(mn))continue;
+      best={fam,co,verts,cands,mx,mn,x0,y0};break;}
+    if(!best){const z=POLYFALL,co=polyCo(z.fam,z.x0,z.y0),cands=quadCands(co,z.verts);best={...z,co,cands,...bestOf(cands)};}
+    const {A,B,C,D:Dc,E,F}=best.co;
+    best.f=(x,y)=>A*x*x+B*y*y+C*x*y+Dc*x+E*y+F;
+    best.tex=poly([[A,'x^2'],[B,'y^2'],[C,'xy'],[Dc,'x'],[E,'y'],[F,'']]);
+    best.fxT=poly([[2*A,'x'],[C,'y'],[Dc,'']]);best.fyT=poly([[2*B,'y'],[C,'x'],[E,'']]);
+    sanityPoly(best.f,best.verts,best.mx,best.mn);
+    return best;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the absolute maximum and minimum values of ${M('f(x,y)='+q.tex)} on the closed polygonal region with vertices ${q.verts.map(v=>M(`(${v[0]},\\,${v[1]})`)).join(', ')}.</p>`;
+    numIn(el,'mx','absolute maximum value =');numIn(el,'mn','absolute minimum value =');},
+  check(q,el){return Gall(el,[['mx',checkNumber($('[data-k=mx]',el).value,q.mx)],['mn',checkNumber($('[data-k=mn]',el).value,q.mn)]]);},
+  solution(q){const inter=q.cands.find(c=>c.kind==='interior'),V=q.verts;
+    let s=`${M(R`f_x=${q.fxT}`)} and ${M(R`f_y=${q.fyT}`)}. The only critical point is ${M(PTX([q.x0,q.y0]))}`;
+    s+=inter?`, which lies inside the polygon, so it is a candidate. `:`, which is not in the interior of the polygon, so it does not count as an interior candidate. `;
+    s+=`Parametrize each edge from ${M('P')} to ${M('Q')} as ${M(R`(x,y)=(1-t)P+tQ,\ 0\le t\le1`)}:<ul class="small" style="list-style:none;padding:0;margin:8px 0;line-height:1.9">`+
+      V.map((P,i)=>{const Qp=V[(i+1)%V.length];
+        return `<li>${M(PTX(P))} to ${M(PTX(Qp))}: ${M(R`(x,y)=\big(${poly([[P[0],''],[Qp[0]-P[0],'t']])},\ ${poly([[P[1],''],[Qp[1]-P[1],'t']])}\big)`)}</li>`;}).join('')+`</ul>`+
+      `On each edge \\(f\\) becomes a quadratic in \\(t\\). Its vertex is a candidate when \\(0\\lt t\\lt 1\\), and the endpoints \\(t=0,1\\) are the vertices of the polygon. The full list:`+candList(q.cands)+
+      `Comparing: absolute maximum <b>${fmt(q.mx)}</b> and absolute minimum <b>${fmt(q.mn)}</b>.`;
+    return s;}
 };
 
 /* ---------- chapter 3 ---------- */
@@ -836,7 +925,7 @@ Q.lagConcept={name:'the meaning of the Lagrange condition',
   redrawOnShow('absolute',draw);draw();
 
   new Drill({mount:'#drill-absolute',section:'absolute',goal:5,
-    ...mixDrill([Q.absRect,Q.absRect,Q.absDisk,Q.absDisk,Q.absTri,Q.absWhere])});
+    ...mixDrill([Q.absRect,Q.absRect,Q.absDisk,Q.absEllipse,Q.absEllipse,Q.absTri,Q.absPoly,Q.absWhere])});
 })();
 
 /* ---- chapter 2: a lone local minimum that is not absolute */
@@ -1000,7 +1089,7 @@ Q.lagConcept={name:'the meaning of the Lagrange condition',
 /* ============================================================ quiz */
 makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
   Q.critFind,Q.critClassify,Q.critExtremes,Q.critTestNums,
-  Q.absRect,Q.absDisk,Q.absTri,Q.absWhere,
+  Q.absRect,Q.absDisk,Q.absEllipse,Q.absTri,Q.absWhere,
   Q.lagLine,Q.lagCurve,Q.lag3,Q.lagWord,Q.lagConcept]});
 
 /* ============================================================ test hook */
@@ -1012,6 +1101,8 @@ window.__solvers={
   'absolute extrema on a rectangle':q=>({mx:fmt(q.mx),mn:fmt(q.mn)}),
   'absolute extrema on a disk':q=>({mx:String(q.mx),mn:String(q.mn)}),
   'absolute extrema on a triangle':q=>({mx:fmt(q.mx),mn:fmt(q.mn)}),
+  'absolute extrema on an ellipse or shifted disk':q=>({mx:fmt(q.mx),mn:fmt(q.mn)}),
+  'absolute extrema on a slanted polygon':q=>({mx:fmt(q.mx),mn:fmt(q.mn)}),
   'where absolute extrema can occur':q=>({_btn:q.ci}),
   'Lagrange: a linear function on a circle':q=>({mx:String(q.mx),mn:String(q.mn)}),
   'Lagrange: maximum and minimum on a curve':q=>({mx:q.mx==='DNE'?'DNE':String(q.mx),mn:q.mn==='DNE'?'DNE':String(q.mn)}),
