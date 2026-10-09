@@ -346,30 +346,77 @@ Q.rectProduct={name:'product integral over a rectangle',
       D(R`=\Big[${q.f.F('x')}\Big]_{${q.f.loT}}^{${q.f.hiT}}\cdot\Big[${q.g.F('y')}\Big]_{${q.g.loT}}^{${q.g.hiT}}=\left(${q.f.valT}\right)\left(${q.g.valT}\right)\approx ${fmtDec(q.val,4)}`);}
 };
 
+/* a Riemann sum on an m by n grid, exact: sample x-values and y-values as fractions, f given as a term list.
+   px, py in {0,.5,1} pick the sample point inside each cell: 0 = low end, 1 = high end, .5 = midpoint */
+function gridSum(tl,x0,y0,dx,dy,m,n,px,py){
+  const at=(o,d,i,t)=>frA(fr(o),frM(d,t===.5?fr(2*i+1,2):fr(i+t)));
+  const xs=[],ys=[];
+  for(let i=0;i<m;i++)xs.push(at(x0,dx,i,px));
+  for(let j=0;j<n;j++)ys.push(at(y0,dy,j,py));
+  const cells=[];let S=fr(0);
+  xs.forEach(a=>ys.forEach(b=>{const v=polyValFr(tl,a,b);cells.push({x:a,y:b,v});S=frA(S,v);}));
+  const dA=frM(dx,dy),est=frM(S,dA);
+  return {xs,ys,cells,S,dA,est};
+}
+const listTex=a=>a.map(frTex).join(',\\ ');
+
 Q.midpointRule={name:'midpoint rule estimate',
   gen(){
-    const x0=rint(0,2),x1=x0+2,y0=rint(0,2),y1=y0+2;
+    const m=pick([2,3]),n=pick([2,3]),dxi=pick([1,2]),dyi=pick([1,2]);
+    const x0=rint(0,2),y0=rint(0,2),x1=x0+m*dxi,y1=y0+n*dyi;
     const terms=randTerms(2,2).map(t=>({...t,k:Math.abs(t.k)}));
-    const dx=fr(x1-x0,2),dy=fr(y1-y0,2);
-    const mx=[frA(fr(x0),frD(dx,fr(2))),frA(fr(x0),frM(fr(3),frD(dx,fr(2))))];
-    const my=[frA(fr(y0),frD(dy,fr(2))),frA(fr(y0),frM(fr(3),frD(dy,fr(2))))];
     const tl=terms.map(t=>({c:fr(t.k),v:[['x',t.i],['y',t.j]]}));
-    const cells=[];let S=fr(0);
-    mx.forEach(a=>my.forEach(b=>{const v=polyValFr(tl,a,b);cells.push({x:a,y:b,v});S=frA(S,v);}));
-    const dA=frM(dx,dy);
-    const est=frM(S,dA);
-    return {x0,x1,y0,y1,terms,tl,mx,my,cells,dA,S,est,val:frV(est),ansStr:frStr(est),fTex:polyTex(tl)};
+    const dx=fr(dxi),dy=fr(dyi);
+    const g=gridSum(tl,x0,y0,dx,dy,m,n,.5,.5);
+    return {m,n,x0,x1,y0,y1,dx,dy,terms,tl,...g,val:frV(g.est),ansStr:frStr(g.est),fTex:polyTex(tl)};
   },
   render(q,el){
-    el.innerHTML=`<p class="prompt">Estimate the integral with the midpoint rule using ${M('m=n=2')} (four cells). Give the exact value of the estimate.</p>
+    el.innerHTML=`<p class="prompt">Estimate the integral with the midpoint rule using ${M(`m=${q.m}`)} and ${M(`n=${q.n}`)} (${q.m*q.n} cells). Give the exact value of the estimate.</p>
       ${D(R`\iint_R ${q.fTex}\;dA,\qquad R=[${q.x0},${q.x1}]\times[${q.y0},${q.y1}]`)}`;
     numIn(el,'v','Estimate =',{wide:true});
   },
   check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{tol:1e-6}));},
   solution(q){
     const pts=q.cells.map(c=>`${M(R`f(${frTex(c.x)},${frTex(c.y)})=${frTex(c.v)}`)}`).join(', ');
-    return `Each subinterval has length ${M(R`\Delta x=${frTex(fr(q.x1-q.x0,2))}`)} and ${M(R`\Delta y=${frTex(fr(q.y1-q.y0,2))}`)}, so ${M(R`\Delta A=${frTex(q.dA)}`)}. The four midpoints give ${pts}. Adding them and multiplying by ${M(R`\Delta A`)}: `+
+    return `Each subinterval has length ${M(R`\Delta x=${frTex(q.dx)}`)} and ${M(R`\Delta y=${frTex(q.dy)}`)}, so ${M(R`\Delta A=${frTex(q.dA)}`)}. The midpoints are ${M(R`x=${listTex(q.xs)}`)} and ${M(R`y=${listTex(q.ys)}`)}, which gives ${q.m*q.n} sample points: ${pts}. Adding them and multiplying by ${M(R`\Delta A`)}: `+
       D(R`\iint_R f\,dA\approx\left(${frTex(q.S)}\right)\left(${frTex(q.dA)}\right)=${frTex(q.est)}${APX(q.val)}`);}
+};
+
+/* Riemann sums with a named corner as the sample point */
+const RCF=[
+  {tex:'xy',t:[[1,1,1]]},{tex:'x+2y',t:[[1,1,0],[2,0,1]]},{tex:'x^2+y',t:[[1,2,0],[1,0,1]]},
+  {tex:'2x+y^2',t:[[2,1,0],[1,0,2]]},{tex:'xy+1',t:[[1,1,1],[1,0,0]]},{tex:'x+y^2',t:[[1,1,0],[1,0,2]]}
+].map(f=>({tex:f.tex,tl:f.t.map(([c,i,j])=>({c:fr(c),v:[['x',i],['y',j]]})),prod:f.tex==='xy'}));
+const CORNERS=[
+  {name:'upper right',px:1,py:1},{name:'lower left',px:0,py:0},{name:'upper left',px:0,py:1},{name:'lower right',px:1,py:0}];
+Q.riemannCorner={name:'Riemann sum with corner sample points',
+  gen(){
+    let q;
+    do{
+      const m=pick([2,3]),n=pick([2,3]),dxi=pick([1,2]),dyi=pick([1,2]);
+      const x0=rint(0,5),y0=rint(0,4),x1=x0+m*dxi,y1=y0+n*dyi;
+      const f=pick(RCF),cn=pick(CORNERS);
+      const g=gridSum(f.tl,x0,y0,fr(dxi),fr(dyi),m,n,cn.px,cn.py);
+      q={m,n,x0,x1,y0,y1,dxi,dyi,f,cn,...g,val:frV(g.est),dAval:frV(g.dA),ansStr:frStr(g.est),dAStr:frStr(g.dA)};
+    }while(q.f.tex==='xy'&&q.x0===7&&q.y0===3&&q.m===3&&q.n===2);   /* open homework instance, cannot occur but excluded explicitly */
+    return q;
+  },
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Estimate ${M(R`\iint_R f\,dA`)} for ${M(`f(x,y)=${q.f.tex}`)} over ${M(R`R=[${q.x0},${q.x1}]\times[${q.y0},${q.y1}]`)} with a Riemann sum. Use ${M(`m=${q.m}`)}, ${M(`n=${q.n}`)}, and take the sample point to be the <b>${q.cn.name}</b> corner of each subrectangle. Whole numbers or fractions like <code>35/2</code> are fine.</p>`;
+    numIn(el,'dA',M(R`\Delta A=`),{wide:true});
+    numIn(el,'v','Estimate =',{wide:true});
+  },
+  check(q,el){return Gall(el,[
+    ['dA',checkNumber($('[data-k=dA]',el).value,q.dAval)],
+    ['v',checkNumber($('[data-k=v]',el).value,q.val)]]);},
+  solution(q){
+    const pts=q.cells.map(c=>`${M(R`f(${frTex(c.x)},${frTex(c.y)})=${frTex(c.v)}`)}`).join(', ');
+    const sumX=q.xs.reduce(frA,fr(0)),sumY=q.ys.reduce(frA,fr(0));
+    return `Cell widths: ${M(R`\Delta x=\frac{${q.x1}-${q.x0}}{${q.m}}=${q.dxi}`)} and ${M(R`\Delta y=\frac{${q.y1}-${q.y0}}{${q.n}}=${q.dyi}`)}, so ${M(R`\Delta A=${q.dAStr}`)}. The ${q.cn.name} corners have ${M(R`x\in\{${listTex(q.xs)}\}`)} and ${M(R`y\in\{${listTex(q.ys)}\}`)}. `+
+      (q.f.prod?`Since ${M('f=xy')} factors, the sum is a product: ${M(R`\Big(\sum x\Big)\Big(\sum y\Big)=(${frTex(sumX)})(${frTex(sumY)})=${frTex(q.S)}`)}. `:
+        `The ${q.m*q.n} values of ${M('f')} are ${pts}, and they add to ${M(frTex(q.S))}. `)+
+      `Multiply by ${M(R`\Delta A`)}:`+
+      D(R`\iint_R f\,dA\approx\left(${frTex(q.S)}\right)\left(${q.dAStr}\right)=${frTex(q.est)}`);}
 };
 
 Q.avgValue={name:'average value over a rectangle',
@@ -804,7 +851,7 @@ Q.planeArea={name:'surface area of a plane',
   $('#wtNew').onclick=newQ;
   newQ();
 
-  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.rectPoly,Q.rectPoly,Q.rectProduct,Q.rectProduct,Q.midpointRule,Q.avgValue])});
+  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.rectPoly,Q.rectPoly,Q.rectProduct,Q.rectProduct,Q.midpointRule,Q.riemannCorner,Q.riemannCorner,Q.avgValue])});
 })();
 
 /* ============================================================ chapter 2: region explorer */
@@ -996,6 +1043,7 @@ window.__solvers={
   'iterated integral over a rectangle':q=>({v:q.ansStr}),
   'product integral over a rectangle':q=>({v:q.ansStr}),
   'midpoint rule estimate':q=>({v:q.ansStr}),
+  'Riemann sum with corner sample points':q=>({dA:q.dAStr,v:q.ansStr}),
   'average value over a rectangle':q=>({v:q.ansStr}),
   'set up as a type I integral':q=>({oa:q.reg.I.aT,ob:q.reg.I.bT,il:q.reg.I.lo,ih:q.reg.I.hi}),
   'set up as a type II integral':q=>({oa:q.reg.II.aT,ob:q.reg.II.bT,il:q.reg.II.lo,ih:q.reg.II.hi}),
