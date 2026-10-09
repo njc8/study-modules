@@ -540,6 +540,54 @@ Q.workSign={name:'sign of the work from a picture',
       ${concl} As a check, the integral itself is ${M(R`W\approx ${fmtDec(Math.abs(q.W)<1e-9?0:q.W,3)}`)}.`;}
 };
 
+/* ---- differential form along a space curve: every term of the integrand is multiplied by k in {1,2,3} ---- */
+const kTex=(k,s)=>k===1?s:`${k}\\left(${s}\\right)`;
+const kPre=k=>k===1?'':String(k);
+const W3F=[
+  {int:k=>R`${kPre(k)}z\,dx+${kPre(k)}x\,dy+${kPre(k)}y\,dz`,xs:R`x=t,\ y=t^{2},\ z=t^{3}`,rng:R`0\le t\le 1`,
+   sub:R`dx=dt,\ dy=2t\,dt,\ dz=3t^{2}\,dt`,how:R`z\,dx=t^{3}\,dt,\ \ x\,dy=t(2t)\,dt=2t^{2}\,dt,\ \ y\,dz=t^{2}(3t^{2})\,dt=3t^{4}\,dt`,
+   integrand:k=>kTex(k,R`t^{3}+2t^{2}+3t^{4}`),
+   calc:k=>R`\int_0^{1}${kTex(k,R`t^{3}+2t^{2}+3t^{4}`)}dt=${kTex(k,R`\tfrac14+\tfrac23+\tfrac35`)}=${texFrac(rat(91*k,60))}`,
+   val:k=>k*91/60,str:k=>ratStr(rat(91*k,60))},
+  {int:k=>R`${kPre(k)}y\,dx-${kPre(k)}x\,dy+${kPre(k)}z\,dz`,xs:R`x=\cos t,\ y=\sin t,\ z=t`,rng:R`0\le t\le 2\pi`,
+   sub:R`dx=-\sin t\,dt,\ dy=\cos t\,dt,\ dz=dt`,how:R`y\,dx=-\sin^{2}t\,dt,\ \ -x\,dy=-\cos^{2}t\,dt,\ \ z\,dz=t\,dt,\ \text{and }\sin^{2}t+\cos^{2}t=1`,
+   integrand:k=>kTex(k,R`t-1`),
+   calc:k=>R`\int_0^{2\pi}${kTex(k,R`t-1`)}dt=${kTex(k,R`\tfrac{t^{2}}{2}-t`)}\Big|_0^{2\pi}=${kTex(k,R`2\pi^{2}-2\pi`)}`,
+   val:k=>k*(2*Math.PI**2-2*Math.PI),str:k=>`${k}*(2pi^2-2pi)`},
+  {int:k=>R`${kPre(k)}x^{2}\,dx+${kPre(k)}y\,dz`,xs:R`x=t,\ y=2t,\ z=t^{2}`,rng:R`0\le t\le 2`,
+   sub:R`dx=dt,\ dz=2t\,dt`,how:R`x^{2}\,dx=t^{2}\,dt,\ \ y\,dz=(2t)(2t)\,dt=4t^{2}\,dt`,
+   integrand:k=>`${5*k}t^{2}`,
+   calc:k=>R`\int_0^{2}${5*k}t^{2}\,dt=${5*k}\cdot\tfrac{t^{3}}{3}\Big|_0^{2}=${texFrac(rat(40*k,3))}`,
+   val:k=>k*40/3,str:k=>ratStr(rat(40*k,3))},
+  {int:k=>R`${kPre(k)}e^{x}\,dy+${kPre(k)}y\,dz`,xs:R`x=\ln t,\ y=t,\ z=t^{2}`,rng:R`1\le t\le 2`,
+   sub:R`dy=dt,\ dz=2t\,dt`,how:R`e^{x}=e^{\ln t}=t,\ \text{so }e^{x}\,dy=t\,dt\text{ and }y\,dz=t(2t)\,dt=2t^{2}\,dt`,
+   integrand:k=>kTex(k,R`t+2t^{2}`),
+   calc:k=>R`\int_1^{2}${kTex(k,R`t+2t^{2}`)}dt=${kTex(k,R`\tfrac{t^{2}}{2}+\tfrac{2t^{3}}{3}`)}\Big|_1^{2}=${texFrac(rat(37*k,6))}`,
+   val:k=>k*37/6,str:k=>ratStr(rat(37*k,6))},
+  {int:k=>R`${kPre(k)}yz\,dx+${kPre(k)}xz\,dy+${kPre(k)}xy\,dz`,xs:R`x=t,\ y=t^{2},\ z=t`,rng:R`0\le t\le 1`,
+   sub:R`dx=dt,\ dy=2t\,dt,\ dz=dt`,how:R`yz\,dx=t^{3}\,dt,\ \ xz\,dy=t^{2}(2t)\,dt=2t^{3}\,dt,\ \ xy\,dz=t^{3}\,dt`,
+   integrand:k=>`${4*k}t^{3}`,
+   calc:k=>R`\int_0^{1}${4*k}t^{3}\,dt=${4*k}\cdot\tfrac{t^{4}}{4}\Big|_0^{1}=${k}`,
+   val:k=>k,str:k=>String(k),
+   extra:k=>R` Notice that the integrand \(yz\,dx+xz\,dy+xy\,dz\) is exactly \(d(xyz)\), so the answer is ${k===1?'':M(String(k))+' times '}\(xyz\) at the end minus \(xyz\) at the start, here \(1-0\). Chapter 3 explains why.`},
+  {int:k=>R`${kPre(k)}x\,dx+${kPre(k)}y\,dy+${kPre(k)}z\,dz`,xs:R`x=\cos t,\ y=\sin t,\ z=2t`,rng:R`0\le t\le \pi`,
+   sub:R`dx=-\sin t\,dt,\ dy=\cos t\,dt,\ dz=2\,dt`,how:R`x\,dx=-\cos t\sin t\,dt\text{ and }y\,dy=\sin t\cos t\,dt\text{ cancel},\ \ z\,dz=(2t)(2)\,dt=4t\,dt`,
+   integrand:k=>`${4*k}t`,
+   calc:k=>R`\int_0^{\pi}${4*k}t\,dt=${4*k}\cdot\tfrac{t^{2}}{2}\Big|_0^{\pi}=${2*k}\pi^{2}`,
+   val:k=>k*2*Math.PI**2,str:k=>`${2*k}pi^2`},
+];
+Q.work3Dform={name:'line integral in differential form in space',
+  gen(){const i=rint(0,W3F.length-1),k=pick([1,2,3]),e=W3F[i];return {i,k,ans:e.val(k),ansStr:e.str(k)};},
+  render(q,el){const e=W3F[q.i];
+    el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\int_C `+e.int(q.k))} where ${M('C')} is the space curve ${M(e.xs+R`,\ `+e.rng)}. Exact answers like <code>2pi^2</code> or fractions like <code>91/60</code> are fine.</p>`;
+    xwIn(el,'I',M(R`\int_C\cdots=`));},
+  check(q,el){return G(el,'I',checkNumber($('[data-k=I]',el).value,q.ans));},
+  solution(q){const e=W3F[q.i];
+    return `Substitute ${M(e.xs)} and replace each differential by its derivative times ${M('dt')}: ${M(e.sub)}.
+      Term by term: ${M(e.how)}.
+      The integrand in ${M('t')} is ${M(e.integrand(q.k))}, so ${M(e.calc(q.k))}.${e.extra?e.extra(q.k):''}`;}
+};
+
 /* ---------------------------------------------------------- chapter 4 */
 const sol2=(P,Q,intP,fy,gp,gt,f)=>`Integrate the first component with respect to ${M('x')}, holding ${M('y')} constant: ${M(R`f=\int\left(${P}\right)dx=${intP}+g(y)`)}. The constant of integration may depend on ${M('y')}.
   Now differentiate in ${M('y')}: ${M(`f_y=${fy}+g'(y)`)}. Set this equal to ${M(`Q=${Q}`)}: ${gp==='0'?`${M(R`g'(y)=0`)}, so ${M('g')} is an ordinary constant`:`${M(R`g'(y)=`+gp)}, so ${M(`g(y)=${gt}`)}`}.
@@ -810,7 +858,7 @@ const stepUI=(mountId,statusId,prevId,nextId)=>({
   sliderRow($('#wkSl'),{label:'position along C',min:0,max:1,step:0.01,value:s,onInput:v=>{s=v;draw();}});
   $('#wkRev').onchange=e=>{rev=e.target.checked;draw();};
   redrawOnShow('vector',draw);draw();
-  new Drill({mount:'#drill-vector',section:'vector',goal:6,...mixDrill([Q.workSeg,Q.workSeg,Q.workGraph,Q.pdxqdy,Q.circleWork,Q.circleWork,Q.work3D,Q.orientFlip,Q.workSign,Q.workSign])});
+  new Drill({mount:'#drill-vector',section:'vector',goal:6,...mixDrill([Q.workSeg,Q.workSeg,Q.workGraph,Q.pdxqdy,Q.circleWork,Q.circleWork,Q.work3D,Q.work3Dform,Q.orientFlip,Q.workSign,Q.workSign])});
 })();
 
 /* ============================================================ chapter 3: walkthrough + potential surface */
@@ -903,6 +951,7 @@ window.__solvers={
   'work around a circle':q=>({W:String(q.ans)}),
   'work along a space curve':q=>({W:ratStr(q.r)}),
   'reversing the orientation':q=>({W:String(-q.W),S:String(q.S)}),
+  'line integral in differential form in space':q=>({I:q.ansStr}),
   'sign of the work from a picture':q=>({_btn:['positive','negative','zero'].indexOf(q.kind)}),
   'is F conservative':q=>({_btn:q.ok?0:1}),
   'find a potential function':q=>({f:q.fStr}),
