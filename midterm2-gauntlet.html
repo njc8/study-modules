@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midterm 2 Gauntlet</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/gauntlet.js"></script>
+<script src="assets/gauntlet-m2-opt.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<section data-id="opt" data-title="Optimization">
+  <p class="eyebrow">Topic 1 · Stewart 14.7 to 14.8</p>
+  <h2>Critical points, absolute extrema, Lagrange multipliers</h2>
+  <p class="lead">Classifying critical points, hunting the candidates on a closed region, and optimizing on a curve or surface.</p>
+  <div class="note">Every item has two steps. First, explain an idea in your own words, and the tutor grades your explanation. Then do a real problem: from a WebAssign set that is already past due, from the Fall 2024 Midterm 2, or a practice problem written to cover a topic. An item passes when the explanation is <b>Got it</b> and the problem is right on the first check. Anything else comes back at the end of the run, and stays on <b>Weak spots</b> until you pass it. No calculators on the exam, so none here either.</div>
+  <div class="gx" data-mode="topic" data-topic="opt"></div>
+</section>
+
+<section data-id="dbl" data-title="Double integrals">
+  <p class="eyebrow">Topic 2 · Stewart 15.1 to 15.5</p>
+  <h2>Double integrals</h2>
+  <p class="lead">Riemann sums, iterated integrals, describing and reversing regions, polar coordinates, and what a double integral can measure.</p>
+  <div class="gx" data-mode="topic" data-topic="dbl"></div>
+</section>
+
+<section data-id="cov" data-title="Change of variables">
+  <p class="eyebrow">Topic 3 · Stewart 15.9</p>
+  <h2>Change of variables</h2>
+  <p class="lead">Choosing a substitution from the region or the integrand, the Jacobian, and the region in the new coordinates.</p>
+  <div class="gx" data-mode="topic" data-topic="cov"></div>
+</section>
+
+<section data-id="tri" data-title="Triple integrals">
+  <p class="eyebrow">Topic 4 · Stewart 15.6 to 15.8</p>
+  <h2>Triple integrals in three coordinate systems</h2>
+  <p class="lead">Setting up limits from a solid, changing the order, and choosing between rectangular, cylindrical, and spherical coordinates.</p>
+  <div class="gx" data-mode="topic" data-topic="tri"></div>
+</section>
+
+<section data-id="vf" data-title="Vector fields and work">
+  <p class="eyebrow">Topic 5 · Stewart 16.1 to 16.2</p>
+  <h2>Vector fields and line integrals of vector fields</h2>
+  <p class="lead">Reading and sketching fields, the conservative test and potential functions, and work along a path.</p>
+  <div class="gx" data-mode="topic" data-topic="vf"></div>
+</section>
+
+<section data-id="exam" data-title="Shuffled exam">
+  <p class="eyebrow">All topics</p>
+  <h2>Shuffled exam</h2>
+  <p class="lead">The same items, dealt across every topic in random order, the way the midterm will mix them.</p>
+  <div class="gx" data-mode="exam"></div>
+</section>
+
+<section data-id="mixed" data-title="Mixed problems">
+  <p class="eyebrow">All topics · problems only</p>
+  <h2>Mixed problems</h2>
+  <p class="lead">Just the problems, shuffled across every topic, with no concept step and no title to tip you off. Reading each one and deciding how to attack it is the skill being tested.</p>
+  <div class="gx" data-mode="mixed"></div>
+</section>
+
+<section data-id="weak" data-title="Weak spots">
+  <p class="eyebrow">Review</p>
+  <h2>Weak spots</h2>
+  <p class="lead">Every item you have not yet passed cleanly, from any run. Clear this list before the exam.</p>
+  <div class="gx" data-mode="weak"></div>
+</section>
+
+</main>
+</div>
+<script>
+initGauntlet({key:'m2',items:window.GAUNTLET_M2,topics:[{id:'opt'},{id:'dbl'},{id:'cov'},{id:'tri'},{id:'vf'}],exam:'Midterm 2'});
+initModule({key:'gauntlet-m2',title:'Midterm 2 Gauntlet',sub:'Concept first, then the real problem · Stewart 14.7 to 16.2'});
+</script>
+</body>
+</html>
