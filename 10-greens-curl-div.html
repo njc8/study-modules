@@ -785,7 +785,7 @@ window.__solvers={
   'curl of a vector field':q=>({cu:'<'+q.curlStr.join(', ')+'>'}),
   'divergence of a vector field':q=>({dv:q.divStr}),
   'conservative by the curl test':q=>({_btn:q.yes?0:1}),
-  'curl and divergence signs from a picture':q=>({_btn:[q.ci,3+q.di]}),
+  'curl and divergence signs from a picture':q=>({_btn:q.ci,_btn1:q.di}),
   'scalar curl in the plane':q=>({g:q.gstr}),
   'vector identities':q=>({_btn:q.ansIdx})
 };
