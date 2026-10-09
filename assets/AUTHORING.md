@@ -165,3 +165,5 @@ Every type must have a solver. Strings can be raw numbers (`String(q.value)`), v
    `sed -n '/^<script>$/,/^<\/script>$/p' NN-name.html | sed '1d;$d' > /tmp/mNN.js && node --check /tmp/mNN.js`
 2. Re-read your `gen()` functions and confirm by hand, for two random draws each, that the stored answer really is the answer to the displayed prompt. Most bugs are here.
 3. Confirm every `Drill` mount id exists in the HTML, every canvas id used by a widget exists, and every section with a drill has `data-goal`.
+4. Run the headless checks: `tools/harness/hx.sh run NN-name.html 30` (every question type, solver, and WebAssign problem) and `tools/harness/hx.sh lint NN-name.html`.
+   Always go through `hx.sh`: the repo sits on the iCloud-synced Desktop, which evicts files, and Node hangs on evicted files. The wrapper runs Node from a temp mirror.
