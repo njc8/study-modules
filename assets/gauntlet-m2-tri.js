@@ -1,0 +1,142 @@
+/* Midterm 2 gauntlet items, change of variables and triple integrals (MATH 212, Fall 2026: Stewart 15.6 to 15.9).
+   Sources: past-due WebAssign sets, the Fall 2024 Midterm 2 (practice exam), and "Practice" problems written for this bank.
+   Format: see the header of assets/gauntlet.js. */
+window.GAUNTLET_M2=window.GAUNTLET_M2||[];
+(function(){
+const R=String.raw;
+window.GAUNTLET_M2.push(
+/* ---------------- change of variables (15.9) */
+{id:'c-jacobian',topic:'cov',title:'The Jacobian as a stretch factor',
+ concept:{q:R`What does the Jacobian \(\partial(x,y)/\partial(u,v)\) measure geometrically, and why does the change of variables formula use its absolute value?`,
+  rubric:['It is the local area scaling factor: a tiny \(du\times dv\) rectangle in the uv-plane maps to a patch in the xy-plane of area about \(|J|\,du\,dv\).','Area cannot be negative; the sign of \(J\) only records whether the map flips orientation, so the formula uses \(|J|\).'],
+  model:R`<p>A small rectangle \(du\times dv\) maps to a small parallelogram spanned by \(\mathbf{r}_u\,du\) and \(\mathbf{r}_v\,dv\). Its area is the cross product magnitude, which is \(|\partial(x,y)/\partial(u,v)|\,du\,dv\). So the Jacobian is the factor by which the map stretches area near that point.</p><p>If the map reverses orientation the determinant is negative, but area is still positive, so we use the absolute value.</p>`},
+ app:{source:'Practice',prompt:R`The map \(x=2u+v,\ y=u-3v\) sends the uv-plane to the xy-plane.`,
+  parts:[{k:'j',label:R`\(\dfrac{\partial(x,y)}{\partial(u,v)}=\)`,kind:'number',ans:-7,sol:'-7'},
+   {k:'a',label:R`Area of the image of the unit square \([0,1]\times[0,1]\):`,kind:'number',ans:7,sol:'7'}],
+  solution:R`<p>\(\dfrac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}2&1\\1&-3\end{vmatrix}=-6-1=-7.\)</p><p>The map is linear, so the area scales by \(|-7|=7\) everywhere. The unit square has area 1, so its image has area \(7\). The negative sign only says the map flips orientation.</p>`}},
+
+{id:'c-rotated',topic:'cov',title:'Rotated rectangle with u = x - y, v = x + y',
+ concept:{q:R`You are given a region in the xy-plane bounded by four lines. How do you choose \(u\) and \(v\), and how do you find the new region?`,
+  rubric:['Pick \(u\) and \(v\) so each boundary curve is a constant value of one of them (here the lines \(x-y=\text{const}\) and \(x+y=\text{const}\)), or so that the integrand becomes simple.','Map each boundary separately to get the limits; the region in the uv-plane is then a rectangle with constant limits.'],
+  model:R`<p>Read the boundary: the four edges are pairs of parallel lines \(x-y=c_1,c_2\) and \(x+y=d_1,d_2\). Setting \(u=x-y\) and \(v=x+y\) turns each edge into \(u=\text{const}\) or \(v=\text{const}\). Check that the integrand also simplifies, here \(x^2-y^2=uv\).</p><p>The new region is the rectangle between those constants, so the limits are plain numbers and the order of integration is free.</p>`},
+ app:{source:'Fall 2024 Midterm 2 · Problem 8',prompt:R`Evaluate \(\displaystyle\iint_E (x+y)\sin(x^2-y^2)\,dA\), where \(E\) is the rectangle with vertices \((0,0),\ (\pi,\pi),\ (\pi+\tfrac12,\pi-\tfrac12),\ (\tfrac12,-\tfrac12)\). Use \(u=x-y,\ v=x+y\). Give the value of the integral as an exact expression.`,
+  parts:[{k:'j',label:R`\(\left|\dfrac{\partial(x,y)}{\partial(u,v)}\right|=\)`,kind:'number',ans:0.5,sol:'1/2'},
+   {k:'v',label:R`\(\displaystyle\iint_E (x+y)\sin(x^2-y^2)\,dA=\)`,kind:'number',ans:Math.PI,sol:'pi',placeholder:'exact'}],
+  solution:R`<p>The edges lie on \(x-y=0,\ 1\) and \(x+y=0,\ 2\pi\), so \(0\le u\le1,\ 0\le v\le2\pi\). Solving, \(x=\tfrac{u+v}{2},\ y=\tfrac{v-u}{2}\), so \(\left|\dfrac{\partial(x,y)}{\partial(u,v)}\right|=\tfrac12\). Also \(x^2-y^2=uv\).</p><p>\(\displaystyle\tfrac12\int_0^{2\pi}\!\!\int_0^1 v\sin(uv)\,du\,dv=\tfrac12\int_0^{2\pi}(1-\cos v)\,dv=\tfrac12(2\pi)=\pi.\)</p>`}},
+
+{id:'c-trapezoid',topic:'cov',title:'Trapezoid with (y - x)/(y + x)',
+ concept:{q:R`Sometimes the integrand, not the region, suggests the substitution. Explain how you pick \(u\) and \(v\) for an integrand like \(\cos\!\left(\tfrac{y-x}{y+x}\right)\).`,
+  rubric:['Make the awkward pieces of the integrand into the new variables (\(u=y-x\) and \(v=y+x\)), so the integrand becomes a function like \(\cos(u/v)\).','Check that the region becomes simple too: each edge of the trapezoid is a constant \(v\) or a line \(u=\pm v\), and you still need the Jacobian.'],
+  model:R`<p>The integrand depends on \(x\) and \(y\) only through \(y-x\) and \(y+x\), so let \(u=y-x\) and \(v=y+x\). The integrand becomes \(\cos(u/v)\), which is easy to integrate in \(u\).</p><p>Then map each edge to get the region, and multiply by the Jacobian factor. Here the lines \(x+y=\text{const}\) give constant \(v\), and \(x=0,\ y=0\) give \(u=\pm v\).</p>`},
+ app:{source:'Practice',prompt:R`Let \(R\) be the trapezoid with vertices \((1,0),\ (3,0),\ (0,3),\ (0,1)\). Evaluate \(\displaystyle\iint_R\cos\!\left(\frac{y-x}{y+x}\right)dA\). Give an exact value.`,
+  parts:[{k:'v',label:R`\(\displaystyle\iint_R\cos\!\left(\frac{y-x}{y+x}\right)dA=\)`,kind:'number',ans:4*Math.sin(1),sol:'4sin(1)',placeholder:'exact'}],
+  solution:R`<p>Let \(u=y-x,\ v=y+x\). The edges \(x+y=1\) and \(x+y=3\) give \(v=1,3\); \(x=0\) gives \(u=v\); \(y=0\) gives \(u=-v\). So \(1\le v\le3,\ -v\le u\le v\).</p><p>\(x=\tfrac{v-u}{2},\ y=\tfrac{u+v}{2}\), so \(dA=\tfrac12\,du\,dv\).</p><p>\(\displaystyle\tfrac12\int_1^3\!\!\int_{-v}^{v}\cos\!\left(\tfrac uv\right)du\,dv=\tfrac12\int_1^3 2v\sin1\,dv=\sin1\int_1^3 v\,dv=4\sin1.\)</p>`}},
+
+{id:'c-ellipse',topic:'cov',title:'Ellipse to a disk',
+ concept:{q:R`How does a scaling substitution turn an ellipse into a disk, and what does that substitution cost in the integral?`,
+  rubric:['Write the ellipse as \(x^2/a^2+y^2/b^2\le1\) and let \(x=au,\ y=bv\); then the region is the unit disk \(u^2+v^2\le1\).','The cost is the Jacobian \(ab\) (the ellipse has area \(ab\) times the disk), and the integrand must be rewritten in \(u,v\); then polar coordinates finish the job.'],
+  model:R`<p>Divide each variable by its semi-axis: \(u=x/a,\ v=y/b\). The ellipse \(\tfrac{x^2}{a^2}+\tfrac{y^2}{b^2}\le1\) becomes the unit disk \(u^2+v^2\le1\), which is perfect for polar coordinates.</p><p>The price is the Jacobian: \(dA=ab\,du\,dv\), because the map stretches area by \(ab\). Rewrite the integrand using \(x=au,\ y=bv\).</p>`},
+ app:{source:'Practice',prompt:R`Let \(E\) be the region \(9x^2+4y^2\le36\). Evaluate \(\displaystyle\iint_E y^2\,dA\). Give an exact value.`,
+  parts:[{k:'v',label:R`\(\displaystyle\iint_E y^2\,dA=\)`,kind:'number',ans:27*Math.PI/2,sol:'27pi/2',placeholder:'exact'}],
+  solution:R`<p>The region is \(\tfrac{x^2}{4}+\tfrac{y^2}{9}\le1\). Let \(x=2u,\ y=3v\), so \(dA=6\,du\,dv\) and the region is the unit disk. Then \(y^2=9v^2\).</p><p>\(\displaystyle 6\cdot9\iint_{u^2+v^2\le1}v^2\,dA=54\int_0^{2\pi}\!\!\int_0^1 r^2\sin^2\theta\,r\,dr\,d\theta=54\cdot\tfrac14\cdot\pi=\tfrac{27\pi}{2}.\)</p>`}},
+
+{id:'c-hyperbola',topic:'cov',title:'Between hyperbolas and lines',
+ concept:{q:R`A region is bounded by hyperbolas \(xy=c\) and lines through the origin \(y=mx\). Which substitution do you use, and how do you get the Jacobian when \(u\) and \(v\) are given as functions of \(x\) and \(y\)?`,
+  rubric:['Use \(u=xy\) and \(v=y/x\): the hyperbolas are constant \(u\), the lines are constant \(v\), so the region becomes a rectangle.','It is easy to compute \(\partial(u,v)/\partial(x,y)\); then \(\partial(x,y)/\partial(u,v)\) is its reciprocal, so \(dA=\left|\dfrac{1}{\partial(u,v)/\partial(x,y)}\right|du\,dv\).'],
+  model:R`<p>Let \(u=xy\) and \(v=y/x\). Each hyperbola is a constant \(u\) and each line is a constant \(v\), so the region is a rectangle in the uv-plane.</p><p>Solving for \(x,y\) is awkward, so compute the other Jacobian: \(\partial(u,v)/\partial(x,y)=2y/x=2v\). The two Jacobians are reciprocals, so \(dA=\tfrac{1}{2v}\,du\,dv\).</p>`},
+ app:{source:'Practice',prompt:R`Let \(R\) be the first-quadrant region between \(xy=1,\ xy=3,\ y=x,\ y=2x\). Use \(u=xy,\ v=y/x\). Then evaluate \(\displaystyle\iint_R xy\,dA\) as an exact value.`,
+  parts:[{k:'f',label:R`\(dA=\)`,after:R`\(\,du\,dv\) (the factor multiplying \(du\,dv\))`,kind:'expr',vars:['u','v'],domain:{u:[1,3],v:[1,2]},ans:e=>1/(2*e.v),sol:'1/(2v)'},
+   {k:'v',label:R`\(\displaystyle\iint_R xy\,dA=\)`,kind:'number',ans:2*Math.log(2),sol:'2ln(2)',placeholder:'exact'}],
+  solution:R`<p>\(\dfrac{\partial(u,v)}{\partial(x,y)}=\begin{vmatrix}y&x\\-y/x^2&1/x\end{vmatrix}=\tfrac yx+\tfrac yx=2v\), so \(dA=\tfrac{1}{2v}\,du\,dv\). The region is \(1\le u\le3,\ 1\le v\le2\).</p><p>\(\displaystyle\int_1^2\!\!\int_1^3 u\cdot\tfrac{1}{2v}\,du\,dv=\tfrac12\cdot\tfrac{9-1}{2}\cdot\ln2=2\ln2.\)</p>`}},
+
+/* ---------------- triple integrals (15.6 to 15.8) */
+{id:'t-tet',topic:'tri',title:'Limits of a tetrahedron',
+ concept:{q:R`How do you read the limits of a triple integral from the inside out, and why must the outermost limits be constants?`,
+  rubric:['Inner limits describe the boundary surfaces the line (in the integration direction) enters and leaves; middle limits describe the shadow of the solid in the plane, with the outer variable fixed.','Each integral removes one variable, so the inner limits may involve outer variables, but the outermost integral has nothing left to depend on; the final answer is a number.'],
+  model:R`<p>Start with a line through the solid in the inner direction (say along \(z\)). It enters at the floor and leaves at the ceiling, which gives the inner limits in terms of \(x,y\). Those limits only make sense over the shadow of the solid in the xy-plane, so the middle limits describe that shadow with \(x\) held fixed, and the outer limits are the extreme values of \(x\).</p><p>The outermost limits are constants because after the inner integrals are done, only that variable is left and the result is a number.</p>`},
+ app:{source:'Practice',prompt:R`Let \(E\) be the tetrahedron bounded by the coordinate planes and the plane \(3x+2y+z=6\). Write \(\displaystyle\iiint_E f\,dV=\int_0^{a}\!\int_0^{g(x)}\!\int_0^{h(x,y)}f\,dz\,dy\,dx\). All lower limits are 0. Find the upper limits, then the volume of \(E\).`,
+  parts:[{k:'h',label:R`\(z\) from 0 to \(h(x,y)=\)`,kind:'expr',vars:['x','y'],domain:{x:[0,1],y:[0,1]},ans:e=>6-3*e.x-2*e.y,sol:'6-3x-2y'},
+   {k:'g',label:R`\(y\) from 0 to \(g(x)=\)`,kind:'expr',vars:['x'],domain:{x:[0,2]},ans:e=>3-1.5*e.x,sol:'3-3x/2'},
+   {k:'a',label:R`\(x\) from 0 to \(a=\)`,kind:'number',ans:2,sol:'2'},
+   {k:'v',label:R`Volume of \(E=\)`,kind:'number',ans:6,sol:'6'}],
+  solution:R`<p>The ceiling is the plane: \(z=6-3x-2y\). Its shadow in the xy-plane is where \(z\ge0\): the triangle \(3x+2y\le6\) with \(x,y\ge0\). For fixed \(x\), \(y\) runs from 0 to \(3-\tfrac32x\); \(x\) runs from 0 to 2.</p><p>\(\displaystyle V=\int_0^2\!\!\int_0^{3-3x/2}(6-3x-2y)\,dy\,dx=\int_0^2\tfrac{(6-3x)^2}{4}\,dx=\tfrac94\int_0^2(2-x)^2dx=\tfrac94\cdot\tfrac83=6.\)</p>`}},
+
+{id:'t-orders',topic:'tri',title:'Rewrite in another order',
+ concept:{q:R`What does it mean, geometrically, to change the order of a triple integral, and how do you find the new limits?`,
+  rubric:['The same solid is described again, but projected along a different axis: the new inner variable runs between two surfaces, and the shadow lies in a different coordinate plane.','Sketch or reason out the solid and its shadow, then re-solve each boundary surface for the new variable; the outermost limits are the extreme values of the new outer variable.'],
+  model:R`<p>Changing the order does not change the solid, only how you slice it. The new inner variable is the one along which you now slide a line through the solid, and its limits are the two bounding surfaces in that direction. The shadow of the solid in the plane of the other two variables gives the middle and outer limits.</p><p>So draw the solid, pick the projection, and solve each bounding equation for the new inner variable.</p>`},
+ app:{source:'Practice',prompt:R`The solid \(E\) is bounded by \(y=x^2,\ z=0,\ y+z=1\), and
+\[\iiint_E f\,dV=\int_{-1}^{1}\!\int_{x^2}^{1}\!\int_0^{1-y}f\,dz\,dy\,dx.\]
+Rewrite it in the order \(dx\,dy\,dz\): \(\displaystyle\int_{0}^{a}\!\int_{0}^{g(z)}\!\int_{p(y)}^{q(y)}f\,dx\,dy\,dz\) (the lower limits of the outer two integrals are 0). Also find the volume of \(E\).`,
+  parts:[{k:'a',label:R`\(z\) from 0 to \(a=\)`,kind:'number',ans:1,sol:'1'},
+   {k:'g',label:R`\(y\) from 0 to \(g(z)=\)`,kind:'expr',vars:['z'],domain:{z:[0,1]},ans:e=>1-e.z,sol:'1-z'},
+   {k:'p',label:R`\(x\) from \(p(y)=\)`,kind:'expr',vars:['y'],domain:{y:[0.1,1]},ans:e=>-Math.sqrt(e.y),sol:'-sqrt(y)'},
+   {k:'q',label:R`\(x\) to \(q(y)=\)`,kind:'expr',vars:['y'],domain:{y:[0.1,1]},ans:e=>Math.sqrt(e.y),sol:'sqrt(y)'},
+   {k:'v',label:R`Volume of \(E=\)`,kind:'number',ans:8/15,sol:'8/15'}],
+  solution:R`<p>Project onto the yz-plane. The surface \(z=1-y\) with \(z\ge0\) and the plane \(y\ge0\) (since \(y\ge x^2\)) give the triangle \(0\le y\le1-z\), \(0\le z\le1\). For each such \((y,z)\), \(x\) runs across the parabolic cylinder: \(-\sqrt y\le x\le\sqrt y\).</p><p>Volume: \(\displaystyle\int_{-1}^{1}\!\int_{x^2}^1(1-y)\,dy\,dx=\int_{-1}^1\tfrac{(1-x^2)^2}{2}\,dx=\tfrac12\left(2-\tfrac43+\tfrac25\right)=\tfrac{8}{15}.\)</p>`}},
+
+{id:'t-project-x',topic:'tri',title:'Integrate x first',
+ concept:{q:R`When is it better to integrate \(x\) first in a triple integral, and how do you handle the shadow of the solid in the yz-plane?`,
+  rubric:['Integrate \(x\) first when the solid is bounded in the x direction by simple surfaces of the form \(x=g(y,z)\), such as a paraboloid opening along the x-axis and a plane \(x=c\).','The shadow is the region in the yz-plane where the two surfaces meet; if it is a disk, use polar coordinates \(y=r\cos\theta,\ z=r\sin\theta\) there (with \(dA=r\,dr\,d\theta\)).'],
+  model:R`<p>If the solid is wrapped around the x-axis, a line parallel to the x-axis enters at one surface \(x=g(y,z)\) and leaves at another, so integrate \(x\) first.</p><p>The shadow is found by setting the two surfaces equal. If it is a disk in the yz-plane, finish with polar coordinates in \(y,z\); the extra \(r\) is the usual area factor.</p>`},
+ app:{source:'Practice',prompt:R`Let \(E\) be the solid bounded by \(x=y^2+z^2\) and \(x=4\). Evaluate \(\displaystyle\iiint_E (y^2+z^2)\,dV\). Give an exact value.`,
+  parts:[{k:'v',label:R`\(\displaystyle\iiint_E (y^2+z^2)\,dV=\)`,kind:'number',ans:32*Math.PI/3,sol:'32pi/3',placeholder:'exact'}],
+  solution:R`<p>The surfaces meet where \(y^2+z^2=4\), so the shadow in the yz-plane is the disk of radius 2. With \(y=r\cos\theta,\ z=r\sin\theta\), \(x\) runs from \(r^2\) to 4.</p><p>\(\displaystyle\int_0^{2\pi}\!\!\int_0^2\!\!\int_{r^2}^4 r^2\,dx\;r\,dr\,d\theta=2\pi\int_0^2 r^3(4-r^2)\,dr=2\pi\left(16-\tfrac{32}{3}\right)=\tfrac{32\pi}{3}.\)</p>`}},
+
+{id:'t-wedge',topic:'tri',title:'Wedge under z = x',
+ concept:{q:R`How do the \(\theta\) limits change for a half region, and what happens with a slanted ceiling like \(z=x\) in cylindrical coordinates?`,
+  rubric:['A half disk \(x\ge0\) means \(-\pi/2\le\theta\le\pi/2\) (and \(y\ge0\) means \(0\le\theta\le\pi\)); \(\theta\) only sweeps the part of the circle that is in the region.','The ceiling \(z=x\) becomes \(z=r\cos\theta\); it is above \(z=0\) only where \(\cos\theta\ge0\), which is exactly why the solid exists only for \(x\ge0\).'],
+  model:R`<p>In cylindrical coordinates \(\theta\) is the angle of the shadow point, so a half disk uses half the angles: \(x\ge0\) is \(-\tfrac\pi2\le\theta\le\tfrac\pi2\).</p><p>The ceiling \(z=x\) is \(z=r\cos\theta\). The solid \(0\le z\le x\) needs \(x\ge0\), so \(\theta\) is limited to the right half, and the height grows with \(r\).</p>`},
+ app:{source:'Fall 2024 Midterm 2 · Problem 6',prompt:R`Find the volume of the solid \(\{0\le z\le x,\ x^2+y^2\le1\}\), using cylindrical coordinates with limits \(\displaystyle\int_{\theta_1}^{\theta_2}\!\int_0^1\!\int_0^{r\cos\theta}\,dz\,r\,dr\,d\theta\).`,
+  parts:[{k:'t1',label:R`\(\theta_1=\)`,kind:'number',ans:-Math.PI/2,sol:'-pi/2'},
+   {k:'t2',label:R`\(\theta_2=\)`,kind:'number',ans:Math.PI/2,sol:'pi/2'},
+   {k:'v',label:R`Volume \(=\)`,kind:'number',ans:2/3,sol:'2/3'}],
+  solution:R`<p>The solid needs \(x\ge0\), so \(-\tfrac\pi2\le\theta\le\tfrac\pi2\).</p><p>\(\displaystyle V=\int_{-\pi/2}^{\pi/2}\!\!\int_0^1 r\cos\theta\cdot r\,dr\,d\theta=\int_{-\pi/2}^{\pi/2}\cos\theta\,d\theta\cdot\tfrac13=2\cdot\tfrac13=\tfrac23.\)</p>`}},
+
+{id:'t-cyl',topic:'tri',title:'Between a paraboloid and a plane',
+ concept:{q:R`Describe the structure of a cylindrical coordinates setup (floor and ceiling in \(z\), then the shadow in polar). Where does the extra \(r\) in \(r\,dz\,dr\,d\theta\) come from?`,
+  rubric:['First write the floor and ceiling surfaces in terms of \(r\) (and \(\theta\)); then the shadow in the xy-plane, found by setting floor = ceiling, gives the polar limits.','\(dV=r\,dz\,dr\,d\theta\): the extra \(r\) is the Jacobian, since a polar patch has area \(r\,dr\,d\theta\), not \(dr\,d\theta\).'],
+  model:R`<p>Cylindrical coordinates are polar coordinates plus \(z\). Write the lower and upper surfaces as \(z=f(r,\theta)\) and \(z=g(r,\theta)\); the shadow comes from where they meet, and its description in polar gives the \(r\) and \(\theta\) limits.</p><p>The factor \(r\) is the polar area factor: a small polar patch has width \(dr\) and arc length \(r\,d\theta\), so \(dA=r\,dr\,d\theta\).</p>`},
+ app:{source:'Practice',prompt:R`Let \(E\) be the solid between \(z=x^2+y^2\) and \(z=4\). Evaluate \(\displaystyle\iiint_E\sqrt{x^2+y^2}\,dV\). Give an exact value.`,
+  parts:[{k:'v',label:R`\(\displaystyle\iiint_E\sqrt{x^2+y^2}\,dV=\)`,kind:'number',ans:128*Math.PI/15,sol:'128pi/15',placeholder:'exact'}],
+  solution:R`<p>The surfaces meet where \(r^2=4\), so \(0\le r\le2\), \(0\le\theta\le2\pi\), and \(r^2\le z\le4\). The integrand is \(r\).</p><p>\(\displaystyle\int_0^{2\pi}\!\!\int_0^2\!\!\int_{r^2}^4 r\cdot r\,dz\,dr\,d\theta=2\pi\int_0^2 r^2(4-r^2)\,dr=2\pi\left(\tfrac{32}{3}-\tfrac{32}{5}\right)=\tfrac{128\pi}{15}.\)</p>`}},
+
+{id:'t-icecream',topic:'tri',title:'Ice cream cone volume',
+ concept:{q:R`What do \(\rho,\ \phi,\ \theta\) measure, and what is the meaning of the factor \(\rho^2\sin\phi\) in \(dV\)?`,
+  rubric:['\(\rho\) is the distance from the origin, \(\phi\) is the angle down from the positive z-axis (0 to \(\pi\)), and \(\theta\) is the same angle around the z-axis as in polar coordinates.','A small spherical box has sides \(d\rho\), \(\rho\,d\phi\), and \(\rho\sin\phi\,d\theta\), so its volume is \(\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\).'],
+  model:R`<p>\(\rho\) is the distance to the origin, \(\phi\) is the angle measured down from the z-axis, and \(\theta\) is the angle around the z-axis.</p><p>A small piece has radial length \(d\rho\), a north-south arc \(\rho\,d\phi\), and an east-west arc \(\rho\sin\phi\,d\theta\) (the circle at angle \(\phi\) has radius \(\rho\sin\phi\)). Multiplying gives \(\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\).</p>`},
+ app:{source:'Practice',prompt:R`Find the volume of the solid above the cone \(z=\sqrt{x^2+y^2}\) and below the sphere \(x^2+y^2+z^2=8\). Give an exact value.`,
+  parts:[{k:'v',label:R`Volume \(=\)`,kind:'number',ans:32*Math.PI*(Math.SQRT2-1)/3,sol:'32pi(sqrt(2)-1)/3',placeholder:'exact'}],
+  solution:R`<p>The cone is \(\phi=\tfrac\pi4\) and the sphere is \(\rho=2\sqrt2\). So \(0\le\rho\le2\sqrt2,\ 0\le\phi\le\tfrac\pi4,\ 0\le\theta\le2\pi\).</p><p>\(\displaystyle V=2\pi\cdot\tfrac{(2\sqrt2)^3}{3}\int_0^{\pi/4}\sin\phi\,d\phi=2\pi\cdot\tfrac{16\sqrt2}{3}\left(1-\tfrac{\sqrt2}{2}\right)=\tfrac{32\pi(\sqrt2-1)}{3}.\)</p>`}},
+
+{id:'t-yaxis',topic:'tri',title:'Cone around the y-axis',
+ concept:{q:R`What changes in spherical coordinates when the cone opens along the y-axis instead of the z-axis?`,
+  rubric:['Use the y-axis as the polar axis: \(y=\rho\cos\phi\), and \(x,z\) play the role that \(x,y\) played before.','Then the cone \(y=\sqrt{x^2+z^2}\) is \(\phi=\pi/4\) as usual, and the volume element is still \(\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\).'],
+  model:R`<p>Spherical coordinates do not care which axis is "up". Choose the axis the cone is built around, here the y-axis: \(y=\rho\cos\phi,\ x=\rho\sin\phi\cos\theta,\ z=\rho\sin\phi\sin\theta\).</p><p>Then \(\phi\) is measured from the positive y-axis, the cone \(y=\sqrt{x^2+z^2}\) is \(\phi=\tfrac\pi4\), and \(dV=\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\) as before.</p>`},
+ app:{source:'Fall 2024 Midterm 2 · Problem 4',prompt:R`Let \(E\) be the solid \(x^2+y^2+z^2\le4,\ y\ge\sqrt{x^2+z^2}\). Evaluate \(\displaystyle\iiint_E (y^2+z^3)\,dV\) using \(y=\rho\cos\phi,\ x=\rho\sin\phi\cos\theta,\ z=\rho\sin\phi\sin\theta\). The limits are \(\displaystyle\int_0^{2\pi}\!\int_0^{\phi_1}\!\int_0^{\rho_1}\) (all lower limits 0).`,
+  parts:[{k:'r',label:R`\(\rho\) upper limit:`,kind:'number',ans:2,sol:'2'},
+   {k:'p',label:R`\(\phi\) upper limit:`,kind:'number',ans:Math.PI/4,sol:'pi/4'},
+   {k:'t',label:R`\(\theta\) upper limit:`,kind:'number',ans:2*Math.PI,sol:'2pi'},
+   {k:'v',label:R`\(\displaystyle\iiint_E (y^2+z^3)\,dV=\)`,kind:'number',ans:64*Math.PI/15*(1-Math.SQRT2/4),sol:'64pi/15*(1-sqrt(2)/4)',placeholder:'exact'}],
+  solution:R`<p>The ball gives \(\rho\le2\); the cone \(y=\sqrt{x^2+z^2}\) is \(\phi=\tfrac\pi4\), and \(y\ge\) the cone means \(\phi\le\tfrac\pi4\). \(\theta\) goes all the way around.</p><p>The \(z^3\) term vanishes because \(\int_0^{2\pi}\sin^3\theta\,d\theta=0\). The \(y^2\) term: \(\displaystyle 2\pi\int_0^2\rho^4\,d\rho\int_0^{\pi/4}\cos^2\phi\sin\phi\,d\phi=2\pi\cdot\tfrac{32}{5}\cdot\tfrac13\left(1-\tfrac{\sqrt2}{4}\right)=\tfrac{64\pi}{15}\left(1-\tfrac{\sqrt2}{4}\right).\)</p>`}},
+
+{id:'t-sphere-origin',topic:'tri',title:'Sphere through the origin',
+ concept:{q:R`How does a sphere that passes through the origin, like \(x^2+y^2+z^2=6z\), look in spherical coordinates, and why?`,
+  rubric:['Substitute \(x^2+y^2+z^2=\rho^2\) and \(z=\rho\cos\phi\): the equation becomes \(\rho^2=6\rho\cos\phi\), so \(\rho=6\cos\phi\).','Because the sphere touches the origin, \(\rho\) now depends on \(\phi\) and runs from 0 to \(6\cos\phi\); \(\phi\) only reaches \(\pi/2\) (the upper half).'],
+  model:R`<p>Replace \(x^2+y^2+z^2\) by \(\rho^2\) and \(z\) by \(\rho\cos\phi\): \(\rho^2=6\rho\cos\phi\), so \(\rho=6\cos\phi\) (dividing by \(\rho\)).</p><p>The radius is no longer constant: along each ray from the origin, \(\rho\) runs from 0 (the origin, on the sphere) to \(6\cos\phi\), where the ray leaves the sphere. That only happens for \(\cos\phi\ge0\), so \(0\le\phi\le\tfrac\pi2\).</p>`},
+ app:{source:'Practice',prompt:R`Find the volume of the solid inside \(x^2+y^2+z^2=6z\) and above \(z=\sqrt{x^2+y^2}\). Use limits \(\displaystyle\int_0^{2\pi}\!\int_0^{\pi/4}\!\int_0^{g(\phi)}\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\).`,
+  parts:[{k:'g',label:R`\(\rho\) upper limit \(g(\phi)=\)`,kind:'expr',vars:['phi'],domain:{phi:[0.1,0.7]},ans:e=>6*Math.cos(e.phi),sol:'6cos(phi)'},
+   {k:'v',label:R`Volume \(=\)`,kind:'number',ans:27*Math.PI,sol:'27pi',placeholder:'exact'}],
+  solution:R`<p>The sphere is \(\rho=6\cos\phi\) and the cone is \(\phi=\tfrac\pi4\).</p><p>\(\displaystyle V=2\pi\int_0^{\pi/4}\tfrac{(6\cos\phi)^3}{3}\sin\phi\,d\phi=144\pi\int_0^{\pi/4}\cos^3\phi\sin\phi\,d\phi=144\pi\cdot\tfrac{1-\cos^4(\pi/4)}{4}=144\pi\cdot\tfrac{3/4}{4}=27\pi.\)</p>`}},
+
+{id:'t-choose',topic:'tri',title:'Choose the coordinate system',
+ concept:{q:R`How do you decide between rectangular, cylindrical, and spherical coordinates for a triple integral?`,
+  rubric:['Look at the boundary surfaces: planes suggest rectangular, cylinders or paraboloids around the z-axis (\(x^2+y^2\)) suggest cylindrical, spheres and cones suggest spherical.','Also look at the integrand: terms like \(x^2+y^2\) or \(x^2+y^2+z^2\) simplify in cylindrical or spherical coordinates; choose the system where the limits are constants or simple functions.'],
+  model:R`<p>Match the coordinates to the surfaces. Planes: rectangular. Cylinders \(x^2+y^2=c\) and paraboloids \(z=x^2+y^2\): cylindrical. Spheres \(x^2+y^2+z^2=c\) and cones \(z=\sqrt{x^2+y^2}\): spherical.</p><p>Then check the integrand: \(x^2+y^2\) or \(x^2+y^2+z^2\) becomes \(r^2\) or \(\rho^2\). The best choice makes the limits simple.</p>`},
+ app:{source:'Practice',prompt:R`For each solid, choose the coordinate system that gives the simplest limits.`,
+  parts:[{k:'a',label:R`(a) The solid between the cylinders \(x^2+y^2=1\) and \(x^2+y^2=4\), between \(z=0\) and \(z=3\).`,kind:'choice',options:['rectangular','cylindrical','spherical'],ans:1},
+   {k:'b',label:R`(b) The solid inside \(x^2+y^2+z^2=9\) and above \(z=\sqrt{3(x^2+y^2)}\).`,kind:'choice',options:['rectangular','cylindrical','spherical'],ans:2},
+   {k:'c',label:R`(c) The tetrahedron bounded by the coordinate planes and \(x+y+z=1\).`,kind:'choice',options:['rectangular','cylindrical','spherical'],ans:0}],
+  solution:R`<p>(a) Cylindrical: \(1\le r\le2,\ 0\le\theta\le2\pi,\ 0\le z\le3\).</p><p>(b) Spherical: \(0\le\rho\le3,\ 0\le\phi\le\tfrac\pi6\) (the cone \(z=\sqrt3\,r\) has \(\tan\phi=\tfrac{1}{\sqrt3}\)), \(0\le\theta\le2\pi\).</p><p>(c) Rectangular: \(0\le x\le1,\ 0\le y\le1-x,\ 0\le z\le1-x-y\).</p>`}}
+);
+})();
