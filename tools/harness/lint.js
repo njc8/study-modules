@@ -20,8 +20,10 @@ const drills=[...src.matchAll(/new Drill\(\{mount:'#([^']+)',\s*section:'([^']+)
 drills.forEach(d=>{if(!new RegExp(`id="${d.mount}"`).test(src))problems.push(`drill mount #${d.mount} not in HTML`);const s=secs.find(x=>x.id===d.section);if(!s)problems.push(`drill section ${d.section} not found`);else if(!/data-goal=/.test(s.attrs))problems.push(`section ${d.section} has a drill but no data-goal`);});
 const canv=[...src.matchAll(/new (?:Plot2D|Scene3D)\('#([^']+)'\s*[,)]/g)].map(m=>m[1]);
 canv.forEach(c=>{if(!new RegExp(`id="${c}"`).test(src))problems.push(`canvas #${c} not in HTML`);});
-if(!/initModule\(\{[^\n]*\}\);\s*<\/script>/.test(src))problems.push('initModule is not the last statement before </script>');
-if(!/window\.__solvers/.test(src))problems.push('no window.__solvers');
+/* module-engine rules apply only to pages built on assets/study.js (matrix-foundations.html has its own engine) */
+const usesEngine=/assets\/study\.js/.test(src);
+if(usesEngine&&!/initModule\(\{[^\n]*\}\);\s*<\/script>/.test(src))problems.push('initModule is not the last statement before </script>');
+if(usesEngine&&!/window\.__solvers/.test(src))problems.push('no window.__solvers');
 const last=secs[secs.length-1]&&secs[secs.length-1].id;
 if(last!=='quiz')problems.push('last section is not quiz');
 console.log(`lint ${path.basename(file)}: ${secs.length} sections, ${drills.length} drills, ${canv.length} canvases`);
