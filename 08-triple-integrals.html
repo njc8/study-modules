@@ -74,7 +74,7 @@
 </section>
 
 <!-- ============================================================ 2 CHANGE OF VARIABLES -->
-<section data-id="change" data-title="Change of variables" data-goal="5">
+<section data-id="change" data-title="Change of variables" data-goal="6">
   <p class="eyebrow">Chapter 2 · Stewart 15.9</p>
   <h2>Change of variables</h2>
   <p class="lead">Substitution for double and triple integrals. You pick new coordinates that straighten the region, and pay for it with a Jacobian. Polar coordinates are the first example, and cylindrical and spherical are the next two.</p>
@@ -610,6 +610,152 @@ Q.uvRegion={name:'change of variables with u = x - y, v = x + y',
       D(R`\iint_R ${q.fTex}\,dA=\int_0^{${q.B}}\!\!\int_0^{${q.A}} ${q.gTex}\cdot\tfrac12\;du\,dv=\tfrac12\int_0^{${q.B}}\Big[\,${q.innerA}\,\Big]_0^{${q.A}}dv=\tfrac12\int_0^{${q.B}}${q.innerV}\,dv=${frTex(q.val)}`);}
 };
 
+/* more change of variables: ellipses, trapezoids, diamonds, hyperbola regions, rotated rectangles, 3D Jacobians */
+const cf=n=>n===1?'':String(n);
+const frC=f=>(f[0]===1&&f[1]===1)?'':frTex(f);
+const SQ_EXCLUDE=(a,b)=>(a===4&&b===5)||(a===5&&b===4);
+
+Q.cvEllipse={name:'integrate over an ellipse by scaling',
+  gen(){
+    let a,b;do{a=rint(1,5);b=rint(1,5);}while(a===b||SQ_EXCLUDE(a,b));
+    const k=pick([1,2,3]),which=pick(['one','x2','y2','r2']);
+    const val={one:fr(k*a*b),x2:fr(k*ipow(a,3)*b,4),y2:fr(k*a*ipow(b,3),4),r2:fr(k*a*b*(a*a+b*b),4)}[which];
+    return {a,b,k,which,val,v:frV(val)*PI,ansStr:`${frStr(val)}*pi`};},
+  render(q,el){
+    const f={one:String(q.k),x2:`${cf(q.k)}x^2`,y2:`${cf(q.k)}y^2`,r2:`${cf(q.k)}${q.k===1?'x^2+y^2':'(x^2+y^2)'}`}[q.which];
+    el.innerHTML=`<p class="prompt">${M('R')} is the region ${M(R`${cf(q.b*q.b)}x^2+${cf(q.a*q.a)}y^2\le ${q.a*q.a*q.b*q.b}`)}. Evaluate the integral by scaling ${M('x')} and ${M('y')} to turn ${M('R')} into a disk. Give the exact value; <code>pi</code> is accepted.</p>${D(R`\iint_R ${f}\;dA`)}`;
+    numInW(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    const {a,b,k,which}=q;
+    const g={one:String(k),x2:`${cf(k*a*a)}u^2`,y2:`${cf(k*b*b)}v^2`,r2:`${cf(k)}\\left(${cf(a*a)}u^2+${cf(b*b)}v^2\\right)`}[which];
+    const chain={one:`${a*b}\\cdot ${k}\\cdot\\pi`,x2:`${a*b}\\cdot ${k*a*a}\\cdot\\tfrac{\\pi}{4}`,y2:`${a*b}\\cdot ${k*b*b}\\cdot\\tfrac{\\pi}{4}`,r2:`${a*b}\\cdot ${k}\\left(${a*a}+${b*b}\\right)\\tfrac{\\pi}{4}`}[which];
+    return `The region is ${M(R`\frac{x^2}{${a*a}}+\frac{y^2}{${b*b}}\le1`)}, so let ${M(`x=${cf(a)}u`)}, ${M(`y=${cf(b)}v`)}. It becomes the unit disk ${M(R`u^2+v^2\le1`)}, and ${M(R`dA=${a*b}\,du\,dv`)} (the Jacobian is ${M(R`\begin{vmatrix}${a}&0\\0&${b}\end{vmatrix}=${a*b}`)}). The integrand becomes ${M(g)}. Over the unit disk (use polar coordinates) ${M(R`\iint 1=\pi`)}, ${M(R`\iint u^2=\iint v^2=\tfrac{\pi}{4}`)}. So `+
+      D(R`\iint_R f\,dA=${chain}=${frC(q.val)}\pi`);}
+};
+
+Q.cvTrapezoid={name:'trapezoid with (y - x)/(y + x)',
+  gen(){
+    const p=rint(1,5),q2=rint(p+1,6),k=pick([1,2,4]),m=pick([1,2,3]),g=pick(['cos','exp']);
+    const c=g==='cos'?fr(k*(q2*q2-p*p),2*m):fr(k*(q2*q2-p*p),4*m);
+    const v=g==='cos'?frV(c)*Math.sin(m):frV(c)*(Math.exp(m)-Math.exp(-m));
+    const ansStr=g==='cos'?`${frStr(c)}*sin(${m})`:`${frStr(c)}*(e^(${m})-e^(-${m}))`;
+    return {p,q:q2,k,m,g,c,v,ansStr};},
+  render(q,el){
+    const arg=`${q.m===1?'':q.m}\\,\\dfrac{y-x}{y+x}`;
+    const f=q.g==='cos'?`${cf(q.k)}\\cos\\!\\left(${arg}\\right)`:`${cf(q.k)}\\,e^{${q.m===1?'':q.m}(y-x)/(y+x)}`;
+    el.innerHTML=`<p class="prompt">${M('R')} is the trapezoid with vertices ${M(`(${q.p},0)`)}, ${M(`(${q.q},0)`)}, ${M(`(0,${q.q})`)}, ${M(`(0,${q.p})`)}. Evaluate the integral with a change of variables. Exact value; <code>sin</code>, <code>e</code> accepted.</p>${D(R`\iint_R ${f}\;dA`)}`;
+    numInW(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    const {p,m,k}=q,qq=q.q;
+    const arg=`${m===1?'':m}\\tfrac{u}{v}`;
+    const g=q.g==='cos'?`${cf(k)}\\cos\\!\\left(${arg}\\right)`:`${cf(k)}e^{${m===1?'':m}u/v}`;
+    const inner=q.g==='cos'?R`\frac{2v\sin ${m}}{${m}}`:R`\frac{v\left(e^{${m}}-e^{-${m}}\right)}{${m}}`;
+    const res=q.g==='cos'?R`${frC(q.c)}\sin ${m}`:R`${frC(q.c)}\left(e^{${m}}-e^{-${m}}\right)`;
+    return `Let ${M('u=y-x')}, ${M('v=y+x')}. The sides ${M(`x+y=${p}`)} and ${M(`x+y=${qq}`)} become ${M(`v=${p}`)} and ${M(`v=${qq}`)}; ${M('x=0')} becomes ${M('u=v')} and ${M('y=0')} becomes ${M('u=-v')}. So ${M(R`S=\{${p}\le v\le ${qq},\ -v\le u\le v\}`)}. Since ${M(R`x=\tfrac{v-u}{2}`)}, ${M(R`y=\tfrac{u+v}{2}`)}, we get ${M(R`\left|\frac{\partial(x,y)}{\partial(u,v)}\right|=\tfrac12`)}. Integrate ${M('u')} first, because ${M(R`\tfrac uv`)} turns the inner integral into a one-line antiderivative: `+
+      D(R`\iint_R f\,dA=\int_{${p}}^{${qq}}\!\!\int_{-v}^{v}${g}\,\tfrac12\,du\,dv=\tfrac12\int_{${p}}^{${qq}}${cf(k)}\,${inner}\,dv=${res}`);}
+};
+
+Q.cvDiamond={name:'diamond region |x| + |y| <= c',
+  gen(){
+    const c=pick([1,2,3]),k=pick([1,2,3]),m=pick([1,2]),which=pick(['exp','sum2','dif2']);
+    let val,v;
+    if(which==='exp'){val=fr(k*c,m);v=frV(val)*(Math.exp(m*c)-Math.exp(-m*c));}
+    else if(which==='sum2'){val=fr(2*k*ipow(c,4),3);v=frV(val);}
+    else{val=fr(2*k*ipow(c,6),9);v=frV(val);}
+    const ansStr=which==='exp'?`${frStr(val)}*(e^(${m*c})-e^(-${m*c}))`:frStr(val);
+    return {c,k,m,which,val,v,ansStr};},
+  render(q,el){
+    const f={exp:`${cf(q.k)}e^{${q.m===1?'':q.m}(x+y)}`,sum2:`${cf(q.k)}(x+y)^2`,dif2:`${cf(q.k)}(x^2-y^2)^2`}[q.which];
+    el.innerHTML=`<p class="prompt">${M('R')} is the diamond ${M(`|x|+|y|\\le ${q.c}`)}. Evaluate the integral. Exact value; <code>e</code> is accepted.</p>${D(R`\iint_R ${f}\;dA`)}`;
+    numInW(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    const {c,k,m,which}=q;
+    const g={exp:`${cf(k)}e^{${m===1?'':m}u}`,sum2:`${cf(k)}u^2`,dif2:`${cf(k)}u^2v^2`}[which];
+    const res={exp:R`${frC(q.val)}\left(e^{${m*c}}-e^{-${m*c}}\right)`,sum2:frTex(q.val),dif2:frTex(q.val)}[which];
+    return `The four sides of the diamond are ${M(`x+y=\\pm${c}`)} and ${M(`x-y=\\pm${c}`)}. With ${M('u=x+y')}, ${M('v=x-y')} they become ${M(`u=\\pm${c}`)}, ${M(`v=\\pm${c}`)}: the square ${M(`[-${c},${c}]^2`)}. Here ${M(R`\frac{\partial(u,v)}{\partial(x,y)}=-2`)}, so ${M(R`dA=\tfrac12\,du\,dv`)}, and ${M(R`x^2-y^2=uv`)}. `+
+      D(R`\iint_R f\,dA=\tfrac12\int_{-${c}}^{${c}}\!\!\int_{-${c}}^{${c}}${g}\,du\,dv=${res}`);}
+};
+
+Q.cvHyperbolic={name:'region between hyperbolas and lines through the origin',
+  CD:[{c:fr(1),d:fr(2),R:2},{c:fr(1),d:fr(3),R:3},{c:fr(1),d:fr(4),R:4},{c:fr(2),d:fr(4),R:2},{c:fr(1,2),d:fr(2),R:4}],
+  gen(){
+    const a=rint(1,3),b=rint(a+1,4),cd=pick(Q.cvHyperbolic.CD),which=pick(['one','xy','yx']);
+    const L=Math.log(cd.R);
+    let val,v,ansStr;
+    if(which==='one'){const c0=fr(b-a,2);val=c0;v=frV(c0)*L;ansStr=`${frStr(c0)}*ln(${cd.R})`;}
+    else if(which==='xy'){const c0=fr(b*b-a*a,4);val=c0;v=frV(c0)*L;ansStr=`${frStr(c0)}*ln(${cd.R})`;}
+    else{val=frM(fr(b-a),frM(frA(cd.d,fr(-cd.c[0],cd.c[1])),fr(1,2)));v=frV(val);ansStr=frStr(val);}
+    return {a,b,cd,which,val,v,ansStr};},
+  render(q,el){
+    const lc=q.cd.c[1]===1?cf(q.cd.c[0]):R`\tfrac12`;
+    const f={one:'1',xy:'xy',yx:R`\dfrac{y}{x}`}[q.which];
+    el.innerHTML=`<p class="prompt">${M('R')} is the region in the first quadrant between the hyperbolas ${M(`xy=${q.a}`)} and ${M(`xy=${q.b}`)} and between the lines ${M(R`y=${lc}x`)} and ${M(`y=${cf(q.cd.d[0])}x`)}. Use ${M('u=xy')}, ${M(R`v=y/x`)} to evaluate the integral. Exact value; <code>ln</code> is accepted.</p>${D(R`\iint_R ${f}\;dA`)}`;
+    numInW(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    const {a,b,cd,which}=q;
+    const cT=cd.c[1]===1?String(cd.c[0]):R`\tfrac12`;
+    const g={one:'1',xy:'u',yx:'v'}[which];
+    const res={one:R`\frac{${b-a}}{2}\ln ${cd.R}`,xy:R`\frac{${b*b-a*a}}{4}\ln ${cd.R}`,yx:frTex(q.val)}[which];
+    return `The curves become ${M(`u=${a}`)}, ${M(`u=${b}`)}, ${M(`v=${cT}`)}, ${M(`v=${cd.d[0]}`)}, a rectangle in the ${M('uv')}-plane. Since ${M(R`\frac{\partial(u,v)}{\partial(x,y)}=\begin{vmatrix}y&x\\-y/x^2&1/x\end{vmatrix}=\frac{2y}{x}=2v`)}, the factor is the reciprocal: ${M(R`dA=\dfrac{1}{2v}\,du\,dv`)}. `+
+      D(R`\iint_R f\,dA=\int_{${cT}}^{${cd.d[0]}}\!\!\int_{${a}}^{${b}}${g}\cdot\frac{1}{2v}\,du\,dv=${res}`);}
+};
+
+Q.cvRotated={name:'rotated rectangle with u = x + y, v = x - y',
+  gen(){
+    const A=pick([1,2,PI]),B=pick([1,2]),which=pick(['e','sin','cos']);
+    const As=A===PI?'pi':String(A),AB=A*B;
+    let v,ansStr;
+    if(which==='e'){v=0.5*((Math.exp(AB)-1)/B-A);ansStr=`(1/2)*((e^(${As}*${B})-1)/${B}-${As})`;}
+    else if(which==='sin'){v=0.5*(A-Math.sin(AB)/B);ansStr=`(1/2)*(${As}-sin(${As}*${B})/${B})`;}
+    else{v=(1-Math.cos(AB))/(2*A);ansStr=`(1-cos(${As}*${B}))/(2*${As})`;}
+    return {A,B,As,which,v,ansStr,AT:A===PI?R`\pi`:String(A)};},
+  render(q,el){
+    const f={e:R`(x+y)\,e^{x^2-y^2}`,sin:R`(x+y)\sin(x^2-y^2)`,cos:R`(x-y)\cos(x^2-y^2)`}[q.which];
+    el.innerHTML=`<p class="prompt">${M('R')} is the rectangle bounded by the lines ${M('x+y=0')}, ${M(`x+y=${q.AT}`)}, ${M('x-y=0')}, ${M(`x-y=${q.B}`)}. Evaluate the integral with ${M('u=x+y')}, ${M('v=x-y')}. Exact value; <code>pi</code>, <code>e</code>, <code>sin</code>, <code>cos</code> accepted.</p>${D(R`\iint_R ${f}\;dA`)}`;
+    numInW(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    const {B,which,AT}=q;
+    const g={e:R`u\,e^{uv}`,sin:R`u\sin(uv)`,cos:R`v\cos(uv)`}[which];
+    const res={e:R`\tfrac12\left[\frac{e^{${AT}\cdot ${B}}-1}{${B}}-${AT}\right]`,sin:R`\tfrac12\left[${AT}-\frac{\sin(${AT}\cdot ${B})}{${B}}\right]`,cos:R`\frac{1-\cos(${AT}\cdot ${B})}{2\cdot ${AT}}`}[which];
+    const how={e:`Integrate ${M('v')} first: ${M(R`\int u\,e^{uv}\,dv=e^{uv}`)}, since ${M('u')} is constant in that integral.`,
+      sin:`Integrate ${M('v')} first: ${M(R`\int u\sin(uv)\,dv=-\cos(uv)`)}.`,
+      cos:`Integrate ${M('u')} first: ${M(R`\int v\cos(uv)\,du=\sin(uv)`)}, because ${M('v')} is constant in that integral.`}[which];
+    return `The four lines become ${M('u=0')}, ${M(`u=${AT}`)}, ${M('v=0')}, ${M(`v=${B}`)}, a rectangle. ${M(R`\frac{\partial(u,v)}{\partial(x,y)}=-2`)}, so ${M(R`dA=\tfrac12\,du\,dv`)}, and ${M(R`x^2-y^2=(x+y)(x-y)=uv`)}. ${how} `+
+      D(R`\iint_R f\,dA=\tfrac12\int_0^{${AT}}\!\!\int_0^{${B}}${g}\,dv\,du=${res}`);}
+};
+
+const JAC3=[
+  ()=>{const a=rint(1,4),b=rint(1,4),c=rint(1,4);
+    return {xT:`${cf(a)}u`,yT:`${cf(b)}v`,zT:`${cf(c)}w`,mat:[[String(a),'0','0'],['0',String(b),'0'],['0','0',String(c)]],
+      detT:`${a}\\cdot${b}\\cdot${c}`,ansT:String(a*b*c),ansStr:String(a*b*c)};},
+  ()=>({xT:'u+v',yT:'v+w',zT:'u+w',mat:[['1','1','0'],['0','1','1'],['1','0','1']],
+    detT:'1(1\\cdot1-1\\cdot0)-1(0\\cdot1-1\\cdot1)+0',ansT:'2',ansStr:'2'}),
+  ()=>({xT:'u',yT:'uv',zT:'uvw',mat:[['1','0','0'],['v','u','0'],['vw','uw','uv']],
+    detT:'1\\cdot(u\\cdot uv-0\\cdot uw)',ansT:'u^2v',ansStr:'u^2*v'}),
+  ()=>({xT:'2u',yT:'v+w',zT:'v-w',mat:[['2','0','0'],['0','1','1'],['0','1','-1']],
+    detT:'2\\left(1\\cdot(-1)-1\\cdot1\\right)',ansT:'-4',ansStr:'-4'}),
+  ()=>({xT:'e^{u}',yT:'e^{v}',zT:'e^{w}',mat:[['e^{u}','0','0'],['0','e^{v}','0'],['0','0','e^{w}']],
+    detT:'e^{u}\\cdot e^{v}\\cdot e^{w}',ansT:'e^{u+v+w}',ansStr:'exp(u+v+w)'}),
+  ()=>({xT:'u\\cos v',yT:'u\\sin v',zT:'w',mat:[['\\cos v','-u\\sin v','0'],['\\sin v','u\\cos v','0'],['0','0','1']],
+    detT:'1\\cdot\\left(u\\cos^2 v+u\\sin^2 v\\right)',ansT:'u',ansStr:'u'})
+];
+Q.jac3={name:'Jacobian in three variables',
+  gen(){return JAC3[rint(0,JAC3.length-1)]();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the Jacobian ${M(R`\dfrac{\partial(x,y,z)}{\partial(u,v,w)}`)} of the transformation. Your answer may contain <code>u</code>, <code>v</code>, <code>w</code>.</p>${D(R`x=${q.xT},\qquad y=${q.yT},\qquad z=${q.zT}`)}`;
+    numInW(el,'j',M(R`\frac{\partial(x,y,z)}{\partial(u,v,w)}=`),{wide:true});},
+  check(q,el){return G(el,'j',checkExpr($('[data-k=j]',el).value,q.ansStr,['u','v','w'],{domain:{u:[0.5,1.5],v:[0.5,1.5],w:[0.5,1.5]}}));},
+  solution(q){
+    const rows=q.mat.map(r=>r.join('&')).join('\\\\ ');
+    return `Take the partial derivatives of ${M('x')}, ${M('y')}, ${M('z')} in the order ${M('u')}, ${M('v')}, ${M('w')} (one row per variable):`+
+      D(R`\frac{\partial(x,y,z)}{\partial(u,v,w)}=\begin{vmatrix}${rows}\end{vmatrix}=${q.detT}=${q.ansT}`);}
+};
+
 /* ---------- 3 cylindrical -------------------------------------------------- */
 Q.rectToCyl={name:'rectangular to cylindrical',
   gen(){const r=rint(1,4),ti=rint(0,15),z=rnz(-4,4);const a=ANGS[ti];
@@ -1093,7 +1239,7 @@ Q.integrandConvert={name:'convert the integrand',
       `ratio image / cell = <b>${fmtDec(cellA?imgA/cellA:0,3)}</b>`;
   }
   build();redrawOnShow('change',draw);draw();
-  new Drill({mount:'#drill-change',section:'change',goal:5,...mixDrill([Q.jacobian,Q.jacobian,Q.changeEval,Q.imageSquare,Q.uvRegion,Q.uvRegion])});
+  new Drill({mount:'#drill-change',section:'change',goal:6,...mixDrill([Q.jacobian,Q.changeEval,Q.imageSquare,Q.uvRegion,Q.cvEllipse,Q.cvTrapezoid,Q.cvTrapezoid,Q.cvDiamond,Q.cvHyperbolic,Q.cvRotated,Q.cvRotated,Q.jac3])});
 })();
 
 /* ============================================================ chapter 3 widget */
@@ -1237,6 +1383,12 @@ window.__solvers={
   'evaluate with a given transformation':q=>({v:q.ansStr}),
   'image of the unit square':q=>({_btn:q.idx}),
   'change of variables with u = x - y, v = x + y':q=>({v:q.ansStr}),
+  'integrate over an ellipse by scaling':q=>({v:q.ansStr}),
+  'trapezoid with (y - x)/(y + x)':q=>({v:q.ansStr}),
+  'diamond region |x| + |y| <= c':q=>({v:q.ansStr}),
+  'region between hyperbolas and lines through the origin':q=>({v:q.ansStr}),
+  'rotated rectangle with u = x + y, v = x - y':q=>({v:q.ansStr}),
+  'Jacobian in three variables':q=>({j:q.ansStr}),
   'rectangular to cylindrical':q=>({r:String(q.r),th:q.thStr,z:String(q.z)}),
   'cylindrical to rectangular':q=>({p:q.ansStr}),
   'identify a cylindrical surface':q=>({_btn:q.ansIdx}),
