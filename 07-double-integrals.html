@@ -228,6 +228,7 @@ const PI=Math.PI;
 const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
 const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
 const numIn=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
+let __uid=0;const uid=p=>p+(++__uid);
 
 /* exact rational arithmetic: a fraction is [numerator, denominator] with denominator > 0 */
 const fr=(n,d=1)=>{if(d<0){n=-n;d=-d;}const g=gcd(n,d)||1;return [n/g,d/g];};
@@ -438,6 +439,120 @@ Q.avgValue={name:'average value over a rectangle',
       D(R`\int_{${P.olo}}^{${P.ohi}}\Big[\,${P.antiTex}\,\Big]_{y=${P.lo}}^{y=${P.hi}}dx=\int_{${P.olo}}^{${P.ohi}}\left(${P.midTex}\right)dx=${frTex(P.val)}`)+
       `The rectangle has area ${M(frTex(q.area))}, so `+
       D(R`f_{\text{avg}}=\frac{1}{${frTex(q.area)}}\cdot ${frTex(P.val)}=${frTex(q.avg)}${APX(q.val)}`);}
+};
+
+/* sign of a double integral read off a contour map.
+   f is a quadratic given by coefficients {c,x,y,xx,yy,xy}; every integral is computed exactly (disks as a multiple of pi). */
+const SCF=[
+  {co:{c:0,x:0,y:0,xx:1,yy:-1,xy:0}},
+  {co:{c:0,x:0,y:0,xx:0,yy:0,xy:1}},
+  {co:{c:4,x:0,y:0,xx:-1,yy:-1,xy:0}},
+  {co:{c:0,x:1,y:1,xx:0,yy:0,xy:0}},
+  {co:{c:0,x:-2,y:0,xx:1,yy:1,xy:0}}
+].map(f=>({...f,tl:[['c',[]],['x',[['x',1]]],['y',[['y',1]]],['xx',[['x',2]]],['yy',[['y',2]]],['xy',[['x',1],['y',1]]]]
+  .map(([k,v])=>({c:fr(f.co[k]),v})),fn:(x,y)=>f.co.c+f.co.x*x+f.co.y*y+f.co.xx*x*x+f.co.yy*y*y+f.co.xy*x*y}));
+const SCDISK_C=[[0,0],[2,0],[0,2],[-2,0],[1,1],[-1,1],[0,-2]];
+const SCDISK_R=[[4,5],[1,1],[3,2]];
+const SCRECT=[[-1,1,-1,1],[0,2,0,2],[-2,0,0,2],[0,2,-2,0],[-2,2,-1,1],[1,3,-1,1],[-3,-1,1,3],[-2,-1,-2,-1],[0,3,0,1],[-3,0,-1,1]];
+/* exact integral of g = sum of coefficient * monomial over the region, as a fraction (times pi for a disk) */
+function scIntegral(g,reg){
+  const mom={};
+  if(reg.kind==='disk'){
+    const R2=frM(reg.R,reg.R),h=fr(reg.h),k=fr(reg.k),q=frD(R2,fr(4));
+    mom.c=R2;mom.x=frM(R2,h);mom.y=frM(R2,k);mom.xx=frM(R2,frA(frM(h,h),q));mom.yy=frM(R2,frA(frM(k,k),q));mom.xy=frM(R2,frM(h,k));
+  }else{
+    const e=(a,b,n)=>fr(ipow(b,n+1)-ipow(a,n+1),n+1);
+    const [x0,x1,y0,y1]=reg.b;
+    mom.c=frM(e(x0,x1,0),e(y0,y1,0));mom.x=frM(e(x0,x1,1),e(y0,y1,0));mom.y=frM(e(x0,x1,0),e(y0,y1,1));
+    mom.xx=frM(e(x0,x1,2),e(y0,y1,0));mom.yy=frM(e(x0,x1,0),e(y0,y1,2));mom.xy=frM(e(x0,x1,1),e(y0,y1,1));
+  }
+  let I=fr(0);Object.keys(mom).forEach(key=>{I=frA(I,frM(fr(g[key]),mom[key]));});
+  return {I,area:mom.c};
+}
+const scInside=(reg,x,y)=>reg.kind==='disk'?(x-reg.h)**2+(y-reg.k)**2<=frV(reg.R)**2:(x>=reg.b[0]&&x<=reg.b[1]&&y>=reg.b[2]&&y<=reg.b[3]);
+function scDraw(q,cv){
+  if(!cv||!cv.isConnected)return;
+  const p=new Plot2D(cv,{xmin:-3.5,xmax:3.5,ymin:-3.5,ymax:3.5,labels:false});
+  p.begin();
+  const reg=q.reg,pts=[];
+  if(reg.kind==='disk'){const r=frV(reg.R);for(let i=0;i<=120;i++){const t=2*PI*i/120;pts.push([reg.h+r*Math.cos(t),reg.k+r*Math.sin(t)]);}}
+  else{const b=reg.b;pts.push([b[0],b[2]],[b[1],b[2]],[b[1],b[3]],[b[0],b[3]]);}
+  p.poly(pts,{fill:'rgba(124,58,237,.20)',stroke:null});
+  const levels=[-4,-3,-2,-1,0,1,2,3,4];
+  const f=q.f.fn;
+  p.contour(f,levels,{labels:false,width:1.5,colors:levels.map(l=>l<0?'#2563eb':(l>0?'#d97706':'#6b6862'))});
+  p.poly(pts,{fill:null,stroke:'#7c3aed',width:2.4});
+  /* one label per level, placed greedily as far from the other labels as possible */
+  const ctx=p.ctx,placed=[],h=1e-4;
+  levels.forEach(lv=>{
+    let best=null,bd=-1;
+    for(let x=-3.2;x<=3.2;x+=0.08)for(let y=-3.2;y<=3.2;y+=0.08){
+      const v=f(x,y),gx=(f(x+h,y)-f(x-h,y))/(2*h),gy=(f(x,y+h)-f(x,y-h))/(2*h),gn=Math.hypot(gx,gy);
+      if(gn<1e-9||Math.abs(v-lv)/gn>0.03)continue;
+      const d=placed.length?Math.min(...placed.map(a=>Math.hypot(a[0]-x,a[1]-y))):10;
+      if(d>bd){bd=d;best=[x,y];}
+    }
+    if(!best)return;
+    placed.push(best);
+    const [px,py]=p.px(best[0],best[1]),txt=String(lv),w=txt.length*7+6;
+    ctx.fillStyle='rgba(255,255,255,.92)';ctx.fillRect(px-w/2,py-8,w,15);
+    ctx.fillStyle=lv<0?'#2563eb':(lv>0?'#d97706':'#6b6862');ctx.font='600 11px -apple-system,Segoe UI,sans-serif';ctx.textAlign='center';ctx.fillText(txt,px,py+3);ctx.textAlign='left';
+  });
+}
+const SCFALLBACK=[
+  ()=>({f:SCF[1],reg:{kind:'disk',h:0,k:0,R:fr(1)},c:0}),
+  ()=>({f:SCF[3],reg:{kind:'disk',h:1,k:1,R:fr(1)},c:0})];
+Q.signContour={name:'sign of a double integral from a contour map',
+  gen(){
+    const wantZero=Math.random()<0.25;
+    const build=()=>{
+      const f=pick(SCF),c=pick([0,1,-1,2,0]);
+      const reg=Math.random()<0.6?{kind:'disk',h:0,k:0,R:null}:{kind:'rect',b:pick(SCRECT)};
+      if(reg.kind==='disk'){const ctr=pick(SCDISK_C);reg.h=ctr[0];reg.k=ctr[1];reg.R=fr(...pick(SCDISK_R));}
+      return {f,reg,c};
+    };
+    const finish=d=>{
+      const g={...d.f.co,c:d.f.co.c-d.c};
+      const {I,area}=scIntegral(g,d.reg);
+      const sign=I[0]===0?'zero':(I[0]>0?'positive':'negative');
+      return {...d,g,I,area,ans:sign,ids:[uid('sc')]};
+    };
+    for(let t=0;t<200;t++){
+      const q=finish(build());
+      if(wantZero?q.ans==='zero':(q.ans!=='zero'&&Math.abs(frV(q.I))>=0.2*frV(q.area)))return q;
+    }
+    return finish(wantZero?SCFALLBACK[0]():SCFALLBACK[1]());
+  },
+  render(q,el){
+    const lhs=q.c===0?R`\iint_D f\,dA`:R`\iint_D \left(f${q.c>0?'-':'+'}${Math.abs(q.c)}\right)dA`;
+    el.innerHTML=`<p class="prompt">The figure shows contour lines of a function ${M('f(x,y)')} (orange for positive levels, blue for negative, gray for 0; each line is labeled with its level). The shaded purple region is ${M('D')}. Is ${M(lhs)} positive, negative, or zero?</p>
+      <div style="max-width:380px"><canvas class="scene" id="${q.ids[0]}"></canvas></div>`;
+    q.get=choiceButtons(el,['positive','negative','zero'].map(v=>({label:v,value:v})));
+    const draw=()=>scDraw(q,$('#'+q.ids[0],el));
+    draw();setTimeout(draw,60);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick positive, negative, or zero.'};
+    return {ok:v===q.ans,msg:v===q.ans?'':'Ask where the integrand is above 0 on D. If it is positive everywhere, the integral is positive. If the positive and negative parts mirror each other, look for a symmetry.'};},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=q.c===0?`Compare the contour levels crossing ${M('D')} with 0: where is ${M('f')} positive, and where negative?`:`Compare the contour levels crossing ${M('D')} with ${M(String(q.c))}: the integrand is ${M(`f${q.c>0?'-':'+'}${Math.abs(q.c)}`)}, which is positive exactly where ${M(`f>${q.c}`)}.`;
+    typeset(h);},
+  solution(q){
+    const reg=q.reg,areaTex=reg.kind==='disk'?texPi(q.area):frTex(q.area);
+    const valTex=q.I[0]===0?'0':(reg.kind==='disk'?texPi(q.I):frTex(q.I));
+    const fTex=polyTex(q.f.tl);
+    const gTex=polyTex(q.f.tl.map((t,i)=>i===0?{...t,c:frS(t.c,fr(q.c))}:t));
+    const rtxt=reg.kind==='disk'?`the disk of radius ${M(frTex(reg.R))} centered at ${M(`(${reg.h},${reg.k})`)}`:`the rectangle ${M(R`[${reg.b[0]},${reg.b[1]}]\times[${reg.b[2]},${reg.b[3]}]`)}`;
+    let why;
+    if(q.ans==='zero')why=`The positive and negative parts of the integrand cancel exactly over ${rtxt}, which is symmetric enough to balance them.`;
+    else{let mn=1e9,mx=-1e9;for(let i=0;i<=60;i++)for(let j=0;j<=60;j++){let x,y;
+        if(reg.kind==='disk'){const r=frV(reg.R)*Math.sqrt(i/60),t=2*PI*j/60;x=reg.h+r*Math.cos(t);y=reg.k+r*Math.sin(t);}
+        else{x=reg.b[0]+(reg.b[1]-reg.b[0])*i/60;y=reg.b[2]+(reg.b[3]-reg.b[2])*j/60;}
+        const v=q.f.fn(x,y)-q.c;mn=Math.min(mn,v);mx=Math.max(mx,v);}
+      const cc=q.c===0?'0':String(q.c);
+      why=q.ans==='positive'?
+        (mn>=-1e-9?`Across ${rtxt}, ${M('f')} stays above ${M(cc)}, so the integrand is nonnegative and the integral is positive.`:`${M('f')} dips below ${M(cc)} in part of ${rtxt}, but the part where it is above ${M(cc)} is larger and counts more.`):
+        (mx<=1e-9?`Across ${rtxt}, ${M('f')} stays below ${M(cc)}, so the integrand is nonpositive and the integral is negative.`:`${M('f')} rises above ${M(cc)} in part of ${rtxt}, but the part where it is below ${M(cc)} is larger and counts more.`);}
+    return `${why} The hidden function was ${M(`f(x,y)=${fTex}`)}, so the integrand is ${M(`${gTex}`)}. Its exact integral over ${M('D')} is `+
+      D(R`\iint_D\left(${gTex}\right)dA=${valTex}`)+`with area ${M(R`A(D)=${areaTex}`)}. The answer is <b>${q.ans}</b>.`;}
 };
 
 /* ---------- chapter 2: general regions ---------- */
@@ -851,7 +966,7 @@ Q.planeArea={name:'surface area of a plane',
   $('#wtNew').onclick=newQ;
   newQ();
 
-  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.rectPoly,Q.rectPoly,Q.rectProduct,Q.rectProduct,Q.midpointRule,Q.riemannCorner,Q.riemannCorner,Q.avgValue])});
+  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.rectPoly,Q.rectPoly,Q.rectProduct,Q.rectProduct,Q.midpointRule,Q.riemannCorner,Q.riemannCorner,Q.avgValue,Q.signContour])});
 })();
 
 /* ============================================================ chapter 2: region explorer */
@@ -1044,6 +1159,7 @@ window.__solvers={
   'product integral over a rectangle':q=>({v:q.ansStr}),
   'midpoint rule estimate':q=>({v:q.ansStr}),
   'Riemann sum with corner sample points':q=>({dA:q.dAStr,v:q.ansStr}),
+  'sign of a double integral from a contour map':q=>({_btn:['positive','negative','zero'].indexOf(q.ans)}),
   'average value over a rectangle':q=>({v:q.ansStr}),
   'set up as a type I integral':q=>({oa:q.reg.I.aT,ob:q.reg.I.bT,il:q.reg.I.lo,ih:q.reg.I.hi}),
   'set up as a type II integral':q=>({oa:q.reg.II.aT,ob:q.reg.II.bT,il:q.reg.II.lo,ih:q.reg.II.hi}),
