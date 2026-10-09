@@ -254,6 +254,9 @@ const PTS=p=>`(${p.map(x=>isNice(x)?fmt(x):fmtDec(x,2)).join(', ')})`;
 const uniqv=a=>{const out=[];a.forEach(v=>{if(!out.some(w=>Math.abs(w-v)<1e-9))out.push(v);});return out.sort((x,y)=>x-y);};
 const listStr=a=>a.length?a.map(v=>fmt(v)).join(', '):'DNE';
 const ptListStr=a=>a.length?a.map(PTS).join(', '):'DNE';
+/* monotone height compression: tanh is increasing, so hills stay hills and saddles stay saddles, but the box always fits.
+   big is the size of f that should reach about 0.995 of the way up; L is the half-height of the box */
+const squash=(v,big,L)=>0.92*L*Math.tanh(3*v/(big||1));
 const classifyD=(D,fxx)=>Math.abs(D)<1e-9?'inc':(D<0?'saddle':(fxx>0?'min':'max'));
 
 /* ============================================================ critical point families
@@ -737,8 +740,7 @@ Q.lagConcept={name:'the meaning of the Lagrange condition',
     const L=P.L;
     let big=0;
     for(let i=0;i<=24;i++)for(let j=0;j<=24;j++)big=Math.max(big,Math.abs(P.f(-L+2*L*i/24,-L+2*L*j/24)));
-    /* tanh is increasing, so hills stay hills and saddles stay saddles, but the box always fits */
-    const Z=v=>0.92*L*Math.tanh(3*v/(big||1));
+    const Z=v=>squash(v,big,L);
     scene.o.range=L;scene.clear();
     scene.surface((x,y)=>Z(P.f(x,y)),[-L,L],[-L,L],{n:34,base:SURF.blue,alpha:0.6,stroke:'rgba(30,40,80,.12)'});
     P.pts.forEach(p=>{const k=kindAt(P,p);
