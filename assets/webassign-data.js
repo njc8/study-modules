@@ -115,3 +115,34 @@ WA_PROBLEMS.push(
   {k:'min',label:'absolute minimum:',kind:'number',ans:Math.exp(-0.25),tol:1e-4}],
  solution:'Interior: \\(f_x=-ye^{-xy}\\) and \\(f_y=-xe^{-xy}\\) vanish only at \\((0,0)\\), where \\(f=1\\). Boundary: the ellipse \\(x^2+4y^2=1\\) is \\(x=\\cos t\\), \\(y=\\tfrac12\\sin t\\), so \\(xy=\\tfrac14\\sin2t\\) takes every value in \\([-\\tfrac14,\\tfrac14]\\). Since \\(e^{-u}\\) is decreasing, \\(f=e^{-xy}\\) runs from \\(e^{-1/4}\\) (when \\(xy=\\tfrac14\\)) to \\(e^{1/4}\\) (when \\(xy=-\\tfrac14\\)). Compare with the interior value 1: the absolute maximum is \\(e^{1/4}\\approx1.2840\\) and the absolute minimum is \\(e^{-1/4}\\approx0.7788\\).'}
 );
+
+/* ---------- WebAssign: Rectangular Integrals (due 2026-10-05) ---------- */
+WA_PROBLEMS.push(
+{id:'wa-rect-1',source:'WebAssign: Rectangular Integrals',hw:'',num:1,module:'06-optimization',chapter:'lagrange',status:'wa',
+ prompt:'Find the points on the surface \\(y^2=64+xz\\) that are closest to the origin. Enter the point with the smaller \\(y\\)-value first.',
+ parts:[
+  {k:'lo',label:'point with the smaller \\(y\\)-value:',kind:'vector',ans:[0,-8,0],placeholder:'(x, y, z)'},
+  {k:'hi',label:'point with the larger \\(y\\)-value:',kind:'vector',ans:[0,8,0],placeholder:'(x, y, z)'}],
+ solution:'Minimize the squared distance \\(f=x^2+y^2+z^2\\) subject to \\(g=y^2-xz=64\\). Lagrange: \\(2x=-\\lambda z\\), \\(2y=2\\lambda y\\), \\(2z=-\\lambda x\\). If \\(y\\ne0\\), the middle equation gives \\(\\lambda=1\\), so \\(2x=-z\\) and \\(2z=-x\\); together \\(4x=x\\), which forces \\(x=0\\) and \\(z=0\\). Then \\(y^2=64\\), so \\(y=\\pm8\\) and \\(f=64\\). If \\(y=0\\), the constraint says \\(xz=-64\\), and \\(x^2+z^2\\ge2|xz|=128\\), which is farther. The closest points are \\((0,-8,0)\\) and \\((0,8,0)\\), at distance 8.'},
+{id:'wa-rect-2',source:'WebAssign: Rectangular Integrals',hw:'',num:2,module:'07-double-integrals',chapter:'rect',status:'wa',
+ prompt:'Estimate the volume of the solid under the surface \\(z=xy\\) and above the rectangle \\(R=[7,13]\\times[3,7]\\). Divide \\(R\\) into \\(m=3\\) subintervals in \\(x\\) and \\(n=2\\) in \\(y\\) (six equal sub-rectangles).',
+ parts:[
+  {k:'dx',label:'\\(\\Delta x=\\)',kind:'number',ans:2},
+  {k:'dy',label:'\\(\\Delta y=\\)',kind:'number',ans:2},
+  {k:'dA',label:'\\(\\Delta A=\\)',kind:'number',ans:4},
+  {k:'ur',label:'(a) Riemann sum using upper right corners:',kind:'number',ans:1584},
+  {k:'mid',label:'(b) Midpoint rule:',kind:'number',ans:1200}],
+ solution:'The widths are \\(\\Delta x=(13-7)/3=2\\) and \\(\\Delta y=(7-3)/2=2\\), so \\(\\Delta A=4\\). Because \\(xy\\) is a product, the sum factors into an \\(x\\)-sum times a \\(y\\)-sum. (a) Upper right corners have \\(x\\in\\{9,11,13\\}\\) and \\(y\\in\\{5,7\\}\\): \\((9+11+13)(5+7)\\cdot4=33\\cdot12\\cdot4=1584\\). (b) Midpoints have \\(x\\in\\{8,10,12\\}\\) and \\(y\\in\\{4,6\\}\\): \\((8+10+12)(4+6)\\cdot4=30\\cdot10\\cdot4=1200\\). The midpoint answer equals the exact integral \\(\\int_7^{13}x\\,dx\\int_3^7y\\,dy=60\\cdot20\\) because \\(xy\\) is linear in each variable, so the midpoint rule has no error here. The corner sum overestimates since \\(xy\\) is increasing.'},
+{id:'wa-rect-3',source:'WebAssign: Rectangular Integrals',hw:'',num:3,module:'07-double-integrals',chapter:'rect',status:'wa',
+ prompt:'Evaluate the iterated integral \\(\\displaystyle\\int_1^2\\int_0^4 (6x^2y-4x)\\,dy\\,dx\\).',
+ parts:[{k:'I',label:'value:',kind:'number',ans:88}],
+ solution:'Inner integral in \\(y\\), holding \\(x\\) fixed: \\(\\int_0^4(6x^2y-4x)\\,dy=\\left[3x^2y^2-4xy\\right]_0^4=48x^2-16x\\). Outer integral: \\(\\int_1^2(48x^2-16x)\\,dx=\\left[16x^3-8x^2\\right]_1^2=(128-32)-(16-8)=88\\).'},
+{id:'wa-rect-4',source:'WebAssign: Rectangular Integrals',hw:'',num:4,module:'07-double-integrals',chapter:'rect',status:'wa',
+ prompt:'Evaluate \\(\\displaystyle\\iint_R \\frac{3xy^2}{x^2+1}\\,dA\\) where \\(R=\\{(x,y):0\\le x\\le3,\\ -2\\le y\\le2\\}\\). Exact (like \\(5\\ln 2\\)) or a decimal to three places.',
+ parts:[{k:'I',label:'value:',kind:'number',ans:8*Math.log(10),tol:0.005}],
+ solution:'The integrand is a function of \\(x\\) times a function of \\(y\\) over a rectangle, so the integral splits: \\(3\\int_0^3\\frac{x}{x^2+1}\\,dx\\cdot\\int_{-2}^2y^2\\,dy\\). The first factor is \\(\\left[\\tfrac12\\ln(x^2+1)\\right]_0^3=\\tfrac12\\ln10\\). The second is \\(\\left[\\tfrac{y^3}{3}\\right]_{-2}^2=\\tfrac{16}{3}\\). Multiply: \\(3\\cdot\\tfrac12\\ln10\\cdot\\tfrac{16}{3}=8\\ln10\\approx18.421\\).'},
+{id:'wa-rect-5',source:'WebAssign: Rectangular Integrals',hw:'',num:5,module:'07-double-integrals',chapter:'rect',status:'wa',
+ prompt:'Find the volume of the solid lying under the surface \\(z=x^2+xy^2\\) and above the rectangle \\(0\\le x\\le5\\), \\(-4\\le y\\le4\\). Exact or a decimal to three places.',
+ parts:[{k:'V',label:'\\(V=\\)',kind:'number',ans:2600/3,tol:0.005}],
+ solution:'The height is nonnegative on the rectangle, so \\(V=\\int_0^5\\int_{-4}^4(x^2+xy^2)\\,dy\\,dx\\). Inner: \\(\\left[x^2y+\\tfrac{xy^3}{3}\\right]_{-4}^4=8x^2+\\tfrac{128}{3}x\\). Outer: \\(\\left[\\tfrac{8x^3}{3}+\\tfrac{64x^2}{3}\\right]_0^5=\\tfrac{1000}{3}+\\tfrac{1600}{3}=\\tfrac{2600}{3}\\approx866.667\\).'}
+);
