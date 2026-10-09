@@ -130,10 +130,13 @@
 
   <div class="card">
     <h4>Explore: a lone local minimum that is not the lowest point</h4>
-    <canvas class="scene" id="oneScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The blue surface is \(f=x^2(1+y)^3+y^2\), heights compressed by a monotone rescaling so it fits the box. Green: the local minimum at the origin. Purple: the path along \(y=-2\).</p>
+    <div class="two">
+      <div><canvas class="scene" id="oneScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. The surface \(f=x^2(1+y)^3+y^2\), heights on a log-like scale so the small bowl and the big drop both fit. Green: the local minimum. Purple: the path along \(y=-2\).</p></div>
+      <div><canvas class="scene" id="oneMap"></canvas><p class="plotcap">Contour map of the same \(f\). Red shading: where \(f\lt 0\), lower than the local minimum. The dark curve is the level \(f=0\).</p></div>
+    </div>
     <div class="sliders" id="oneSliders" style="grid-template-columns:1fr"></div>
     <div class="readout" id="oneOut"></div>
-    <p class="hint">Slide past \(|x|=2\) and the path along \(y=-2\) drops below the valley floor at the origin, even though the origin is the only flat spot anywhere.</p>
+    <p class="hint">Start at \(x=0\): the orange point sits at height 4, above the valley floor. Slide past \(|x|=2\) and it enters the red region, below the local minimum, even though the origin is the only flat spot anywhere. On the map you can see why there is no contradiction: the red region never touches the origin, so the origin is still a local minimum.</p>
   </div>
 
   <div class="note"><b>Closed and bounded is what saves you.</b> On a closed bounded region you compare candidates, and the Extreme Value Theorem guarantees the winner is on your list. On an unbounded region such as the whole plane, one local extremum says nothing about absolute extrema.</div>
@@ -1016,22 +1019,33 @@ Q.lagConcept={name:'the meaning of the Lagrange condition',
 /* ---- chapter 2: a lone local minimum that is not absolute */
 (function(){
   const f=(x,y)=>x*x*Math.pow(1+y,3)+y*y;
-  /* f reaches 73 at the corner of the window, so compress against a much smaller scale to keep the valley readable */
-  const L=2.6,Z=v=>squash(v,12,L);
-  const sc=new Scene3D('#oneScene',{range:L,azim:-58,elev:26,center:[0,-0.75,0]});
+  /* f runs from about -13 to 19 in this window while the bowl at the origin is a few tenths deep,
+     so heights use a signed log scale: small values stay visible and large ones still fit */
+  const Z=v=>Math.sign(v)*0.85*Math.log1p(Math.abs(v));
+  const X=[-2.6,2.6],Y=[-2.4,0.4];
+  const sc=new Scene3D('#oneScene',{range:2.6,azim:-58,elev:24,center:[0,-1,0]});
+  const map=new Plot2D('#oneMap',{xmin:-2.8,xmax:2.8,ymin:-2.6,ymax:0.9});
   let x0=0;
-  sliderRow($('#oneSliders'),{label:'x along y = -2',min:-3,max:3,step:0.05,value:0,
+  sliderRow($('#oneSliders'),{label:'x along y = -2',min:-2.6,max:2.6,step:0.05,value:0,
     fmt:v=>fmtDec(v,2),onInput:v=>{x0=Math.round(v*20)/20;draw();}});
   function draw(){
+    const v=4-x0*x0,below=v<-1e-9;
     sc.clear();
-    sc.surface((x,y)=>Z(f(x,y)),[-3,3],[-2.5,1],{n:40,base:SURF.blue,alpha:0.4,stroke:'rgba(30,40,80,.10)'});
-    sc.curve(x=>[x,-2,Z(4-x*x)+0.06],-3,3,{color:'#7c3aed',width:3,n:120});
+    sc.surface((x,y)=>Z(f(x,y)),X,Y,{n:44,base:SURF.blue,alpha:0.45,stroke:'rgba(30,40,80,.10)',
+      colorFn:(p,sh)=>p[2]<0?shadeColor([220,38,38],sh,0.5):shadeColor(SURF.blue,sh,0.45)});
+    sc.curve(x=>[x,-2,Z(4-x*x)+0.05],X[0],X[1],{color:'#7c3aed',width:3,n:120});
     sc.point([0,0,0.05],{color:'#16a34a',r:7,label:'local min, f = 0'});
-    sc.point([x0,-2,Z(4-x0*x0)+0.06],{color:'#d97706',r:7});
+    sc.point([x0,-2,Z(v)+0.05],{color:'#d97706',r:7});
     sc.render();
-    const v=4-x0*x0;
-    $('#oneOut').innerHTML=`f(${fmtDec(x0,2)}, -2) = 4 - (${fmtDec(x0,2)})² = <b>${fmtDec(v,2)}</b><br>f(0, 0) = 0`+
-      (v<-1e-9?`<br><b>${fmtDec(v,2)} is lower than the local minimum.</b>`:'');}
+    map.begin();
+    map.heat(f,{colorFn:z=>z<0?'rgba(220,38,38,.22)':'rgba(0,0,0,0)'});
+    map.contour(f,[-8,-4,-2,2,4,8],{color:'#a8a29e',width:1});
+    map.contour(f,[0],{color:'#44403c',width:1.8});
+    map.fn(()=>-2,{color:'#7c3aed',width:2.4,xmin:X[0],xmax:X[1]});
+    map.point([0,0],{color:'#16a34a',r:5,label:'local min'});
+    map.point([x0,-2],{color:'#d97706',r:5});
+    $('#oneOut').innerHTML=`f(${fmtDec(x0,2)}, -2) = 4 - (${fmtDec(x0,2)})² = <b>${fmtDec(v,2)}</b><br>f(0, 0) = 0, the local minimum`+
+      (below?`<br><b>${fmtDec(v,2)} is lower than the local minimum.</b>`:'');}
   redrawOnShow('absolute',draw);draw();
 })();
 
