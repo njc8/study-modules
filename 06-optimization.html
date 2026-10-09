@@ -329,7 +329,21 @@ CF.sym=()=>{const a=rnz(-3,3);
     fxxT:'6x',fyyT:'6y',fxyT:texNum(-3*a),
     fxx:x=>6*x,fyy:(x,y)=>6*y,fxy:()=>-3*a,pts:[[0,0],[a,a]],
     how:`The first equation gives ${M(R`y=x^2/(${texNum(a)})`)}. Substituting into ${M(R`y^2=${texNum(a)}x`)} gives ${M(R`x^4=${texNum(a*a*a)}x`)}, so ${M(R`x\big(x^3-${texNum(a*a*a)}\big)=0`)} and ${M(R`x=0`)} or ${M(R`x=${texNum(a)}`)}.`};};
-const CFLIST=[CF.quad,CF.cubicX,CF.quarticX,CF.cubicY,CF.bilin,CF.sym];
+/* the x-equation and y-equation separate, so every root of one pairs with every root of the other */
+CF.sepCubic=()=>{const a=pick([1,2]),b=pick([1,2]);
+  return {tex:poly([[1,'x^3'],[-3*a*a,'x'],[1,'y^3'],[-3*b*b,'y']]),f:(x,y)=>x*x*x-3*a*a*x+y*y*y-3*b*b*y,
+    fxT:poly([[3,'x^2'],[-3*a*a,'']]),fyT:poly([[3,'y^2'],[-3*b*b,'']]),
+    fxxT:'6x',fyyT:'6y',fxyT:'0',fxx:x=>6*x,fyy:(x,y)=>6*y,fxy:()=>0,
+    pts:[[a,b],[a,-b],[-a,b],[-a,-b]],
+    how:`Factor each equation: ${M(R`f_x=3(x-${a})(x+${a})=0`)} gives ${M(R`x=\pm${a}`)}, and ${M(R`f_y=3(y-${b})(y+${b})=0`)} gives ${M(R`y=\pm${b}`)}. The two equations do not involve each other, so every <i>x</i>-root pairs with every <i>y</i>-root: 2 times 2 gives four critical points.`};};
+CF.quartCubic=()=>{let a,b;do{a=pick([1,2]);b=pick([1,2]);}while(a===1&&b===1);
+  return {tex:poly([[1,'x^4'],[-2*a*a,'x^2'],[1,'y^3'],[-3*b*b,'y']]),f:(x,y)=>x*x*x*x-2*a*a*x*x+y*y*y-3*b*b*y,
+    fxT:poly([[4,'x^3'],[-4*a*a,'x']]),fyT:poly([[3,'y^2'],[-3*b*b,'']]),
+    fxxT:poly([[12,'x^2'],[-4*a*a,'']]),fyyT:'6y',fxyT:'0',
+    fxx:x=>12*x*x-4*a*a,fyy:(x,y)=>6*y,fxy:()=>0,
+    pts:[[0,b],[0,-b],[a,b],[a,-b],[-a,b],[-a,-b]],
+    how:`Factor rather than divide: ${M(R`f_x=4x(x-${a})(x+${a})=0`)} gives ${M('x=0')} <b>and</b> ${M(R`x=\pm${a}`)}, while ${M(R`f_y=3(y-${b})(y+${b})=0`)} gives ${M(R`y=\pm${b}`)}. The equations do not involve each other, so every <i>x</i>-root pairs with every <i>y</i>-root: 3 times 2 gives six critical points.`};};
+const CFLIST=[CF.quad,CF.cubicX,CF.quarticX,CF.cubicY,CF.bilin,CF.sym,CF.sepCubic,CF.quartCubic];
 
 /* functions whose second derivative test fails (D = 0) at the origin */
 const DEGLIST=[
