@@ -272,6 +272,23 @@
   <div class="warn"><b>\(\phi\) is measured from the positive \(z\)-axis</b>, not from the \(xy\)-plane. The north pole is \(\phi=0\), the equator is \(\phi=\pi/2\), the south pole is \(\phi=\pi\). An upper hemisphere is \(0\le\phi\le\pi/2\), never \(0\le\phi\le\pi\) with \(z\ge 0\) tacked on.</div>
   <div class="warn"><b>Never drop \(\rho^2\sin\phi\).</b> It is the single most common lost point on this material. Write \(dV=\rho^2\sin\phi\,d\rho\,d\theta\,d\phi\) first, before you write a single limit, and the rest of the problem is arithmetic.</div>
 
+  <h3>Spheres through the origin, cones, and pieces of a ball</h3>
+  <p>A sphere through the origin has a clean description: multiply \(\rho=2a\cos\phi\) by \(\rho\) to see \(x^2+y^2+z^2=2az\), the sphere of radius \(a\) centered at \((0,0,a)\). The solid inside it is \(0\le\rho\le2a\cos\phi\), and the upper limit now depends on \(\phi\).</p>
+  <div class="card">
+    <h4>Worked example</h4>
+    <p>Find the volume of the solid inside \(x^2+y^2+z^2=4z\) and above the cone \(z=\sqrt{x^2+y^2}\).</p>
+    <p>The sphere is \(\rho^2=4\rho\cos\phi\), so \(\rho=4\cos\phi\). The cone \(z=\sqrt{x^2+y^2}\) is \(\phi=\pi/4\), and "above" it means \(0\le\phi\le\pi/4\). Every direction around the \(z\)-axis is used. So
+    \[V=\int_0^{2\pi}\!\!\int_0^{\pi/4}\!\!\int_0^{4\cos\phi}\rho^2\sin\phi\,d\rho\,d\phi\,d\theta=2\pi\int_0^{\pi/4}\frac{64\cos^3\phi}{3}\sin\phi\,d\phi=2\pi\cdot\frac{64}{3}\cdot\frac{1}{4}\left(1-\frac14\right)=8\pi.\]</p>
+  </div>
+  <p>The angle limits for common pieces:</p>
+  <ul>
+    <li>\(z\ge0\iff0\le\phi\le\pi/2\), and \(z\le0\iff\pi/2\le\phi\le\pi\).</li>
+    <li>\(y\ge0\iff0\le\theta\le\pi\), and \(x\le0\iff\pi/2\le\theta\le3\pi/2\).</li>
+    <li>"Outside the cone \(\phi=c\)", above the \(xy\)-plane, means \(c\le\phi\le\pi/2\). "Inside the cone" is \(0\le\phi\le c\).</li>
+  </ul>
+  <div class="note"><b>A cone around another axis.</b> The condition \(y\ge\sqrt{x^2+z^2}\) is a cone opening along the positive \(y\)-axis. Use \(y\) as the polar axis: \(y=\rho\cos\phi\), \(z=\rho\sin\phi\cos\theta\), \(x=\rho\sin\phi\sin\theta\) (any assignment of the other two works). The volume element is still \(dV=\rho^2\sin\phi\,d\rho\,d\phi\,d\theta\), and the solid \(x^2+y^2+z^2\le4\), \(y\ge\sqrt{x^2+z^2}\) becomes \(0\le\rho\le2\), \(0\le\phi\le\pi/4\), \(0\le\theta\le2\pi\).</div>
+  <p>The <b>average value</b> of \(f\) over a solid \(E\) is \(f_{\text{avg}}=\dfrac{1}{V(E)}\iiint_E f\,dV\). For example, the average of \(x^2+y^2+z^2\) over the ball of radius \(a\) is \(\dfrac{4\pi a^5/5}{4\pi a^3/3}=\dfrac{3a^2}{5}\).</p>
+
   <h3>Practice</h3>
   <div class="card" id="drill-sph"></div>
 </section>
@@ -1098,6 +1115,30 @@ Q.sphEvaluate={name:'evaluate in spherical coordinates',
       val:4*Math.PI*(Math.E-1)/3,ansStr:`4*pi*(e-1)/3`,
       sol:R`\int_0^{\pi}\!\!\int_0^{2\pi}\!\!\int_0^{1} e^{\rho^3}\rho^2\sin\phi\;d\rho\,d\theta\,d\phi=2\pi\cdot 2\cdot\int_0^1 e^{\rho^3}\rho^2\,d\rho=4\pi\left[\tfrac{1}{3}e^{\rho^3}\right]_0^1=\frac{4\pi(e-1)}{3}`,
       note:`${M(R`(x^2+y^2+z^2)^{3/2}=\rho^3`)}. The Jacobian's ${M(R`\rho^2`)} is exactly the ${M(R`du`)} you need for ${M(R`u=\rho^3`)}: this integral is impossible in rectangular coordinates and one line in spherical.`})},
+    {mk:v=>{let A,B;do{A=rint(1,3);B=A+rint(1,3);}while(A===1&&B===4);return {spec:{k:'shellxy',A,B},prompt:`Evaluate ${M(R`\displaystyle\iiint_E (x^2+y^2)\,dV`)} where ${M('E')} is the shell ${M(`${A}\\le\\sqrt{x^2+y^2+z^2}\\le ${B}`)}.`,
+      val:8*Math.PI*(Math.pow(B,5)-Math.pow(A,5))/15,ansStr:`8*pi*(${Math.pow(B,5)}-${Math.pow(A,5)})/15`,
+      sol:R`\int_0^{\pi}\!\!\int_0^{2\pi}\!\!\int_{${A}}^{${B}} (\rho\sin\phi)^2\,\rho^2\sin\phi\;d\rho\,d\theta\,d\phi=\frac{${Math.pow(B,5)}-${Math.pow(A,5)}}{5}\cdot2\pi\cdot\frac43=\frac{8\pi(${Math.pow(B,5)}-${Math.pow(A,5)})}{15}`,
+      note:`${M('x^2+y^2')} is ${M(R`\rho^2\sin^2\phi`)}, so the ${M(R`\phi`)} integral is ${M(R`\int_0^\pi\sin^3\phi\,d\phi=\tfrac43`)}, not ${M('2')}.`};}},
+    {mk:v=>{let A,B;do{A=rint(1,3);B=A+rint(1,5);}while(A===1&&B===6);return {spec:{k:'distcone',A,B},prompt:`Evaluate ${M(R`\displaystyle\iiint_E \sqrt{x^2+y^2+z^2}\,dV`)} where ${M('E')} lies above the cone ${M(R`z=\sqrt{x^2+y^2}`)} between the spheres ${M(`\\rho=${A}`)} and ${M(`\\rho=${B}`)}.`,
+      val:Math.PI*(Math.pow(B,4)-Math.pow(A,4))*(2-Math.SQRT2)/4,ansStr:`pi*(${Math.pow(B,4)}-${Math.pow(A,4)})*(2-sqrt(2))/4`,
+      sol:R`\int_0^{\pi/4}\!\!\int_0^{2\pi}\!\!\int_{${A}}^{${B}} \rho\cdot\rho^2\sin\phi\;d\rho\,d\theta\,d\phi=\frac{${Math.pow(B,4)}-${Math.pow(A,4)}}{4}\cdot2\pi\cdot\left(1-\tfrac{\sqrt2}{2}\right)=\frac{\pi(${Math.pow(B,4)}-${Math.pow(A,4)})(2-\sqrt2)}{4}`,
+      note:`The integrand is ${M(R`\rho`)}, so the ${M(R`\rho`)} integral is ${M(R`\int\rho^3\,d\rho`)}. "Above the cone" is ${M(R`0\le\phi\le\pi/4`)}, and ${M(R`\int_0^{\pi/4}\sin\phi\,d\phi=1-\tfrac{\sqrt2}{2}`)}.`};}},
+    {mk:v=>{let A,B;do{A=rint(1,3);B=A+rint(1,2);}while(A===3&&B===4);return {spec:{k:'distpiece',A,B},prompt:`Evaluate ${M(R`\displaystyle\iiint_E \sqrt{x^2+y^2+z^2}\,dV`)} where ${M('E')} is the part of the shell ${M(`${A}\\le\\rho\\le ${B}`)} with ${M(R`x\le0`)} and ${M(R`z\le0`)}.`,
+      val:Math.PI*(Math.pow(B,4)-Math.pow(A,4))/4,ansStr:`pi*(${Math.pow(B,4)}-${Math.pow(A,4)})/4`,
+      sol:R`\int_{\pi/2}^{\pi}\!\!\int_{\pi/2}^{3\pi/2}\!\!\int_{${A}}^{${B}} \rho\cdot\rho^2\sin\phi\;d\rho\,d\theta\,d\phi=\frac{${Math.pow(B,4)}-${Math.pow(A,4)}}{4}\cdot\pi\cdot1=\frac{\pi(${Math.pow(B,4)}-${Math.pow(A,4)})}{4}`,
+      note:`${M(R`z\le0`)} is ${M(R`\pi/2\le\phi\le\pi`)} and ${M(R`x\le0`)} is ${M(R`\pi/2\le\theta\le3\pi/2`)}, an angle range of length ${M(R`\pi`)}. Then ${M(R`\int_{\pi/2}^{\pi}\sin\phi\,d\phi=1`)}.`};}},
+    {mk:v=>{const A=pick([1,2,3]);return {spec:{k:'spherecone',A},prompt:`Find the volume of the solid inside the sphere ${M(`x^2+y^2+z^2=${2*A}z`)} and above the cone ${M(R`z=\sqrt{x^2+y^2}`)}.`,
+      val:Math.PI*Math.pow(A,3),ansStr:`pi*${Math.pow(A,3)}`,
+      sol:R`V=\int_0^{2\pi}\!\!\int_0^{\pi/4}\!\!\int_0^{${2*A}\cos\phi}\rho^2\sin\phi\;d\rho\,d\phi\,d\theta=2\pi\cdot\frac{${Math.pow(2*A,3)}}{3}\int_0^{\pi/4}\cos^3\phi\sin\phi\,d\phi=2\pi\cdot\frac{${Math.pow(2*A,3)}}{3}\cdot\frac{3}{16}=${Math.pow(A,3)}\pi`,
+      note:`The sphere is ${M(R`\rho=${2*A}\cos\phi`)}, which has radius ${A} and passes through the origin. The ${M(R`\phi`)} integral is ${M(R`\left[-\tfrac{\cos^4\phi}{4}\right]_0^{\pi/4}=\tfrac14\cdot\tfrac34`)}.`};}},
+    {mk:v=>{const A=rint(1,4);return {spec:{k:'avgsq',A},prompt:`Find the average value of ${M('x^2+y^2+z^2')} over the ball ${M(`x^2+y^2+z^2\\le ${A*A}`)}.`,
+      val:3*A*A/5,ansStr:`${3*A*A}/5`,
+      sol:R`f_{\text{avg}}=\frac{1}{V}\iiint_E\rho^2\,dV=\frac{3}{4\pi\cdot${A}^3}\cdot\frac{4\pi\cdot${Math.pow(A,5)}}{5}=\frac{${3*A*A}}{5}`,
+      note:`Average value is the integral divided by the volume ${M(R`\tfrac43\pi a^3`)}. The integral is the one you already know: ${M(R`\tfrac{4\pi a^5}{5}`)}.`};}},
+    {mk:v=>{const B=pick([2,3]);return {spec:{k:'avgdist',B},prompt:`Find the average distance from the origin to a point of the shell ${M(`1\\le\\rho\\le ${B}`)}.`,
+      val:0.75*(Math.pow(B,4)-1)/(Math.pow(B,3)-1),ansStr:`3*(${Math.pow(B,4)}-1)/(4*(${Math.pow(B,3)}-1))`,
+      sol:R`f_{\text{avg}}=\frac{\int\!\int\!\int_1^{${B}}\rho\cdot\rho^2\sin\phi\,d\rho\,d\theta\,d\phi}{\tfrac{4\pi}{3}(${B}^3-1)}=\frac{4\pi(${B}^4-1)/4}{4\pi(${B}^3-1)/3}=\frac34\cdot\frac{${Math.pow(B,4)-1}}{${Math.pow(B,3)-1}}`,
+      note:`The distance from the origin is ${M(R`\rho`)}. Divide the integral by the volume of the shell, ${M(R`\tfrac{4\pi}{3}(${B}^3-1)`)}.`};}},
   ],
   gen(){
     const a=rint(1,3);let b=a+rint(1,2);
@@ -1121,38 +1162,57 @@ Q.sphLimits={name:'set up limits in spherical',
     const cTex=[R`\tfrac{\pi}{6}`,R`\tfrac{\pi}{4}`,R`\tfrac{\pi}{3}`][cIx];
     const cVal=[Math.PI/6,Math.PI/4,Math.PI/3][cIx];
     const cStr=['pi/6','pi/4','pi/3'][cIx];
-    const kind=pick(['ball','hemi','cone','shell','oct']);
-    const base={rl:0,rlS:'0',ru:a,ruS:String(a),fl:0,flS:'0',fu:Math.PI,fuS:'pi',tl:0,tlS:'0',tu:2*Math.PI,tuS:'2pi'};
-    if(kind==='ball')return {kind,...base,desc:`the ball ${M(`x^2+y^2+z^2\\le ${a*a}`)}`,fuTex:R`\pi`,tuTex:R`2\pi`,ruTex:String(a),
+    const A2=pick([1,2,3]);
+    const kind=pick(['ball','hemi','cone','shell','oct','sphereCone','sphereOutsideCone','outsideCone','octantPiece','yHalf']);
+    const base={rl:0,rlS:'0',ru:a,ruS:String(a),fl:0,flS:'0',fu:Math.PI,fuS:'pi',tl:0,tlS:'0',tu:2*Math.PI,tuS:'2pi',
+      rlT:'0',ruT:String(a),flT:'0',fuT:R`\pi`,tlT:'0',tuT:R`2\pi`};
+    if(kind==='ball')return {kind,sp:{k:'ball',a},...base,desc:`the ball ${M(`x^2+y^2+z^2\\le ${a*a}`)}`,
       why:`All directions are used, so ${M(R`\phi`)} sweeps the full ${M(R`0`)} to ${M(R`\pi`)} and ${M(R`\theta`)} the full ${M(R`0`)} to ${M(R`2\pi`)}, while ${M(R`\rho`)} runs from the center out to the surface.`};
-    if(kind==='hemi')return {kind,...base,fu:Math.PI/2,fuS:'pi/2',fuTex:R`\pi/2`,tuTex:R`2\pi`,ruTex:String(a),
+    if(kind==='hemi')return {kind,sp:{k:'hemi',a},...base,fu:Math.PI/2,fuS:'pi/2',fuT:R`\pi/2`,
       desc:`the upper half of the ball ${M(`x^2+y^2+z^2\\le ${a*a}`)}, ${M(R`z\ge0`)}`,
       why:`${M(R`z\ge 0`)} is ${M(R`\cos\phi\ge0`)}, that is ${M(R`0\le\phi\le\pi/2`)}: from the north pole down to the equator. Nothing else changes.`};
-    if(kind==='cone')return {kind,...base,fu:cVal,fuS:cStr,fuTex:cTex,tuTex:R`2\pi`,ruTex:String(a),
+    if(kind==='cone')return {kind,sp:{k:'cone',a,c:cVal},...base,fu:cVal,fuS:cStr,fuT:cTex,
       desc:`the ice-cream cone: the solid inside the sphere ${M(R`\rho=${a}`)} and above the cone ${M(R`\phi=${cTex}`)}`,
       why:`"Above the cone" is the cap of directions ${M(R`0\le\phi\le ${cTex}`)} around the north pole; the sphere caps ${M(R`\rho`)} at ${M(String(a))}.`};
-    if(kind==='shell')return {kind,...base,rl:a,rlS:String(a),ru:b,ruS:String(b),ruTex:String(b),fuTex:R`\pi`,tuTex:R`2\pi`,
+    if(kind==='shell')return {kind,sp:{k:'shell',a,b},...base,rlS:String(a),ruS:String(b),rlT:String(a),ruT:String(b),
       desc:`the spherical shell between the spheres ${M(R`\rho=${a}`)} and ${M(R`\rho=${b}`)}`,
       why:`Only ${M(R`\rho`)} is restricted: ${M(`${a}\\le\\rho\\le ${b}`)}. Every direction is still present, so the two angles keep their full ranges.`};
-    return {kind,...base,fu:Math.PI/2,fuS:'pi/2',fuTex:R`\pi/2`,tu:Math.PI/2,tuS:'pi/2',tuTex:R`\pi/2`,ruTex:String(a),
+    if(kind==='oct')return {kind,sp:{k:'oct',a},...base,fu:Math.PI/2,fuS:'pi/2',fuT:R`\pi/2`,tu:Math.PI/2,tuS:'pi/2',tuT:R`\pi/2`,
       desc:`the part of the ball ${M(`x^2+y^2+z^2\\le ${a*a}`)} that lies in the first octant`,
       why:`First octant means ${M(R`x,y,z\ge 0`)}. ${M(R`z\ge0`)} gives ${M(R`0\le\phi\le\pi/2`)}, and ${M(R`x,y\ge0`)} restricts the shadow to the first quadrant, ${M(R`0\le\theta\le\pi/2`)}.`};
+    if(kind==='sphereCone')return {kind,sp:{k:'sphereCone',a:A2},...base,ruS:`${2*A2}*cos(phi)`,ruT:R`${2*A2}\cos\phi`,fu:Math.PI/4,fuS:'pi/4',fuT:R`\pi/4`,
+      desc:`the solid inside the sphere ${M(`x^2+y^2+z^2=${2*A2}z`)} and above the cone ${M(R`z=\sqrt{x^2+y^2}`)}`,
+      why:`Substitute ${M(R`z=\rho\cos\phi`)}: the sphere becomes ${M(R`\rho^2=${2*A2}\rho\cos\phi`)}, so it is ${M(R`\rho=${2*A2}\cos\phi`)} and the solid starts at the origin: ${M(R`0\le\rho\le${2*A2}\cos\phi`)}. The cone is ${M(R`\phi=\pi/4`)}, and "above" it means ${M(R`0\le\phi\le\pi/4`)}.`};
+    if(kind==='sphereOutsideCone')return {kind,sp:{k:'sphereOutsideCone',a:A2},...base,ruS:`${2*A2}*cos(phi)`,ruT:R`${2*A2}\cos\phi`,fl:Math.PI/4,flS:'pi/4',flT:R`\pi/4`,fu:Math.PI/2,fuS:'pi/2',fuT:R`\pi/2`,
+      desc:`the solid inside the sphere ${M(`x^2+y^2+z^2=${2*A2}z`)} and outside the cone ${M(R`z=\sqrt{x^2+y^2}`)}`,
+      why:`The sphere is ${M(R`\rho=${2*A2}\cos\phi`)}, which only exists for ${M(R`\cos\phi\ge0`)}, so the solid sits above the ${M('xy')}-plane. Outside the cone ${M(R`\phi=\pi/4`)} means the directions from ${M(R`\pi/4`)} down to the equator: ${M(R`\pi/4\le\phi\le\pi/2`)}.`};
+    if(kind==='outsideCone')return {kind,sp:{k:'outsideCone',a,c:cVal},...base,fl:cVal,flS:cStr,flT:cTex,fu:Math.PI/2,fuS:'pi/2',fuT:R`\pi/2`,
+      desc:`the solid inside the sphere ${M(R`\rho=${a}`)}, outside the cone ${M(R`\phi=${cTex}`)}, and above the ${M('xy')}-plane`,
+      why:`Outside the cone means the angle from the ${M('z')}-axis is larger than ${M(R`${cTex}`)}, and above the ${M('xy')}-plane stops it at the equator: ${M(R`${cTex}\le\phi\le\pi/2`)}.`};
+    if(kind==='octantPiece'){let A,B;do{A=rint(1,3);B=A+rint(1,2);}while(A===3&&B===4);
+      return {kind,sp:{k:'octantPiece',a:A,b:B},...base,rlS:String(A),ruS:String(B),rlT:String(A),ruT:String(B),
+        fl:Math.PI/2,flS:'pi/2',flT:R`\pi/2`,tl:Math.PI/2,tlS:'pi/2',tlT:R`\pi/2`,tu:3*Math.PI/2,tuS:'3pi/2',tuT:R`\tfrac{3\pi}{2}`,
+        desc:`the part of the shell ${M(`${A}\\le\\rho\\le ${B}`)} with ${M(R`x\le0`)} and ${M(R`z\le0`)}`,
+        why:`${M(R`z\le0`)} is the lower half, ${M(R`\pi/2\le\phi\le\pi`)}. ${M(R`x\le0`)} is the left half of the ${M('xy')}-plane, ${M(R`\pi/2\le\theta\le3\pi/2`)}. The shell gives ${M(`${A}\\le\\rho\\le ${B}`)}.`};}
+    return {kind,sp:{k:'yHalf',a},...base,tu:Math.PI,tuS:'pi',tuT:R`\pi`,
+      desc:`the half ball ${M(`x^2+y^2+z^2\\le ${a*a}`)}, ${M(R`y\ge0`)}`,
+      why:`${M(R`y\ge0`)} is the half of the ${M('xy')}-plane above the ${M('x')}-axis, that is ${M(R`0\le\theta\le\pi`)}. Both ${M(R`\rho`)} and ${M(R`\phi`)} keep their full ranges.`};
   },
   render(q,el){
-    el.innerHTML=`<p class="prompt">Set up ${M(R`\iiint_E f\,dV`)} in spherical coordinates for ${q.desc}. All six limits are numbers here (<code>pi</code> accepted). Remember ${M(R`dV=\rho^2\sin\phi\,d\rho\,d\theta\,d\phi`)}.</p>`;
+    el.innerHTML=`<p class="prompt">Set up ${M(R`\iiint_E f\,dV`)} in spherical coordinates, order ${M(R`d\rho\,d\theta\,d\phi`)}, for ${q.desc}. The ${M(R`\rho`)} limits may use ${M(R`\phi`)} (type <code>phi</code>); the angle limits are numbers (<code>pi</code> accepted). Remember ${M(R`dV=\rho^2\sin\phi\,d\rho\,d\theta\,d\phi`)}.</p>`;
     limRows(el,[
-      [M(R`\rho`)+' from:','rl',{}],[M(R`\rho`)+' to:','ru',{}],
+      [M(R`\rho`)+' from:','rl',{wide:true,placeholder:'number or expression in phi'}],[M(R`\rho`)+' to:','ru',{wide:true,placeholder:'number or expression in phi'}],
       [M(R`\phi`)+' from:','fl',{}],[M(R`\phi`)+' to:','fu',{}],
       [M(R`\theta`)+' from:','tl',{}],[M(R`\theta`)+' to:','tu',{}]]);},
-  check(q,el){return Gall(el,[
-    ['rl',checkNumber(val(el,'rl'),q.rl,{tol:1e-4})],
-    ['ru',checkNumber(val(el,'ru'),q.ru,{tol:1e-4})],
+  check(q,el){const dr={phi:[0.1,1.4],theta:[0.2,2.5]};return Gall(el,[
+    ['rl',checkExpr(val(el,'rl'),q.rlS,['phi','theta'],{domain:dr})],
+    ['ru',checkExpr(val(el,'ru'),q.ruS,['phi','theta'],{domain:dr})],
     ['fl',checkNumber(val(el,'fl'),q.fl,{tol:1e-4})],
     ['fu',checkNumber(val(el,'fu'),q.fu,{tol:1e-4})],
     ['tl',checkNumber(val(el,'tl'),q.tl,{tol:1e-4})],
     ['tu',checkNumber(val(el,'tu'),q.tu,{tol:1e-4})]]);},
   hint(q,el){hintBox(el,`Ask three questions in order. How far out does the solid reach (that is ${M(R`\rho`)})? Which directions down from the ${M('z')}-axis are used (that is ${M(R`\phi`)})? How far around (that is ${M(R`\theta`)})?`);},
-  solution(q){return q.why+' '+D(R`\int_{0}^{${q.fuTex}}\!\!\int_{0}^{${q.tuTex}}\!\!\int_{${q.rlS}}^{${q.ruTex}} f\;\rho^2\sin\phi\;d\rho\,d\theta\,d\phi`);}
+  solution(q){return q.why+' '+D(R`\int_{${q.flT}}^{${q.fuT}}\!\!\int_{${q.tlT}}^{${q.tuT}}\!\!\int_{${q.rlT}}^{${q.ruT}} f\;\rho^2\sin\phi\;d\rho\,d\theta\,d\phi`);}
 };
 
 /* ---------- 5 choosing coordinates ---------------------------------------- */
