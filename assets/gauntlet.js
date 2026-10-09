@@ -13,7 +13,7 @@
 
    Page markup: one <section> per topic holding <div class="gx" data-mode="topic" data-topic="vec">,
    plus sections holding data-mode="exam", data-mode="mixed" and data-mode="weak". Call
-     initGauntlet({key, items, topics:[{id, title}]})
+     initGauntlet({key, items, topics:[{id, title}], exam})   exam names the test in the tutor's grading prompt (default 'Midterm 1')
    right before initModule. Section ids must equal topic ids.
 
    Item: {id, topic, title, concept:{q, rubric:[...], model}, app:{source, prompt, fig?, parts:[...], solution}}
@@ -24,8 +24,8 @@
               written{rubric}: tutor-graded, and must be the item's only part.
               Every other part carries sol: a string its checker accepts (used by the self-test). */
 
-const GRADE_RULES=`GRADING MODE. Ignore the graph instructions above: never draw a graph here.
-You are grading one short answer from a MATH 212 student studying for Midterm 1. The user message holds the question, the rubric (the key ideas a complete answer contains), and the student's answer.
+const gradeRules=exam=>`GRADING MODE. Ignore the graph instructions above: never draw a graph here.
+You are grading one short answer from a MATH 212 student studying for ${exam}. The user message holds the question, the rubric (the key ideas a complete answer contains), and the student's answer.
 Grade the idea, not the wording. Informal language is fine when the idea is right. Do not require formulas unless the rubric does. A factually wrong claim outweighs extra correct detail.
 Verdicts:
 - GOT IT: every rubric point is present or clearly implied, and nothing stated is wrong.
@@ -44,7 +44,7 @@ async function gxGrade({question,rubric,answer,onText,signal}){
   const K=window.TutorKit;const url=K&&K.endpoint();
   if(!url)throw new Error('The tutor is not connected on this copy of the site.');
   const msg=`Question: ${question}\n\nRubric (the key ideas a complete answer contains):\n${rubric.map((r,i)=>`${i+1}. ${gxPlain(r)}`).join('\n')}\n\nStudent answer: ${answer}`;
-  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:msg}],context:GRADE_RULES}),signal});
+  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:msg}],context:gradeRules(GX.exam)}),signal});
   if(!res.ok){let m='The tutor is unavailable right now ('+res.status+').';try{const j=await res.json();if(j.error)m=j.error;}catch(e){}throw new Error(m);}
   const reader=res.body.getReader(),dec=new TextDecoder();let buf='',text='';
   for(;;){
@@ -80,7 +80,7 @@ function gxCheckPart(part,v){
 }
 
 /* ------------------------------------------------------------ store */
-const GX={items:[],byId:{},topics:[],store:{rec:{},runs:{}},storeKey:'',runners:{}};
+const GX={items:[],byId:{},topics:[],store:{rec:{},runs:{}},storeKey:'',runners:{},exam:'Midterm 1'};
 function gxSave(){try{localStorage.setItem(GX.storeKey,JSON.stringify(GX.store));}catch(e){}}
 function gxLoad(){try{const s=JSON.parse(localStorage.getItem(GX.storeKey)||'null');if(s&&s.rec&&s.runs)GX.store=s;}catch(e){}}
 function gxState(id){const r=GX.store.rec[id];if(!r)return 'new';if(r.pass)return 'pass';return (r.c==='missed'||r.a==='revealed')?'missed':'shaky';}
@@ -288,7 +288,8 @@ class GxRunner{
   }
 }
 
-function initGauntlet({key,items,topics}){
+function initGauntlet({key,items,topics,exam}){
+  if(exam)GX.exam=exam;
   GX.items=items;GX.topics=topics;GX.byId=Object.fromEntries(items.map(i=>[i.id,i]));GX.storeKey='sm-gauntlet-'+key;gxLoad();
   $$('.gx').forEach(m=>{const r=new GxRunner(m);onShow(r.section,()=>{if(r.drawFig)r.drawFig();});window.addEventListener('resize',()=>{const s=m.closest('section');if(s.classList.contains('active')&&r.drawFig)r.drawFig();});});
 }
