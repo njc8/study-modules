@@ -77,7 +77,7 @@
 <section data-id="change" data-title="Change of variables" data-goal="5">
   <p class="eyebrow">Chapter 2 · Stewart 15.9</p>
   <h2>Change of variables</h2>
-  <p class="lead">Substitution, in two dimensions. You pick new coordinates that straighten the region, and pay for it with a Jacobian. You have already done this once: polar coordinates.</p>
+  <p class="lead">Substitution for double and triple integrals. You pick new coordinates that straighten the region, and pay for it with a Jacobian. Polar coordinates are the first example, and cylindrical and spherical are the next two.</p>
 
   <p>A <b>transformation</b> \(T\) takes a region \(S\) in the \(uv\)-plane to a region \(R\) in the \(xy\)-plane through \(x=x(u,v)\), \(y=y(u,v)\). A small rectangle in \(S\) maps to a small parallelogram in \(R\). The factor by which its area changes is the <b>Jacobian</b>:</p>
   <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}\dfrac{\partial x}{\partial u}&\dfrac{\partial x}{\partial v}\\[6pt] \dfrac{\partial y}{\partial u}&\dfrac{\partial y}{\partial v}\end{vmatrix}=\frac{\partial x}{\partial u}\frac{\partial y}{\partial v}-\frac{\partial x}{\partial v}\frac{\partial y}{\partial u}\)<span class="cap">A \(2\times2\) determinant of partial derivatives. Top row is \(x\), bottom row is \(y\); first column is \(u\), second is \(v\).</span></div>
@@ -108,6 +108,44 @@
   <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(u,v)}=\left(\frac{\partial(u,v)}{\partial(x,y)}\right)^{-1}\)<span class="cap">For \(u=x-y\), \(v=x+y\) the determinant \(\partial(u,v)/\partial(x,y)=2\), so \(\partial(x,y)/\partial(u,v)=\tfrac12\) and \(dA=\tfrac12\,du\,dv\).</span></div>
   <div class="warn"><b>Absolute value, and the right way up.</b> The formula uses \(\left|\partial(x,y)/\partial(u,v)\right|\). A negative Jacobian only means the map flips orientation; areas stay positive. And the Jacobian rides with \(du\,dv\), never with \(dx\,dy\).</div>
   <div class="note"><b>Why the determinant.</b> The image of the cell is the parallelogram spanned by \(\mathbf{r}_u\,du\) and \(\mathbf{r}_v\,dv\). The area of a parallelogram spanned by two vectors is the absolute value of the \(2\times2\) determinant of their components, which is exactly \(|J|\,du\,dv\).</div>
+
+  <h3>Finding the region in the new coordinates</h3>
+  <p>Map each boundary curve of \(R\) separately, one equation at a time, and read off what the curve becomes in the \(uv\)-plane. The pieces together bound \(S\).</p>
+  <div class="card">
+    <h4>Worked example</h4>
+    <p>Evaluate \(\displaystyle\iint_R e^{(y-x)/(y+x)}\,dA\), where \(R\) is the trapezoid with vertices \((1,0),(2,0),(0,2),(0,1)\).</p>
+    <p>The integrand begs for \(u=y-x\), \(v=y+x\). The four sides map one by one: \(x+y=1\) becomes \(v=1\); \(x+y=2\) becomes \(v=2\); \(x=0\) gives \(u=y=v\), so \(u=v\); \(y=0\) gives \(u=-x=-v\), so \(u=-v\). Hence
+    \[S=\{(u,v):\ 1\le v\le 2,\ -v\le u\le v\}.\]
+    Solving for the old variables gives \(x=\tfrac{v-u}{2}\), \(y=\tfrac{u+v}{2}\), and
+    \[\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}-\tfrac12&\tfrac12\\[2pt]\tfrac12&\tfrac12\end{vmatrix}=-\tfrac14-\tfrac14=-\tfrac12,\qquad dA=\tfrac12\,du\,dv.\]
+    Then
+    \[\iint_R e^{(y-x)/(y+x)}\,dA=\int_1^2\!\!\int_{-v}^{v}e^{u/v}\,\tfrac12\,du\,dv=\tfrac12\int_1^2 v\,(e-e^{-1})\,dv=\tfrac34\,(e-e^{-1}).\]</p>
+    <p class="small muted">Do \(du\) first. The inner integral of \(e^{u/v}\) in \(u\) is immediate, and the limits \(\pm v\) make the \(e\) and \(e^{-1}\) appear at once. In the other order you would have to integrate \(e^{u/v}\) in \(v\), which has no elementary antiderivative.</p>
+  </div>
+
+  <h3>Four patterns worth recognizing</h3>
+  <p>Almost every change of variables you will be asked for is one of these. Match the region or the integrand, then reach for the substitution.</p>
+  <table class="simple">
+    <tr><th>Region or integrand</th><th>Substitution</th><th>Jacobian factor, \(dA=\)</th></tr>
+    <tr><td>ellipse \(\tfrac{x^2}{a^2}+\tfrac{y^2}{b^2}\le1\)</td><td>\(x=au,\ y=bv\), then polar in \(u,v\) (the region becomes the unit disk)</td><td>\(ab\,du\,dv\); the area is \(\pi ab\)</td></tr>
+    <tr><td>lines \(x+y=\text{const}\) and \(x-y=\text{const}\): rotated rectangles, diamonds \(|x|+|y|\le c\), integrands with \(x^2-y^2=(x+y)(x-y)\)</td><td>\(u=x+y,\ v=x-y\) (the diamond becomes the square \([-c,c]^2\))</td><td>\(\tfrac12\,du\,dv\)</td></tr>
+    <tr><td>integrand in \(\tfrac{y-x}{y+x}\) or \(\tfrac{x-y}{x+y}\)</td><td>\(u=y-x,\ v=y+x\)</td><td>\(\tfrac12\,du\,dv\)</td></tr>
+    <tr><td>hyperbolas \(xy=\text{const}\) and lines \(y=mx\)</td><td>\(u=xy,\ v=y/x\)</td><td>\(\partial(u,v)/\partial(x,y)=2y/x=2v\), so \(\tfrac{1}{2v}\,du\,dv\)</td></tr>
+  </table>
+  <p>Example for the last row: the first-quadrant region between \(xy=1\), \(xy=4\), \(y=x\), \(y=4x\) becomes the square \(1\le u\le4\), \(1\le v\le4\), so
+  \[\text{area}=\int_1^4\!\!\int_1^4\frac{1}{2v}\,dv\,du=3\cdot\frac{\ln4}{2}=3\ln2.\]</p>
+  <div class="warn"><b>The \(2v\) is a reciprocal.</b> You computed \(\partial(u,v)/\partial(x,y)=2v\) because \(u\) and \(v\) are given in terms of \(x\) and \(y\). The factor that multiplies \(du\,dv\) is its reciprocal, \(\tfrac{1}{2v}\).</div>
+
+  <h3>Three variables</h3>
+  <p>The same idea works in space. A transformation \(x=x(u,v,w)\), \(y=y(u,v,w)\), \(z=z(u,v,w)\) stretches a small box in \(uvw\)-space into a small parallelepiped, and the volume factor is a \(3\times3\) determinant:</p>
+  <div class="formula">\(\displaystyle dV=\left|\frac{\partial(x,y,z)}{\partial(u,v,w)}\right|du\,dv\,dw,\qquad \frac{\partial(x,y,z)}{\partial(u,v,w)}=\begin{vmatrix}x_u&x_v&x_w\\ y_u&y_v&y_w\\ z_u&z_v&z_w\end{vmatrix}\)<span class="cap">Rows are \(x,y,z\); columns are \(u,v,w\). The absolute value of this determinant is the volume of the parallelepiped spanned by the three column vectors.</span></div>
+  <p>The two Jacobians the next two chapters use come straight out of it. For <b>cylindrical</b> coordinates, \(x=r\cos\theta\), \(y=r\sin\theta\), \(z=z\), with columns \(r,\theta,z\):</p>
+  \[\frac{\partial(x,y,z)}{\partial(r,\theta,z)}=\begin{vmatrix}\cos\theta&-r\sin\theta&0\\ \sin\theta&r\cos\theta&0\\ 0&0&1\end{vmatrix}=r.\]
+  <p>For <b>spherical</b> coordinates, \(x=\rho\sin\phi\cos\theta\), \(y=\rho\sin\phi\sin\theta\), \(z=\rho\cos\phi\), with columns \(\rho,\theta,\phi\):</p>
+  \[\frac{\partial(x,y,z)}{\partial(\rho,\theta,\phi)}=\begin{vmatrix}\sin\phi\cos\theta&-\rho\sin\phi\sin\theta&\rho\cos\phi\cos\theta\\ \sin\phi\sin\theta&\rho\sin\phi\cos\theta&\rho\cos\phi\sin\theta\\ \cos\phi&0&-\rho\sin\phi\end{vmatrix}.\]
+  <p>Expand along the bottom row, where the middle entry is zero:</p>
+  \[\cos\phi\cdot\left(-\rho^2\sin\phi\cos\phi\right)+\left(-\rho\sin\phi\right)\left(\rho\sin^2\phi\right)=-\rho^2\sin\phi\left(\cos^2\phi+\sin^2\phi\right)=-\rho^2\sin\phi.\]
+  <p>So \(|J|=\rho^2\sin\phi\). The minus sign only reflects the column order \(\rho,\theta,\phi\); the absolute value is what enters \(dV\). The next two chapters are the two changes of variables every exam uses.</p>
 
   <h3>Practice</h3>
   <div class="card" id="drill-change"></div>
