@@ -241,10 +241,18 @@
 
   <div class="card">
     <h4>Explore: the endpoint Lagrange misses</h4>
-    <canvas class="scene" id="endMap"></canvas><p class="plotcap">Purple: the curve \(\sqrt x+\sqrt y=3\). Blue: level lines of \(f=x+4y\). Green: the level line through the moving point. Orange dots: the two endpoints. Green dot: the Lagrange point.</p>
-    <div class="sliders" id="endSliders" style="grid-template-columns:1fr"></div>
-    <div class="readout" id="endOut"></div>
-    <p class="hint">At the Lagrange point the green level line is tangent to the curve, and that is the minimum. Slide to \(s=0\) and \(f\) keeps growing until the curve stops.</p>
+    <div class="xf">
+      <div><canvas class="scene" id="endMap"></canvas><p class="plotcap">Purple: the curve \(\sqrt x+\sqrt y=3\). Blue: level lines of \(f=x+4y\), labeled with their values. Green: the level line through the moving point.</p></div>
+      <div>
+        <div class="sliders" id="endSliders" style="grid-template-columns:1fr"></div>
+        <div class="readout" id="endOut"></div>
+        <div class="legend" style="margin-top:10px">
+          <span><i class="dot" style="background:var(--c)"></i> Lagrange point</span>
+          <span><i class="dot" style="background:var(--a)"></i> endpoints</span>
+        </div>
+        <p class="hint">At the Lagrange point the green level line is tangent to the curve, and that is the minimum. Slide toward \(s=0\): \(f\) keeps growing until the curve stops at \((0,9)\), where the gradients are not parallel at all.</p>
+      </div>
+    </div>
   </div>
 
   <div class="warn"><b>Check where the constraint ends.</b> If the problem says \(x\ge0\), \(y\ge0\), or the constraint involves square roots, the curve probably has endpoints. Add them to the candidate list before you compare.</div>
@@ -1170,7 +1178,8 @@ Q.lagConcept={name:'the meaning of the Lagrange condition',
     function draw(){
       ep.begin();
       const p=cv(s0),val=f(p[0],p[1]);
-      ep.contour(f,[4,8,12,16,20,24,28,32,36,40],{color:'#c3cfe9',width:1.1,labels:false});
+      ep.contour(f,[4,8,12,16,20,24,28,32,36,40],{color:'#93a4cc',width:1.2,labels:false});
+      [16,24,32,40].forEach(L=>ep.text([9.2,(L-9.2)/4],'f = '+L,{color:'#5b6b94',align:'right',dy:-8}));
       ep.contour(f,[val],{color:'#16a34a',width:2,labels:false});
       ep.param(cv,0,1,{color:'#7c3aed',width:2.6});
       ep.point(cv(0.8),{color:'#16a34a',r:6.5,label:'Lagrange'});
