@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Triple Integrals</title>
+<title>Triple Integrals and Change of Variables</title>
 <link rel="stylesheet" href="assets/study.css">
 <link rel="stylesheet" href="assets/mathquill/mathquill.css">
 <script src="assets/jquery.min.js"></script>
@@ -73,9 +73,49 @@
   <div class="card" id="drill-rect"></div>
 </section>
 
-<!-- ============================================================ 2 CYLINDRICAL -->
+<!-- ============================================================ 2 CHANGE OF VARIABLES -->
+<section data-id="change" data-title="Change of variables" data-goal="5">
+  <p class="eyebrow">Chapter 2 · Stewart 15.9</p>
+  <h2>Change of variables</h2>
+  <p class="lead">Substitution, in two dimensions. You pick new coordinates that straighten the region, and pay for it with a Jacobian. You have already done this once: polar coordinates.</p>
+
+  <p>A <b>transformation</b> \(T\) takes a region \(S\) in the \(uv\)-plane to a region \(R\) in the \(xy\)-plane through \(x=x(u,v)\), \(y=y(u,v)\). A small rectangle in \(S\) maps to a small parallelogram in \(R\). The factor by which its area changes is the <b>Jacobian</b>:</p>
+  <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}\dfrac{\partial x}{\partial u}&\dfrac{\partial x}{\partial v}\\[6pt] \dfrac{\partial y}{\partial u}&\dfrac{\partial y}{\partial v}\end{vmatrix}=\frac{\partial x}{\partial u}\frac{\partial y}{\partial v}-\frac{\partial x}{\partial v}\frac{\partial y}{\partial u}\)<span class="cap">A \(2\times2\) determinant of partial derivatives. Top row is \(x\), bottom row is \(y\); first column is \(u\), second is \(v\).</span></div>
+  <div class="formula">\(\displaystyle\iint_R f(x,y)\,dA=\iint_S f\big(x(u,v),y(u,v)\big)\left|\frac{\partial(x,y)}{\partial(u,v)}\right|du\,dv\)<span class="cap">Three changes, same as polar: rewrite the integrand in \(u\) and \(v\), replace \(R\) by \(S\), and multiply by the absolute value of the Jacobian.</span></div>
+  <p>Polar coordinates are exactly this with \(u=r\), \(v=\theta\). From \(x=r\cos\theta\), \(y=r\sin\theta\):</p>
+  <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(r,\theta)}=\begin{vmatrix}\cos\theta&-r\sin\theta\\ \sin\theta&r\cos\theta\end{vmatrix}=r\cos^2\theta+r\sin^2\theta=r\)<span class="cap">The \(r\) in \(r\,dr\,d\theta\) was a Jacobian all along.</span></div>
+
+  <div class="card">
+    <h4>Explore: how a transformation bends the grid</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="cvPlot"></canvas><p class="plotcap">Faint blue: the images of the \(uv\)-grid lines. Orange: one small \(uv\)-cell and the quadrilateral it maps onto.</p></div>
+      <div>
+        <div class="presets" id="cvPresets"></div>
+        <div class="sliders" id="cvSliders"></div>
+        <div class="readout" id="cvOut"></div>
+        <p class="hint">Move the cell around with the two sliders and compare the last two lines of the readout. The area ratio of the image to the original cell tracks \(|J|\) at that point, and the agreement gets better as the cell shrinks. Under the polar map, watch \(|J|=u\) grow as you push the cell outward, and collapse to zero at the origin.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Choosing the substitution</h3>
+  <p>Two things can go wrong with an integral, and either one can motivate the change:</p>
+  <ol>
+    <li><b>The region is awkward.</b> Pick \(u\) and \(v\) so that the bounding curves become \(u=\) constant and \(v=\) constant. A region bounded by \(x-y=0\), \(x-y=2\), \(x+y=0\), \(x+y=3\) begs for \(u=x-y\), \(v=x+y\); then \(S\) is the rectangle \([0,2]\times[0,3]\).</li>
+    <li><b>The integrand is awkward.</b> Pick \(u\) and \(v\) so that the ugly combination becomes a single variable, as with \(e^{(x+y)/(x-y)}\).</li>
+  </ol>
+  <p>When you define \(u\) and \(v\) in terms of \(x\) and \(y\), the easy determinant to compute is \(\partial(u,v)/\partial(x,y)\). It is the reciprocal of the one you need:</p>
+  <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(u,v)}=\left(\frac{\partial(u,v)}{\partial(x,y)}\right)^{-1}\)<span class="cap">For \(u=x-y\), \(v=x+y\) the determinant \(\partial(u,v)/\partial(x,y)=2\), so \(\partial(x,y)/\partial(u,v)=\tfrac12\) and \(dA=\tfrac12\,du\,dv\).</span></div>
+  <div class="warn"><b>Absolute value, and the right way up.</b> The formula uses \(\left|\partial(x,y)/\partial(u,v)\right|\). A negative Jacobian only means the map flips orientation; areas stay positive. And the Jacobian rides with \(du\,dv\), never with \(dx\,dy\).</div>
+  <div class="note"><b>Why the determinant.</b> The image of the cell is the parallelogram spanned by \(\mathbf{r}_u\,du\) and \(\mathbf{r}_v\,dv\). The area of a parallelogram spanned by two vectors is the absolute value of the \(2\times2\) determinant of their components, which is exactly \(|J|\,du\,dv\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-change"></div>
+</section>
+
+<!-- ============================================================ 3 CYLINDRICAL -->
 <section data-id="cyl" data-title="Cylindrical coordinates" data-goal="6">
-  <p class="eyebrow">Chapter 2 · Stewart 15.7</p>
+  <p class="eyebrow">Chapter 3 · Stewart 15.7</p>
   <h2>Cylindrical coordinates</h2>
   <p class="lead">Polar coordinates in the \(xy\)-plane, with \(z\) left alone. Use them whenever the solid has an axis of symmetry along \(z\).</p>
 
@@ -119,9 +159,9 @@
   <div class="card" id="drill-cyl"></div>
 </section>
 
-<!-- ============================================================ 3 SPHERICAL -->
+<!-- ============================================================ 4 SPHERICAL -->
 <section data-id="sph" data-title="Spherical coordinates" data-goal="6">
-  <p class="eyebrow">Chapter 3 · Stewart 15.8</p>
+  <p class="eyebrow">Chapter 4 · Stewart 15.8</p>
   <h2>Spherical coordinates</h2>
   <p class="lead">Locate a point by how far out it is and by two angles. Balls, cones through the origin, and anything built from \(x^2+y^2+z^2\) become trivial.</p>
 
@@ -167,9 +207,9 @@
   <div class="card" id="drill-sph"></div>
 </section>
 
-<!-- ============================================================ 4 CHOOSING -->
+<!-- ============================================================ 5 CHOOSING -->
 <section data-id="choose" data-title="Choosing coordinates" data-goal="6">
-  <p class="eyebrow">Chapter 4 · Stewart 15.6 to 15.8</p>
+  <p class="eyebrow">Chapter 5 · Stewart 15.6 to 15.9</p>
   <h2>Choosing coordinates</h2>
   <p class="lead">Three systems, one decision. Read the boundary first, the integrand second, then commit.</p>
 
@@ -182,7 +222,7 @@
 
   <p>The boundary surfaces usually decide it. A sphere plus a cone through the origin is spherical, every time. A cylinder plus two planes is cylindrical. Planes only is rectangular. The tie-breaker, when a solid could go either way, is which choice makes all six limits constants.</p>
 
-  <p>The factors \(r\) and \(\rho^2\sin\phi\) are <b>Jacobians</b>: they measure how much a little box in the new coordinates gets stretched when it is mapped into space. That is why they cannot be left out, and why they carry a length and a length-squared respectively.</p>
+  <p>The factors \(r\) and \(\rho^2\sin\phi\) are <b>Jacobians</b> (Chapter 2): they measure how much a little box in the new coordinates gets stretched when it is mapped into space. That is why they cannot be left out, and why they carry a length and a length-squared respectively.</p>
 
   <div class="card">
     <h4>Explore: each system's natural grid</h4>
@@ -201,9 +241,9 @@
   <div class="card" id="drill-choose"></div>
 </section>
 
-<!-- ============================================================ 5 QUIZ -->
+<!-- ============================================================ 6 QUIZ -->
 <section data-id="quiz" data-title="Mastery quiz">
-  <p class="eyebrow">Chapter 5</p>
+  <p class="eyebrow">Chapter 6</p>
   <h2>Mastery quiz</h2>
   <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
   <div class="card" id="quizBox"></div>
@@ -250,6 +290,17 @@ function strEx(A){
 const ratRed=(n,d)=>{if(d<0){n=-n;d=-d;}const g=gcd(n,d)||1;return [n/g,d/g];};
 const texRat=([n,d])=>d===1?String(n):`${n<0?'-':''}\\tfrac{${Math.abs(n)}}{${d}}`;
 const strRat=([n,d])=>d===1?String(n):`${n}/${d}`;
+
+/* exact fractions as [numerator, denominator] pairs, used by the change of variables chapter */
+const PI=Math.PI;
+const fr=(n,d=1)=>{if(d<0){n=-n;d=-d;}const g=gcd(n,d)||1;return [n/g,d/g];};
+const frA=(a,b)=>fr(a[0]*b[1]+b[0]*a[1],a[1]*b[1]);
+const frM=(a,b)=>fr(a[0]*b[0],a[1]*b[1]);
+const frV=a=>a[0]/a[1];
+const frStr=a=>a[1]===1?String(a[0]):`${a[0]}/${a[1]}`;
+const frTex=a=>a[1]===1?String(a[0]):(a[0]<0?'-':'')+`\\tfrac{${Math.abs(a[0])}}{${a[1]}}`;
+const ipow=(n,k)=>{let v=1;for(let i=0;i<k;i++)v*=n;return v;};
+const numInW=(el,k,label,opts)=>el.appendChild(ansLine(label,k,opts||{}));
 
 /* the sixteen standard angles, with exact cosine and sine ------------------ */
 const ANGS=[
@@ -428,7 +479,100 @@ Q.changeOrder={name:'change the order of integration',
   solution(q){return `The ${M('z')} limits are untouched. Only the shadow gets re-described: ${M(q.e.D)} becomes ${M(q.e.DD)}. ${q.e.why} So the answer is `+D(q.e.right);}
 };
 
-/* ---------- 2 cylindrical -------------------------------------------------- */
+/* ---------- 2 change of variables ---------------------------------------- */
+const JACS=[
+  ()=>{let A,B,C,E,J;do{A=rnz(-3,3);B=rnz(-3,3);C=rnz(-3,3);E=rnz(-3,3);J=A*E-B*C;}while(J===0);
+    return {xT:texLin([A,B],['u','v']),yT:texLin([C,E],['u','v']),
+      xu:String(A),xv:String(B),yu:String(C),yv:String(E),
+      JT:`(${A})(${E})-(${B})(${C})=${J}`,ansT:String(J),ansStr:String(J)};},
+  ()=>({xT:'u^2',yT:'v^2',xu:'2u',xv:'0',yu:'0',yv:'2v',JT:'(2u)(2v)-(0)(0)',ansT:'4uv',ansStr:'4*u*v'}),
+  ()=>({xT:'uv',yT:'\\tfrac{u}{v}',xu:'v',xv:'u',yu:'\\tfrac{1}{v}',yv:'-\\tfrac{u}{v^2}',
+    JT:'(v)\\left(-\\tfrac{u}{v^2}\\right)-(u)\\left(\\tfrac{1}{v}\\right)=-\\tfrac{u}{v}-\\tfrac{u}{v}',ansT:'-\\tfrac{2u}{v}',ansStr:'-2*u/v'}),
+  ()=>({xT:'e^{u}\\cos v',yT:'e^{u}\\sin v',xu:'e^{u}\\cos v',xv:'-e^{u}\\sin v',yu:'e^{u}\\sin v',yv:'e^{u}\\cos v',
+    JT:'e^{2u}\\cos^2 v+e^{2u}\\sin^2 v',ansT:'e^{2u}',ansStr:'e^(2u)'}),
+  ()=>({xT:'u+v^2',yT:'v',xu:'1',xv:'2v',yu:'0',yv:'1',JT:'(1)(1)-(2v)(0)',ansT:'1',ansStr:'1'}),
+  ()=>({xT:'u\\cos v',yT:'u\\sin v',xu:'\\cos v',xv:'-u\\sin v',yu:'\\sin v',yv:'u\\cos v',
+    JT:'u\\cos^2 v+u\\sin^2 v',ansT:'u',ansStr:'u'})
+];
+Q.jacobian={name:'the Jacobian of a transformation',
+  gen(){return JACS[rint(0,JACS.length-1)]();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Find the Jacobian ${M(R`\dfrac{\partial(x,y)}{\partial(u,v)}`)} of the transformation. Your answer may contain <code>u</code> and <code>v</code>.</p>
+      ${D(R`x=${q.xT},\qquad y=${q.yT}`)}`;
+    numInW(el,'j',M(R`\frac{\partial(x,y)}{\partial(u,v)}=`),{wide:true});},
+  check(q,el){return G(el,'j',checkExpr($('[data-k=j]',el).value,q.ansStr,['u','v'],{domain:{u:[1,2],v:[1,2]}}));},
+  solution(q){
+    return D(R`\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}${q.xu}&${q.xv}\\ ${q.yu}&${q.yv}\end{vmatrix}=${q.JT}=${q.ansT}`);}
+};
+
+Q.changeEval={name:'evaluate with a given transformation',
+  gen(){
+    let A,B,C,E,J;do{A=rint(1,3);B=rint(-2,3);C=rint(-2,3);E=rint(1,3);J=A*E-B*C;}while(Math.abs(J)<1);
+    const p=pick([1,1,2]),q2=pick([1,1,2]);
+    const which=pick(['x+y','x','y']);
+    let ca=which==='x+y'?A+C:which==='x'?A:C;
+    let cb=which==='x+y'?B+E:which==='x'?B:E;
+    if(ca===0&&cb===0)return Q.changeEval.gen();
+    const val=frM(fr(Math.abs(J)),frA(fr(ca*p*p*q2,2),fr(cb*p*q2*q2,2)));
+    const V=[[0,0],[A*p,C*p],[A*p+B*q2,C*p+E*q2],[B*q2,E*q2]];
+    return {A,B,C,E,J,p,q:q2,which,ca,cb,V,val,v:frV(val),ansStr:frStr(val)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">${M('R')} is the parallelogram with vertices ${M(q.V.map(v=>`(${v[0]},${v[1]})`).join(',\\;'))}. The transformation ${M(`x=${texLin([q.A,q.B],['u','v'])}`)}, ${M(`y=${texLin([q.C,q.E],['u','v'])}`)} maps the rectangle ${M(R`S=[0,${q.p}]\times[0,${q.q}]`)} in the ${M('uv')}-plane onto ${M('R')}. Use it to evaluate the integral. Exact value.</p>
+      ${D(R`\iint_R (${q.which})\,dA`)}`;
+    numInW(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    return `The Jacobian is `+M(R`\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}${q.A}&${q.B}\\ ${q.C}&${q.E}\end{vmatrix}=${q.J}`)+`, so ${M(R`dA=${Math.abs(q.J)===1?'':Math.abs(q.J)}\,du\,dv`)}. The integrand becomes ${M(`${q.which}=${texLin([q.ca,q.cb],['u','v'])}`)}, and the region is a rectangle:`+
+      D(R`\iint_R(${q.which})dA=${Math.abs(q.J)===1?'':Math.abs(q.J)}\int_0^{${q.p}}\!\!\int_0^{${q.q}}\left(${texLin([q.ca,q.cb],['u','v'])}\right)dv\,du=${frTex(q.val)}`);}
+};
+
+const ptsKey=V=>V.map(p=>p.join(',')).sort().join(';');
+Q.imageSquare={name:'image of the unit square',
+  gen(){
+    let A,B,C,E,opts,correct;
+    for(;;){
+      A=rnz(-3,3);B=rnz(-3,3);C=rnz(-3,3);E=rnz(-3,3);
+      if(A*E-B*C===0)continue;
+      correct=[[0,0],[A,C],[A+B,C+E],[B,E]];
+      const d1=[[0,0],[A,B],[A+C,B+E],[C,E]];
+      const d2=[[0,0],[A,C],[A-B,C-E],[-B,-E]];
+      const d3=[[0,0],[A,C],[A+B,C-E],[B,-E]];
+      const keys=[correct,d1,d2,d3].map(ptsKey);
+      if(new Set(keys).size===4){opts=[correct,d1,d2,d3];break;}
+    }
+    const order=shuffle([0,1,2,3]);
+    const shown=order.map(i=>opts[i]);
+    return {A,B,C,E,opts:shown,idx:order.indexOf(0)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The transformation ${M(`x=${texLin([q.A,q.B],['u','v'])}`)}, ${M(`y=${texLin([q.C,q.E],['u','v'])}`)} is applied to the unit square ${M(R`S=[0,1]\times[0,1]`)} in the ${M('uv')}-plane. Which parallelogram is the image ${M('R')}? Vertices are listed in the order ${M('(0,0)')}, image of ${M('(1,0)')}, image of ${M('(1,1)')}, image of ${M('(0,1)')}.</p>`;
+    q.get=choiceButtons(el,q.opts.map((o,i)=>({label:M(o.map(v=>`(${v[0]},${v[1]})`).join(',\\;')),value:i})));},
+  check(q,el){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.idx,msg:v===q.idx?'':'Map the corners one at a time: substitute each \\((u,v)\\) into both formulas.'};},
+  solution(q){
+    return `Substitute the four corners. ${M(`(u,v)=(1,0)`)} gives ${M(`(x,y)=(${q.A},${q.C})`)}, ${M('(1,1)')} gives ${M(`(${q.A+q.B},${q.C+q.E})`)}, and ${M('(0,1)')} gives ${M(`(${q.B},${q.E})`)}. Because the transformation is linear, the straight edges of the square stay straight, so the image is the parallelogram ${M(q.opts[q.idx].map(v=>`(${v[0]},${v[1]})`).join(',\\;'))}.`;}
+};
+
+Q.uvRegion={name:'change of variables with u = x - y, v = x + y',
+  gen(){
+    const A=rint(1,3),B=rint(1,4);
+    const which=pick(['u','v','u2','one']);
+    const fTex={u:'(x-y)',v:'(x+y)',u2:'(x-y)^2',one:'1'}[which];
+    const gTex={u:'u',v:'v',u2:'u^2',one:'1'}[which];
+    const val={u:fr(A*A*B,4),v:fr(A*B*B,4),u2:fr(ipow(A,3)*B,6),one:fr(A*B,2)}[which];
+    const innerA={u:'\\tfrac{u^2}{2}',v:'uv',u2:'\\tfrac{u^3}{3}',one:'u'}[which];
+    const innerV={u:`\\tfrac{${A*A}}{2}`,v:`${A===1?'':A}v`,u2:`\\tfrac{${ipow(A,3)}}{3}`,one:String(A)}[which];
+    return {A,B,which,fTex,gTex,val,v:frV(val),ansStr:frStr(val),innerA,innerV};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">${M('R')} is the region bounded by the lines ${M('x-y=0')}, ${M(`x-y=${q.A}`)}, ${M('x+y=0')}, and ${M(`x+y=${q.B}`)}. Use the substitution ${M('u=x-y')}, ${M('v=x+y')} to evaluate the integral. Exact value.</p>
+      ${D(R`\iint_R ${q.fTex}\;dA`)}`;
+    numInW(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    return `The four lines become ${M(`u=0`)}, ${M(`u=${q.A}`)}, ${M('v=0')}, ${M(`v=${q.B}`)}, so ${M('S')} is a rectangle. Since ${M(R`\frac{\partial(u,v)}{\partial(x,y)}=\begin{vmatrix}1&-1\\ 1&1\end{vmatrix}=2`)}, the Jacobian you need is its reciprocal, ${M(R`\frac{\partial(x,y)}{\partial(u,v)}=\tfrac12`)}:`+
+      D(R`\iint_R ${q.fTex}\,dA=\int_0^{${q.B}}\!\!\int_0^{${q.A}} ${q.gTex}\cdot\tfrac12\;du\,dv=\tfrac12\int_0^{${q.B}}\Big[\,${q.innerA}\,\Big]_0^{${q.A}}dv=\tfrac12\int_0^{${q.B}}${q.innerV}\,dv=${frTex(q.val)}`);}
+};
+
+/* ---------- 3 cylindrical -------------------------------------------------- */
 Q.rectToCyl={name:'rectangular to cylindrical',
   gen(){const r=rint(1,4),ti=rint(0,15),z=rnz(-4,4);const a=ANGS[ti];
     return {r,ti,z,X:scaleEx(r,a.cos),Y:scaleEx(r,a.sin),th:a.val,thStr:a.s,thTex:a.tex};},
@@ -550,7 +694,7 @@ Q.cylLimits={name:'set up limits in cylindrical',
   solution(q){return q.why+' '+D(R`\int_{0}^{${q.tuTex}}\!\!\int_{0}^{${fmt(q.ru)}}\!\!\int_{${q.zl}}^{${q.zu}} f\;r\,dz\,dr\,d\theta`)+` Do not lose the factor ${M('r')} from ${M(R`dV=r\,dz\,dr\,d\theta`)}.`;}
 };
 
-/* ---------- 3 spherical ---------------------------------------------------- */
+/* ---------- 4 spherical ---------------------------------------------------- */
 Q.rectToSph={name:'rectangular to spherical',
   gen(){const rho=rint(1,4),ti=rint(0,15),fi=pick(PHI_IX);const t=ANGS[ti],f=ANGS[fi];
     const X=scaleEx(rho,mulEx(f.sin,t.cos)),Y=scaleEx(rho,mulEx(f.sin,t.sin)),Z=scaleEx(rho,f.cos);
@@ -679,7 +823,7 @@ Q.sphLimits={name:'set up limits in spherical',
   solution(q){return q.why+' '+D(R`\int_{0}^{${q.fuTex}}\!\!\int_{0}^{${q.tuTex}}\!\!\int_{${q.rlS}}^{${q.ruTex}} f\;\rho^2\sin\phi\;d\rho\,d\theta\,d\phi`);}
 };
 
-/* ---------- 4 choosing coordinates ---------------------------------------- */
+/* ---------- 5 choosing coordinates ---------------------------------------- */
 Q.whichSystem={name:'which coordinate system',
   opts:['rectangular','cylindrical','spherical'],
   pool:[
@@ -862,7 +1006,59 @@ Q.integrandConvert={name:'convert the integrand',
   new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.boxIterated,Q.tetLimits,Q.tetLimits,Q.volSolid,Q.volSolid,Q.tetIntegral,Q.changeOrder,Q.changeOrder])});
 })();
 
-/* ============================================================ chapter 2 widget */
+/* ============================================================ chapter 2 widget: transformation explorer */
+(function(){
+  const p=new Plot2D('#cvPlot',{xmin:-3,xmax:3,ymin:-3,ymax:3});
+  const CVP=[
+    {n:'polar: x = u cos v, y = u sin v',T:(u,v)=>[u*Math.cos(v),u*Math.sin(v)],U:[0,2.2],V:[0,2*PI],
+     J:(u,v)=>u,JT:'|J| = u',win:{xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:2.6}},
+    {n:'x = u + v, y = u − v',T:(u,v)=>[u+v,u-v],U:[-1.4,1.4],V:[-1.4,1.4],
+     J:()=>-2,JT:'|J| = 2',win:{xmin:-3,xmax:3,ymin:-3,ymax:3}},
+    {n:'x = u², y = v',T:(u,v)=>[u*u,v],U:[0,1.7],V:[-1.7,1.7],
+     J:(u,v)=>2*u,JT:'|J| = 2u',win:{xmin:-0.6,xmax:3,ymin:-1.8,ymax:1.8}},
+    {n:'x = u, y = uv',T:(u,v)=>[u,u*v],U:[0,2],V:[-1.5,1.5],
+     J:(u,v)=>u,JT:'|J| = u',win:{xmin:-0.5,xmax:2.4,ymin:-3,ymax:3}}
+  ];
+  let cur=CVP[0],u0=0.8,v0=1,sl=[];
+  const pb=$('#cvPresets'),sb=$('#cvSliders');
+  CVP.forEach(c=>{const b=el('button',{class:'btn small'},c.n);b.onclick=()=>{cur=c;
+    $$('.btn',pb).forEach(x=>x.classList.remove('on'));b.classList.add('on');build();draw();};pb.appendChild(b);});
+  $$('.btn',pb)[0].classList.add('on');
+  const hOf=()=>(cur.U[1]-cur.U[0])/8, kOf=()=>(cur.V[1]-cur.V[0])/8;
+  function build(){
+    sb.innerHTML='';
+    u0=cur.U[0]+(cur.U[1]-cur.U[0])*0.4;v0=cur.V[0]+(cur.V[1]-cur.V[0])*0.35;
+    sl=[sliderRow(sb,{label:'u',min:cur.U[0],max:cur.U[1]-hOf(),step:(cur.U[1]-cur.U[0])/40,value:u0,onInput:v=>{u0=v;draw();}}),
+        sliderRow(sb,{label:'v',min:cur.V[0],max:cur.V[1]-kOf(),step:(cur.V[1]-cur.V[0])/40,value:v0,onInput:v=>{v0=v;draw();}})];
+  }
+  const shoe=pts=>{let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=a[0]*b[1]-b[0]*a[1];}return Math.abs(s)/2;};
+  function draw(){
+    Object.assign(p.o,cur.win);p.begin();
+    const NL=9;
+    for(let i=0;i<=NL;i++){const u=cur.U[0]+(cur.U[1]-cur.U[0])*i/NL;
+      p.param(v=>cur.T(u,v),cur.V[0],cur.V[1],{color:'#cbd8f5',width:1.2});}
+    for(let j=0;j<=NL;j++){const v=cur.V[0]+(cur.V[1]-cur.V[0])*j/NL;
+      p.param(u=>cur.T(u,v),cur.U[0],cur.U[1],{color:'#cbd8f5',width:1.2});}
+    const h=hOf(),k=kOf();
+    const edge=[];const N=10;
+    for(let i=0;i<=N;i++)edge.push(cur.T(u0+h*i/N,v0));
+    for(let i=0;i<=N;i++)edge.push(cur.T(u0+h,v0+k*i/N));
+    for(let i=N;i>=0;i--)edge.push(cur.T(u0+h*i/N,v0+k));
+    for(let i=N;i>=0;i--)edge.push(cur.T(u0,v0+k*i/N));
+    p.poly(edge,{fill:'rgba(217,119,6,.45)',stroke:'#d97706',width:1.6});
+    const c=cur.T(u0+h/2,v0+k/2);p.point(c,{color:'#d97706',r:3});
+    const J=Math.abs(cur.J(u0,v0)),cellA=h*k,imgA=shoe(edge);
+    $('#cvOut').innerHTML=`cell corner (u, v) = (${fmtDec(u0,2)}, ${fmtDec(v0,2)}), Δu = ${fmtDec(h,2)}, Δv = ${fmtDec(k,2)}<br>`+
+      `${cur.JT} = <b>${fmtDec(J,3)}</b><br>`+
+      `cell area ΔuΔv = ${fmtDec(cellA,4)}<br>`+
+      `image area = ${fmtDec(imgA,4)}<br>`+
+      `ratio image / cell = <b>${fmtDec(cellA?imgA/cellA:0,3)}</b>`;
+  }
+  build();redrawOnShow('change',draw);draw();
+  new Drill({mount:'#drill-change',section:'change',goal:5,...mixDrill([Q.jacobian,Q.jacobian,Q.changeEval,Q.imageSquare,Q.uvRegion,Q.uvRegion])});
+})();
+
+/* ============================================================ chapter 3 widget */
 (function(){
   const scene=new Scene3D('#cylScene',{range:3.6});
   let r=2,th=Math.PI/3,z=1.5,solid='none';
@@ -904,7 +1100,7 @@ Q.integrandConvert={name:'convert the integrand',
   new Drill({mount:'#drill-cyl',section:'cyl',goal:6,...mixDrill([Q.rectToCyl,Q.rectToCyl,Q.cylToRect,Q.cylSurface,Q.cylSurface,Q.cylEvaluate,Q.cylEvaluate,Q.cylLimits])});
 })();
 
-/* ============================================================ chapter 3 widget */
+/* ============================================================ chapter 4 widget */
 (function(){
   const scene=new Scene3D('#sphScene',{range:3.4});
   let rho=2.4,th=Math.PI/3,ph=Math.PI/3;
@@ -945,7 +1141,7 @@ Q.integrandConvert={name:'convert the integrand',
   new Drill({mount:'#drill-sph',section:'sph',goal:6,...mixDrill([Q.rectToSph,Q.rectToSph,Q.sphToRect,Q.sphSurface,Q.sphSurface,Q.sphEvaluate,Q.sphEvaluate,Q.sphLimits])});
 })();
 
-/* ============================================================ chapter 4 widget */
+/* ============================================================ chapter 5 widget */
 (function(){
   const B=new Scene3D('#gridBox',{range:2.4,azim:-58,elev:22});
   const C=new Scene3D('#gridCyl',{range:3.2,azim:-58,elev:22});
@@ -987,6 +1183,7 @@ Q.integrandConvert={name:'convert the integrand',
 /* ============================================================ quiz */
 makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
   Q.boxIterated,Q.tetLimits,Q.volSolid,Q.tetIntegral,Q.changeOrder,
+  Q.jacobian,Q.changeEval,Q.uvRegion,
   Q.rectToCyl,Q.cylToRect,Q.cylSurface,Q.cylEvaluate,Q.cylLimits,
   Q.rectToSph,Q.sphToRect,Q.sphSurface,Q.sphEvaluate,Q.sphLimits,
   Q.whichSystem,Q.volumeElement,Q.integrandConvert]});
@@ -998,6 +1195,10 @@ window.__solvers={
   'volume of a solid':q=>({v:q.ansStr}),
   'integral over a tetrahedron':q=>({v:q.ansStr}),
   'change the order of integration':q=>({_btn:q.ansIdx}),
+  'the Jacobian of a transformation':q=>({j:q.ansStr}),
+  'evaluate with a given transformation':q=>({v:q.ansStr}),
+  'image of the unit square':q=>({_btn:q.idx}),
+  'change of variables with u = x - y, v = x + y':q=>({v:q.ansStr}),
   'rectangular to cylindrical':q=>({r:String(q.r),th:q.thStr,z:String(q.z)}),
   'cylindrical to rectangular':q=>({p:q.ansStr}),
   'identify a cylindrical surface':q=>({_btn:q.ansIdx}),
@@ -1013,7 +1214,7 @@ window.__solvers={
   'convert the integrand':q=>({_btn:q.ansIdx}),
 };
 
-initModule({key:'triple-integrals',title:'Triple Integrals',sub:'Module 8 · Stewart 15.6 to 15.8',hub:'math212.html'});
+initModule({key:'triple-integrals',title:'Triple Integrals and Change of Variables',sub:'Module 8 · Stewart 15.6 to 15.9',hub:'math212.html'});
 </script>
 </body>
 </html>
