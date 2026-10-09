@@ -82,3 +82,36 @@ WA_PROBLEMS.push(
  parts:[{k:'V',label:'\\(V=\\)',kind:'number',ans:125/6,tol:0.005}],
  solution:'The box with vertex \\((x,y,z)\\) has volume \\(V=xyz\\), subject to \\(g=x+2y+3z=15\\). Lagrange: \\(yz=\\lambda\\), \\(xz=2\\lambda\\), \\(xy=3\\lambda\\). Then \\(x=2y\\) and \\(x=3z\\) (divide the equations in pairs), so the three terms \\(x,\\ 2y,\\ 3z\\) are equal, each \\(15/3=5\\). The vertex is \\((5,\\tfrac52,\\tfrac53)\\) and \\(V=5\\cdot\\tfrac52\\cdot\\tfrac53=\\tfrac{125}{6}\\approx 20.83\\). It is a maximum because \\(V\\) is 0 on the boundary of the triangle \\(x,y,z\\ge0\\).'}
 );
+
+/* ---------- WebAssign: Constrained Optimization (due 2026-10-05) ---------- */
+WA_PROBLEMS.push(
+{id:'wa-con-1',source:'WebAssign: Constrained Optimization',hw:'',num:1,module:'06-optimization',chapter:'lagrange',status:'wa',
+ prompt:'Use Lagrange multipliers to find the maximum and minimum values of \\(f(x,y)=5xe^{y}\\) subject to the constraint \\(x^2+y^2=2\\). Give each value and the point where it occurs.',
+ parts:[
+  {k:'max',label:'maximum value:',kind:'number',ans:5*Math.E,tol:0.005},
+  {k:'maxpt',label:'at the point:',kind:'vector',ans:[1,1],placeholder:'(x, y)'},
+  {k:'min',label:'minimum value:',kind:'number',ans:-5*Math.E,tol:0.005},
+  {k:'minpt',label:'at the point:',kind:'vector',ans:[-1,1],placeholder:'(x, y)'}],
+ solution:'Set \\(\\nabla f=\\lambda\\nabla g\\) with \\(g=x^2+y^2\\): \\(5e^{y}=2\\lambda x\\) and \\(5xe^{y}=2\\lambda y\\). Neither \\(x\\) nor \\(\\lambda\\) can be 0 (the first equation would read \\(5e^y=0\\)), so divide the second equation by the first: \\(x=y/x\\), that is \\(y=x^2\\). Put that in the constraint: \\(y+y^2=2\\), so \\((y+2)(y-1)=0\\). The root \\(y=-2\\) would need \\(x^2=-2\\), which is impossible, so \\(y=1\\) and \\(x=\\pm1\\). Compare: \\(f(1,1)=5e\\approx13.59\\) is the maximum and \\(f(-1,1)=-5e\\) is the minimum.'},
+{id:'wa-con-2',source:'WebAssign: Constrained Optimization',hw:'',num:2,module:'06-optimization',chapter:'absolute',status:'wa',
+ prompt:'Find the absolute maximum and minimum values of \\(f(x,y)=2x^2+3y^2-4x-6\\) on the disk \\(x^2+y^2\\le16\\).',
+ parts:[
+  {k:'max',label:'absolute maximum:',kind:'number',ans:46},
+  {k:'maxpt',label:'at the point(s):',kind:'pointList',ans:[[-2,2*Math.sqrt(3)],[-2,-2*Math.sqrt(3)]]},
+  {k:'min',label:'absolute minimum:',kind:'number',ans:-8},
+  {k:'minpt',label:'at the point:',kind:'vector',ans:[1,0],placeholder:'(x, y)'}],
+ solution:'Interior: \\(f_x=4x-4=0\\) and \\(f_y=6y=0\\) give \\((1,0)\\), which is inside the disk, with \\(f=2-4-6=-8\\). Boundary: use \\(y^2=16-x^2\\), so \\(f=2x^2+3(16-x^2)-4x-6=-x^2-4x+42\\) for \\(-4\\le x\\le4\\). This parabola peaks at \\(x=-2\\) with value 46 (there \\(y^2=12\\), so \\(y=\\pm2\\sqrt3\\)), and its ends give \\(f(-4)=42\\) and \\(f(4)=10\\). The absolute maximum is 46 at \\((-2,\\pm2\\sqrt3)\\) and the absolute minimum is \\(-8\\) at \\((1,0)\\).'},
+{id:'wa-con-3',source:'WebAssign: Constrained Optimization',hw:'',num:3,module:'06-optimization',chapter:'lagrange',status:'wa',
+ prompt:'The US Postal Service will accept a box for domestic shipping only if the sum of its length and girth (the perimeter of a cross-section perpendicular to the length) is at most 114 inches. Find the dimensions of the largest-volume rectangular box that can be mailed. Take the length \\(\\ell\\) as the long side and a cross-section of width \\(w\\) and height \\(h\\).',
+ parts:[
+  {k:'l',label:'length \\(\\ell\\) (in):',kind:'number',ans:38,tol:0.005},
+  {k:'w',label:'width \\(w\\) (in):',kind:'number',ans:19,tol:0.005},
+  {k:'h',label:'height \\(h\\) (in):',kind:'number',ans:19,tol:0.005}],
+ solution:'Maximize \\(V=\\ell wh\\) subject to \\(\\ell+2w+2h=114\\) (the girth is \\(2w+2h\\)); the largest box uses the full limit. Lagrange: \\(wh=\\lambda\\), \\(\\ell h=2\\lambda\\), \\(\\ell w=2\\lambda\\). The first two give \\(\\ell=2w\\), the first and third give \\(\\ell=2h\\), so \\(w=h=\\ell/2\\). Then \\(\\ell+2(\\ell/2)+2(\\ell/2)=3\\ell=114\\), so \\(\\ell=38\\) and \\(w=h=19\\). The volume is \\(38\\cdot19\\cdot19=13718\\) cubic inches.'},
+{id:'wa-con-4',source:'WebAssign: Constrained Optimization',hw:'',num:4,module:'06-optimization',chapter:'absolute',status:'wa',
+ prompt:'Find the absolute maximum and minimum values of \\(f(x,y)=e^{-xy}\\) on the region \\(x^2+4y^2\\le1\\). Give decimals to four places or exact values.',
+ parts:[
+  {k:'max',label:'absolute maximum:',kind:'number',ans:Math.exp(0.25),tol:1e-4},
+  {k:'min',label:'absolute minimum:',kind:'number',ans:Math.exp(-0.25),tol:1e-4}],
+ solution:'Interior: \\(f_x=-ye^{-xy}\\) and \\(f_y=-xe^{-xy}\\) vanish only at \\((0,0)\\), where \\(f=1\\). Boundary: the ellipse \\(x^2+4y^2=1\\) is \\(x=\\cos t\\), \\(y=\\tfrac12\\sin t\\), so \\(xy=\\tfrac14\\sin2t\\) takes every value in \\([-\\tfrac14,\\tfrac14]\\). Since \\(e^{-u}\\) is decreasing, \\(f=e^{-xy}\\) runs from \\(e^{-1/4}\\) (when \\(xy=\\tfrac14\\)) to \\(e^{1/4}\\) (when \\(xy=-\\tfrac14\\)). Compare with the interior value 1: the absolute maximum is \\(e^{1/4}\\approx1.2840\\) and the absolute minimum is \\(e^{-1/4}\\approx0.7788\\).'}
+);
