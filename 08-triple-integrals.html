@@ -74,6 +74,21 @@
   <div class="formula">\(\displaystyle\iiint_E x\,dV=\int_0^{2\pi}\!\!\int_0^{2}\!\!\int_{r^2}^{4}x\,dx\;r\,dr\,d\theta=2\pi\int_0^2\frac{16-r^4}{2}\,r\,dr=\frac{64\pi}{3}\)<span class="cap">The \(r\) is the usual polar factor for the shadow. The \(x\) integral runs from the back surface \(r^2\) to the front surface \(4\).</span></div>
   <p>This is a cylindrical setup with the \(x\)-axis playing the role the \(z\)-axis usually plays. Whichever variable the solid is symmetric around is the one you integrate first.</p>
 
+  <h3>All six orders</h3>
+  <p>Rewriting a triple integral in another order means describing the <b>same solid</b> with a different projection. Nothing about the solid changes, only the order in which you peel it: the innermost variable runs between two surfaces over a shadow, the middle variable slices the shadow, and the outer variable takes two constant values.</p>
+  <p>Worked example: the solid \(0\le x\le1\), \(0\le y\le x^2\), \(0\le z\le y\). All six orders:</p>
+  <table class="simple">
+    <tr><th>Order</th><th>Iterated integral</th></tr>
+    <tr><td>\(dz\,dy\,dx\)</td><td>\(\displaystyle\int_0^1\!\!\int_0^{x^2}\!\!\int_0^{y} f\,dz\,dy\,dx\)</td></tr>
+    <tr><td>\(dz\,dx\,dy\)</td><td>\(\displaystyle\int_0^1\!\!\int_{\sqrt y}^{1}\!\!\int_0^{y} f\,dz\,dx\,dy\)</td></tr>
+    <tr><td>\(dx\,dz\,dy\)</td><td>\(\displaystyle\int_0^1\!\!\int_0^{y}\!\!\int_{\sqrt y}^{1} f\,dx\,dz\,dy\)</td></tr>
+    <tr><td>\(dx\,dy\,dz\)</td><td>\(\displaystyle\int_0^1\!\!\int_{z}^{1}\!\!\int_{\sqrt y}^{1} f\,dx\,dy\,dz\)</td></tr>
+    <tr><td>\(dy\,dz\,dx\)</td><td>\(\displaystyle\int_0^1\!\!\int_0^{x^2}\!\!\int_{z}^{x^2} f\,dy\,dz\,dx\)</td></tr>
+    <tr><td>\(dy\,dx\,dz\)</td><td>\(\displaystyle\int_0^1\!\!\int_{\sqrt z}^{1}\!\!\int_{z}^{x^2} f\,dy\,dx\,dz\)</td></tr>
+  </table>
+  <p>To get the \(yz\)-shadow, which the orders \(dx\,dz\,dy\) and \(dx\,dy\,dz\) need: from \(z\le y\le x^2\le1\) the shadow is the triangle \(0\le z\le y\le1\), and for each point of it \(x\) runs from \(\sqrt y\) to \(1\).</p>
+  <div class="note"><b>Checklist.</b> Pick the innermost variable and find its two bounding surfaces. Eliminate it to get the shadow in the plane of the other two. Describe the shadow as a slice (middle variable) inside an interval (outer variable). If any limit still contains a variable that is integrated further in, or the outer limits are not numbers, start again.</div>
+
   <div class="warn"><b>Constants on the outside.</b> An answer like \(\int_0^{1-y}\!\int_0^1 \cdots\,dx\,dy\) is wrong no matter what the solid is: the outer limits contain \(y\), the very variable being integrated there. If a variable survives to the end, you have made a mistake.</div>
 
   <h3>Practice</h3>
@@ -546,6 +561,61 @@ Q.projectX={name:'integrate x first over a solid around the x-axis',
     return `Along each line parallel to the ${M(ax)}-axis the solid is entered at the paraboloid ${M(`${ax}=${cf(k)}r^2`)} and left at the plane ${M(`${ax}=${c}`)}, where ${M(`r^2=${o1}^2+${o2}^2`)}. They meet at ${M(R`r^2=${k===1?c:`\\tfrac{${c}}{${k}}`}`)}, so the shadow in the ${M(o1+o2)}-plane is a disk of radius ${M(R`\sqrt{${k===1?c:`\\tfrac{${c}}{${k}}`}}`)}. Polar coordinates there give `+
       D(R`\int_0^{2\pi}\!\!\int_0^{\sqrt{${k===1?c:`${c}/${k}`}}}${inner}\;r\,dr\,d\theta=${frC(q.val)}\pi`)+
       `Keep the factor ${M('r')} from the shadow's area element.`;}
+};
+
+/* solids with every one of their six single-piece orders; an order is keyed outer to inner, e.g. 'xyz' means dz dy dx */
+const LM=(s,t)=>({s,t});
+const REORDER_SOLIDS=[
+  ()=>({desc:R`0\le x\le1,\ 0\le y\le x^2,\ 0\le z\le y`,rng:{x:[0,1],y:[0,1],z:[0,1]},
+    ord:{
+      xyz:[['x',LM('0','0'),LM('1','1')],['y',LM('0','0'),LM('x^2','x^2')],['z',LM('0','0'),LM('y','y')]],
+      yxz:[['y',LM('0','0'),LM('1','1')],['x',LM('sqrt(y)',R`\sqrt{y}`),LM('1','1')],['z',LM('0','0'),LM('y','y')]],
+      yzx:[['y',LM('0','0'),LM('1','1')],['z',LM('0','0'),LM('y','y')],['x',LM('sqrt(y)',R`\sqrt{y}`),LM('1','1')]],
+      zyx:[['z',LM('0','0'),LM('1','1')],['y',LM('z','z'),LM('1','1')],['x',LM('sqrt(y)',R`\sqrt{y}`),LM('1','1')]],
+      xzy:[['x',LM('0','0'),LM('1','1')],['z',LM('0','0'),LM('x^2','x^2')],['y',LM('z','z'),LM('x^2','x^2')]],
+      zxy:[['z',LM('0','0'),LM('1','1')],['x',LM('sqrt(z)',R`\sqrt{z}`),LM('1','1')],['y',LM('z','z'),LM('x^2','x^2')]]}}),
+  ()=>{const a=pick([1,2,3]);
+    const o={};
+    ['xyz','xzy','yxz','yzx','zxy','zyx'].forEach(k=>{const [p,q2,r]=k.split('');
+      o[k]=[[p,LM('0','0'),LM(String(a),String(a))],[q2,LM('0','0'),LM(`${a}-${p}`,`${a}-${p}`)],[r,LM('0','0'),LM(`${a}-${p}-${q2}`,`${a}-${p}-${q2}`)]];});
+    return {desc:`x,\\ y,\\ z\\ge0,\\ x+y+z\\le ${a}`,rng:{x:[0,a],y:[0,a],z:[0,a]},ord:o,a};},
+  ()=>({desc:R`y\ge x^2,\ z\ge0,\ y+z\le1`,rng:{x:[-1,1],y:[0,1],z:[0,1]},
+    ord:{
+      xyz:[['x',LM('-1','-1'),LM('1','1')],['y',LM('x^2','x^2'),LM('1','1')],['z',LM('0','0'),LM('1-y','1-y')]],
+      yxz:[['y',LM('0','0'),LM('1','1')],['x',LM('-sqrt(y)',R`-\sqrt{y}`),LM('sqrt(y)',R`\sqrt{y}`)],['z',LM('0','0'),LM('1-y','1-y')]],
+      xzy:[['x',LM('-1','-1'),LM('1','1')],['z',LM('0','0'),LM('1-x^2','1-x^2')],['y',LM('x^2','x^2'),LM('1-z','1-z')]],
+      zxy:[['z',LM('0','0'),LM('1','1')],['x',LM('-sqrt(1-z)',R`-\sqrt{1-z}`),LM('sqrt(1-z)',R`\sqrt{1-z}`)],['y',LM('x^2','x^2'),LM('1-z','1-z')]],
+      zyx:[['z',LM('0','0'),LM('1','1')],['y',LM('0','0'),LM('1-z','1-z')],['x',LM('-sqrt(y)',R`-\sqrt{y}`),LM('sqrt(y)',R`\sqrt{y}`)]],
+      yzx:[['y',LM('0','0'),LM('1','1')],['z',LM('0','0'),LM('1-y','1-y')],['x',LM('-sqrt(y)',R`-\sqrt{y}`),LM('sqrt(y)',R`\sqrt{y}`)]]}})
+];
+const ordTex=k=>k.split('').reverse().map(v=>`d${v}`).join('\\,');
+const iterTex=L=>L.map(([v,lo,hi])=>`\\int_{${lo.t}}^{${hi.t}}`).join('\\!\\!')+' f\;'+ordTex(L.map(l=>l[0]).join(''));
+Q.reorder3={name:'rewrite a triple integral in another order',
+  gen(){
+    const S=pick(REORDER_SOLIDS)();const keys=Object.keys(S.ord);
+    const gk=pick(keys);let tk;do{tk=pick(keys);}while(tk===gk);
+    const T=S.ord[tk];
+    const dom={};['x','y','z'].forEach(v=>{const [lo,hi]=S.rng[v],w=hi-lo;dom[v]=[lo+0.05*w,hi-0.05*w];});
+    return {desc:S.desc,gk,tk,given:S.ord[gk],target:T,dom,
+      ol:T[0][1].s,oh:T[0][2].s,ml:T[1][1].s,mh:T[1][2].s,il:T[2][1].s,ih:T[2][2].s,
+      gtex:iterTex(S.ord[gk]),ttex:iterTex(T)};},
+  render(q,el){
+    const [v1,v2,v3]=q.tk.split('');
+    el.innerHTML=`<p class="prompt">The iterated integral below is taken over a solid ${M('E')}. Rewrite it in the order ${M(ordTex(q.tk))} by filling in the six limits. The outer limits are numbers; the middle limits may use ${M(v1)}; the inner limits may use ${M(v1)} and ${M(v2)}. Fractions and <code>sqrt</code> are fine.</p>${D(q.gtex)}`;
+    limRows(el,[
+      [M(v1)+' from:','ol',{placeholder:'number'}],[M(v1)+' to:','oh',{placeholder:'number'}],
+      [M(v2)+' from:','ml',{wide:true,placeholder:`expression in ${v1}`}],[M(v2)+' to:','mh',{wide:true,placeholder:`expression in ${v1}`}],
+      [M(v3)+' from:','il',{wide:true,placeholder:`expression in ${v1}, ${v2}`}],[M(v3)+' to:','ih',{wide:true,placeholder:`expression in ${v1}, ${v2}`}]]);},
+  check(q,el){
+    const [v1,v2]=q.tk.split('');
+    return Gall(el,[
+      ['ol',checkNumber(val(el,'ol'),Expr.evalNumber(q.ol))],['oh',checkNumber(val(el,'oh'),Expr.evalNumber(q.oh))],
+      ['ml',checkExpr(val(el,'ml'),q.ml,[v1],{domain:q.dom})],['mh',checkExpr(val(el,'mh'),q.mh,[v1],{domain:q.dom})],
+      ['il',checkExpr(val(el,'il'),q.il,[v1,v2],{domain:q.dom})],['ih',checkExpr(val(el,'ih'),q.ih,[v1,v2],{domain:q.dom})]]);},
+  hint(q,el){const [v1,v2,v3]=q.tk.split('');hintBox(el,`First recover the solid from the given limits: ${M(q.desc)}. Then ${M(v3)} is innermost, so project onto the ${M(v1+v2)}-plane. Describe that shadow with ${M(v2)} sliced inside an interval of ${M(v1)}.`);},
+  solution(q){
+    const [v1,v2,v3]=q.tk.split('');
+    return `The given limits describe the solid ${M(q.desc)}. To integrate ${M(v3)} first, find the two surfaces that bound ${M(v3)} (they give the inner limits, ${M(v3)} from ${M(q.target[2][1].t)} to ${M(q.target[2][2].t)}) and project onto the ${M(v1+v2)}-plane. In that shadow ${M(v2)} runs from ${M(q.target[1][1].t)} to ${M(q.target[1][2].t)}, and ${M(v1)} runs over the constants ${M(q.target[0][1].t)} to ${M(q.target[0][2].t)}. `+D(q.ttex);}
 };
 
 /* ---------- 2 change of variables ---------------------------------------- */
@@ -1218,7 +1288,7 @@ Q.integrandConvert={name:'convert the integrand',
     b.onclick=()=>{P=p;t=0.5;sw.set(0.5);setLims();drawScene();};$('#rectPresets').appendChild(b);});
   setLims();drawScene();
   redrawOnShow('rect',drawScene);
-  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.boxIterated,Q.tetLimits,Q.tetLimits,Q.volSolid,Q.volSolid,Q.tetIntegral,Q.changeOrder,Q.changeOrder,Q.projectX])});
+  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.boxIterated,Q.tetLimits,Q.tetLimits,Q.volSolid,Q.volSolid,Q.tetIntegral,Q.changeOrder,Q.changeOrder,Q.reorder3,Q.reorder3,Q.projectX])});
 })();
 
 /* ============================================================ chapter 2 widget: transformation explorer */
@@ -1410,6 +1480,7 @@ window.__solvers={
   'volume of a solid':q=>({v:q.ansStr}),
   'integral over a tetrahedron':q=>({v:q.ansStr}),
   'change the order of integration':q=>({_btn:q.ansIdx}),
+  'rewrite a triple integral in another order':q=>({ol:q.ol,oh:q.oh,ml:q.ml,mh:q.mh,il:q.il,ih:q.ih}),
   'integrate x first over a solid around the x-axis':q=>({v:q.ansStr}),
   'the Jacobian of a transformation':q=>({j:q.ansStr}),
   'evaluate with a given transformation':q=>({v:q.ansStr}),
