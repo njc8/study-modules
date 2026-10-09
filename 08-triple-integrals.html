@@ -67,6 +67,13 @@
   </div>
 
   <div class="note"><b>Which order.</b> Integrating \(z\) first works whenever the solid has a single floor surface and a single ceiling surface. If a vertical line enters and leaves the solid more than once, split the solid, or project onto a different plane instead.</div>
+
+  <h3>Projecting onto another coordinate plane</h3>
+  <p>A solid wrapped around the \(x\)-axis, such as the region between the paraboloid \(x=y^2+z^2\) and the plane \(x=4\), has no useful floor and ceiling in the \(z\) direction. But in the \(x\) direction it has exactly one "back" and one "front": a line parallel to the \(x\)-axis enters at \(x=y^2+z^2\) and leaves at \(x=4\). So integrate \(x\) first, and project onto the \(yz\)-plane.</p>
+  <p>The shadow is where the two surfaces meet: \(y^2+z^2=4\), the disk of radius \(2\) in the \(yz\)-plane. A disk begs for polar coordinates, here with \(y=r\cos\theta\), \(z=r\sin\theta\):</p>
+  <div class="formula">\(\displaystyle\iiint_E x\,dV=\int_0^{2\pi}\!\!\int_0^{2}\!\!\int_{r^2}^{4}x\,dx\;r\,dr\,d\theta=2\pi\int_0^2\frac{16-r^4}{2}\,r\,dr=\frac{64\pi}{3}\)<span class="cap">The \(r\) is the usual polar factor for the shadow. The \(x\) integral runs from the back surface \(r^2\) to the front surface \(4\).</span></div>
+  <p>This is a cylindrical setup with the \(x\)-axis playing the role the \(z\)-axis usually plays. Whichever variable the solid is symmetric around is the one you integrate first.</p>
+
   <div class="warn"><b>Constants on the outside.</b> An answer like \(\int_0^{1-y}\!\int_0^1 \cdots\,dx\,dy\) is wrong no matter what the solid is: the outer limits contain \(y\), the very variable being integrated there. If a variable survives to the end, you have made a mistake.</div>
 
   <h3>Practice</h3>
@@ -515,6 +522,30 @@ Q.changeOrder={name:'change the order of integration',
     return {ok:v===q.e.right,msg:v===q.e.right?'':'The inner \\(z\\) limits never change. Only the description of the shadow does.'};},
   hint(q,el){hintBox(el,`The shadow is ${M(q.e.D)}. Re-describe it with ${M('y')} on the outside: ${M(q.e.DD)}.`);},
   solution(q){return `The ${M('z')} limits are untouched. Only the shadow gets re-described: ${M(q.e.D)} becomes ${M(q.e.DD)}. ${q.e.why} So the answer is `+D(q.e.right);}
+};
+
+Q.projectX={name:'integrate x first over a solid around the x-axis',
+  gen(){
+    let k,c;do{k=pick([1,2,3]);c=pick([1,2,3,4]);}while(k===2&&c===2);
+    const ax=pick(['x','y']),which=pick(['vol','axis','dist']);
+    const val={vol:fr(c*c,2*k),axis:fr(ipow(c,3),3*k),dist:fr(ipow(c,3),6*k*k)}[which];
+    const [o1,o2]=ax==='x'?['y','z']:['x','z'];
+    return {k,c,ax,o1,o2,which,val,v:frV(val)*PI,ansStr:`${frStr(val)}*pi`};},
+  render(q,el){
+    const {k,c,ax,o1,o2}=q;
+    const surf=`${ax}=${cf(k)}${k===1?`${o1}^2+${o2}^2`:`(${o1}^2+${o2}^2)`}`;
+    const f={vol:'',axis:ax,dist:`${o1}^2+${o2}^2`}[q.which];
+    const task=q.which==='vol'?`Find the volume of the solid ${M('E')}`:`Evaluate ${M(R`\iiint_E ${f}\,dV`)} where ${M('E')} is the solid`;
+    el.innerHTML=`<p class="prompt">${task} bounded by the paraboloid ${M(surf)} and the plane ${M(`${ax}=${c}`)}. Integrate ${M(ax)} first and use polar coordinates in the ${M(o1+o2)}-plane. Exact value; <code>pi</code> is accepted.</p>`;
+    numInW(el,'v','Value =',{wide:true});},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.v));},
+  solution(q){
+    const {k,c,ax,o1,o2,which}=q;
+    const lim=R`\int_{${cf(k)}r^2}^{${c}}`;
+    const inner={vol:R`${lim}d${ax}`,axis:R`${lim}${ax}\,d${ax}`,dist:R`${lim}r^2\,d${ax}`}[which];
+    return `Along each line parallel to the ${M(ax)}-axis the solid is entered at the paraboloid ${M(`${ax}=${cf(k)}r^2`)} and left at the plane ${M(`${ax}=${c}`)}, where ${M(`r^2=${o1}^2+${o2}^2`)}. They meet at ${M(R`r^2=${k===1?c:`\\tfrac{${c}}{${k}}`}`)}, so the shadow in the ${M(o1+o2)}-plane is a disk of radius ${M(R`\sqrt{${k===1?c:`\\tfrac{${c}}{${k}}`}}`)}. Polar coordinates there give `+
+      D(R`\int_0^{2\pi}\!\!\int_0^{\sqrt{${k===1?c:`${c}/${k}`}}}${inner}\;r\,dr\,d\theta=${frC(q.val)}\pi`)+
+      `Keep the factor ${M('r')} from the shadow's area element.`;}
 };
 
 /* ---------- 2 change of variables ---------------------------------------- */
@@ -1187,7 +1218,7 @@ Q.integrandConvert={name:'convert the integrand',
     b.onclick=()=>{P=p;t=0.5;sw.set(0.5);setLims();drawScene();};$('#rectPresets').appendChild(b);});
   setLims();drawScene();
   redrawOnShow('rect',drawScene);
-  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.boxIterated,Q.tetLimits,Q.tetLimits,Q.volSolid,Q.volSolid,Q.tetIntegral,Q.changeOrder,Q.changeOrder])});
+  new Drill({mount:'#drill-rect',section:'rect',goal:6,...mixDrill([Q.boxIterated,Q.tetLimits,Q.tetLimits,Q.volSolid,Q.volSolid,Q.tetIntegral,Q.changeOrder,Q.changeOrder,Q.projectX])});
 })();
 
 /* ============================================================ chapter 2 widget: transformation explorer */
@@ -1379,6 +1410,7 @@ window.__solvers={
   'volume of a solid':q=>({v:q.ansStr}),
   'integral over a tetrahedron':q=>({v:q.ansStr}),
   'change the order of integration':q=>({_btn:q.ansIdx}),
+  'integrate x first over a solid around the x-axis':q=>({v:q.ansStr}),
   'the Jacobian of a transformation':q=>({j:q.ansStr}),
   'evaluate with a given transformation':q=>({v:q.ansStr}),
   'image of the unit square':q=>({_btn:q.idx}),
