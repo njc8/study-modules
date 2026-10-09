@@ -228,6 +228,24 @@
 
   <div class="note"><b>When an extreme is DNE.</b> Lagrange finds the candidates, but only a closed bounded constraint set guarantees both extremes exist. On a circle or a sphere both always exist. On a line or a plane, \(f\) may be unbounded in one direction: \(f=x^2+y^2\) on \(x+y=4\) has a minimum of \(8\) and no maximum at all.</div>
 
+  <h3>Constraint curves with endpoints</h3>
+  <p>Lagrange multipliers only find points where the constraint curve continues on both sides. If the curve has <b>endpoints</b>, they are candidates too, exactly like the endpoints of a closed interval in Calc I. Typical curves with endpoints: a segment such as \(x+2y=6\) with \(x,y\ge0\), and \(\sqrt{x}+\sqrt{y}=c\), which runs from \((c^2,0)\) to \((0,c^2)\).</p>
+  <div class="card tint">
+    <h4>Example: \(f=x+4y\) on \(\sqrt{x}+\sqrt{y}=3\)</h4>
+    <p>With \(g=\sqrt x+\sqrt y\), the equations \(f_x=\lambda g_x\) and \(f_y=\lambda g_y\) read \(1=\dfrac{\lambda}{2\sqrt x}\) and \(4=\dfrac{\lambda}{2\sqrt y}\). Dividing gives \(\sqrt x=4\sqrt y\). The constraint then says \(5\sqrt y=3\), so \(\sqrt y=\tfrac35\), \(\sqrt x=\tfrac{12}{5}\), and the point is \(\big(\tfrac{144}{25},\tfrac{9}{25}\big)\) with \(f=\tfrac{36}{5}\).</p>
+    <p>The curve stops at \((9,0)\) and \((0,9)\), where \(f(9,0)=9\) and \(f(0,9)=36\). Comparing \(\tfrac{36}{5},\ 9,\ 36\): the minimum is \(\tfrac{36}{5}\) at the Lagrange point, and the maximum is \(36\) at the endpoint \((0,9)\), which Lagrange never sees.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: the endpoint Lagrange misses</h4>
+    <canvas class="scene" id="endMap"></canvas><p class="plotcap">Purple: the curve \(\sqrt x+\sqrt y=3\). Blue: level lines of \(f=x+4y\). Green: the level line through the moving point. Orange dots: the two endpoints. Green dot: the Lagrange point.</p>
+    <div class="sliders" id="endSliders" style="grid-template-columns:1fr"></div>
+    <div class="readout" id="endOut"></div>
+    <p class="hint">At the Lagrange point the green level line is tangent to the curve, and that is the minimum. Slide to \(s=0\) and \(f\) keeps growing until the curve stops.</p>
+  </div>
+
+  <div class="warn"><b>Check where the constraint ends.</b> If the problem says \(x\ge0\), \(y\ge0\), or the constraint involves square roots, the curve probably has endpoints. Add them to the candidate list before you compare.</div>
+
   <h3>Practice</h3>
   <div class="card" id="drill-lagrange"></div>
 </section>
@@ -953,6 +971,27 @@ Q.lagConcept={name:'the meaning of the Lagrange condition',
       ? `<div class="note" style="margin-top:10px"><b>Gradients aligned.</b> ∇f and ∇g point along the same line, so ∇f = λ∇g here: this is a candidate. The green level curve of f is tangent to the purple constraint.</div>`
       : `<div class="hint" style="margin-top:10px">Keep sliding. While the two arrows disagree, f is still changing as you move along the constraint, so this cannot be a maximum or a minimum.</div>`;}
   redrawOnShow('lagrange',draw2);draw2();
+
+  /* --- the endpoint Lagrange misses: f = x + 4y on sqrt(x) + sqrt(y) = 3 --- */
+  (function(){
+    const f=(x,y)=>x+4*y,cv=s=>[9*s*s,9*(1-s)*(1-s)];
+    const ep=new Plot2D('#endMap',{xmin:-0.6,xmax:10,ymin:-0.6,ymax:10});
+    let s0=0.3;
+    sliderRow($('#endSliders'),{label:'position along the curve',min:0,max:1,step:0.01,value:s0,
+      fmt:v=>'s = '+fmtDec(v,2),onInput:v=>{s0=v;draw();}});
+    function draw(){
+      ep.begin();
+      const p=cv(s0),val=f(p[0],p[1]);
+      ep.contour(f,[4,8,12,16,20,24,28,32,36,40],{color:'#c3cfe9',width:1.1,labels:false});
+      ep.contour(f,[val],{color:'#16a34a',width:2,labels:false});
+      ep.param(cv,0,1,{color:'#7c3aed',width:2.6});
+      ep.point(cv(0.8),{color:'#16a34a',r:6.5,label:'Lagrange'});
+      ep.point(cv(1),{color:'#d97706',r:6.5});ep.point(cv(0),{color:'#d97706',r:6.5});
+      ep.point(p,{color:'#1c1b1a',r:5,ring:true});
+      $('#endOut').innerHTML=`point on the curve: (${fmtDec(p[0],2)}, ${fmtDec(p[1],2)})<br>f = ${fmtDec(val,2)}<br>`+
+        `candidates: Lagrange point (144/25, 9/25): <b>36/5 = 7.2</b> (minimum); endpoint (9, 0): <b>9</b>; endpoint (0, 9): <b>36</b> (maximum)`;}
+    redrawOnShow('lagrange',draw);draw();
+  })();
 
   new Drill({mount:'#drill-lagrange',section:'lagrange',goal:6,
     ...mixDrill([Q.lagLine,Q.lagLine,Q.lagCurve,Q.lagCurve,Q.lag3,Q.lag3,Q.lagWord,Q.lagConcept])});
