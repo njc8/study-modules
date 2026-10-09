@@ -519,7 +519,7 @@ const wsDraw=()=>{const want=Math.random()<0.22?'zero':pick(['positive','negativ
 Q.workSign={name:'sign of the work from a picture',
   gen(){const d=wsDraw();return {...d,id:uid('ws')};},
   render(q,el){el.innerHTML=`<p class="prompt">The picture shows the vector field ${M(R`\mathbf{F}=`+q.f.tex)} (orange arrows) and the oriented curve ${M('C')} (purple): ${q.C.tex}. The arrowhead shows the direction of travel and the dot marks the start. Without computing anything, what is the sign of ${M(R`\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}`)}?</p>
-      <div class="minis"><div><canvas class="scene" id="${q.id}"></canvas></div></div>`;
+      <canvas class="scene" style="max-width:380px" id="${q.id}"></canvas>`;
     q.get=choiceButtons(el,[{label:'Positive',value:'positive'},{label:'Negative',value:'negative'},{label:'Zero',value:'zero'}]);
     const draw=()=>{const cv=$('#'+q.id,el);if(!cv||!cv.isConnected)return;
       const p=new Plot2D(cv,{xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:2.6,labels:false});p.begin();
