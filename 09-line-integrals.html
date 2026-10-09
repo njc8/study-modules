@@ -120,6 +120,15 @@
   </div>
 
   <div class="note"><b>Only the tangential part counts.</b> A force perpendicular to the motion does no work: that is why \(\langle x,y\rangle\) does zero work around a circle centered at the origin, and why the string tension on a swinging pendulum does no work. If you can see that \(\mathbf{F}\perp\mathbf{T}\) along the whole curve, write 0 and move on.</div>
+  <h3>Reading the sign from a picture</h3>
+  <p>Sometimes you are shown a field and an oriented curve and asked only for the <b>sign</b> of the work, with no formulas to integrate. Use the tangential idea directly:</p>
+  <ol>
+    <li>Walk along \(C\) in its direction (follow the arrowhead from the dotted start).</li>
+    <li>At each point, compare the arrow of \(\mathbf{F}\) there with your direction of travel. If it has a component along you, that spot contributes positive work. If it has a component against you, negative.</li>
+    <li>Add up the whole trip. Mostly with you means <b>positive</b>, mostly against means <b>negative</b>, and if \(\mathbf{F}\perp\mathbf{T}\) everywhere (or the with and against parts cancel by symmetry) the work is <b>zero</b>.</li>
+  </ol>
+  <p>Arrow lengths matter. A few long arrows against the motion can beat many short ones with it, so weigh each push by its size, not by how many arrows you counted.</p>
+
   <div class="warn"><b>Orientation: two different rules.</b> \(\int_C f\,ds\) does not care which way you traverse \(C\). \(\int_C\mathbf{F}\cdot d\mathbf{r}\) changes sign. If a problem says "from \(B\) to \(A\)" and you parametrized from \(A\) to \(B\), you must negate the work, but you must not negate a mass or an arc length.</div>
 
   <h3>Practice</h3>
@@ -460,6 +469,77 @@ Q.orientFlip={name:'reversing the orientation',
     In short: ${M(R`\int_{-C}\mathbf{F}\cdot d\mathbf{r}=-\int_{C}\mathbf{F}\cdot d\mathbf{r}`)} but ${M(R`\int_{-C}f\,ds=\int_{C}f\,ds`)}.`;}
 };
 
+/* ---- sign of the work from a picture: eight fields, oriented curves on t in [0,1], Simpson with 400 subintervals ---- */
+const WSF=[
+  {tex:R`\langle -y,\; x\rangle`,F:(x,y)=>[-y,x],why:'counterclockwise rotation'},
+  {tex:R`\langle y,\; -x\rangle`,F:(x,y)=>[y,-x],why:'clockwise rotation'},
+  {tex:R`\langle x,\; y\rangle`,F:(x,y)=>[x,y],why:'radial, pointing away from the origin'},
+  {tex:R`\langle -x,\; -y\rangle`,F:(x,y)=>[-x,-y],why:'radial, pointing in toward the origin'},
+  {tex:R`\langle y,\; 0\rangle`,F:(x,y)=>[y,0],why:'a horizontal shear'},
+  {tex:R`\langle 1,\; 0\rangle`,F:()=>[1,0],why:'a constant push to the right'},
+  {tex:R`\langle 0,\; -1\rangle`,F:()=>[0,-1],why:'a constant push downward'},
+  {tex:R`\langle x,\; -y\rangle`,F:(x,y)=>[x,-y],why:'a saddle flow'},
+];
+const wsPtT=p=>`(${p.map(v=>String(Math.round(v*100)/100+0)).join(',\\,')})`;
+const wsPt=p=>M(wsPtT(p));
+const WSV=[-2,-1,0,1,2],WSE=[-2,-1.5,-1,0,1,1.5,2];
+const WSC=[
+  ()=>{const c=pick(WSV);let a,b;do{a=pick(WSE);b=pick(WSE);}while(a===b);
+    return {r:t=>[a+(b-a)*t,c],rp:()=>[b-a,0],tex:`the horizontal segment from ${wsPt([a,c])} to ${wsPt([b,c])}`};},
+  ()=>{const c=pick(WSV);let a,b;do{a=pick(WSE);b=pick(WSE);}while(a===b);
+    return {r:t=>[c,a+(b-a)*t],rp:()=>[0,b-a],tex:`the vertical segment from ${wsPt([c,a])} to ${wsPt([c,b])}`};},
+  ()=>{let A,B;do{A=[pick(WSV),pick(WSV)];B=[pick(WSV),pick(WSV)];}while(A[0]===B[0]||A[1]===B[1]);
+    return {r:t=>[A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t],rp:()=>[B[0]-A[0],B[1]-A[1]],tex:`the diagonal segment from ${wsPt(A)} to ${wsPt(B)}`};},
+  ()=>{const a=pick([1.5,2]),up=Math.random()<0.5,fwd=Math.random()<0.5;
+    const th0=(up?0:Math.PI)+(fwd?0:Math.PI),dth=fwd?Math.PI:-Math.PI;
+    const A=[a*Math.cos(th0),a*Math.sin(th0)],B=[-A[0],-A[1]];
+    return {r:t=>[a*Math.cos(th0+dth*t),a*Math.sin(th0+dth*t)],rp:t=>[-a*dth*Math.sin(th0+dth*t),a*dth*Math.cos(th0+dth*t)],
+      tex:`the ${up?'upper':'lower'} semicircle of radius ${M(String(a))} centered at the origin, from ${wsPt(A)} to ${wsPt(B)}`};},
+  ()=>{const a=pick([1.5,2]),k=rint(0,3),fwd=Math.random()<0.5;
+    const t0=k*Math.PI/2,th0=fwd?t0:t0+Math.PI/2,dth=fwd?Math.PI/2:-Math.PI/2;
+    const A=[a*Math.cos(th0),a*Math.sin(th0)],B=[a*Math.cos(th0+dth),a*Math.sin(th0+dth)];
+    return {r:t=>[a*Math.cos(th0+dth*t),a*Math.sin(th0+dth*t)],rp:t=>[-a*dth*Math.sin(th0+dth*t),a*dth*Math.cos(th0+dth*t)],
+      tex:`the quarter circle of radius ${M(String(a))} centered at the origin (quadrant ${['I','II','III','IV'][k]}), from ${wsPt(A)} to ${wsPt(B)}`};},
+  ()=>{const fwd=Math.random()<0.5,a=fwd?-1.5:1.5,b=-a;
+    return {r:t=>{const x=a+(b-a)*t;return [x,x*x/2];},rp:t=>{const x=a+(b-a)*t;return [b-a,(b-a)*x];},
+      tex:`the arc of ${M('y=x^{2}/2')} from ${wsPt([a,a*a/2])} to ${wsPt([b,b*b/2])}`};},
+];
+const simpson=(g,n=400)=>{const h=1/n;let s=g(0)+g(1);for(let i=1;i<n;i++)s+=g(i*h)*(i%2?4:2);return s*h/3;};
+const wsWork=(F,C)=>simpson(t=>{const p=C.r(t),v=C.rp(t),f=F(p[0],p[1]);return f[0]*v[0]+f[1]*v[1];});
+const wsKind=W=>Math.abs(W)<1e-9?'zero':(W>0?'positive':'negative');
+const wsDraw=()=>{const want=Math.random()<0.22?'zero':pick(['positive','negative']);
+  for(let i=0;i<200;i++){const f=pick(WSF),C=pick(WSC)(),W=wsWork(f.F,C),k=wsKind(W);
+    if(k===want&&(k==='zero'||Math.abs(W)>=0.4))return {f,C,W,kind:k};}
+  const C={r:t=>[2*Math.cos(Math.PI*t),2*Math.sin(Math.PI*t)],rp:t=>[-2*Math.PI*Math.sin(Math.PI*t),2*Math.PI*Math.cos(Math.PI*t)],
+    tex:`the upper semicircle of radius ${M('2')} centered at the origin, from ${wsPt([2,0])} to ${wsPt([-2,0])}`};
+  const f=WSF[0],W=wsWork(f.F,C);return {f,C,W,kind:wsKind(W)};};
+Q.workSign={name:'sign of the work from a picture',
+  gen(){const d=wsDraw();return {...d,id:uid('ws')};},
+  render(q,el){el.innerHTML=`<p class="prompt">The picture shows the vector field ${M(R`\mathbf{F}=`+q.f.tex)} (orange arrows) and the oriented curve ${M('C')} (purple): ${q.C.tex}. The arrowhead shows the direction of travel and the dot marks the start. Without computing anything, what is the sign of ${M(R`\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}`)}?</p>
+      <div class="minis"><div><canvas class="scene" id="${q.id}"></canvas></div></div>`;
+    q.get=choiceButtons(el,[{label:'Positive',value:'positive'},{label:'Negative',value:'negative'},{label:'Zero',value:'zero'}]);
+    const draw=()=>{const cv=$('#'+q.id,el);if(!cv||!cv.isConnected)return;
+      const p=new Plot2D(cv,{xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:2.6,labels:false});p.begin();
+      let mx=0;for(let x=-2.4;x<=2.41;x+=0.8)for(let y=-2.4;y<=2.41;y+=0.8)mx=Math.max(mx,norm(q.f.F(x,y)));
+      p.field(q.f.F,{step:0.8,scale:mx>1e-9?0.6/mx:0.3,color:'#d97706',width:1.4});
+      p.param(q.C.r,0,1,{color:'#7c3aed',width:3.4,arrow:true});
+      p.point(q.C.r(0),{color:'#7c3aed',r:5,label:'start'});};
+    draw();setTimeout(draw,60);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick positive, negative, or zero.'};
+    return {ok:v===q.kind,msg:v===q.kind?'':'Walk along the curve and compare the arrow of F with your direction of travel at a few points. Remember that long arrows count more than short ones.'};},
+  solution(q){const C=q.C,d2=x=>{const z=fmtDec(Math.abs(x)<5e-10?0:x,2);return z==='-0.00'?'0.00':z;};
+    const ftAt=t=>{const p=C.r(t);return dot(q.f.F(p[0],p[1]),unit(C.rp(t)));};
+    const s=t=>{const p=C.r(t),f=q.f.F(p[0],p[1]),T=unit(C.rp(t));
+      return `at ${M(wsPtT(p))}, ${M(R`\mathbf{F}=\langle ${d2(f[0])},\,${d2(f[1])}\rangle`)} and ${M(R`\mathbf{T}=\langle ${d2(T[0])},\,${d2(T[1])}\rangle`)}, so ${M(R`\mathbf{F}\cdot\mathbf{T}=${d2(ftAt(t))}`)}`;};
+    const flat=[0,0.5,1].every(t=>Math.abs(ftAt(t))<1e-9);
+    const concl=q.kind==='zero'?(flat?`${M(R`\mathbf{F}`)} is perpendicular to the path at every sample, and that holds along the whole curve, so nothing contributes: the work is <b>zero</b>.`
+        :`The stretches where ${M(R`\mathbf{F}`)} helps and the stretches where it fights cancel exactly (the picture is symmetric), so the work is <b>zero</b>.`)
+      :`Weighing the arrows by their lengths, ${M(R`\mathbf{F}`)} is mostly ${q.kind==='positive'?'with':'against'} the direction of travel, so the work is <b>${q.kind}</b>.`;
+    return `Compare ${M(R`\mathbf{F}`)} (${q.f.why}) with the unit tangent ${M(R`\mathbf{T}`)} at three points of ${M('C')}.
+      Start: ${s(0)}. Middle: ${s(0.5)}. End: ${s(1)}.
+      ${concl} As a check, the integral itself is ${M(R`W\approx ${fmtDec(Math.abs(q.W)<1e-9?0:q.W,3)}`)}.`;}
+};
+
 /* ---------------------------------------------------------- chapter 4 */
 const sol2=(P,Q,intP,fy,gp,gt,f)=>`Integrate the first component with respect to ${M('x')}, holding ${M('y')} constant: ${M(R`f=\int\left(${P}\right)dx=${intP}+g(y)`)}. The constant of integration may depend on ${M('y')}.
   Now differentiate in ${M('y')}: ${M(`f_y=${fy}+g'(y)`)}. Set this equal to ${M(`Q=${Q}`)}: ${gp==='0'?`${M(R`g'(y)=0`)}, so ${M('g')} is an ordinary constant`:`${M(R`g'(y)=`+gp)}, so ${M(`g(y)=${gt}`)}`}.
@@ -730,7 +810,7 @@ const stepUI=(mountId,statusId,prevId,nextId)=>({
   sliderRow($('#wkSl'),{label:'position along C',min:0,max:1,step:0.01,value:s,onInput:v=>{s=v;draw();}});
   $('#wkRev').onchange=e=>{rev=e.target.checked;draw();};
   redrawOnShow('vector',draw);draw();
-  new Drill({mount:'#drill-vector',section:'vector',goal:6,...mixDrill([Q.workSeg,Q.workSeg,Q.workGraph,Q.pdxqdy,Q.circleWork,Q.circleWork,Q.work3D,Q.orientFlip])});
+  new Drill({mount:'#drill-vector',section:'vector',goal:6,...mixDrill([Q.workSeg,Q.workSeg,Q.workGraph,Q.pdxqdy,Q.circleWork,Q.circleWork,Q.work3D,Q.orientFlip,Q.workSign,Q.workSign])});
 })();
 
 /* ============================================================ chapter 3: walkthrough + potential surface */
@@ -823,6 +903,7 @@ window.__solvers={
   'work around a circle':q=>({W:String(q.ans)}),
   'work along a space curve':q=>({W:ratStr(q.r)}),
   'reversing the orientation':q=>({W:String(-q.W),S:String(q.S)}),
+  'sign of the work from a picture':q=>({_btn:['positive','negative','zero'].indexOf(q.kind)}),
   'is F conservative':q=>({_btn:q.ok?0:1}),
   'find a potential function':q=>({f:q.fStr}),
   'fundamental theorem for line integrals':q=>({I:String(q.ans)}),
