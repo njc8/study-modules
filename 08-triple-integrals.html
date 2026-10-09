@@ -1239,6 +1239,12 @@ Q.whichSystem={name:'which coordinate system',
      why:R`The solid is a can and the density is \(r\), which is a single letter in cylindrical coordinates and an ugly square root in rectangular ones.`},
     {d:R`the solid enclosed by the cone \(z=\sqrt{x^2+y^2}\) and the plane \(z=2\)`,a:'cylindrical',
      why:R`A cone with a flat lid. Spherical handles the cone but the flat plane \(z=2\) becomes \(\rho=2\sec\phi\), a non-constant \(\rho\) limit. Cylindrical keeps everything simple: \(r\le z\le 2\).`},
+    {d:R`the solid \(x^2+y^2+z^2\le9\) with \(y\ge\sqrt{x^2+z^2}\)`,a:'spherical',
+     why:R`A ball plus a cone with its vertex at the origin is spherical, but the cone opens along the \(y\)-axis, so use \(y\) as the polar axis: \(y=\rho\cos\phi\). Then \(0\le\rho\le3\), \(0\le\phi\le\pi/4\), \(0\le\theta\le2\pi\).`},
+    {d:R`the solid bounded by \(x=y^2+z^2\) and the plane \(x=4\)`,a:'cylindrical',
+     why:R`The combination \(y^2+z^2\) is the cylindrical give-away, with the \(x\)-axis playing the role of the axis. Use polar coordinates in the \(yz\)-plane: \(r^2\le x\le4\), \(0\le r\le2\), \(0\le\theta\le2\pi\).`},
+    {d:R`the solid inside the sphere \(x^2+y^2+z^2=4z\)`,a:'spherical',
+     why:R`A sphere through the origin is \(\rho=4\cos\phi\), so the solid is \(0\le\rho\le4\cos\phi\), \(0\le\phi\le\pi/2\), \(0\le\theta\le2\pi\). In cylindrical coordinates the limits would need square roots.`},
   ],
   gen(){const e=pick(Q.whichSystem.pool);return {e,ans:e.a,ansIdx:Q.whichSystem.opts.indexOf(e.a)};},
   render(q,el){el.innerHTML=`<p class="prompt">Which coordinate system is the natural one for a triple integral over ${q.e.d}?</p>`;
@@ -1578,7 +1584,8 @@ makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
   Q.jacobian,Q.changeEval,Q.uvRegion,
   Q.rectToCyl,Q.cylToRect,Q.cylSurface,Q.cylEvaluate,Q.cylLimits,
   Q.rectToSph,Q.sphToRect,Q.sphSurface,Q.sphEvaluate,Q.sphLimits,
-  Q.whichSystem,Q.volumeElement,Q.integrandConvert]});
+  Q.whichSystem,Q.volumeElement,Q.integrandConvert,
+  Q.cvTrapezoid,Q.cvRotated,Q.reorder3,Q.projectX]});
 
 /* ============================================================ test hook */
 window.__solvers={
