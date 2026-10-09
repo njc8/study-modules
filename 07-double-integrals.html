@@ -127,6 +127,7 @@
   <h3>Area as a double integral</h3>
   <p>Take \(f=1\). Every column has height 1, so the volume equals the base area:</p>
   <div class="formula">\(\displaystyle A(D)=\iint_D 1\,dA=\int_a^b\!\!\int_{g_1(x)}^{g_2(x)}1\,dy\,dx=\int_a^b\big(g_2(x)-g_1(x)\big)\,dx\)<span class="cap">The inner integral collapses to the height of the strip, and you are back to the area between two curves from first-year calculus.</span></div>
+  <p>The same idea gives two more uses. The <b>average value</b> formula works over any region: \(f_{\text{avg}}=\frac{1}{A(D)}\iint_D f\,dA\) with \(A(D)=\iint_D 1\,dA\). And a density integrates to a total: \(\iint_D\sigma\,dA\) is the total charge when \(\sigma\) is a charge density (the total mass when it is a mass density).</p>
 
   <h3>Practice</h3>
   <div class="card" id="drill-general"></div>
@@ -683,6 +684,133 @@ Q.areaRegion={name:'area of a region',
       D(iintTex(I.aT,I.bT,I.loT,I.hiT,'1','y','x')+R`=\int_{${I.aT}}^{${I.bT}}\left(${q.innerT}\right)dx=\Big[\,${q.outerA}\,\Big]_{${I.aT}}^{${I.bT}}=${q.tex||frTex(q.ans)}${APX(q.val)}`);}
 };
 
+/* ---------- chapter 2, continued: averages, totals, reversing to evaluate ---------- */
+const fact=n=>n<=1?1:n*fact(n-1);
+/* exact integral of x^i y^j over a triangle. kind 1: (0,0),(a,0),(a,b).  kind 2: (0,0),(a,0),(0,b). */
+const triMono=(kind,a,b,i,j)=>kind===1?
+  fr(ipow(b,j+1)*ipow(a,i+1),(j+1)*(i+j+2)):
+  fr(ipow(b,j+1)*ipow(a,i+1)*fact(i)*fact(j+1),(j+1)*fact(i+j+2));
+const triVerts=(kind,a,b)=>kind===1?[`(0,0)`,`(${a},0)`,`(${a},${b})`]:[`(0,0)`,`(${a},0)`,`(0,${b})`];
+/* the upper boundary y = hi(x), as TeX */
+const triHiTex=(kind,a,b)=>kind===1?monoTex(fr(b,a),[['x',1]]):(a===1?`${b===1?'':b}(1-x)`:`${b===1?'':b}\\left(1-\\tfrac{x}{${a}}\\right)`);
+const triSetup=(kind,a,b,fTex)=>iintTex('0',String(a),'0',triHiTex(kind,a,b),fTex,'y','x');
+/* a density or integrand as a term list: forms k, kx, ky, kxy, k(x+y) */
+const AVGF=[
+  k=>({tex:`${k}`,t:[[k,0,0]]}),
+  k=>({tex:`${k===1?'':k}x`,t:[[k,1,0]]}),
+  k=>({tex:`${k===1?'':k}y`,t:[[k,0,1]]}),
+  k=>({tex:`${k===1?'':k}xy`,t:[[k,1,1]],xy:true}),
+  k=>({tex:`${k===1?'':k}(x+y)`,t:[[k,1,0],[k,0,1]]})
+];
+const triInt=(kind,a,b,t)=>t.reduce((S,[c,i,j])=>frA(S,frM(fr(c),triMono(kind,a,b,i,j))),fr(0));
+const triTermsTex=(kind,a,b,t)=>t.map(([c,i,j])=>M(R`${c===1?'':c}\iint_D ${monoTex(fr(1),[['x',i],['y',j]])||'1'}\,dA=${frTex(frM(fr(c),triMono(kind,a,b,i,j)))}`)).join(', ');
+
+Q.avgRegion={name:'average value over a triangle',
+  gen(){
+    let q;
+    do{
+      const kind=pick([1,2]),a=pick([1,2,3,4]),b=pick([1,2,3,4,6]),k=pick([1,2,3,6]),fm=pick(AVGF)(k);
+      const I=triInt(kind,a,b,fm.t),area=fr(a*b,2),avg=frD(I,area);
+      q={kind,a,b,k,fm,I,area,avg,val:frV(avg),ansStr:frStr(avg)};
+    }while(q.kind===1&&q.a===1&&q.b===7);   /* excludes the open homework triangle (cannot occur, b is never 7) */
+    return q;
+  },
+  render(q,el){
+    const v=triVerts(q.kind,q.a,q.b).map(t=>M(t)).join(', ');
+    el.innerHTML=`<p class="prompt">Find the average value of ${M(`f(x,y)=${q.fm.tex}`)} over the triangle with vertices ${v}. Exact value; fractions are fine.</p>`;
+    numIn(el,'v',M(R`f_{\text{avg}}=`),{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  solution(q){
+    const hi=triHiTex(q.kind,q.a,q.b);
+    return `Describe the triangle as a type I region: ${M(`0\\le x\\le ${q.a}`)} and ${M(`0\\le y\\le ${hi}`)}. The total is`+
+      D(triSetup(q.kind,q.a,q.b,q.fm.tex)+R`=${frTex(q.I)}`)+
+      `(term by term: ${triTermsTex(q.kind,q.a,q.b,q.fm.t)}). The area is ${M(R`A(D)=\tfrac12\cdot ${q.a}\cdot ${q.b}=${frTex(q.area)}`)}, so`+
+      D(R`f_{\text{avg}}=\frac{1}{A(D)}\iint_D f\,dA=\frac{${frTex(q.I)}}{${frTex(q.area)}}=${frTex(q.avg)}${APX(q.val)}`);}
+};
+
+Q.densityTotal={name:'total charge or mass from a density',
+  gen(){
+    let q;
+    do{
+      const tri=Math.random()<0.3,charge=Math.random()<0.5;
+      const prod=Math.random()<0.35,p=rint(1,6),qq=rint(1,6),k=rint(1,6);
+      const terms=prod?[[k,1,1]]:[[p,1,0],[qq,0,1]];
+      const sig=prod?`${k===1?'':k}xy`:`${p===1?'':p}x+${qq===1?'':qq}y`;
+      let tot,reg;
+      if(tri){const a=rint(1,4),b=pick([1,2,3,4,6]);reg={tri:true,a,b};tot=triInt(2,a,b,terms);}
+      else{
+        const x0=rint(0,4),x1=rint(x0+1,5),y0=rint(0,4),y1=rint(y0+1,5);
+        reg={tri:false,x0,x1,y0,y1};
+        tot=fr(0);terms.forEach(([c,i,j])=>{tot=frA(tot,frM(fr(c),frM(fr(ipow(x1,i+1)-ipow(x0,i+1),i+1),fr(ipow(y1,j+1)-ipow(y0,j+1),j+1))));});
+      }
+      q={tri,charge,prod,p,qq,k,terms,sig,reg,tot,val:frV(tot),ansStr:frStr(tot)};
+    }while(!q.tri&&!q.prod&&q.p===6&&q.qq===4&&q.reg.x0===0&&q.reg.x1===4&&q.reg.y0===1&&q.reg.y1===4);   /* open homework instance */
+    return q;
+  },
+  render(q,el){
+    const where=q.reg.tri?`the triangle with vertices ${triVerts(2,q.reg.a,q.reg.b).map(t=>M(t)).join(', ')}`:
+      `the rectangle ${M(`${q.reg.x0}\\le x\\le ${q.reg.x1}`)}, ${M(`${q.reg.y0}\\le y\\le ${q.reg.y1}`)}`;
+    const txt=q.charge?`A charge is spread over ${where} (coordinates in meters) with charge density ${M(`\\sigma(x,y)=${q.sig}`)} coulombs per square meter. Find the total charge.`:
+      `A thin plate occupies ${where} (coordinates in meters) with density ${M(`\\rho(x,y)=${q.sig}`)} kilograms per square meter. Find its mass.`;
+    el.innerHTML=`<p class="prompt">${txt} Exact value; fractions are fine.</p>`;
+    numIn(el,'v',q.charge?'Q =':'m =',{wide:true,after:q.charge?'C':'kg'});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  solution(q){
+    const sym=q.charge?'Q':'m',dens=q.charge?'\\sigma':'\\rho';
+    const head=`Total ${q.charge?'charge':'mass'} is the density integrated over the region: ${M(R`${sym}=\iint_D ${dens}\,dA`)}. `;
+    if(q.reg.tri){
+      return head+`As a type I region, ${M(`0\\le x\\le ${q.reg.a}`)} and ${M(`0\\le y\\le ${triHiTex(2,q.reg.a,q.reg.b)}`)}:`+
+        D(R`${sym}=`+triSetup(2,q.reg.a,q.reg.b,q.sig)+R`=${frTex(q.tot)}`)+
+        `(term by term: ${triTermsTex(2,q.reg.a,q.reg.b,q.terms)}). The answer is ${M(frTex(q.tot))} ${q.charge?'C':'kg'}${APX(q.val)?' '+M(APX(q.val)):''}.`;
+    }
+    const tl=q.terms.map(([c,i,j])=>({k:c,i,j}));
+    const P=iterParts(tl,q.reg.x0,q.reg.x1,q.reg.y0,q.reg.y1,'y');
+    return head+`The region is a rectangle, so the limits are constants:`+
+      D(R`${sym}=`+iintTex(P.olo,P.ohi,P.lo,P.hi,q.sig,'y','x')+R`=\int_{${P.olo}}^{${P.ohi}}\Big[\,${P.antiTex}\,\Big]_{y=${P.lo}}^{y=${P.hi}}dx=\int_{${P.olo}}^{${P.ohi}}\left(${P.midTex}\right)dx=${frTex(P.val)}`)+
+      `The answer is ${M(frTex(q.tot))} ${q.charge?'C':'kg'}${APX(q.val)?' '+M(APX(q.val)):''}.`;
+  }
+};
+
+/* integrals that only work after reversing the order. Every one is checked numerically in its ORIGINAL order. */
+const REVCASES=[
+  ()=>{const a=pick([1,2]);return {orig:R`\int_0^{${a}}\!\!\int_x^{${a}} e^{y^2}\,dy\,dx`,
+    region:M(`0\\le x\\le y\\le ${a}`),rev:R`\int_0^{${a}}\!\!\int_0^{y} e^{y^2}\,dx\,dy`,
+    inner:R`\int_0^{y}e^{y^2}\,dx=y\,e^{y^2}`,outer:R`\int_0^{${a}}y\,e^{y^2}\,dy=\tfrac12\Big[e^{y^2}\Big]_0^{${a}}`,
+    ansT:R`\tfrac{e^{${a*a}}-1}{2}`,ansStr:`(e^${a*a}-1)/2`,val:(Math.exp(a*a)-1)/2};},
+  ()=>({orig:R`\int_0^1\!\!\int_{\sqrt y}^1 \sqrt{x^3+1}\,dx\,dy`,region:M('0\\le y\\le x^2,\\ 0\\le x\\le 1'),
+    rev:R`\int_0^1\!\!\int_0^{x^2}\sqrt{x^3+1}\,dy\,dx`,inner:R`\int_0^{x^2}\sqrt{x^3+1}\,dy=x^2\sqrt{x^3+1}`,
+    outer:R`\int_0^1 x^2\sqrt{x^3+1}\,dx=\tfrac13\cdot\tfrac23\Big[(x^3+1)^{3/2}\Big]_0^1`,
+    ansT:R`\tfrac29\left(2\sqrt2-1\right)`,ansStr:'2/9*(2*sqrt(2)-1)',val:2/9*(2*Math.SQRT2-1)}),
+  ()=>({orig:R`\int_0^\pi\!\!\int_x^\pi \frac{\sin y}{y}\,dy\,dx`,region:M('0\\le x\\le y\\le \\pi'),
+    rev:R`\int_0^\pi\!\!\int_0^{y}\frac{\sin y}{y}\,dx\,dy`,inner:R`\int_0^{y}\frac{\sin y}{y}\,dx=\sin y`,
+    outer:R`\int_0^\pi\sin y\,dy=\Big[-\cos y\Big]_0^\pi`,ansT:'2',ansStr:'2',val:2}),
+  ()=>({orig:R`\int_0^2\!\!\int_{y/2}^1 e^{x^2}\,dx\,dy`,region:M('0\\le y\\le 2x,\\ 0\\le x\\le 1'),
+    rev:R`\int_0^1\!\!\int_0^{2x}e^{x^2}\,dy\,dx`,inner:R`\int_0^{2x}e^{x^2}\,dy=2x\,e^{x^2}`,
+    outer:R`\int_0^1 2x\,e^{x^2}\,dx=\Big[e^{x^2}\Big]_0^1`,ansT:'e-1',ansStr:'e-1',val:Math.E-1}),
+  ()=>({orig:R`\int_0^1\!\!\int_{\sqrt[3]{y}}^1 e^{x^4}\,dx\,dy`,region:M('0\\le y\\le x^3,\\ 0\\le x\\le 1'),
+    rev:R`\int_0^1\!\!\int_0^{x^3}e^{x^4}\,dy\,dx`,inner:R`\int_0^{x^3}e^{x^4}\,dy=x^3e^{x^4}`,
+    outer:R`\int_0^1 x^3e^{x^4}\,dx=\tfrac14\Big[e^{x^4}\Big]_0^1`,ansT:R`\tfrac{e-1}{4}`,ansStr:'(e-1)/4',val:(Math.E-1)/4}),
+  ()=>({orig:R`\int_0^1\!\!\int_{\sqrt y}^1 \frac{y}{x^5+1}\,dx\,dy`,region:M('0\\le y\\le x^2,\\ 0\\le x\\le 1'),
+    rev:R`\int_0^1\!\!\int_0^{x^2}\frac{y}{x^5+1}\,dy\,dx`,inner:R`\int_0^{x^2}\frac{y}{x^5+1}\,dy=\frac{x^4}{2(x^5+1)}`,
+    outer:R`\int_0^1\frac{x^4}{2(x^5+1)}\,dx=\tfrac1{10}\Big[\ln(x^5+1)\Big]_0^1`,ansT:R`\tfrac{\ln 2}{10}`,ansStr:'ln(2)/10',val:Math.LN2/10}),
+  ()=>({orig:R`\int_0^{\sqrt{\pi/2}}\!\!\int_y^{\sqrt{\pi/2}}\cos(x^2)\,dx\,dy`,region:M('0\\le y\\le x,\\ 0\\le x\\le \\sqrt{\\pi/2}'),
+    rev:R`\int_0^{\sqrt{\pi/2}}\!\!\int_0^{x}\cos(x^2)\,dy\,dx`,inner:R`\int_0^{x}\cos(x^2)\,dy=x\cos(x^2)`,
+    outer:R`\int_0^{\sqrt{\pi/2}}x\cos(x^2)\,dx=\tfrac12\Big[\sin(x^2)\Big]_0^{\sqrt{\pi/2}}`,ansT:R`\tfrac12`,ansStr:'1/2',val:0.5})
+];
+Q.reverseEval={name:'evaluate by reversing the order',
+  gen(){return pick(REVCASES)();},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">This integral cannot be done in the order given. Sketch the region, reverse the order, and evaluate. Exact answers like <code>(e-1)/2</code> or <code>ln(2)/10</code> are expected.</p>${D(q.orig)}`;
+    numIn(el,'v','Value =',{wide:true});
+  },
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,{rel:1e-5}));},
+  solution(q){
+    return `The limits describe the region ${q.region}. Slide the strip the other way and the integrand stays the same:`+D(q.orig+R`=`+q.rev)+
+      `Now the inner integral produces the factor that was missing: `+D(q.inner)+`and the outer integral is a direct antiderivative: `+D(q.outer+R`=${q.ansT}\approx ${fmtDec(q.val,4)}`);}
+};
+
 /* ---------- chapter 3: polar ---------- */
 const POLCASES=[
   ()=>{const a=rint(1,3);return {
@@ -1030,7 +1158,7 @@ Q.planeArea={name:'surface area of a plane',
     typeset($('#regOut'));
   }
   buildSlider();redrawOnShow('general',draw);draw();
-  new Drill({mount:'#drill-general',section:'general',goal:8,...mixDrill([Q.setupI,Q.setupI,Q.setupII,Q.reverse,Q.reverse,Q.evalRegion,Q.evalRegion,Q.areaRegion])});
+  new Drill({mount:'#drill-general',section:'general',goal:8,...mixDrill([Q.setupI,Q.setupI,Q.setupII,Q.reverse,Q.reverse,Q.reverseEval,Q.reverseEval,Q.evalRegion,Q.evalRegion,Q.areaRegion,Q.avgRegion,Q.densityTotal])});
 })();
 
 /* ============================================================ chapter 3: polar explorer */
@@ -1166,6 +1294,9 @@ window.__solvers={
   'reverse the order of integration':q=>({oa:q.want.aT,ob:q.want.bT,il:q.want.lo,ih:q.want.hi}),
   'evaluate over a general region':q=>({v:q.ansStr}),
   'area of a region':q=>({v:q.ansStr}),
+  'average value over a triangle':q=>({v:q.ansStr}),
+  'total charge or mass from a density':q=>({v:q.ansStr}),
+  'evaluate by reversing the order':q=>({v:q.ansStr}),
   'convert to polar and evaluate':q=>({v:q.ansStr}),
   'polar limits for a region':q=>({rl:q.ansStr[0],rh:q.ansStr[1],tl:q.ansStr[2],th:q.ansStr[3]}),
   'area of a polar region':q=>({v:q.ansStr}),
