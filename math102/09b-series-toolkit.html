@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Series Toolkit</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+<style>
+/* tables used for the case summaries and the theorem sheet */
+.tbl{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0 4px}
+.tbl th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tbl td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td.res{white-space:nowrap}
+.tbl .yes{color:#15803d;font-weight:600}
+.tbl .no{color:#b45309;font-weight:600}
+.tbl .either{color:#7c3aed;font-weight:600}
+.tbl-wrap{overflow-x:auto}
+/* telescoping cancellation grid */
+.tg{display:grid;grid-template-columns:auto auto auto auto auto auto;gap:6px 6px;align-items:center;justify-content:start;margin:6px 0 2px;font-size:17px}
+.tg .lab{font-size:13px;color:var(--muted);padding-right:10px;font-family:ui-monospace,Menlo,monospace}
+.tg .op{color:var(--muted);padding:0 2px}
+.tg .cell{position:relative;padding:3px 9px;border-radius:9px;min-width:44px;text-align:center;transition:background .2s,opacity .2s}
+.tg .cell.dead{opacity:.32}
+.tg .cell.dead::after{content:'';position:absolute;left:4px;right:4px;top:50%;border-top:2px solid #6b675f;transform:rotate(-18deg)}
+.tg .cell.front{background:#dcfce7}
+.tg .cell.back{background:#ffedd5}
+.tg .cell.now{background:#ede9fe;box-shadow:0 0 0 1.5px #a78bfa inset}
+.tg .gap{grid-column:1/-1;font-size:13px;color:var(--muted);padding:2px 0 2px 2px}
+.legend-row{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:8px}
+.legend-row span{display:inline-flex;align-items:center;gap:6px}
+.legend-row i{width:12px;height:12px;border-radius:4px;display:inline-block}
+/* decision ladder on the theorem sheet */
+.ladder{display:grid;gap:10px;margin:12px 0 6px}
+.rung{display:grid;grid-template-columns:34px 1fr 1fr;gap:14px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.rung .k{width:28px;height:28px;border-radius:50%;background:#ede9fe;color:#6d28d9;display:grid;place-items:center;font-weight:700;font-size:13px}
+.rung .q{font-weight:600;line-height:1.5}
+.rung .a{line-height:1.5;color:var(--ink)}
+.rung .a small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+@media (max-width:760px){.rung{grid-template-columns:34px 1fr}.rung .a{grid-column:2}}
+.why-list{margin:8px 0 0;padding-left:20px}
+.why-list li{margin:6px 0;line-height:1.55}
+</style>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 1 WHY -->
+<section data-id="why" data-title="What this unit is for">
+  <p class="eyebrow">Chapter 1 · Orientation</p>
+  <h2>What this unit is actually for</h2>
+  <p class="lead">Every problem in this unit asks one question: if you keep adding terms forever, does the running total settle on a number? Every test is a shortcut for answering that without doing the infinite addition.</p>
+  <div id="memcard"></div>
+
+  <p>The honest case for caring comes in three parts.</p>
+
+  <h3>1. Your calculator runs on series</h3>
+  <p>When you press \(\sin(0.3)\), the calculator does not look anything up. It adds a few terms of a series and stops:</p>
+  <div class="formula">\(\sin x = x-\dfrac{x^3}{3!}+\dfrac{x^5}{5!}-\dfrac{x^7}{7!}+\dfrac{x^9}{9!}-\cdots\)<span class="cap">Five terms give \(\sin(0.3)\) correct to 12 decimal places. Knowing that five is enough, and that the infinite sum really equals \(\sin x\), is exactly what this unit and the next one teach.</span></div>
+  <p>The same goes for \(e^x\), \(\ln x\), \(\arctan x\), and the digits of \(\pi\). That is the next unit (Taylor series). This unit is the safety check underneath it: it tells you when an infinite sum is an actual number, and how many terms you need before you can stop. Without it, "add terms until the answer looks stable" will sometimes hand you a confident wrong answer. The harmonic series \(1+\tfrac12+\tfrac13+\cdots\) looks like it is slowing to a stop, and it never stops growing.</p>
+
+  <h3>2. Anything that repeats with a fixed fraction left over is a geometric series</h3>
+  <p>A drug your body clears by a fixed fraction each day, money that loses a fixed fraction of its value each year, a ball that bounces back to a fixed fraction of its height. Each one is a sum \(a+ar+ar^2+\cdots\), and the long-run total takes one line of algebra: it is \(a/(1-r)\).</p>
+
+  <div class="card">
+    <h4>Explore: a daily dose that never quite clears</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene wide" id="doseFig"></canvas>
+        <p class="plotcap">You take a dose \(D\) every day, and a fraction \(r\) of what is in your body is still there a day later. Blue dots: the amount right after each dose. Orange dots: the amount just before the next one. The dashed green line is the ceiling \(\dfrac{D}{1-r}\).</p>
+      </div>
+      <div>
+        <div class="sliders" id="doseSliders"></div>
+        <div class="readout" id="doseOut"></div>
+        <p class="hint">After day \(n\) the amount is \(D+Dr+\cdots+Dr^{n-1}\), a partial sum of a geometric series. Set \(r=0.5\): the level climbs fast and stops at twice the dose. Now drag \(r\) toward \(1\) (a drug the body clears slowly). The ceiling shoots up, and it takes far longer to get there. At \(r=1\) nothing ever clears and the total grows forever: that is the edge of \(|r|&lt;1\), where geometric series stop converging. Pharmacists call this ceiling the steady state.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>3. The unit is smaller than it looks</h3>
+  <p>It feels like an endless list of tests. It is really about seven shapes of term, and each shape has the one test that fits it. Once you can see the shape, most problems take three lines. This table is the whole unit. The last chapter of this module is the same table with every theorem's fine print.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>The term looks like</th><th>Example</th><th>What you do</th></tr>
+    <tr><td>terms that do not go to \(0\)</td><td>\(\dfrac{n}{n+1}\)</td><td>Test for divergence: it diverges. Always check this first.</td></tr>
+    <tr><td>pieces of the form \(C\,r^{n}\)</td><td>\(\dfrac{3\cdot 2^{n}}{5^{n}}\)</td><td>Geometric: converges to \(\dfrac{\text{first term}}{1-r}\) exactly when \(|r|&lt;1\). Chapter 3.</td></tr>
+    <tr><td>\(f(n)-f(n+k)\) after partial fractions</td><td>\(\dfrac{1}{n(n+3)}\)</td><td>Telescoping: find the partial sum \(s_N\), then let \(N\to\infty\). Chapter 4.</td></tr>
+    <tr><td>a power of \(n\), up to constants</td><td>\(\dfrac{2n+1}{n^{3}+4}\)</td><td>Find the simplest asymptotic form (here \(2/n^2\)), then compare with that \(p\)-series. Chapter 5.</td></tr>
+    <tr><td>\((-1)^{n}b_n\)</td><td>\(\dfrac{(-1)^{n}}{\sqrt n}\)</td><td>Alternating series test (Module 10).</td></tr>
+    <tr><td>factorials, \(c^{n}\), \(n^{n}\)</td><td>\(\dfrac{n!}{3^{n}}\)</td><td>Ratio test, or the root test for a whole term to the \(n\)th power (Module 10).</td></tr>
+    <tr><td>\(f(n)\) for a decreasing \(f\) you can integrate</td><td>\(\dfrac{1}{n\ln n}\)</td><td>Integral test, after checking its hypotheses. Chapter 6.</td></tr>
+  </table></div>
+
+  <h3>How the Week 9 homework maps onto this module</h3>
+  <ul class="why-list">
+    <li><b>Problem 1</b> (adding a convergent and a divergent series): Chapter 2.</li>
+    <li><b>Problem 2</b> (an exact value): Chapter 3.</li>
+    <li><b>Problem 3</b> (asymptotics that fail under subtraction): Chapter 5.</li>
+    <li><b>Problem 4</b> (partial fractions and telescoping): Chapter 4.</li>
+    <li><b>Problem 5</b> (when the integral test does not apply): Chapter 6.</li>
+  </ul>
+  <p class="hint">Every example here is a close relative of a homework problem, never the problem itself, so the homework is still yours to do. If you can do the examples, you can do the homework.</p>
+</section>
+
+<!-- ============================================================ 2 ADDING SERIES -->
+<section data-id="adding" data-title="Adding two series" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 11.2 · Week 9 HW 1</p>
+  <h2>Adding two series together</h2>
+  <p class="lead">You can add convergent series term by term. The interesting questions are what happens when one or both of them diverge.</p>
+
+  <p>Remember what \(\sum a_n\) means: the limit of the partial sums \(A_N=a_1+a_2+\cdots+a_N\). Write \(B_N\) for the partial sums of \(\sum b_n\) and \(C_N\) for those of \(\sum(a_n+b_n)\). A finite sum can be regrouped any way you like, so for every \(N\):</p>
+  <div class="formula">\(C_N=(a_1+b_1)+\cdots+(a_N+b_N)=A_N+B_N\)<span class="cap">This is the only fact the whole chapter needs. Every question about \(\sum(a_n+b_n)\) becomes a question about the limit of \(A_N+B_N\), which is an ordinary limit of sequences.</span></div>
+
+  <p>That gives three cases.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>\(\sum a_n\)</th><th>\(\sum b_n\)</th><th>\(\sum (a_n+b_n)\)</th><th>Why</th></tr>
+    <tr><td>converges to \(A\)</td><td>converges to \(B\)</td><td class="res yes">converges to \(A+B\)</td><td>The limit of a sum of two convergent sequences is the sum of their limits. The same goes for \(\sum c\,a_n=c\,A\). Together these are called <b>linearity</b>.</td></tr>
+    <tr><td>converges</td><td>diverges</td><td class="res no">always diverges</td><td>A total that settles down cannot cancel a total that does not. The proof is the template below.</td></tr>
+    <tr><td>diverges</td><td>diverges</td><td class="res either">could go either way</td><td>Two divergences can cancel exactly, or not cancel at all. You have to look at the actual sum.</td></tr>
+  </table></div>
+
+  <div class="card">
+    <h4>Explore: three running totals</h4>
+    <div class="presets" id="addPresets"></div>
+    <canvas class="scene wide" id="addFig"></canvas>
+    <div class="legend-row"><span><i style="background:#d97706"></i>\(A_N\), partial sums of \(\sum a_n\)</span><span><i style="background:#2563eb"></i>\(B_N\), partial sums of \(\sum b_n\)</span><span><i style="background:#16a34a"></i>\(C_N=A_N+B_N\)</span></div>
+    <div class="xf" style="margin-top:12px">
+      <div><div class="sliders" id="addSliders"></div></div>
+      <div><div class="readout" id="addOut"></div></div>
+    </div>
+    <p class="hint">Start with the third preset. The orange total climbs forever and the blue total falls forever, yet the green total, their sum, levels off at \(\pi^2/6\): two divergent series whose sum converges. Then try the second preset. The convergent blue total flattens out, so it has nothing left to cancel the orange climb with, and the green total climbs too. No choice of series can change that.</p>
+  </div>
+
+  <h3>The proof template: run linearity backwards</h3>
+  <p>The "convergent plus divergent" fact, and a whole family like it, are proved with one move. Linearity says combinations of convergent series converge. Run it backwards: if a series you <b>know</b> diverges could be written as a combination of series that converge, it would have to converge, which is impossible.</p>
+  <p>The step-by-step card below runs this template on relatives of the homework statement. Each one needs the same four steps.</p>
+
+  <div class="card">
+    <h4>Step-by-step: a linearity proof</h4>
+    <div class="expr" id="pfExpr"></div>
+    <div class="controls">
+      <button class="btn" id="pfPrev">◀ Back</button>
+      <button class="btn primary" id="pfNext">Next step ▶</button>
+      <button class="btn" id="pfNew">Another statement</button>
+      <span class="status" id="pfStatus"></span>
+    </div>
+    <p class="hint">The creative step is always step 2: write the series you know about as a sum or difference of series you are assuming converge. After that, linearity does the work.</p>
+  </div>
+
+  <div class="warn"><b>Linearity needs both pieces to converge first.</b> \(\sum\left(\frac1n-\frac1n\right)=0\), but you cannot write that as \(\sum\frac1n-\sum\frac1n\), because that is \(\infty-\infty\). Splitting a series into pieces is only legal once you know each piece converges. Chapter 3 leans on this: split, check every piece, and if exactly one piece diverges, the whole series diverges by the theorem above.</div>
+
+  <h3>Building examples on purpose</h3>
+  <p>To show that two divergent series can have a convergent sum, do not hunt for an example. Build one. Pick any convergent series \(\sum c_n\) and any divergent series \(\sum a_n\), and set \(b_n=c_n-a_n\). Then \(\sum b_n\) diverges (a convergent series minus a divergent one), and \(a_n+b_n=c_n\), which converges. Every example of this kind is this recipe in disguise.</p>
+  <div class="note"><b>Starting points do not matter for convergence.</b> Changing or dropping finitely many terms never changes whether a series converges. It only changes the sum. So \(\sum_{n=1}^{\infty}a_n\) and \(\sum_{n=7}^{\infty}a_n\) converge or diverge together, and \(\sum_{n=3}^{\infty}a_n=\sum_{n=1}^{\infty}a_n-a_1-a_2\).</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-adding"></div>
+</section>
+
+<!-- ============================================================ 3 GEOMETRIC EXACT VALUES -->
+<section data-id="geometric" data-title="Exact values" data-goal="6">
+  <p class="eyebrow">Chapter 3 · Stewart 11.2 · Week 9 HW 2</p>
+  <h2>Exact values: hunting for geometric series</h2>
+  <p class="lead">Only two kinds of series in this course have sums you can compute exactly: geometric and telescoping. When a problem asks for an exact value, expect geometric pieces in disguise.</p>
+
+  <div class="formula">\(\displaystyle\sum_{n=n_0}^{\infty} C\,r^{\,n}=\frac{\text{first term}}{1-r}=\frac{C\,r^{\,n_0}}{1-r}\qquad\text{when }|r|&lt;1\)<span class="cap">Get the first term by plugging the starting index into the term. Do not memorize separate versions for \(n=0\) and \(n=1\). For \(|r|\ge 1\) the series diverges.</span></div>
+
+  <h3>The recipe</h3>
+  <ol class="steps">
+    <li><b>Split the numerator.</b> \(\dfrac{p+q+s}{D}=\dfrac{p}{D}+\dfrac{q}{D}+\dfrac{s}{D}\).</li>
+    <li><b>Force every piece into the form \(C\,r^{n}\).</b> The exponent rules do all the work: \(b^{-n}=\left(\tfrac1b\right)^{n}\), \(\;b^{2n}=(b^2)^{n}\), \(\;b^{n+k}=b^k\cdot b^{n}\), \(\;\dfrac{p^n}{q^n}=\left(\dfrac pq\right)^{n}\). A plain constant counts: \(\dfrac{1}{b^{2n}}=\left(\dfrac{1}{b^2}\right)^{n}\).</li>
+    <li><b>Check \(|r|&lt;1\) for every piece.</b> If one piece has \(|r|\ge 1\) and the others converge, the whole series diverges (Chapter 2). Stop there.</li>
+    <li><b>Sum each piece</b> with \(\dfrac{\text{first term}}{1-r}\), then add.</li>
+  </ol>
+
+  <div class="card">
+    <h4>Explore: build a series and watch the ratios</h4>
+    <div class="tex" id="geoTerm" style="font-size:18px;margin:4px 0 12px;overflow-x:auto;overflow-y:hidden"></div>
+    <div class="xf">
+      <div>
+        <canvas class="scene short" id="geoLine"></canvas>
+        <p class="plotcap">Each piece's ratio \(r\) on the number line. Inside the shaded band \(|r|&lt;1\) a piece converges; one dot outside the band sinks the whole series.</p>
+        <canvas class="scene short" id="geoSums"></canvas>
+        <p class="plotcap">Partial sums of the whole series, with the exact total dashed when it exists.</p>
+      </div>
+      <div>
+        <div class="sliders" id="geoSliders"></div>
+        <div class="presets" id="geoBase"></div>
+        <div class="presets" id="geoStart"></div>
+        <div class="readout" id="geoOut"></div>
+        <p class="hint">Pick base \(e\) with power \(2n\), so the denominator is \(e^{2n}\approx 7.389^{\,n}\). Then slide \(d\) from \(7\) to \(8\): the green piece \(\left(\frac{d}{e^2}\right)^n\) jumps outside the band, and the partial sums take off. Next change only the starting index and watch the total move while every ratio stays put. The start changes the first term, never \(r\).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: an exact value</h4>
+    <div class="expr" id="gwExpr"></div>
+    <div class="controls">
+      <button class="btn" id="gwPrev">◀ Back</button>
+      <button class="btn primary" id="gwNext">Next step ▶</button>
+      <button class="btn" id="gwNew">New series</button>
+      <span class="status" id="gwStatus"></span>
+    </div>
+    <p class="hint">Press New series a few times. Some of them diverge on purpose: one piece's ratio is at least \(1\), and step 3 is where you catch it.</p>
+  </div>
+
+  <div class="warn"><b>The first term is where the points go.</b> \(\sum_{n=1}^{\infty}\left(\tfrac14\right)^{n}\) starts at \(\tfrac14\), so it sums to \(\dfrac{1/4}{1-1/4}=\dfrac13\). Writing \(\dfrac{1}{1-1/4}=\dfrac43\) is the most common mistake in this whole chapter. It quietly assumes the series starts at \(n=0\).</div>
+  <div class="note"><b>Nothing in the numerator is left over.</b> A \(1\) on top of \(b^{n}\) is the geometric piece \(\left(\frac1b\right)^{n}\). A \(c^{-n}\) on top of \(b^{n}\) is \(\left(\frac{1}{cb}\right)^{n}\). Every piece of the numerator becomes its own geometric series.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-geometric"></div>
+</section>
+
+<!-- ============================================================ 4 TELESCOPING -->
+<section data-id="telescoping" data-title="Telescoping" data-goal="6">
+  <p class="eyebrow">Chapter 4 · Stewart 11.2 and 7.4 · Week 9 HW 4</p>
+  <h2>Telescoping: write it out and watch it collapse</h2>
+  <p class="lead">In a telescoping series nearly every piece cancels against a later piece. Partial fractions create the cancellation, and writing out the terms shows you what survives.</p>
+
+  <p>The pattern is a term of the form \(a_n=f(n)-f(n+k)\). In the partial sum, the \(-f(n+k)\) from row \(n\) cancels the \(+f(n+k)\) that appears \(k\) rows later. Only the ends survive:</p>
+  <div class="formula">\(\displaystyle s_N=\sum_{n=1}^{N}\big[f(n)-f(n+k)\big]=\underbrace{f(1)+\cdots+f(k)}_{\text{first }k\text{ pieces}}\;-\;\underbrace{\big[f(N+1)+\cdots+f(N+k)\big]}_{\text{last }k\text{ pieces}}\)<span class="cap">\(k\) survivors at the front, \(k\) at the back. If \(f(N)\to 0\), the back ones vanish as \(N\to\infty\), and the front ones are the sum.</span></div>
+
+  <h3>Step 1: partial fractions with a gap</h3>
+  <div class="formula">\(\dfrac{1}{(n+a)(n+b)}=\dfrac{1}{b-a}\left[\dfrac{1}{n+a}-\dfrac{1}{n+b}\right]\)<span class="cap">The gap is \(k=b-a\), and it decides how many survivors there are. The factor \(\frac{1}{b-a}\) in front is the part people forget. Check it by recombining: \(\frac{1}{n+a}-\frac{1}{n+b}=\frac{b-a}{(n+a)(n+b)}\).</span></div>
+  <p>The fast way to get the constants is the <b>cover-up method</b>. For \(\dfrac{1}{(n+1)(n+4)}=\dfrac{A}{n+1}+\dfrac{B}{n+4}\): cover the factor \((n+1)\) and set \(n=-1\) in what is left, so \(A=\frac{1}{-1+4}=\frac13\). Cover \((n+4)\) and set \(n=-4\): \(B=\frac{1}{-4+1}=-\frac13\). So the term is \(\frac13\left[\frac{1}{n+1}-\frac{1}{n+4}\right]\), a gap of \(3\).</p>
+
+  <div class="card">
+    <h4>Explore: the cancellation grid</h4>
+    <p class="small muted" style="margin:0 0 6px">The series \(\displaystyle\sum_{n=1}^{\infty}\frac{1}{(n+s)(n+s+k)}=\frac1k\sum_{n=1}^{\infty}\left[\frac{1}{n+s}-\frac{1}{n+s+k}\right]\), written out row by row.</p>
+    <div class="xf">
+      <div>
+        <div id="tgBox"></div>
+        <div class="legend-row"><span><i style="background:#dcfce7"></i>survives at the front</span><span><i style="background:#ffedd5"></i>survives at the back</span><span><i style="background:#ede9fe"></i>the pair cancelling now</span></div>
+      </div>
+      <div>
+        <div class="sliders" id="tgSliders"></div>
+        <div class="controls"><button class="btn primary" id="tgPlay">▶ Cancel pairs</button><button class="btn" id="tgAll">Show all</button></div>
+        <div class="readout" id="tgOut"></div>
+        <p class="hint">Press Cancel pairs and watch each negative piece meet its positive twin exactly \(k\) rows down. Then raise the gap \(k\): the number of survivors at each end is always \(k\). Raise \(N\): the front survivors never change, the back survivors just shift along and shrink toward \(0\). That is why the sum is the front survivors times \(\frac1k\).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: sum a telescoping series</h4>
+    <div class="expr" id="twExpr"></div>
+    <div id="twGrid"></div>
+    <div class="controls">
+      <button class="btn" id="twPrev">◀ Back</button>
+      <button class="btn primary" id="twNext">Next step ▶</button>
+      <button class="btn" id="twNew">New series</button>
+      <span class="status" id="twStatus"></span>
+    </div>
+    <p class="hint">Write the first few rows and the last few rows, never the middle. The pattern of cancellation is decided entirely by the gap.</p>
+  </div>
+
+  <div class="warn"><b>Find \(s_N\) first, then take the limit.</b> Never cancel inside an infinite sum by splitting it into two separate series: \(\sum\frac{1}{n+1}-\sum\frac{1}{n+4}\) is \(\infty-\infty\) (both pieces diverge, see Chapter 2). The finite partial sum is where cancelling is legal.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-telescoping"></div>
+</section>
+
+<!-- ============================================================ 5 ASYMPTOTICS -->
+<section data-id="asymptotics" data-title="Asymptotics" data-goal="6">
+  <p class="eyebrow">Chapter 5 · Week 9 HW 3</p>
+  <h2>Asymptotics, and the one place they lie</h2>
+  <p class="lead">Two sequences are asymptotic when they are the same size up to a percentage error that shrinks to zero. That is perfect for products and quotients, and useless the moment you subtract.</p>
+
+  <div class="formula">\(a_n\sim b_n\quad\text{means}\quad\displaystyle\lim_{n\to\infty}\frac{a_n}{b_n}=1\)<span class="cap">Read it as "\(a_n\) and \(b_n\) agree to within a percentage that goes to \(0\)". It does <b>not</b> say \(a_n-b_n\to 0\). To show two sequences are <b>not</b> asymptotic, show the ratio tends to something other than \(1\), or has no limit, or is not even defined.</span></div>
+
+  <h3>Finding the simplest asymptotic form</h3>
+  <p>Keep the dominant piece of every factor and throw the rest away:</p>
+  <ul>
+    <li>\(\dfrac{3n^2+5n}{n+7}\sim\dfrac{3n^2}{n}=3n\)</li>
+    <li>\(\sqrt{4n^2+n}\sim\sqrt{4n^2}=2n\)</li>
+    <li>\(\sqrt{n+2}\,\sqrt{n+7}\sim\sqrt{n}\,\sqrt{n}=n\)</li>
+    <li>\(\dfrac{2^n+n^5}{3^n}\sim\dfrac{2^n}{3^n}=\left(\dfrac23\right)^{n}\) (exponentials beat powers)</li>
+  </ul>
+  <p>Asymptotics are safe for <b>products, quotients, and powers</b>: if \(a_n\sim b_n\) and \(c_n\sim d_n\), then \(a_nc_n\sim b_nd_n\) and \(\frac{a_n}{c_n}\sim\frac{b_n}{d_n}\). They are safe for <b>limits</b>: if \(a_n\sim b_n\) and \(b_n\to L\), then \(a_n\to L\), because \(a_n=\frac{a_n}{b_n}\cdot b_n\to 1\cdot L\). And the limit comparison test is this idea applied to series: for positive terms, \(a_n\sim b_n\) means \(\sum a_n\) and \(\sum b_n\) converge or diverge together.</p>
+
+  <h3>Where they lie: subtraction</h3>
+  <p>Take \(c_n=\sqrt{n+2}\,\sqrt{n+6}\). It is asymptotic to \(n\). So it is tempting to say \(\lim(c_n-n)=\lim(n-n)=0\). The true limit is \(4.\)</p>
+  <p>Look at real numbers. At \(n=1{,}000{,}000\), \(c_n=1{,}000{,}003.999998\). The ratio \(c_n/n=1.000004\), which is \(1\) to five decimal places. That is exactly what \(\sim\) promises, and it delivers. But the gap \(c_n-n\) is about \(4\), and it stays near \(4\) forever. The relation \(\sim\) only controls the error relative to \(n\). When you subtract \(n\), the \(n\)'s cancel, and the error is all that is left: the exact part that \(\sim\) threw away.</p>
+  <div class="formula">\(a_n\sim b_n\quad\not\Longrightarrow\quad a_n-c_n\sim b_n-c_n\)<span class="cap">Asymptotic is a statement about ratios. Subtraction can turn a small relative error into the entire answer.</span></div>
+
+  <div class="card">
+    <h4>Explore: the ratio goes to 1, the gap does not go to 0</h4>
+    <div class="minis two">
+      <div><canvas class="scene short" id="asRatio"></canvas><p class="cap">the ratio \(c_n/n\)</p></div>
+      <div><canvas class="scene short" id="asGap"></canvas><p class="cap">the gap \(c_n-n\)</p></div>
+    </div>
+    <div class="xf" style="margin-top:14px">
+      <div>
+        <div class="tex" id="asFormula" style="font-size:18px;margin-bottom:8px"></div>
+        <div class="sliders" id="asSliders"></div>
+      </div>
+      <div><div class="readout" id="asOut"></div></div>
+    </div>
+    <p class="hint">Left: the ratio comes down to \(1\), so \(c_n\sim n\) is true. Right: the gap settles at \(\frac{p+q}{2}\), not at the dashed orange line \(0\) that "\(n-n\)" predicts. Change \(p\) and \(q\) and watch the ratio picture barely change while the gap picture moves. The ratio cannot see the thing the gap measures.</p>
+  </div>
+
+  <h3>The fix: the conjugate trick</h3>
+  <div class="formula">\(A-B=\dfrac{(A-B)(A+B)}{A+B}=\dfrac{A^2-B^2}{A+B}\)<span class="cap">Squaring removes the square roots, so the cancellation happens in plain algebra where you can see it. The denominator is now a sum, where nothing cancels, so asymptotics are safe there.</span></div>
+
+  <div class="card">
+    <h4>Step-by-step: a limit that asymptotics get wrong</h4>
+    <div class="expr" id="awExpr"></div>
+    <div class="controls">
+      <button class="btn" id="awPrev">◀ Back</button>
+      <button class="btn primary" id="awNext">Next step ▶</button>
+      <button class="btn" id="awNew">New limit</button>
+      <span class="status" id="awStatus"></span>
+    </div>
+    <p class="hint">Step 1 is the habit to build: before you simplify, ask whether the two pieces you are subtracting are asymptotic to each other. If they are, the naive answer is wrong and you need the conjugate.</p>
+  </div>
+
+  <div class="note"><b>How to see the trap coming.</b> Two pieces that are asymptotic to each other, being subtracted. Whenever the simplest forms cancel to \(0\), the real answer lives in the next-order terms, and you need algebra (a conjugate, or a common denominator) to get at it.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-asymptotics"></div>
+</section>
+
+<!-- ============================================================ 6 INTEGRAL TEST HYPOTHESES -->
+<section data-id="integral" data-title="Integral test fine print" data-goal="6">
+  <p class="eyebrow">Chapter 6 · Stewart 11.3 · Week 9 HW 5</p>
+  <h2>When the integral test is the wrong tool</h2>
+  <p class="lead">The integral test is a theorem with three hypotheses. When they fail, the integral and the series can disagree completely, and neither one tells you anything about the other.</p>
+
+  <div class="formula">If \(f\) is <b>positive</b>, <b>continuous</b>, and <b>decreasing</b> on \([m,\infty)\) and \(a_n=f(n)\), then \(\displaystyle\sum_{n=m}^{\infty}a_n\) and \(\displaystyle\int_m^{\infty}f(x)\,dx\) both converge or both diverge.<span class="cap">The <b>integral test</b>. The hypotheses only need to hold eventually, from some \(m\) on. The test never says the sum equals the integral.</span></div>
+  <p>Each hypothesis has a job.</p>
+  <ul class="why-list">
+    <li><b>Decreasing</b> makes the sandwich work. The rectangle of height \(f(n)\) over \([n,n+1]\) sits above the curve, and the one over \([n-1,n]\) sits below it. So the sum and the integral stay within one term of each other: finite together or infinite together.</li>
+    <li><b>Positive</b> stops areas from cancelling. With sign changes, positive and negative area can cancel in the integral in a way the sum does not, or the other way round.</li>
+    <li><b>Continuous</b> makes the integral exist in the first place.</li>
+  </ul>
+
+  <h3>The series only sees the dots</h3>
+  <p>\(\sum a_n\) uses only the values \(f(1), f(2), f(3),\dots\). The integral uses every value in between. Infinitely many functions pass through the same dots, so pick one that wiggles between the integers and the integral picks up area the series never sees.</p>
+
+  <div class="card">
+    <h4>Explore: same dots, different integral</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene wide" id="wigFig"></canvas>
+        <p class="plotcap">\(f(x)=\dfrac{1}{x^2}+A\sin^2(2\pi x)\). Since \(\sin(2\pi n)=0\), the purple dots are \(f(n)=\dfrac{1}{n^2}\) for every \(A\). The shaded region is \(\displaystyle\int_1^{b}f(x)\,dx\).</p>
+      </div>
+      <div>
+        <div class="sliders" id="wigSliders"></div>
+        <div class="controls"><button class="btn primary" id="wigPlay">▶ Play b</button></div>
+        <div class="readout" id="wigOut"></div>
+        <p class="hint">At \(A=0\) the function is decreasing, and the integral and the sum both level off: the test applies and they agree. Now raise \(A\). The dots do not move, so the series still converges to \(\pi^2/6\). But every bump adds area, the integral grows like \(\frac{A}{2}(b-1)\), and it diverges. The integral test has no opinion here, because this \(f\) is not decreasing.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>"Not a counterexample" is a logic statement.</b> A theorem promises its conclusion only when its hypotheses hold. A case where a hypothesis fails and the conclusion also fails does not contradict the theorem. It just lies outside it. To explain why something is not a counterexample, name the hypothesis that fails.</div>
+
+  <h3>Simplify first: trig at integer multiples of \(\pi\)</h3>
+  <p>Before choosing any test, plug in integers. Trig functions at multiples of \(\pi\) are just numbers, and a series that looks frightening often turns out to be geometric, alternating, or all zeros.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Expression at integer \(n\)</th><th>Value</th><th>Pattern</th></tr>
+    <tr><td>\(\sin(n\pi)\)</td><td>\(0\)</td><td>\(0,0,0,\dots\)</td></tr>
+    <tr><td>\(\cos(n\pi)\)</td><td>\((-1)^{n}\)</td><td>\(-1,1,-1,1,\dots\)</td></tr>
+    <tr><td>\(\cos(2n\pi)\), \(\cos^2(n\pi)\)</td><td>\(1\)</td><td>\(1,1,1,\dots\)</td></tr>
+    <tr><td>\(\sin\!\left(\frac{n\pi}{2}\right)\)</td><td>cycles</td><td>\(1,0,-1,0,1,0,-1,0,\dots\)</td></tr>
+    <tr><td>\(\sin\!\left(n\pi+\frac{\pi}{2}\right)\)</td><td>\(\cos(n\pi)=(-1)^{n}\)</td><td>\(-1,1,-1,1,\dots\)</td></tr>
+  </table></div>
+  <p>Integrals of squared trig functions use the half-angle identity: \(\sin^2\theta=\frac{1-\cos 2\theta}{2}\) and \(\cos^2\theta=\frac{1+\cos 2\theta}{2}\). Over a whole number of periods the cosine part integrates to \(0\), so the average value is exactly \(\frac12\), and an integral of length \(L\) over whole periods is \(\frac{L}{2}\).</p>
+
+  <h3>Checking "decreasing" with a derivative</h3>
+  <p>Show \(f'(x)&lt;0\) from some point on. "Eventually" is enough, because dropping finitely many terms never changes convergence. For \(f(x)=\dfrac{x}{x^2+5}\), \(f'(x)=\dfrac{5-x^2}{(x^2+5)^2}\), which is negative for \(x&gt;\sqrt5\approx 2.24\). So apply the test on \([3,\infty)\).</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-integral"></div>
+</section>
+
+<!-- ============================================================ 7 THEOREM SHEET -->
+<section data-id="sheet" data-title="Every theorem, one page">
+  <p class="eyebrow">Chapter 7 · Reference</p>
+  <h2>Every theorem in the unit, on one page</h2>
+  <p class="lead">The page to study from: each theorem with its exact hypotheses, what it concludes, when to reach for it, and the trap. The flashcards drill the same statements.</p>
+  <div class="controls" style="margin:4px 0 18px"><a class="btn primary" href="memory.html#mod=c2-wk9">Open the theorem flashcards</a></div>
+
+  <h3>Which test? Ask these in order</h3>
+  <div class="ladder">
+    <div class="rung"><span class="k">1</span><span class="q">Do the terms go to \(0\)?</span><span class="a">If not, it <b>diverges</b> (test for divergence). Done.<small>If they do, you have learned nothing yet. Keep going.</small></span></div>
+    <div class="rung"><span class="k">2</span><span class="q">Is every piece \(C\,r^{n}\)?</span><span class="a">Geometric: converges to \(\frac{\text{first term}}{1-r}\) when \(|r|&lt;1\), diverges otherwise.<small>Split the numerator first.</small></span></div>
+    <div class="rung"><span class="k">3</span><span class="q">Does it split into \(f(n)-f(n+k)\)?</span><span class="a">Telescoping: find \(s_N\), then take the limit.<small>Usually after partial fractions.</small></span></div>
+    <div class="rung"><span class="k">4</span><span class="q">Is it a \(p\)-series, or asymptotic to one?</span><span class="a">\(\sum\frac{1}{n^p}\) converges exactly when \(p&gt;1\). Otherwise use limit comparison with the simplest asymptotic form.<small>Rational and root expressions in \(n\) land here.</small></span></div>
+    <div class="rung"><span class="k">5</span><span class="q">Does it alternate?</span><span class="a">Check \(\sum|a_n|\) first (absolute convergence). If that fails, use the alternating series test.<small>Needs \(b_n\) eventually decreasing and \(b_n\to 0\).</small></span></div>
+    <div class="rung"><span class="k">6</span><span class="q">Factorials, \(c^n\), or \(n^n\)?</span><span class="a">Ratio test. A whole term raised to the \(n\)th power: root test.<small>Both are useless on \(p\)-series, where they give \(L=1\).</small></span></div>
+    <div class="rung"><span class="k">7</span><span class="q">Positive, decreasing, and easy to integrate?</span><span class="a">Integral test.<small>Verify all three hypotheses before you integrate.</small></span></div>
+  </div>
+
+  <h3>Sequences</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Theorem</th><th>Statement</th><th>Watch out</th></tr>
+    <tr><td><b>Limit of a sequence</b></td><td>\(a_n\to L\) if for every \(\varepsilon&gt;0\) there is an \(N\) with \(|a_n-L|&lt;\varepsilon\) for all \(n&gt;N\).</td><td>Eventually inside every band, however thin.</td></tr>
+    <tr><td><b>Functions to sequences</b></td><td>If \(\lim_{x\to\infty}f(x)=L\) and \(a_n=f(n)\), then \(a_n\to L\).</td><td>The converse fails: \(\sin(\pi n)=0\to 0\), but \(\sin(\pi x)\) has no limit.</td></tr>
+    <tr><td><b>Squeeze</b></td><td>If \(b_n\le a_n\le c_n\) eventually and \(b_n,c_n\to L\), then \(a_n\to L\). Also \(|a_n|\to 0\Rightarrow a_n\to 0\).</td><td>The outer limits must be equal.</td></tr>
+    <tr><td><b>Continuity</b></td><td>If \(a_n\to L\) and \(f\) is continuous at \(L\), then \(f(a_n)\to f(L).\)</td><td>Lets you pull limits inside \(\sqrt{\ }\), \(e^{x}\), \(\ln\).</td></tr>
+    <tr><td><b>Geometric sequence</b></td><td>\(r^n\to 0\) if \(|r|&lt;1\), \(\to 1\) if \(r=1\), and diverges otherwise.</td><td>\(r=-1\) flips forever.</td></tr>
+    <tr><td><b>Monotonic sequence theorem</b></td><td>Monotonic and bounded \(\Rightarrow\) convergent.</td><td>Tells you a limit exists, not what it is.</td></tr>
+    <tr><td><b>Asymptotic</b></td><td>\(a_n\sim b_n\) means \(\frac{a_n}{b_n}\to 1\). Safe for products, quotients, powers, and limits.</td><td>Not safe for differences, and not inside exponentials: \(n+1\sim n\) but \(\frac{e^{n+1}}{e^n}=e\).</td></tr>
+    <tr><td><b>Growth order</b></td><td>\(\ln n\ll n^p\ll b^n\ll n!\ll n^n\) for \(p&gt;0\), \(b&gt;1\).</td><td>The faster one wins a ratio.</td></tr>
+  </table></div>
+
+  <h3>Series: definitions and algebra</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Theorem</th><th>Statement</th><th>Watch out</th></tr>
+    <tr><td><b>Definition</b></td><td>\(\sum a_n=\lim_{N\to\infty}s_N\) where \(s_N=a_1+\cdots+a_N\). Converges if that limit exists.</td><td>Two sequences: the terms \(a_n\) and the partial sums \(s_N\). Do not mix them up.</td></tr>
+    <tr><td><b>Geometric series</b></td><td>\(\sum_{n=n_0}^{\infty}Cr^n=\frac{Cr^{n_0}}{1-r}\) if \(|r|&lt;1\); diverges if \(|r|\ge 1\).</td><td>Numerator is the first term, not \(C\).</td></tr>
+    <tr><td><b>Telescoping</b></td><td>For \(a_n=f(n)-f(n+k)\), \(s_N=\) first \(k\) values of \(f\) minus \(f(N+1),\dots,f(N+k)\).</td><td>Cancel in \(s_N\), never in the infinite sum.</td></tr>
+    <tr><td><b>Linearity</b></td><td>If \(\sum a_n=A\) and \(\sum b_n=B\) converge, then \(\sum(a_n\pm b_n)=A\pm B\) and \(\sum ca_n=cA\).</td><td>Both must converge first.</td></tr>
+    <tr><td><b>Convergent + divergent</b></td><td>If \(\sum a_n\) converges and \(\sum b_n\) diverges, \(\sum(a_n+b_n)\) diverges.</td><td>Proof: linearity backwards, by contradiction.</td></tr>
+    <tr><td><b>Divergent + divergent</b></td><td>Can converge or diverge.</td><td>Build examples with \(b_n=c_n-a_n\).</td></tr>
+    <tr><td><b>Tails</b></td><td>Changing or dropping finitely many terms does not change convergence.</td><td>It does change the sum.</td></tr>
+    <tr><td><b>Terms of a convergent series</b></td><td>If \(\sum a_n\) converges, then \(a_n\to 0\).</td><td>The converse is false.</td></tr>
+  </table></div>
+
+  <h3>Convergence tests</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Test</th><th>Hypotheses</th><th>Conclusion</th><th>Watch out</th></tr>
+    <tr><td><b>Test for divergence</b></td><td>none</td><td>If \(\lim a_n\ne 0\) or does not exist, \(\sum a_n\) diverges.</td><td>\(a_n\to 0\) proves nothing: \(\sum\frac1n\) diverges.</td></tr>
+    <tr><td><b>Integral test</b></td><td>\(f\) positive, continuous, decreasing on \([m,\infty)\), \(a_n=f(n)\)</td><td>\(\sum a_n\) and \(\int_m^\infty f\) converge or diverge together.</td><td>Sum \(\ne\) integral. Hypotheses matter (Chapter 6).</td></tr>
+    <tr><td><b>Integral test remainder</b></td><td>same as the integral test</td><td>\(\int_{n+1}^{\infty}f\le R_n\le\int_n^{\infty}f\).</td><td>\(R_n=s-s_n\), the part you have not added yet.</td></tr>
+    <tr><td><b>\(p\)-series</b></td><td>none</td><td>\(\sum\frac{1}{n^p}\) converges exactly when \(p&gt;1\).</td><td>\(p=1\) (harmonic) diverges.</td></tr>
+    <tr><td><b>Comparison</b></td><td>\(0\le a_n\le b_n\) eventually</td><td>\(\sum b_n\) converges \(\Rightarrow\sum a_n\) converges. \(\sum a_n\) diverges \(\Rightarrow\sum b_n\) diverges.</td><td>Smaller than divergent, or bigger than convergent, tells you nothing.</td></tr>
+    <tr><td><b>Limit comparison</b></td><td>\(a_n,b_n&gt;0\), \(\lim\frac{a_n}{b_n}=c\) with \(0&lt;c&lt;\infty\)</td><td>Both converge or both diverge.</td><td>Choose \(b_n\) as the simplest asymptotic form.</td></tr>
+    <tr><td><b>Alternating series test</b></td><td>\(\sum(-1)^{n}b_n\) with \(b_n&gt;0\), \(b_n\) eventually decreasing, \(b_n\to 0\)</td><td>The series converges.</td><td>Proves convergence only, never divergence.</td></tr>
+    <tr><td><b>Alternating estimate</b></td><td>same as the alternating test</td><td>\(|R_n|\le b_{n+1}\), the first term left out.</td><td></td></tr>
+    <tr><td><b>Absolute convergence</b></td><td>\(\sum|a_n|\) converges</td><td>\(\sum a_n\) converges.</td><td>Converse false: \(\sum\frac{(-1)^n}{n}\) converges only conditionally.</td></tr>
+    <tr><td><b>Ratio test</b></td><td>\(L=\lim\left|\frac{a_{n+1}}{a_n}\right|\)</td><td>\(L&lt;1\): converges absolutely. \(L&gt;1\): diverges. \(L=1\): no information.</td><td>\(L=1\) on every \(p\)-series and rational term.</td></tr>
+    <tr><td><b>Root test</b></td><td>\(L=\lim\sqrt[n]{|a_n|}\)</td><td>Same three cases as the ratio test.</td><td>Best when the whole term is a power of \(n\).</td></tr>
+  </table></div>
+</section>
+
+<!-- ============================================================ 8 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 8</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from Chapters 2 to 6. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ shared helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label)=>el.appendChild(ansLine(label,k));
+const exprIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{wide:true,placeholder:ph}));
+const val=(el,k)=>$(`[data-k=${k}]`,el).value;
+const partSum=(t,from,to)=>{let s=0;for(let k=from;k<=to;k++)s+=t(k);return s;};
+const sigTex=(from,body)=>R`\sum_{n=${from}}^{\infty} ${body}`;
+function hintBox(el,html){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox note';}h.innerHTML=html;}
+/* exact rational form of a float (continued fractions) */
+function ratOf(x,maxDen=2000000){
+  if(!Number.isFinite(x))return null;
+  const sgn=x<0?-1:1;x=Math.abs(x);
+  let h1=1,h0=0,k1=0,k0=1,b=x;
+  for(let i=0;i<40;i++){
+    const a=Math.floor(b);const h2=a*h1+h0,k2=a*k1+k0;
+    if(k2>maxDen)break;
+    h0=h1;h1=h2;k0=k1;k1=k2;
+    if(Math.abs(x-h1/k1)<1e-12*Math.max(1,x))break;
+    const f=b-a;if(f<1e-13)break;b=1/f;
+  }
+  if(k1===0)return null;
+  if(Math.abs(x-h1/k1)>1e-9*Math.max(1,x))return null;
+  return [sgn*h1,k1];
+}
+/* texQ(x): x as a simplified TeX fraction when it is rational, else a 4-place decimal; strQ for typed answers */
+function texQ(x,tf=true){const r=ratOf(x);return r?texFrac(r[0],r[1],{tf}):fmtDec(x,4);}
+function strQ(x){const r=ratOf(x);return r?(r[1]===1?String(r[0]):`${r[0]}/${r[1]}`):String(x);}
+/* n+a with the sign handled: nPlus(0)='n', nPlus(3)='n+3', nPlus(-1)='n-1' */
+const nPlus=(a,v='n')=>a===0?v:(a>0?`${v}+${a}`:`${v}-${-a}`);
+const harmFrom=(a,k)=>{let s=0;for(let j=1;j<=k;j++)s+=1/(a+j);return s;};
+/* a sum of unit fractions as a TeX string: 1/(a+1) + ... + 1/(a+k) */
+const unitSumTex=(a,k,v)=>Array.from({length:k},(_,j)=>v?R`\frac{1}{${nPlus(a+j+1,v)}}`:R`\frac{1}{${a+j+1}}`).join('+');
+/* a step-by-step walkthrough card: lines[i] are shown faint until step i is reached */
+function walkthrough(ids,build){
+  let step=0,W=null;
+  const ex=$('#'+ids.expr),st=$('#'+ids.status),prev=$('#'+ids.prev),next=$('#'+ids.next);
+  function draw(){
+    const L=W.lines;
+    ex.innerHTML=L.map((l,i)=>i===0?`<span class="t b">${l}</span>`:`<span class="${step>=i?'':'faint'}">→ <span class="t ${step===i?'now':''} ${W.cls&&W.cls[i]||'a'}">${l}</span></span>`).join('<br>');
+    st.textContent=W.notes[step]||'';
+    prev.disabled=step===0;next.disabled=step===L.length-1;
+    if(W.after)W.after(step);
+    typeset(ex);
+  }
+  prev.onclick=()=>{step=Math.max(0,step-1);draw();};
+  next.onclick=()=>{step=Math.min(W.lines.length-1,step+1);draw();};
+  $('#'+ids.fresh).onclick=()=>{W=build();step=0;draw();};
+  W=build();draw();
+}
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---------- chapter 2: adding series ---------- */
+const LC_VALS=[2,3,4,5,6,-1,-2,-3,1/2,3/2,-1/2,1/3,2/3,5/4,7/2];
+Q.linComb={name:'combine convergent series',
+  gen(){
+    const kind=pick(['comb','comb','solve','tail']);
+    const A=pick(LC_VALS),B=pick(LC_VALS);
+    if(kind==='comb'){const p=rnz(-4,4),q=rnz(-4,4);return {kind,A,B,p,q,ans:p*A+q*B};}
+    if(kind==='solve'){const q=rnz(-3,3);return {kind,A,B,q,T:A+q*B,ans:A};}
+    const a1=rnz(-5,5),a2=rnz(-5,5);return {kind,A,a1,a2,ans:A-a1-a2};},
+  render(q,el){
+    const cb=(p,s)=>`${texCoef(p)}${s}`;
+    if(q.kind==='comb')el.innerHTML=`<p class="prompt">Both series converge: ${M(R`\sum_{n=1}^{\infty}a_n=${texQ(q.A)}`)} and ${M(R`\sum_{n=1}^{\infty}b_n=${texQ(q.B)}`)}. Find ${M(R`\displaystyle\sum_{n=1}^{\infty}\left(${cb(q.p,'a_n')}${q.q<0?'-':'+'}${cb(Math.abs(q.q),'b_n')}\right)`)}.</p>`;
+    else if(q.kind==='solve')el.innerHTML=`<p class="prompt">You know ${M(R`\sum_{n=1}^{\infty}b_n=${texQ(q.B)}`)} and ${M(R`\displaystyle\sum_{n=1}^{\infty}\left(a_n${q.q<0?'-':'+'}${cb(Math.abs(q.q),'b_n')}\right)=${texQ(q.T)}`)}, and both of these converge. Find ${M(R`\sum_{n=1}^{\infty}a_n`)}.</p>`;
+    else el.innerHTML=`<p class="prompt">${M(R`\sum_{n=1}^{\infty}a_n=${texQ(q.A)}`)}, with ${M(R`a_1=${q.a1}`)} and ${M(R`a_2=${q.a2}`)}. Find ${M(R`\sum_{n=3}^{\infty}a_n`)}.</p>`;
+    numIn(el,'v',M(R`\text{value}=`));},
+  check(q,el){return G(el,'v',checkNumber(val(el,'v'),q.ans));},
+  solution(q){
+    if(q.kind==='comb')return `Both series converge, so linearity applies: ${M(R`${q.p}\cdot ${texQ(q.A)}${q.q<0?'-':'+'}${Math.abs(q.q)}\cdot ${texQ(q.B)}=${texQ(q.ans)}`)}.`;
+    if(q.kind==='solve')return `${M('\\sum a_n')} is the difference of two convergent series: ${M(R`\sum a_n=\sum\left(a_n${q.q<0?'-':'+'}${texCoef(Math.abs(q.q))}b_n\right)${q.q<0?'+':'-'}${texCoef(Math.abs(q.q))}\sum b_n=${texQ(q.T)}${q.q<0?'+':'-'}${Math.abs(q.q)}\cdot ${texQ(q.B)}=${texQ(q.ans)}`)}. Linearity is legal because both of those series converge.`;
+    return `Dropping the first two terms subtracts them from the sum: ${M(R`${texQ(q.A)}-(${q.a1})-(${q.a2})=${texQ(q.ans)}`)}. Convergence itself is unchanged.`;}
+};
+
+const BP_A=[
+  {tex:'n',s:'n',f:n=>n},{tex:'2n+1',s:'2n+1',f:n=>2*n+1},{tex:R`\sqrt{n}`,s:'sqrt(n)',f:n=>Math.sqrt(n)},
+  {tex:R`\frac{1}{n}`,s:'1/n',f:n=>1/n},{tex:'n^{2}',s:'n^2',f:n=>n*n},{tex:'5',s:'5',f:()=>5},{tex:R`\frac{1}{\sqrt{n}}`,s:'1/sqrt(n)',f:n=>1/Math.sqrt(n)}];
+Q.buildPair={name:'build a divergent pair with a convergent sum',
+  gen(){const A=pick(BP_A),d=pick([2,3,4,5]),C=pick([1,2,3]);
+    return {A,d,C,ctex:R`\frac{${C}}{${d}^{n}}`,cs:`${C}/${d}^n`,cf:n=>C/Math.pow(d,n),S:C/(d-1)};},
+  render(q,el){el.innerHTML=`<p class="prompt">The series ${M(R`\sum_{n=1}^{\infty}a_n`)} with ${M(R`a_n=${q.A.tex}`)} diverges. Find ${M('b_n')} so that ${M(R`a_n+b_n=${q.ctex}`)} for every ${M('n')}. (Then ${M(R`\sum b_n`)} diverges too, yet ${M(R`\sum(a_n+b_n)`)} converges.) Give ${M('b_n')} and the value of ${M(R`\sum_{n=1}^{\infty}(a_n+b_n)`)}.</p>`;
+    exprIn(el,'b',M('b_n='),'a formula in n');numIn(el,'S',M(R`\sum_{n=1}^{\infty}(a_n+b_n)=`));},
+  check(q,el){return Gall(el,[['b',checkExprInt(val(el,'b'),e=>q.cf(e.n)-q.A.f(e.n),['n'],{domain:{n:[1,12]}})],['S',checkNumber(val(el,'S'),q.S)]]);},
+  solution(q){return `Take ${M(R`b_n=${q.ctex}-\left(${q.A.tex}\right)`)}. Then ${M(R`\sum b_n`)} is a convergent series minus a divergent one, so it diverges, while ${M(R`a_n+b_n=${q.ctex}`)} is geometric with first term ${M(texQ(q.C/q.d))} and ratio ${M(texFrac(1,q.d,{tf:true}))}: the sum is ${M(R`\frac{${texQ(q.C/q.d)}}{1-${texFrac(1,q.d,{tf:true})}}=${texQ(q.S)}`)}.`;}
+};
+
+const SV_DIV=[
+  {tex:R`\frac{1}{n}`,lim:'inf',why:R`the harmonic series diverges`},
+  {tex:R`\frac{3}{n}`,lim:'inf',why:R`it is \(3\) times the harmonic series`},
+  {tex:R`\frac{1}{\sqrt{n}}`,lim:'inf',why:R`it is a \(p\)-series with \(p=\tfrac12\le 1\)`},
+  {tex:R`\frac{n}{n+1}`,lim:'inf',why:R`its terms go to \(1\), not \(0\)`},
+  {tex:R`(-1)^{n}`,lim:'DNE',why:R`its terms do not go to \(0\)`}];
+Q.splitVerdict={name:'split a sum and decide',
+  gen(){
+    const d=pick([2,3,4,5,6]),C=pick([1,2,3,4]);
+    const U={tex:R`\frac{${C}}{${d}^{n}}`,S:C/(d-1)};
+    const r=Math.random();let V;
+    if(r<0.3){let e=pick([2,3,4,5,7]);if(e===d)e=d+1;V={tex:R`\frac{1}{${e}^{n}}`,S:1/(e-1),conv:true};}
+    else if(r<0.4){V={tex:R`\frac{1}{n^{2}}`,S:Math.PI*Math.PI/6,conv:true,why:R`it is a \(p\)-series with \(p=2\), and its sum is \(\pi^2/6\)`};}
+    else V={...pick(SV_DIV),conv:false};
+    const total=V.conv?U.S+V.S:V.lim;
+    return {U,V,first:Math.random()<0.5,total};},
+  render(q,el){const body=q.first?R`${q.U.tex}+${q.V.tex}`:R`${q.V.tex}+${q.U.tex}`;
+    el.innerHTML=`<p class="prompt">Find ${M(R`\displaystyle\sum_{n=1}^{\infty}\left(${body}\right)`)}. First give the sum of its geometric piece ${M(R`\sum_{n=1}^{\infty}${q.U.tex}`)}, then the whole sum. Type <code>diverges</code> if the whole series diverges.</p>`;
+    numIn(el,'u',M(R`\sum_{n=1}^{\infty}${q.U.tex}=`));numIn(el,'T',M(R`\text{whole sum}=`));},
+  check(q,el){return Gall(el,[['u',checkNumber(val(el,'u'),q.U.S)],['T',checkLimit(val(el,'T'),q.total)]]);},
+  solution(q){const head=`The geometric piece is first term over ${M('1-r')}: ${M(R`\sum_{n=1}^{\infty}${q.U.tex}=${texQ(q.U.S)}`)}. `;
+    if(q.V.conv){const isPi=Math.abs(q.V.S-Math.PI*Math.PI/6)<1e-12;
+      return head+`The other piece ${M(R`\sum ${q.V.tex}`)} converges too${q.V.why?` (${q.V.why})`:`, to ${M(texQ(q.V.S))}`}, so linearity adds them: `+
+        (isPi?M(R`${texQ(q.U.S)}+\frac{\pi^2}{6}\approx ${fmtDec(q.total,4)}`):M(R`${texQ(q.U.S)}+${texQ(q.V.S)}=${texQ(q.total)}`))+`.`;}
+    return head+`But ${M(R`\sum ${q.V.tex}`)} diverges, since ${q.V.why}. Convergent plus divergent is divergent, so the whole series <b>diverges</b>.`;}
+};
+
+/* ---------- chapter 3: geometric exact values ---------- */
+const expTex=(v,s)=>s===0?v:(s>0?`${v}+${s}`:`${v}-${-s}`);
+Q.firstTermRatio={name:'first term, ratio, and sum',
+  gen(){
+    for(let it=0;it<200;it++){
+      const C=pick([1,2,3,5]),p=pick([2,3,4,5]),qq=pick([2,3,4,5,6,7,9]),m=pick([1,1,2]),s=pick([-1,0,1,2]),t=pick([-1,0,1]),n0=pick([0,1,2]);
+      const r=p/Math.pow(qq,m);if(!(r<1))continue;
+      const term=n=>C*Math.pow(p,n+s)/Math.pow(qq,m*n+t);
+      const first=term(n0),S=first/(1-r);
+      const rf=ratOf(first,100000),rS=ratOf(S,100000);if(!rf||!rS)continue;
+      if(Math.abs(partSum(term,n0,n0+400)-S)>1e-9*Math.max(1,S))continue;
+      const tex=R`\frac{${C===1?'':C+R`\cdot `}${p}^{${expTex('n',s)}}}{${qq}^{${expTex(m===1?'n':'2n',t)}}}`;
+      return {C,p,qq,m,s,t,n0,r,first,S,tex};}
+    return {C:1,p:2,qq:5,m:1,s:0,t:0,n0:1,r:0.4,first:0.4,S:2/3,tex:R`\frac{2^{n}}{5^{n}}`};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle ${sigTex(q.n0,q.tex)}`)}, give the first term ${M('a')}, the common ratio ${M('r')}, and the sum. Fractions are fine.</p>`;
+    numIn(el,'a',M(R`a=`));numIn(el,'r',M(R`r=`));numIn(el,'S',M(R`\text{sum}=`));},
+  check(q,el){return Gall(el,[['a',checkNumber(val(el,'a'),q.first)],['r',checkNumber(val(el,'r'),q.r)],['S',checkNumber(val(el,'S'),q.S)]]);},
+  hint(q,el){hintBox(el,`Pull the constants out of the exponents: ${M(R`${q.p}^{${expTex('n',q.s)}}=${q.p}^{${q.s}}\cdot ${q.p}^{n}`)} and ${M(R`${q.qq}^{${expTex(q.m===1?'n':'2n',q.t)}}=${q.qq}^{${q.t}}\cdot ${q.m===1?q.qq:q.qq*q.qq}^{n}`)}. Then plug ${M(R`n=${q.n0}`)} into the original term for ${M('a')}.`);},
+  solution(q){const base=q.m===1?q.qq:q.qq*q.qq;
+    return `Rewrite the term as ${M(R`${texQ(q.C*Math.pow(q.p,q.s)/Math.pow(q.qq,q.t))}\left(\frac{${q.p}}{${base}}\right)^{n}`)}, so ${M(R`r=${texQ(q.r)}`)}. The first term is the term at ${M(R`n=${q.n0}`)}: ${M(R`a=${texQ(q.first)}`)}. Since ${M('|r|<1')}, the sum is ${M(R`\frac{a}{1-r}=\frac{${texQ(q.first)}}{1-${texQ(q.r)}}=${texQ(q.S)}`)}.`;}
+};
+
+/* the three-piece family (A + B c^-n + C d^n) / base^(k n), shared by the drills, the walkthrough, and the explorer */
+function geoPieces(o){
+  /* o: {A,B,c,C,d,V (base^k value),baseTex,k,n0} ; returns pieces with r, first, sum, tex */
+  const P=[];
+  const den=o.k===1?o.baseTex:`${o.baseTex}^{2}`;
+  if(o.A)P.push({key:'A',coef:o.A,r:1/o.V,rTex:R`\frac{1}{${den}}`,num:R`${o.A}`});
+  if(o.B)P.push({key:'B',coef:o.B,r:1/(o.c*o.V),rTex:R`\frac{1}{${o.c}${/^\d/.test(o.baseTex)?R`\cdot `:''}${den}}`,num:R`${o.B===1?'':o.B+R`\cdot `}${o.c}^{-n}`});
+  if(o.C)P.push({key:'C',coef:o.C,r:o.d/o.V,rTex:R`\frac{${o.d}}{${den}}`,num:R`${o.C===1?'':o.C+R`\cdot `}${o.d}^{n}`});
+  P.forEach(p=>{p.conv=Math.abs(p.r)<1-1e-12;p.first=p.coef*Math.pow(p.r,o.n0);p.sum=p.conv?p.first/(1-p.r):Infinity;});
+  const conv=P.every(p=>p.conv);
+  const total=conv?P.reduce((s,p)=>s+p.sum,0):Infinity;
+  const denTex=o.k===1?R`${o.baseTex}^{n}`:R`${o.baseTex}^{2n}`;
+  const termTex=R`\frac{${P.map(p=>p.num).join('+')}}{${denTex}}`;
+  return {P,conv,total,termTex,denTex};
+}
+const pieceTex=(p)=>R`${p.coef===1?'':p.coef}\left(${p.rTex}\right)^{n}`;
+Q.geoExact={name:'exact value of a geometric combination',
+  gen(){
+    for(let it=0;it<300;it++){
+      const D=pick([4,5,6,8,9,10,12,16]);
+      const A=pick([0,1,2,3]),B=pick([0,1,2]),C=pick([0,1,2,3]);
+      if([A,B,C].filter(Boolean).length<2)continue;
+      const c=pick([2,3]);
+      const diverge=Math.random()<0.25;
+      const d=diverge?pick([D,D+1,D+3]):rint(2,D-1);
+      const n0=pick([0,1,1,2]);
+      const sq={4:2,9:3,16:4}[D];
+      const useSq=sq&&Math.random()<0.5;
+      const G2=geoPieces({A,B,c,C,d,V:D,baseTex:useSq?String(sq):String(D),k:useSq?2:1,n0});
+      if(G2.conv){
+        const t=n=>(A+B*Math.pow(c,-n)+C*Math.pow(d,n))/Math.pow(D,n);
+        if(Math.abs(partSum(t,n0,n0+600)-G2.total)>1e-9*Math.max(1,G2.total))continue;
+        if(!ratOf(G2.total,1000000))continue;
+      }else if(!C)continue;
+      return {...G2,n0,D,ans:G2.conv?G2.total:'inf',ansStr:G2.conv?strQ(G2.total):'diverges'};}
+    const G2=geoPieces({A:1,B:0,c:2,C:1,d:2,V:5,baseTex:'5',k:1,n0:1});return {...G2,n0:1,D:5,ans:G2.total,ansStr:strQ(G2.total)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the exact value of ${M(R`\displaystyle ${sigTex(q.n0,q.termTex)}`)}. A fraction is fine. Type <code>diverges</code> if it diverges.</p>`;
+    numIn(el,'S',M(R`\text{sum}=`));},
+  check(q,el){return G(el,'S',checkLimit(val(el,'S'),q.ans));},
+  hint(q,el){hintBox(el,`Split it: ${M(R`${q.P.map(pieceTex).join('+')}`)}. Check each ratio, then plug ${M(R`n=${q.n0}`)} into each piece for its first term.`);},
+  solution(q){
+    const parts=q.P.map(p=>`${M(pieceTex(p))} has ${M(R`r=${texQ(p.r)}`)}`).join(', ');
+    if(!q.conv){const bad=q.P.find(p=>!p.conv);
+      return `Split into ${parts}. The piece ${M(pieceTex(bad))} has ${M(R`r=${texQ(bad.r)}\ge 1`)}, so it diverges, while the others converge. Convergent plus divergent is divergent: the series <b>diverges</b>.`;}
+    return `Split into ${parts}. Every ratio is under ${M('1')}. Each piece sums to first term over ${M('1-r')}: `+q.P.map(p=>M(R`\frac{${texQ(p.first)}}{1-${texQ(p.r)}}=${texQ(p.sum)}`)).join(', ')+`. Total: ${M(texQ(q.total))}.`;}
+};
+const TRANS_BASES=[
+  {baseTex:'e',V:Math.E,k:1,ds:[2,3]},
+  {baseTex:'e',V:Math.E*Math.E,k:2,ds:[2,3,4,5,6,7,8]},
+  {baseTex:R`\pi`,V:Math.PI,k:1,ds:[2,3,4]}];
+Q.geoExactTrans={name:'exact value with e or pi in the base',
+  gen(){
+    for(let it=0;it<200;it++){
+      const B0=pick(TRANS_BASES);
+      const A=pick([0,1,2]),B=pick([0,1,2]),C=pick([0,1,2]);
+      if([A,B,C].filter(Boolean).length<2)continue;
+      const c=pick([2,3]),d=pick(B0.ds),n0=pick([0,1,1]);
+      const G2=geoPieces({A,B,c,C,d,V:B0.V,baseTex:B0.baseTex,k:B0.k,n0});
+      if(!G2.conv&&!C)continue;
+      if(G2.conv){const t=n=>(A+B*Math.pow(c,-n)+C*Math.pow(d,n))/Math.pow(B0.V,n);
+        if(Math.abs(partSum(t,n0,n0+3000)-G2.total)>1e-8*Math.max(1,G2.total))continue;}
+      return {...G2,n0,ans:G2.conv?G2.total:'inf',ansStr:G2.conv?String(G2.total):'diverges'};}
+    const G2=geoPieces({A:1,B:0,c:2,C:1,d:2,V:Math.E*Math.E,baseTex:'e',k:2,n0:1});return {...G2,n0:1,ans:G2.total,ansStr:String(G2.total)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the exact value of ${M(R`\displaystyle ${sigTex(q.n0,q.termTex)}`)}. You may leave ${M('e')} or ${M(R`\pi`)} in the answer. Type <code>diverges</code> if it diverges.</p>`;
+    numIn(el,'S',M(R`\text{sum}=`));},
+  check(q,el){return G(el,'S',checkLimit(val(el,'S'),q.ans));},
+  hint(q,el){hintBox(el,`Split it: ${M(R`${q.P.map(pieceTex).join('+')}`)}. Compare each ratio with ${M('1')} numerically (${M(R`e\approx 2.718`)}, ${M(R`e^2\approx 7.389`)}, ${M(R`\pi\approx 3.14`)}).`);},
+  solution(q){
+    const parts=q.P.map(p=>`${M(pieceTex(p))} (${M(R`r\approx ${fmtDec(p.r,3)}`)})`).join(', ');
+    if(!q.conv){const bad=q.P.find(p=>!p.conv);
+      return `Split into ${parts}. The piece ${M(pieceTex(bad))} has ${M(R`r=${bad.rTex}\approx ${fmtDec(bad.r,3)}\ge 1`)}, so it diverges while the others converge: the whole series <b>diverges</b>.`;}
+    return `Split into ${parts}. All ratios are under ${M('1')}, so each piece is ${M(R`\frac{\text{first term}}{1-r}`)}: `+
+      q.P.map(p=>M(R`\frac{${p.coef===1?'':p.coef}\left(${p.rTex}\right)^{${q.n0}}}{1-${p.rTex}}`)).join(' + ')+` ${M(R`\approx ${fmtDec(q.total,6)}`)}.`;}
+};
+
+/* ---------- chapter 4: telescoping ---------- */
+/* family c/((n+a)(n+a+k)), never the homework's 1/(n(n+2)) shape */
+function teleFam(){
+  for(let it=0;it<100;it++){
+    const k=pick([1,2,3,4]),a=pick([0,1,1,2,3]);
+    if(a===0&&k===2)continue;
+    const c=pick([1,1,k,2*k,6]);
+    const coef=c/k;
+    const front=harmFrom(a,k);
+    const closed=N=>coef*(front-partSum(j=>1/(N+a+j),1,k));
+    const t=n=>c/((n+a)*(n+a+k));
+    let ok=true;for(let N=1;N<=12;N++){if(Math.abs(partSum(t,1,N)-closed(N))>1e-12){ok=false;break;}}
+    if(!ok)continue;
+    return {k,a,c,coef,front,closed,sum:coef*front,
+      tex:R`\frac{${c}}{(${nPlus(a)})(${nPlus(a+k)})}`.replace('(n)','n'),
+      sStr:`${strQ(coef)}*(${strQ(front)}-(${Array.from({length:k},(_,j)=>`1/(n+${a+j+1})`).join('+')}))`};}
+  return null;
+}
+Q.pfGap={name:'partial fractions with a gap',
+  gen(){
+    for(let it=0;it<100;it++){const k=pick([1,2,3,4,5]),a=pick([0,1,2,3,-1]);if(a===0&&k===2)continue;const c=pick([1,2,3,4,6,12]);
+      if(a<0&&a+k<=0)continue;
+      return {k,a,b:a+k,c,A:c/k,B:-c/k,tex:R`\frac{${c}}{(${nPlus(a)})(${nPlus(a+k)})}`.replace('(n)','n')};}
+    return {k:3,a:1,b:4,c:1,A:1/3,B:-1/3,tex:R`\frac{1}{(n+1)(n+4)}`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Write ${M(R`\displaystyle ${q.tex}=\frac{A}{${nPlus(q.a)}}+\frac{B}{${nPlus(q.b)}}`)}. Give ${M('A')} and ${M('B')}.</p>`;
+    numIn(el,'A',M('A='));numIn(el,'B',M('B='));},
+  check(q,el){return Gall(el,[['A',checkNumber(val(el,'A'),q.A)],['B',checkNumber(val(el,'B'),q.B)]]);},
+  hint(q,el){hintBox(el,`Cover-up: hide ${M(`(${nPlus(q.a)})`)} and set ${M(`n=${-q.a}`)} in what is left to get ${M('A')}. Then hide ${M(`(${nPlus(q.b)})`)} and set ${M(`n=${-q.b}`)}.`);},
+  solution(q){return `Cover-up: ${M(R`A=\frac{${q.c}}{${-q.a}+${q.b}}=${texQ(q.A)}`)} and ${M(R`B=\frac{${q.c}}{${-q.b}${q.a<0?'-':'+'}${Math.abs(q.a)}}=${texQ(q.B)}`)}. So the term is ${M(R`${texQ(q.A)}\left[\frac{1}{${nPlus(q.a)}}-\frac{1}{${nPlus(q.b)}}\right]`)}, a gap of ${M(String(q.k))}: the constant is ${M(R`\frac{${q.c}}{b-a}`)}.`;}
+};
+Q.teleClosed={name:'telescoping closed form and sum',
+  gen(){return teleFam()||{k:1,a:0,c:1,coef:1,front:1,closed:N=>1-1/(N+1),sum:1,tex:R`\frac{1}{n(n+1)}`,sStr:'1-1/(n+1)'};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle ${sigTex(1,q.tex)}`)}, find the partial sum ${M(R`s_n=\sum_{j=1}^{n}a_j`)} in closed form (a formula in ${M('n')}, no sum sign), then the sum of the series.</p>`;
+    exprIn(el,'s',M('s_n='),'a formula in n');numIn(el,'S',M(R`\text{sum}=`));},
+  check(q,el){return Gall(el,[['s',checkExprInt(val(el,'s'),e=>q.closed(e.n),['n'],{domain:{n:[1,10]}})],['S',checkNumber(val(el,'S'),q.sum)]]);},
+  hint(q,el){hintBox(el,`Partial fractions: ${M(R`${q.tex}=${texQ(q.coef)}\left[\frac{1}{${nPlus(q.a)}}-\frac{1}{${nPlus(q.a+q.k)}}\right]`)}. The gap is ${M(String(q.k))}, so ${M(String(q.k))} piece${q.k>1?'s':''} survive${q.k>1?'':'s'} at each end.`);},
+  solution(q){return `Split: ${M(R`${q.tex}=${texQ(q.coef)}\left[\frac{1}{${nPlus(q.a)}}-\frac{1}{${nPlus(q.a+q.k)}}\right]`)}. With a gap of ${M(String(q.k))}, the first ${q.k} positive pieces and the last ${q.k} negative pieces survive: ${M(R`s_n=${texQ(q.coef)}\left[\left(${unitSumTex(q.a,q.k)}\right)-\left(${unitSumTex(q.a,q.k,'n')}\right)\right]`)}. As ${M(R`n\to\infty`)} the back pieces go to ${M('0')}, so the sum is ${M(R`${texQ(q.coef)}\cdot ${texQ(q.front)}=${texQ(q.sum)}`)}.`;}
+};
+Q.teleSpecific={name:'one specific partial sum',
+  gen(){const F=teleFam()||teleFam();const N=rint(Math.max(4,F.k+2),12);return {...F,N,sN:F.closed(N)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`a_n=${q.tex}`)}. Find the exact value of ${M(R`s_{${q.N}}=\sum_{n=1}^{${q.N}}a_n`)} using the survivors, not by adding ${q.N} fractions. A fraction (or a sum of fractions) is fine.</p>`;
+    numIn(el,'v',M(R`s_{${q.N}}=`));},
+  check(q,el){return G(el,'v',checkNumber(val(el,'v'),q.sN));},
+  hint(q,el){hintBox(el,`The term is ${M(R`${texQ(q.coef)}\left[\frac{1}{${nPlus(q.a)}}-\frac{1}{${nPlus(q.a+q.k)}}\right]`)}. Front survivors: ${M(unitSumTex(q.a,q.k))}. Back survivors: the last ${q.k} negative pieces, ${M(unitSumTex(q.a+q.N,q.k))}.`);},
+  solution(q){return `Front survivors ${M(unitSumTex(q.a,q.k))}, back survivors ${M(unitSumTex(q.a+q.N,q.k))}. So ${M(R`s_{${q.N}}=${texQ(q.coef)}\left[${texQ(q.front)}-${texQ(harmFrom(q.a+q.N,q.k))}\right]=${texQ(q.sN)}`)}.`;}
+};
+
+/* ---------- chapter 5: asymptotics ---------- */
+const AS_FAMS=[
+  ()=>{const a=rint(1,6),b=rint(-5,9),c=rint(1,9),d=rint(1,4),e=rint(1,9);if(b===0)return null;
+    return {tex:R`\frac{${a}n^{2}${b<0?'-':'+'}${Math.abs(b)}n+${c}}{${d===1?'':d}n+${e}}`,f:n=>(a*n*n+b*n+c)/(d*n+e),simp:R`${texQ(a/d)}\,n`,ans:`(${strQ(a/d)})*n`,Ns:[1e6,1e7]};},
+  ()=>{const a=rint(2,5),b=rint(1,9);return {tex:R`\sqrt{${a*a}n^{2}+${b}n}`,f:n=>Math.sqrt(a*a*n*n+b*n),simp:R`${a}n`,ans:`${a}n`,Ns:[1e6,1e7]};},
+  ()=>{let p=rint(1,8),q=rint(1,8);if((p===1&&q===3)||(p===3&&q===1))q=5;return {tex:R`\sqrt{n+${p}}\,\sqrt{n+${q}}`,f:n=>Math.sqrt((n+p)*(n+q)),simp:'n',ans:'n',Ns:[1e6,1e7]};},
+  ()=>{const a=rint(1,7),c=rint(1,4),b=rint(1,9),d=rint(1,9);return {tex:R`\frac{${a}n^{3}+${b}}{${c===1?'':c}n^{5}+${d}n}`,f:n=>(a*n**3+b)/(c*n**5+d*n),simp:R`\frac{${texQ(a/c,false)}}{n^{2}}`,ans:`(${strQ(a/c)})/n^2`,Ns:[1e5,1e6]};},
+  ()=>{const a=pick([1,4,9]),b=rint(1,9),c=rint(1,9);const ra=Math.sqrt(a);return {tex:R`\frac{\sqrt{${a===1?'':a}n^{3}+${b}}}{n+${c}}`,f:n=>Math.sqrt(a*n**3+b)/(n+c),simp:R`${ra===1?'':ra}\sqrt{n}`,ans:`${ra===1?'':ra}sqrt(n)`,Ns:[1e6,1e7]};},
+  ()=>{const [p,qq]=pick([[2,3],[3,4],[2,5],[3,5],[4,5]]),k=rint(2,5);return {tex:R`\frac{${p}^{n}+n^{${k}}}{${qq}^{n}}`,f:n=>(Math.pow(p,n)+Math.pow(n,k))/Math.pow(qq,n),simp:R`\left(\frac{${p}}{${qq}}\right)^{n}`,ans:`(${p}/${qq})^n`,Ns:[300,400]};},
+  ()=>{const b=pick([2,3,5]),k=rint(2,6);return {tex:R`n^{${k}}+${b}^{n}`,f:n=>Math.pow(n,k)+Math.pow(b,n),simp:R`${b}^{n}`,ans:`${b}^n`,Ns:[200,300]};},
+  ()=>{const k=rint(2,5),c=rint(1,9);return {tex:R`\ln\!\left(n^{${k}}+${c}n\right)`,f:n=>Math.log(Math.pow(n,k)+c*n),simp:R`${k}\ln n`,ans:`${k}ln(n)`,Ns:[1e6,1e8]};},
+];
+function asymCheck(user,f,Ns){
+  const s=cleanAns(user);let g;try{g=Expr.compile(s);}catch(e){return {ok:false,err:e.message};}
+  for(const n of Ns){const a=g({n}),b=f(n);if(!Number.isFinite(a)||!Number.isFinite(b)||b===0)return {ok:false};if(Math.abs(a/b-1)>2e-3)return {ok:false};}
+  return {ok:true};
+}
+Q.simplestAsym={name:'simplest asymptotic form',
+  gen(){for(let it=0;it<50;it++){const F=pick(AS_FAMS)();if(F)return F;}return AS_FAMS[2]();},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the simplest ${M('b_n')} with ${M(R`\displaystyle ${q.tex}\sim b_n`)}.</p>`;
+    exprIn(el,'b',M('b_n='),'a formula in n');},
+  check(q,el){return G(el,'b',asymCheck(val(el,'b'),q.f,q.Ns));},
+  solution(q){return `Keep the dominant piece of every factor: ${M(R`${q.tex}\sim ${q.simp}`)}. Check: the ratio of the two goes to ${M('1')}, because every piece you dropped is negligible next to the piece you kept.`;}
+};
+const ISAS=[
+  {a:R`n+\sqrt{n}`,b:'n',L:1,why:R`\frac{n+\sqrt n}{n}=1+\frac{1}{\sqrt n}\to 1`},
+  {a:R`2n+1`,b:'n',L:2,why:R`\frac{2n+1}{n}\to 2`},
+  {a:R`\sqrt{n^{2}+5n}`,b:'n',L:1,why:R`\frac{\sqrt{n^2+5n}}{n}=\sqrt{1+\frac5n}\to 1`},
+  {a:R`e^{n+1}`,b:R`e^{n}`,L:Math.E,Ls:'e',why:R`\frac{e^{n+1}}{e^{n}}=e`},
+  {a:R`(n+1)^{2}`,b:R`n^{2}`,L:1,why:R`\left(\frac{n+1}{n}\right)^{2}\to 1`},
+  {a:R`\ln(n^{3})`,b:R`\ln n`,L:3,why:R`\ln(n^3)=3\ln n`},
+  {a:R`\ln(5n)`,b:R`\ln n`,L:1,why:R`\frac{\ln 5+\ln n}{\ln n}=1+\frac{\ln 5}{\ln n}\to 1`},
+  {a:R`2^{n+3}`,b:R`2^{n}`,L:8,why:R`\frac{2^{n+3}}{2^{n}}=2^{3}`},
+  {a:R`n^{2}+\sin n`,b:R`n^{2}`,L:1,why:R`\frac{n^2+\sin n}{n^2}=1+\frac{\sin n}{n^2}\to 1`},
+  {a:R`\sqrt{n+4}-\sqrt{n}`,b:R`\frac{1}{\sqrt{n}}`,L:2,why:R`\sqrt{n+4}-\sqrt n=\frac{4}{\sqrt{n+4}+\sqrt n}\sim\frac{4}{2\sqrt n}=\frac{2}{\sqrt n}`},
+  {a:R`\sqrt{n+4}-\sqrt{n}`,b:R`\frac{2}{\sqrt{n}}`,L:1,why:R`\sqrt{n+4}-\sqrt n=\frac{4}{\sqrt{n+4}+\sqrt n}\sim\frac{2}{\sqrt n}`},
+  {a:R`\frac{n^{2}}{n+1}`,b:R`n-1`,L:1,why:R`\frac{n^2}{(n+1)(n-1)}=\frac{n^2}{n^2-1}\to 1`},
+  {a:R`3^{n}+2^{n}`,b:R`3^{n}`,L:1,why:R`1+\left(\frac23\right)^n\to 1`},
+];
+Q.isAsym={name:'are they asymptotic?',
+  gen(){return {...pick(ISAS)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`a_n=${q.a}`)} and ${M(R`b_n=${q.b}`)}. Find ${M(R`\displaystyle\lim_{n\to\infty}\frac{a_n}{b_n}`)}, then decide whether ${M(R`a_n\sim b_n`)}.</p>`;
+    numIn(el,'L',M(R`\lim\frac{a_n}{b_n}=`));
+    q.get=choiceButtons(el,[{label:'asymptotic',value:0},{label:'not asymptotic',value:1}]);},
+  check(q,el){const r=G(el,'L',checkLimit(val(el,'L'),q.L));const v=q.get();
+    if(v===null)return {ok:false,msg:'Pick a verdict as well.'};if(!r.ok)return r;
+    const want=Math.abs(q.L-1)<1e-12?0:1;
+    if(v!==want)return {ok:false,msg:want===0?'The ratio tends to exactly 1, so they are asymptotic.':'Asymptotic means the ratio tends to exactly 1. Any other limit means not asymptotic.'};
+    return {ok:true};},
+  solution(q){const yes=Math.abs(q.L-1)<1e-12;return `${M(q.why)}, so the limit is ${M(q.Ls||texQ(q.L))}. ${yes?'That is exactly 1: <b>asymptotic</b>.':'That is not 1: <b>not asymptotic</b>, even though both have the same rough growth.'}`;}
+};
+/* conjugate-trick limits; each family stores a stable form for verification */
+const CJ_FAMS=[
+  ()=>{const a=rnz(-9,9),b=rint(-5,9);
+    return {kind:'shift',a,b,tex:R`\sqrt{n^{2}${a<0?'-':'+'}${Math.abs(a)===1?'':Math.abs(a)}n${b===0?'':(b<0?'-':'+')+Math.abs(b)}}-n`,
+      Atex:R`\sqrt{n^{2}${a<0?'-':'+'}${Math.abs(a)===1?'':Math.abs(a)}n${b===0?'':(b<0?'-':'+')+Math.abs(b)}}`,Btex:'n',
+      numTex:R`${a===1?'':a===-1?'-':a}n${b===0?'':(b<0?'-':'+')+Math.abs(b)}`,lead:a,denLead:2,L:a/2,
+      stable:n=>(a*n+b)/(Math.sqrt(n*n+a*n+b)+n)};},
+  ()=>{let p=rint(0,8),q=rint(0,8);if((p===1&&q===3)||(p===3&&q===1))q=6;if(p===q&&p===0)p=2;
+    return {kind:'prod',p,q,tex:R`n-\sqrt{(${nPlus(p)})(${nPlus(q)})}`.replace('(n)','n'),
+      Atex:'n',Btex:R`\sqrt{(${nPlus(p)})(${nPlus(q)})}`.replace('(n)','n'),
+      numTex:R`-${p+q===1?'':p+q}n${p*q===0?'':'-'+p*q}`,lead:-(p+q),denLead:2,L:-(p+q)/2,
+      stable:n=>(-(p+q)*n-p*q)/(n+Math.sqrt((n+p)*(n+q)))};},
+  ()=>{let a=rint(1,9),b=rint(1,9);if(a===b)b=a+1;
+    return {kind:'two',a,b,tex:R`\sqrt{n^{2}+${a===1?'':a}n}-\sqrt{n^{2}+${b===1?'':b}n}`,
+      Atex:R`\sqrt{n^{2}+${a===1?'':a}n}`,Btex:R`\sqrt{n^{2}+${b===1?'':b}n}`,
+      numTex:R`${a-b===1?'':a-b===-1?'-':a-b}n`,lead:a-b,denLead:2,L:(a-b)/2,
+      stable:n=>((a-b)*n)/(Math.sqrt(n*n+a*n)+Math.sqrt(n*n+b*n))};},
+  ()=>{const c=pick([2,3]),a=rnz(-9,9);
+    return {kind:'scaled',c,a,tex:R`\sqrt{${c*c}n^{2}${a<0?'-':'+'}${Math.abs(a)===1?'':Math.abs(a)}n}-${c}n`,
+      Atex:R`\sqrt{${c*c}n^{2}${a<0?'-':'+'}${Math.abs(a)===1?'':Math.abs(a)}n}`,Btex:R`${c}n`,
+      numTex:R`${a===1?'':a===-1?'-':a}n`,lead:a,denLead:2*c,L:a/(2*c),
+      stable:n=>(a*n)/(Math.sqrt(c*c*n*n+a*n)+c*n)};},
+];
+Q.conjLimit={name:'conjugate-trick limit',
+  gen(){for(let it=0;it<50;it++){const F=pick(CJ_FAMS)();if(Math.abs(F.stable(1e7)-F.L)<1e-4*Math.max(1,Math.abs(F.L)))return F;}return CJ_FAMS[0]();},
+  render(q,el){el.innerHTML=`<p class="prompt">Find ${M(R`\displaystyle\lim_{n\to\infty}\left(${q.tex}\right)`)}. A fraction is fine.</p>`;
+    numIn(el,'L',M(R`\text{limit}=`));},
+  check(q,el){return G(el,'L',checkNumber(val(el,'L'),q.L));},
+  hint(q,el){hintBox(el,`Both pieces are asymptotic to the same thing, so the naive answer ${M('0')} is wrong. Multiply and divide by ${M(R`${q.Atex}+${q.Btex}`)}.`);},
+  solution(q){return `Multiply by the conjugate: ${M(R`\frac{(${q.Atex})^2-(${q.Btex})^2}{${q.Atex}+${q.Btex}}=\frac{${q.numTex}}{${q.Atex}+${q.Btex}}`)}. The ${M('n^2')} terms cancelled. The denominator is a sum with no cancellation, so it is asymptotic to ${M(R`${q.denLead}n`)}. Dividing, the limit is ${M(R`\frac{${q.lead}}{${q.denLead}}=${texQ(q.L)}`)}.`;}
+};
+
+/* ---------- chapter 6: integral test fine print ---------- */
+const TS_FAMS=[
+  ()=>{const d=pick([2,3,4,5]);return {tex:R`\frac{\cos(n\pi)}{${d}^{n}}`,simp:R`\left(-\frac{1}{${d}}\right)^{n}`,s:`(-1)^n/${d}^n`,f:n=>Math.pow(-1/d,n),sum:-1/(d+1)};},
+  ()=>{const d=pick([2,3,4,5]),c=pick([1,2,3]);return {tex:R`n\sin(n\pi)+\frac{${c}}{${d}^{n}}`,simp:R`\frac{${c}}{${d}^{n}}`,s:`${c}/${d}^n`,f:n=>c/Math.pow(d,n),sum:c/(d-1)};},
+  ()=>{const d=pick([2,3,4,5]);return {tex:R`\frac{\cos^{2}(n\pi)}{${d}^{n}}`,simp:R`\frac{1}{${d}^{n}}`,s:`1/${d}^n`,f:n=>1/Math.pow(d,n),sum:1/(d-1)};},
+  ()=>({tex:R`\frac{\cos(2n\pi)}{n(n+1)}`,simp:R`\frac{1}{n(n+1)}`,s:'1/(n(n+1))',f:n=>1/(n*(n+1)),sum:1}),
+  ()=>({tex:R`n\cos(n\pi)`,simp:R`(-1)^{n}n`,s:'(-1)^n n',f:n=>Math.pow(-1,n)*n,sum:'DNE'}),
+  ()=>({tex:R`1+\sin(n\pi)`,simp:'1',s:'1',f:()=>1,sum:'inf'}),
+  ()=>({tex:R`\frac{\sin^{2}\!\left(\frac{n\pi}{2}\right)}{2^{n}}`,simp:R`\frac{1-(-1)^{n}}{2}\cdot\frac{1}{2^{n}}`,s:'(1-(-1)^n)/2/2^n',f:n=>(1-Math.pow(-1,n))/2/Math.pow(2,n),sum:2/3}),
+  ()=>{const d=pick([2,3,4]);return {tex:R`\frac{\sin\!\left(n\pi+\frac{\pi}{2}\right)}{${d}^{n}}`,simp:R`\left(-\frac{1}{${d}}\right)^{n}`,s:`(-1)^n/${d}^n`,f:n=>Math.pow(-1/d,n),sum:-1/(d+1)};},
+];
+Q.trigSimplify={name:'simplify trig at integers, then sum',
+  gen(){return pick(TS_FAMS)();},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle ${sigTex(1,q.tex)}`)}, rewrite ${M('a_n')} with no trig functions (a formula in ${M('n')}), then find the sum. Type <code>diverges</code> if it diverges.</p>`;
+    exprIn(el,'a',M('a_n='),'no trig, a formula in n');numIn(el,'S',M(R`\text{sum}=`));},
+  check(q,el){return Gall(el,[['a',checkExprInt(val(el,'a'),e=>q.f(e.n),['n'],{domain:{n:[1,12]}})],['S',checkLimit(val(el,'S'),q.sum)]]);},
+  hint(q,el){hintBox(el,`At integers: ${M(R`\sin(n\pi)=0`)}, ${M(R`\cos(n\pi)=(-1)^n`)}, ${M(R`\cos(2n\pi)=1`)}, and ${M(R`\sin\frac{n\pi}{2}`)} cycles ${M('1,0,-1,0')}.`);},
+  solution(q){const S=q.sum==='inf'?'diverges':q.sum==='DNE'?'diverges':texQ(q.sum);
+    return `At integer ${M('n')}, ${M(R`${q.tex}=${q.simp}`)}. `+(typeof q.sum==='number'
+      ?`That is a series you can sum exactly, and its sum is ${M(S)}.`
+      :`Its terms do not go to ${M('0')}, so the series <b>diverges</b> by the test for divergence.`);}
+};
+Q.periodicIntegral={name:'integral of a squared trig function',
+  gen(){const fn=pick(['sin','cos']),k=pick([2,3,4]),b=rint(3,9);return {fn,k,b,v:(b-1)/2};},
+  render(q,el){const f=R`${q.fn==='sin'?R`\sin`:R`\cos`}^{2}(${q.k}\pi x)`;
+    el.innerHTML=`<p class="prompt">Compute ${M(R`\displaystyle\int_{1}^{${q.b}}${f}\,dx`)} exactly, then ${M(R`\displaystyle\int_{1}^{\infty}${f}\,dx`)} (type <code>inf</code> if it diverges).</p>`;
+    numIn(el,'I',M(R`\int_{1}^{${q.b}}=`));numIn(el,'J',M(R`\int_{1}^{\infty}=`));},
+  check(q,el){return Gall(el,[['I',checkNumber(val(el,'I'),q.v)],['J',checkLimit(val(el,'J'),'inf')]]);},
+  hint(q,el){hintBox(el,`Half-angle: ${M(q.fn==='sin'?R`\sin^2\theta=\frac{1-\cos 2\theta}{2}`:R`\cos^2\theta=\frac{1+\cos 2\theta}{2}`)}. What is ${M(R`\sin(${2*q.k}\pi x)`)} at integers?`);},
+  solution(q){return `${M(R`\int ${q.fn==='sin'?R`\sin`:R`\cos`}^2(${q.k}\pi x)\,dx=\frac{x}{2}${q.fn==='sin'?'-':'+'}\frac{\sin(${2*q.k}\pi x)}{${4*q.k}\pi}`)}, and the sine part is ${M('0')} at every integer. So ${M(R`\int_1^{${q.b}}=\frac{${q.b}-1}{2}=${texQ(q.v)}`)}. Over ${M(R`[1,b]`)} the integral is ${M(R`\frac{b-1}{2}`)}, which grows without bound: the improper integral <b>diverges</b>.`;}
+};
+const DF_FAMS=[
+  ()=>{const c=pick([2,3,5,6,7,10]);return {tex:R`\frac{x}{x^{2}+${c}}`,x0:Math.sqrt(c),x0Tex:R`\sqrt{${c}}`,x0s:`sqrt(${c})`,d:R`f'(x)=\frac{${c}-x^{2}}{(x^{2}+${c})^{2}}`};},
+  ()=>{const p=pick([1,2,3]);return {tex:p===1?R`\frac{\ln x}{x}`:R`\frac{\ln x}{x^{${p}}}`,x0:Math.exp(1/p),x0Tex:p===1?'e':R`e^{1/${p}}`,x0s:p===1?'e':`e^(1/${p})`,d:p===1?R`f'(x)=\frac{1-\ln x}{x^{2}}`:R`f'(x)=\frac{1-${p}\ln x}{x^{${p+1}}}`};},
+  ()=>{const c=pick([2,3,4,5]);return {tex:R`x\,e^{-x/${c}}`,x0:c,x0Tex:String(c),x0s:String(c),d:R`f'(x)=e^{-x/${c}}\left(1-\frac{x}{${c}}\right)`};},
+  ()=>{const [c,r]=pick([[4,2],[32,4],[108,6]]);return {tex:R`\frac{x^{2}}{x^{3}+${c}}`,x0:r,x0Tex:String(r),x0s:String(r),d:R`f'(x)=\frac{x(${2*c}-x^{3})}{(x^{3}+${c})^{2}}`};},
+  ()=>{const c=pick([2,3,5,7]);return {tex:R`\frac{x}{(x+${c})^{2}}`,x0:c,x0Tex:String(c),x0s:String(c),d:R`f'(x)=\frac{${c}-x}{(x+${c})^{3}}`};},
+];
+Q.decreasingFrom={name:'where f starts decreasing',
+  gen(){const F=pick(DF_FAMS)();F.m=Math.ceil(F.x0-1e-9);return F;},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`f(x)=${q.tex}`)} (positive for ${M('x>1')}), find the exact point ${M('x_0')} after which ${M('f')} is decreasing, then the smallest integer ${M('m')} with ${M('f')} decreasing on ${M(R`[m,\infty)`)}, where the integral test can start.</p>`;
+    numIn(el,'x',M('x_0='));numIn(el,'m',M('m='));},
+  check(q,el){return Gall(el,[['x',checkNumber(val(el,'x'),q.x0)],['m',checkNumber(val(el,'m'),q.m)]]);},
+  hint(q,el){hintBox(el,`${M(q.d)}. Where does it change sign?`);},
+  solution(q){return `${M(q.d)}, which is negative exactly when ${M(R`x>${q.x0Tex}`)}${Number.isInteger(q.x0)?'':` ${M(R`\approx ${fmtDec(q.x0,3)}`)}`}. So ${M(R`x_0=${q.x0Tex}`)}, and the integral test can start at ${M(R`m=${q.m}`)}. The terms before that do not affect convergence.`;}
+};
+Q.integralVsSum={name:'the integral is not the sum',
+  gen(){const k=pick([1,3,4]);return {k,I:Math.log(1+k)/k,S:harmFrom(0,k)/k};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`f(x)=\frac{1}{x(x+${q.k})}`)}, which is positive, continuous, and decreasing on ${M(R`[1,\infty)`)}. Compute ${M(R`\displaystyle\int_1^{\infty}f(x)\,dx`)} exactly (${M(R`\ln`)} is fine), and the exact sum ${M(R`\displaystyle\sum_{n=1}^{\infty}\frac{1}{n(n+${q.k})}`)}.</p>`;
+    numIn(el,'I',M(R`\int_1^{\infty}f=`));numIn(el,'S',M(R`\sum_{n=1}^{\infty}a_n=`));},
+  check(q,el){return Gall(el,[['I',checkNumber(val(el,'I'),q.I)],['S',checkNumber(val(el,'S'),q.S)]]);},
+  hint(q,el){hintBox(el,`Both use ${M(R`\frac{1}{x(x+${q.k})}=\frac{1}{${q.k}}\left[\frac1x-\frac{1}{x+${q.k}}\right]`)}. The integral gives ${M(R`\frac{1}{${q.k}}\ln\frac{x}{x+${q.k}}`)}; the sum telescopes with ${q.k} survivor${q.k>1?'s':''} at the front.`);},
+  solution(q){return `Integral: ${M(R`\frac{1}{${q.k}}\Big[\ln\frac{x}{x+${q.k}}\Big]_1^{\infty}=\frac{1}{${q.k}}\left(0-\ln\frac{1}{${1+q.k}}\right)=\frac{\ln ${1+q.k}}{${q.k}}\approx ${fmtDec(q.I,4)}`)}. Sum: telescoping leaves ${M(R`\frac{1}{${q.k}}\left(${unitSumTex(0,q.k)}\right)=${texQ(q.S)}\approx ${fmtDec(q.S,4)}`)}. Both finite, as the integral test promises, and <b>not equal</b>: the test shares only finiteness.`;}
+};
+
+/* ============================================================ chapter 1 widget: daily dose */
+(function(){
+  let D=100,r=0.5;const DAYS=30;
+  const plot=new Plot2D('#doseFig',{xmin:-2.5,xmax:DAYS+1,ymin:0,ymax:300,grid:false,labels:true});
+  const sl=$('#doseSliders');
+  let touched=false;const touch=()=>{if(!touched){touched=true;markDone('why');}};
+  sliderRow(sl,{label:'dose D (mg)',min:20,max:200,step:10,value:D,fmt:v=>String(Math.round(v)),onInput:v=>{D=v;touch();draw();}});
+  sliderRow(sl,{label:'fraction left after a day, r',min:0,max:0.98,step:0.02,value:r,fmt:v=>fmtDec(v,2),onInput:v=>{r=v;touch();draw();}});
+  function draw(){
+    const ceil=D/(1-r);
+    const after=[];let amt=0;for(let n=1;n<=DAYS;n++){amt=amt*r+D;after.push(amt);}
+    plot.o.ymax=Math.max(ceil,after[after.length-1])*1.15;plot.begin();
+    plot.fn(()=>ceil,{color:'#16a34a',width:1.6,dash:[6,5]});
+    plot.text([DAYS+0.6,ceil],'D/(1 − r)',{color:'#16a34a',align:'right',dy:-8});
+    const pts=[[0,0]];after.forEach((a,i)=>{pts.push([i+1,i===0?0:after[i-1]*r]);pts.push([i+1,a]);});
+    const ctx=plot.ctx;ctx.strokeStyle='rgba(124,58,237,.35)';ctx.lineWidth=1.2;ctx.beginPath();
+    pts.forEach((p,i)=>{const [x,y]=plot.px(p[0],p[1]);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+    after.forEach((a,i)=>{plot.point([i+1,a],{color:'#2563eb',r:3.2});if(i<DAYS-1)plot.point([i+2,a*r],{color:'#d97706',r:2.6});});
+    const day90=Math.log(0.1)/Math.log(r||1e-9);
+    $('#doseOut').innerHTML=`after day 1: <b>${fmtDec(after[0],1)}</b> mg<br>after day 7: <b>${fmtDec(after[6],1)}</b> mg<br>after day 30: <b>${fmtDec(after[29],1)}</b> mg<br>ceiling D/(1 − r) = <b>${fmtDec(ceil,1)}</b> mg<br>`+
+      `<span class="muted">${r>0?`within 10% of the ceiling after about ${Math.max(1,Math.ceil(day90))} day${Math.ceil(day90)>1?'s':''}`:'r = 0: each dose clears completely, so the level never builds'}</span>`;
+  }
+  redrawOnShow('why',draw);draw();
+})();
+
+/* ============================================================ chapter 2 widget: three running totals */
+(function(){
+  const P=[
+    {n:'both converge',a:n=>Math.pow(0.5,n),b:n=>Math.pow(1/3,n),at:R`\left(\tfrac12\right)^{n}`,bt:R`\left(\tfrac13\right)^{n}`,note:'converges + converges: the sum converges to 1 + 1/2 = 3/2',C:1.5},
+    {n:'converges + diverges',a:n=>1/n,b:n=>Math.pow(0.5,n),at:R`\tfrac1n`,bt:R`\left(\tfrac12\right)^{n}`,note:'a convergent total cannot cancel a divergent one: the sum diverges',C:null},
+    {n:'diverges + diverges, sum converges',a:n=>1/Math.sqrt(n),b:n=>1/(n*n)-1/Math.sqrt(n),at:R`\tfrac{1}{\sqrt n}`,bt:R`\tfrac{1}{n^2}-\tfrac{1}{\sqrt n}`,note:'the two divergences cancel exactly, leaving Σ 1/n² = π²/6',C:Math.PI*Math.PI/6},
+    {n:'diverges + diverges, sum diverges',a:n=>1/n,b:n=>1/n,at:R`\tfrac1n`,bt:R`\tfrac1n`,note:'here nothing cancels: the sum is Σ 2/n, which diverges',C:null},
+    {n:'a big cancellation',a:n=>n,b:n=>Math.pow(2/3,n)-n,at:'n',bt:R`\left(\tfrac23\right)^{n}-n`,note:'both run off to ±∞, and the sum is geometric: 2',C:2},
+  ];
+  let cur=P[2],NN=30;
+  const plot=new Plot2D('#addFig',{xmin:0,xmax:32,ymin:-6,ymax:6,grid:false,labels:true});
+  const sl=$('#addSliders');
+  sliderRow(sl,{label:'N (terms)',min:5,max:80,step:1,value:NN,fmt:v=>String(Math.round(v)),onInput:v=>{NN=Math.round(v);draw();}});
+  P.forEach(p=>{const b=document.createElement('button');b.className='btn small';b.textContent=p.n;
+    b.onclick=()=>{cur=p;$$('#addPresets .btn').forEach(x=>x.classList.remove('picked'));b.classList.add('picked');draw();};$('#addPresets').appendChild(b);});
+  $$('#addPresets .btn')[2].classList.add('picked');
+  function draw(){
+    const A=[],B=[],C=[];let a=0,b=0;
+    for(let n=1;n<=NN;n++){a+=cur.a(n);b+=cur.b(n);A.push(a);B.push(b);C.push(a+b);}
+    const all=A.concat(B,C).filter(Number.isFinite);
+    let lo=Math.min(0,...all),hi=Math.max(0,...all);const pad=0.1*(hi-lo||1);
+    plot.o.ymin=lo-pad;plot.o.ymax=hi+pad;plot.o.xmax=NN+2;plot.begin();
+    if(cur.C!==null){plot.fn(()=>cur.C,{color:'#16a34a',width:1.3,dash:[6,5]});}
+    const rr=NN>50?2.2:3;
+    A.forEach((v,i)=>plot.point([i+1,v],{color:'#d97706',r:rr}));
+    B.forEach((v,i)=>plot.point([i+1,v],{color:'#2563eb',r:rr}));
+    C.forEach((v,i)=>plot.point([i+1,v],{color:'#16a34a',r:rr+0.4}));
+    $('#addOut').innerHTML=`${M(R`a_n=${cur.at}`)}, &nbsp; ${M(R`b_n=${cur.bt}`)}<br>A<sub>${NN}</sub> = ${fmtDec(A[NN-1],4)}<br>B<sub>${NN}</sub> = ${fmtDec(B[NN-1],4)}<br>C<sub>${NN}</sub> = A + B = <b>${fmtDec(C[NN-1],4)}</b><br><span class="muted">${cur.note}</span>`;
+    typeset($('#addOut'));
+  }
+  redrawOnShow('adding',draw);draw();
+
+  /* ---- walkthrough: the linearity proof template ---- */
+  const STATEMENTS=[
+    {claim:R`\text{If }\sum a_n\text{ diverges and }c\ne 0,\text{ then }\sum c\,a_n\text{ diverges.}`,
+     lines:[R`\text{Suppose instead that }\sum c\,a_n\text{ converges.}`,
+       R`a_n=\tfrac1c\,(c\,a_n)\quad\text{so}\quad\sum a_n=\sum \tfrac1c\,(c\,a_n)`,
+       R`\text{a constant multiple of a convergent series converges, so }\sum a_n\text{ converges}`,
+       R`\text{but }\sum a_n\text{ diverges: contradiction. So }\sum c\,a_n\text{ diverges.}\;\blacksquare`]},
+    {claim:R`\text{If }\sum (a_n+b_n)\text{ diverges and }\sum b_n\text{ converges, then }\sum a_n\text{ diverges.}`,
+     lines:[R`\text{Suppose instead that }\sum a_n\text{ converges.}`,
+       R`a_n+b_n\text{ is the sum of the terms of two series we now assume converge}`,
+       R`\text{linearity: }\sum(a_n+b_n)=\sum a_n+\sum b_n\text{ converges}`,
+       R`\text{but }\sum(a_n+b_n)\text{ diverges: contradiction. So }\sum a_n\text{ diverges.}\;\blacksquare`]},
+    {claim:R`\text{If }\sum (a_n+b_n)\text{ and }\sum b_n\text{ both converge, then }\sum a_n\text{ converges.}`,
+     direct:true,
+     lines:[R`\text{No contradiction needed: this one is direct.}`,
+       R`a_n=(a_n+b_n)-b_n`,
+       R`\text{both series on the right converge, so linearity applies to their difference}`,
+       R`\sum a_n=\sum(a_n+b_n)-\sum b_n\text{ converges.}\;\blacksquare`]},
+  ];
+  let si=0;
+  walkthrough({expr:'pfExpr',status:'pfStatus',prev:'pfPrev',next:'pfNext',fresh:'pfNew'},()=>{
+    const S=STATEMENTS[si%STATEMENTS.length];si++;
+    return {lines:[M(S.claim),...S.lines.map(l=>M(l))],cls:[null,'a','b','b','c'],
+      notes:S.direct
+        ?['A statement to prove. Press Next.','Some facts follow from linearity directly. Ask first whether you can just write the unknown series in terms of known convergent ones.','Here a_n is a difference of the terms of two convergent series.','Linearity requires both series to converge, and they do.','Done, no contradiction needed.']
+        :['A statement to prove. Press Next.','Step 1: assume the opposite of what you want to show. Here that is "it converges".','Step 2, the creative step: write the series you know diverges in terms of series you are now assuming converge.','Step 3: linearity forces that series to converge.','Step 4: that contradicts a hypothesis, so the assumption was false.']};
+  });
+
+  new Drill({mount:'#drill-adding',section:'adding',goal:6,...mixDrill([Q.linComb,Q.linComb,Q.buildPair,Q.buildPair,Q.splitVerdict,Q.splitVerdict])});
+})();
+
+/* ============================================================ chapter 3 widget: ratio explorer + walkthrough */
+(function(){
+  const BASES=[{t:'e',V:Math.E,tex:'e'},{t:'2',V:2,tex:'2'},{t:'3',V:3,tex:'3'},{t:'5',V:5,tex:'5'}];
+  let s={A:1,B:1,c:2,C:1,d:5,base:BASES[0],k:2,n0:1};
+  const line=new Plot2D('#geoLine',{xmin:-0.15,xmax:1.6,ymin:-1,ymax:1,grid:false,axes:false,labels:false});
+  const sums=new Plot2D('#geoSums',{xmin:0,xmax:22,ymin:0,ymax:2,grid:false,labels:true});
+  const sl=$('#geoSliders');
+  const iv=v=>String(Math.round(v));
+  sliderRow(sl,{label:'A (constant on top)',min:0,max:3,step:1,value:s.A,fmt:iv,onInput:v=>{s.A=v;draw();}});
+  sliderRow(sl,{label:'B (coefficient of 2⁻ⁿ)',min:0,max:3,step:1,value:s.B,fmt:iv,onInput:v=>{s.B=v;draw();}});
+  sliderRow(sl,{label:'C (coefficient of dⁿ)',min:0,max:3,step:1,value:s.C,fmt:iv,onInput:v=>{s.C=v;draw();}});
+  sliderRow(sl,{label:'d',min:1,max:12,step:1,value:s.d,fmt:iv,onInput:v=>{s.d=v;draw();}});
+  BASES.forEach(b=>[1,2].forEach(k=>{const bt=document.createElement('button');bt.className='btn small';bt.innerHTML=`base ${b.t}<sup>${k===1?'n':'2n'}</sup>`;
+    bt.onclick=()=>{s.base=b;s.k=k;$$('#geoBase .btn').forEach(x=>x.classList.remove('picked'));bt.classList.add('picked');draw();};
+    if(b===s.base&&k===s.k)bt.classList.add('picked');$('#geoBase').appendChild(bt);}));
+  [0,1,2].forEach(n0=>{const bt=document.createElement('button');bt.className='btn small';bt.textContent=`start at n = ${n0}`;
+    bt.onclick=()=>{s.n0=n0;$$('#geoStart .btn').forEach(x=>x.classList.remove('picked'));bt.classList.add('picked');draw();};
+    if(n0===s.n0)bt.classList.add('picked');$('#geoStart').appendChild(bt);});
+  const COL={A:'#d97706',B:'#2563eb',C:'#16a34a'};
+  function draw(){
+    const V=Math.pow(s.base.V,s.k);
+    if(!s.A&&!s.B&&!s.C){s.A=1;}
+    const G2=geoPieces({A:s.A,B:s.B,c:s.c,C:s.C,d:s.d,V,baseTex:s.base.tex,k:s.k,n0:s.n0});
+    $('#geoTerm').innerHTML=M(R`\displaystyle ${sigTex(s.n0,G2.termTex)}=`+G2.P.map(pieceTex).map(t=>R`\sum ${t}`).join('+'));
+    typeset($('#geoTerm'));
+    /* number line of ratios */
+    const xmax=Math.max(1.6,...G2.P.map(p=>p.r+0.25));line.o.xmax=xmax;line.begin();
+    line.region(-1,1,()=>-0.55,()=>0.55,{fill:'rgba(22,163,74,.10)',stroke:'rgba(22,163,74,.0)'});
+    line.fn(()=>0,{color:'#b9b5ab',width:1.4});
+    [0,0.5,1].forEach(x=>{line.point([x,0],{color:'#8b877e',r:2});line.text([x,0],String(x),{color:'#8b877e',dy:16});});
+    const ctx=line.ctx;const [x1,y1]=line.px(1,0.7),[x2,y2]=line.px(1,-0.7);ctx.strokeStyle='#16a34a';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);
+    line.text([1,0.75],'|r| = 1',{color:'#16a34a',dy:-2});
+    G2.P.forEach((p,i)=>{line.point([p.r,0],{color:COL[p.key],r:6,ring:!p.conv});line.text([p.r,0],p.key,{color:COL[p.key],dy:-14});});
+    /* partial sums */
+    const t=n=>(s.A+s.B*Math.pow(s.c,-n)+s.C*Math.pow(s.d,n))/Math.pow(V,n);
+    const S=[];let acc=0;for(let n=s.n0;n<s.n0+20;n++){acc+=t(n);S.push(acc);}
+    const fin=S.filter(Number.isFinite);const hiS=Math.max(...fin,G2.conv?G2.total:0);
+    sums.o.ymax=Math.min(hiS*1.15+0.05,G2.conv?Infinity:hiS*1.15);sums.o.ymin=0;sums.begin();
+    if(G2.conv)sums.fn(()=>G2.total,{color:'#16a34a',width:1.5,dash:[6,5]});
+    S.forEach((v,i)=>{if(Number.isFinite(v))sums.point([i+1,v],{color:'#7c3aed',r:3});});
+    $('#geoOut').innerHTML=G2.P.map(p=>`<span style="color:${COL[p.key]}">●</span> ${p.key}: r = ${fmtDec(p.r,4)}, first term ${fmtDec(p.first,4)}, ${p.conv?`sum ${fmtDec(p.sum,5)}`:'<b>diverges</b>'}`).join('<br>')+
+      `<br>${G2.conv?`total = <b>${fmtDec(G2.total,6)}</b>`:'<b>one ratio is at least 1, so the whole series diverges</b>'}`;
+  }
+  redrawOnShow('geometric',draw);draw();
+
+  /* ---- walkthrough ---- */
+  walkthrough({expr:'gwExpr',status:'gwStatus',prev:'gwPrev',next:'gwNext',fresh:'gwNew'},()=>{
+    let o,G2;
+    for(let it=0;it<200;it++){
+      /* small bases only, so every number in the walkthrough stays readable: e^2n, 2^2n, 3^2n, 4^n, 5^n, 6^n */
+      const base=pick([{tex:'e',V:Math.E,k:2},{tex:'2',V:2,k:2},{tex:'3',V:3,k:2},{tex:'4',V:4,k:1},{tex:'5',V:5,k:1},{tex:'6',V:6,k:1}]);
+      const k=base.k;
+      const V=Math.pow(base.V,k);
+      const diverge=Math.random()<0.25;
+      const d=diverge?Math.ceil(V+1e-9)+pick([0,1]):rint(2,Math.max(2,Math.ceil(V)-1));
+      o={A:pick([1,2,3]),B:pick([1,2]),c:pick([2,3]),C:pick([1,2]),d,V,baseTex:base.tex,k,n0:pick([0,1,2])};
+      if(d>=V!==diverge)continue;
+      G2=geoPieces(o);break;}
+    if(!G2){o={A:1,B:1,c:2,C:1,d:5,V:Math.E*Math.E,baseTex:'e',k:2,n0:1};G2=geoPieces(o);}
+    const L=[M(R`\displaystyle ${sigTex(o.n0,G2.termTex)}`)];
+    L.push(M(R`=${G2.P.map(p=>R`\sum\frac{${p.num}}{${G2.denTex}}`).join('+')}`));
+    L.push(M(R`=${G2.P.map(p=>R`\sum ${pieceTex(p)}`).join('+')}`));
+    L.push(G2.P.map(p=>M(R`r=${p.rTex}\approx ${fmtDec(p.r,3)}${p.conv?R`\;\checkmark`:R`\;\ge 1`}`)).join(R` &nbsp; `));
+    if(!G2.conv){
+      L.push(M(R`\text{one piece diverges, the rest converge}\;\Longrightarrow\;\text{the series diverges}`));
+      return {lines:L,cls:[null,'a','a','b','c'],notes:['Goal: an exact value. Press Next.','Split the numerator over the common denominator.','Force every piece into the form C·rⁿ using the exponent rules.','Check each ratio. One of them is at least 1.','Convergent pieces plus one divergent piece diverge (Chapter 2). There is no exact value to find.']};}
+    const rational=/^\d/.test(o.baseTex);
+    L.push(M(R`\text{first terms }(n=${o.n0}):\quad `+G2.P.map(p=>rational?texQ(p.first):R`${p.coef===1?'':p.coef}\left(${p.rTex}\right)^{${o.n0}}`).join(R`,\quad `)));
+    L.push(M(rational?G2.P.map(p=>R`\frac{${texQ(p.first)}}{1-${texQ(p.r)}}`).join('+')+R`=${texQ(G2.total)}`
+      :G2.P.map(p=>R`\frac{${p.coef===1?'':p.coef}\left(${p.rTex}\right)^{${o.n0}}}{1-${p.rTex}}`).join('+')+R`\approx ${fmtDec(G2.total,6)}`));
+    return {lines:L,cls:[null,'a','a','b','b','c'],notes:['Goal: an exact value. Press Next.','Split the numerator over the common denominator.','Force every piece into the form C·rⁿ using the exponent rules.','Check each ratio against 1. All of them pass, so every piece converges and linearity lets you add them.','Plug the starting index into each piece. That is its first term.','First term over 1 − r for each piece, then add. Leave e in the answer; the decimal is only a check.']};
+  });
+
+  new Drill({mount:'#drill-geometric',section:'geometric',goal:6,...mixDrill([Q.firstTermRatio,Q.firstTermRatio,Q.geoExact,Q.geoExact,Q.geoExact,Q.geoExactTrans,Q.geoExactTrans])});
+})();
+
+/* ============================================================ chapter 4: cancellation grid, shared by explorer and walkthrough */
+function teleGrid(mount,{a,k,N,shown,label}){
+  /* row n: +1/(n+a) and -1/(n+a+k). Pair j (1..N-k) is the negative of row j with the positive of row j+k */
+  const box=typeof mount==='string'?$(mount):mount;
+  const cells=[];
+  const posState=n=>n<=k?'front':(n-k<=shown?'dead':(n-k===shown+1?'now':''));
+  const negState=n=>n>N-k?'back':(n<=shown?'dead':(n===shown+1?'now':''));
+  const showRow=n=>N<=9||n<=4||n>N-4;
+  let gapDone=false;
+  for(let n=1;n<=N;n++){
+    if(!showRow(n)){if(!gapDone){cells.push(`<div class="gap">⋮ rows ${5} to ${N-4} cancel the same way</div>`);gapDone=true;}continue;}
+    cells.push(`<span class="lab">n = ${n}</span><span class="op">(</span><span class="cell ${posState(n)}">${M(R`\tfrac{1}{${n+a}}`)}</span><span class="op">−</span><span class="cell ${negState(n)}">${M(R`\tfrac{1}{${n+a+k}}`)}</span><span class="op">)</span>`);
+  }
+  box.innerHTML=(label?`<div class="small muted" style="margin-bottom:4px">${label}</div>`:'')+`<div class="tg">${cells.join('')}</div>`;
+  typeset(box);
+}
+(function(){
+  let s=1,k=3,N=8,shown=0;
+  const sl=$('#tgSliders');
+  const iv=v=>String(Math.round(v));
+  sliderRow(sl,{label:'shift s',min:1,max:3,step:1,value:s,fmt:iv,onInput:v=>{s=Math.round(v);shown=0;draw();}});
+  const kS=sliderRow(sl,{label:'gap k',min:1,max:4,step:1,value:k,fmt:iv,onInput:v=>{k=Math.round(v);if(N<k+2){N=k+2;nS.set(N);}shown=0;draw();}});
+  const nS=sliderRow(sl,{label:'N (rows)',min:3,max:12,step:1,value:N,fmt:iv,onInput:v=>{N=Math.max(Math.round(v),k+1);shown=0;draw();}});
+  let timer=null;
+  const stop=()=>{if(timer){clearInterval(timer);timer=null;}$('#tgPlay').textContent='▶ Cancel pairs';};
+  $('#tgPlay').onclick=()=>{if(timer){stop();return;}if(shown>=N-k)shown=0;
+    $('#tgPlay').textContent='❚❚ Pause';timer=setInterval(()=>{shown++;draw();if(shown>=N-k)stop();},700);};
+  $('#tgAll').onclick=()=>{stop();shown=N-k;draw();};
+  onShow('*',id=>{if(id!=='telescoping')stop();});
+  function draw(){
+    teleGrid('#tgBox',{a:s,k,N,shown,label:R`Each row is \(\frac{1}{n+${s}}-\frac{1}{n+${s+k}}\); the whole sum is \(\frac{1}{${k}}\) times the total of the rows.`});
+    const front=harmFrom(s,k),back=harmFrom(s+N,k);
+    const sN=(front-back)/k,sum=front/k;
+    $('#tgOut').innerHTML=`gap k = ${k}: ${k} survivor${k>1?'s':''} at each end<br>front: ${M(unitSumTex(s,k))} = ${M(texQ(front))}<br>back: ${M(unitSumTex(s+N,k))} ≈ ${fmtDec(back,4)}<br>`+
+      `${M(R`s_{${N}}=\tfrac{1}{${k}}\left(${texQ(front)}-${texQ(back)}\right)=${texQ(sN)}`)}<br>`+
+      `sum of the series = ${M(R`\tfrac{1}{${k}}\cdot ${texQ(front)}=${texQ(sum)}`)}<br><span class="muted">still missing after ${N} rows: ${fmtDec(sum-sN,4)}</span>`;
+    typeset($('#tgOut'));
+  }
+  redrawOnShow('telescoping',draw);draw();
+
+  /* ---- walkthrough ---- */
+  let twF=null;
+  walkthrough({expr:'twExpr',status:'twStatus',prev:'twPrev',next:'twNext',fresh:'twNew'},()=>{
+    const F=teleFam();twF=F;
+    const b=F.a+F.k;
+    const L=[M(R`\displaystyle ${sigTex(1,F.tex)}`)];
+    L.push(M(R`\text{cover-up: }A=\frac{${F.c}}{${-F.a}+${b}}=${texQ(F.coef)},\quad B=\frac{${F.c}}{${-b}${F.a?'+'+F.a:''}}=${texQ(-F.coef)}\quad\Longrightarrow\quad a_n=${texQ(F.coef)}\left[\frac{1}{${nPlus(F.a)}}-\frac{1}{${nPlus(b)}}\right]`));
+    L.push(M(R`\text{write out the rows (below): each negative piece cancels the positive piece }${F.k}\text{ row${F.k>1?'s':''} later}`));
+    L.push(M(R`s_N=${texQ(F.coef)}\left[\left(${unitSumTex(F.a,F.k)}\right)-\left(${unitSumTex(F.a,F.k,'N')}\right)\right]`));
+    L.push(M(R`N\to\infty:\quad\text{the back pieces}\to 0,\quad\sum=${texQ(F.coef)}\cdot ${texQ(F.front)}=${texQ(F.sum)}`));
+    return {lines:L,cls:[null,'a','b','b','c'],
+      notes:['A telescoping candidate: a rational term whose denominator factors into two linear pieces. Press Next.',`Partial fractions. The gap is ${F.k}, and the constant in front is ${F.c}/${F.k}.`,'Write the first rows and the last rows. Survivors are highlighted: the first k positives and the last k negatives.','Collect the survivors. That is the closed form of the partial sum.','Let N grow. The back survivors shrink to 0, and the front survivors times the constant are the sum.'],
+      after:st=>{const g=$('#twGrid');if(st>=2){const N=Math.max(8,F.k+5);teleGrid(g,{a:F.a,k:F.k,N,shown:N-F.k,label:R`Rows of \(\frac{1}{n${F.a?'+'+F.a:''}}-\frac{1}{n+${b}}\), times \(${texQ(F.coef)}\), for \(N=${N}\):`});}else g.innerHTML='';}};
+  });
+
+  new Drill({mount:'#drill-telescoping',section:'telescoping',goal:6,...mixDrill([Q.pfGap,Q.pfGap,Q.teleClosed,Q.teleClosed,Q.teleClosed,Q.teleSpecific,Q.teleSpecific])});
+})();
+
+/* ============================================================ chapter 5: ratio vs gap, and the conjugate walkthrough */
+(function(){
+  let p=2,q=6,NN=60;
+  const pr=new Plot2D('#asRatio',{xmin:0,xmax:62,ymin:0.9,ymax:1.6,grid:false,labels:true});
+  const pg=new Plot2D('#asGap',{xmin:0,xmax:62,ymin:-0.6,ymax:5,grid:false,labels:true});
+  const sl=$('#asSliders');const iv=v=>String(Math.round(v));
+  sliderRow(sl,{label:'p',min:0,max:8,step:1,value:p,fmt:iv,onInput:v=>{p=Math.round(v);draw();}});
+  sliderRow(sl,{label:'q',min:0,max:8,step:1,value:q,fmt:iv,onInput:v=>{q=Math.round(v);draw();}});
+  sliderRow(sl,{label:'N (terms shown)',min:10,max:120,step:5,value:NN,fmt:iv,onInput:v=>{NN=Math.round(v);draw();}});
+  const c=n=>Math.sqrt((n+p)*(n+q));
+  const gap=n=>(n*(p+q)+p*q)/(Math.sqrt((n+p)*(n+q))+n); /* c_n - n, written stably */
+  function draw(){
+    $('#asFormula').innerHTML=M(R`c_n=\sqrt{n+${p}}\,\sqrt{n+${q}}`);typeset($('#asFormula'));
+    const ratio=[],g=[];for(let n=1;n<=NN;n++){ratio.push(c(n)/n);g.push(gap(n));}
+    pr.o.xmax=NN+2;pr.o.ymin=0.8;pr.o.ymax=Math.min(2.5,Math.max(1.1,...ratio))*1.02;pr.begin();
+    pr.fn(()=>1,{color:'#16a34a',width:1.5,dash:[6,5]});pr.text([NN+1.5,1],'1',{color:'#16a34a',align:'right',dy:-8});
+    ratio.forEach((v,i)=>pr.point([i+1,v],{color:'#2563eb',r:NN>70?2:2.8}));
+    const L=(p+q)/2;
+    pg.o.xmax=NN+2;pg.o.ymin=-0.8;pg.o.ymax=Math.max(1,L*1.25,...g);pg.begin();
+    pg.fn(()=>0,{color:'#d97706',width:1.8,dash:[6,5]});pg.text([NN+1.5,0],'n − n = 0 ?',{color:'#d97706',align:'right',dy:-8});
+    pg.fn(()=>L,{color:'#16a34a',width:1.5,dash:[6,5]});pg.text([NN+1.5,L],`(p+q)/2 = ${fmtDec(L,1)}`,{color:'#16a34a',align:'right',dy:-8});
+    g.forEach((v,i)=>pg.point([i+1,v],{color:'#7c3aed',r:NN>70?2:2.8}));
+    const rows=[10,100,10000,1000000].map(n=>`<tr><td>${n.toLocaleString()}</td><td>${fmtDec(c(n),6)}</td><td>${(c(n)/n).toFixed(7)}</td><td>${gap(n).toFixed(6)}</td></tr>`).join('');
+    $('#asOut').innerHTML=`<table class="tbl" style="font-size:13px;margin:0"><tr><th>n</th><th>c<sub>n</sub></th><th>c<sub>n</sub>/n</th><th>c<sub>n</sub> − n</th></tr>${rows}</table><span class="muted">ratio → 1, gap → ${fmtDec(L,2)}</span>`;
+  }
+  redrawOnShow('asymptotics',draw);draw();
+
+  walkthrough({expr:'awExpr',status:'awStatus',prev:'awPrev',next:'awNext',fresh:'awNew'},()=>{
+    const F=Q.conjLimit.gen();
+    const L=[M(R`\displaystyle\lim_{n\to\infty}\left(${F.tex}\right)`)];
+    const form=F.kind==='scaled'?F.c+'n':'n';
+    const roots=[F.Atex,F.Btex].filter(t=>t!==form);
+    L.push(M(R`${roots.map(t=>R`${t}\sim ${form}`).join(R`\text{ and }`)}\;\Longrightarrow\;\text{naive answer }${form}-${form}=0\text{, which is wrong}`));
+    L.push(M(R`=\lim\frac{\left(${F.Atex}\right)^{2}-\left(${F.Btex}\right)^{2}}{${F.Atex}+${F.Btex}}`));
+    L.push(M(R`=\lim\frac{${F.numTex}}{${F.Atex}+${F.Btex}}`));
+    L.push(M(R`=\lim\frac{${F.numTex}}{${F.denLead}n\,(1+\text{small})}`));
+    L.push(M(R`=\frac{${F.lead}}{${F.denLead}}=${texQ(F.L)}`));
+    return {lines:L,cls:[null,'b','a','a','b','c'],
+      notes:['A limit of a difference. Press Next.','Both pieces are asymptotic to the same thing, so asymptotics would predict 0. That is the warning sign.','Multiply top and bottom by the conjugate (the sum of the two pieces). The top becomes a difference of squares.','Expand the squares. The n² terms cancel exactly, which is the cancellation that asymptotics could not see.','Now the denominator is a sum, so asymptotics are safe there: each square root is about its leading term.','Divide: the limit is the ratio of the leading coefficients.']};
+  });
+
+  new Drill({mount:'#drill-asymptotics',section:'asymptotics',goal:6,...mixDrill([Q.simplestAsym,Q.simplestAsym,Q.isAsym,Q.isAsym,Q.conjLimit,Q.conjLimit,Q.conjLimit])});
+})();
+
+/* ============================================================ chapter 6: same dots, different integral */
+(function(){
+  let A=0.5,b=8;
+  const plot=new Plot2D('#wigFig',{xmin:0,xmax:10,ymin:-0.1,ymax:1.6,grid:false,labels:true});
+  const sl=$('#wigSliders');
+  sliderRow(sl,{label:'wiggle A',min:0,max:1,step:0.05,value:A,fmt:v=>fmtDec(v,2),onInput:v=>{A=v;draw();}});
+  const bS=sliderRow(sl,{label:'upper limit b',min:2,max:30,step:1,value:b,fmt:v=>String(Math.round(v)),onInput:v=>{b=Math.round(v);draw();}});
+  const f=x=>1/(x*x)+A*Math.pow(Math.sin(2*Math.PI*x),2);
+  let tb=b;const anim=animator('integral',dt=>{tb+=dt*3;if(tb>30)tb=2;b=Math.round(tb);bS.set(b);draw();});
+  $('#wigPlay').onclick=()=>{tb=b;anim.toggle();$('#wigPlay').textContent=anim.running?'❚❚ Pause':'▶ Play b';};
+  function draw(){
+    plot.o.xmax=Math.max(10,b+1.5);plot.o.ymax=Math.max(1.25,1+A)*1.08;plot.begin();
+    plot.region(1,b,()=>0,f,{fill:'rgba(37,99,235,.14)',stroke:'rgba(37,99,235,0)'});
+    plot.fn(f,{color:'#2563eb',width:2.2,xmin:0.7,xmax:plot.o.xmax});
+    if(A>0)plot.fn(x=>1/(x*x),{color:'#8b877e',width:1.2,dash:[5,4],xmin:0.8,xmax:plot.o.xmax});
+    for(let n=1;n<=Math.floor(plot.o.xmax);n++)plot.point([n,1/(n*n)],{color:'#7c3aed',r:4});
+    const I=1-1/b+A*(b-1)/2;
+    const S=partSum(n=>1/(n*n),1,b);
+    $('#wigOut').innerHTML=`${M(R`\sum_{n=1}^{${b}}f(n)=${fmtDec(S,5)}`)}<br><span class="muted">the same for every A, heading to π²/6 ≈ 1.64493</span><br>`+
+      `${M(R`\int_1^{${b}}f(x)\,dx=1-\tfrac{1}{${b}}+\tfrac{A}{2}(${b}-1)=${fmtDec(I,5)}`)}<br>`+
+      `<span class="muted">${A===0?'A = 0: f is decreasing, the test applies, and both stay finite':`A = ${fmtDec(A,2)}: the integral grows by A/2 for every unit of b, so it diverges, while the series still converges`}</span>`;
+    typeset($('#wigOut'));
+  }
+  redrawOnShow('integral',draw);draw();
+  new Drill({mount:'#drill-integral',section:'integral',goal:6,...mixDrill([Q.trigSimplify,Q.trigSimplify,Q.trigSimplify,Q.periodicIntegral,Q.decreasingFrom,Q.decreasingFrom,Q.integralVsSum])});
+})();
+
+/* the reference chapter counts as done once it has been opened */
+onShow('sheet',()=>markDone('sheet'));
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.linComb,Q.buildPair,Q.splitVerdict,
+  Q.firstTermRatio,Q.geoExact,Q.geoExactTrans,
+  Q.pfGap,Q.teleClosed,Q.teleSpecific,
+  Q.simplestAsym,Q.isAsym,Q.conjLimit,
+  Q.trigSimplify,Q.periodicIntegral,Q.decreasingFrom,Q.integralVsSum]});
+
+/* ============================================================ memory card */
+$('#memcard').replaceWith(memoryCard('c2-wk9',[
+  R`A series is the limit of its partial sums: \(\sum a_n=\lim_{N\to\infty}s_N\).`,
+  R`Geometric: \(\sum_{n=n_0}^{\infty}Cr^n=\dfrac{\text{first term}}{1-r}\) for \(|r|&lt;1\), divergent for \(|r|\ge 1\).`,
+  R`Linearity: if \(\sum a_n\) and \(\sum b_n\) converge, so does \(\sum(a_n\pm b_n)\), with the sums adding.`,
+  R`Convergent \(+\) divergent \(=\) divergent. Divergent \(+\) divergent can go either way.`,
+  R`\(\dfrac{1}{(n+a)(n+b)}=\dfrac{1}{b-a}\left[\dfrac{1}{n+a}-\dfrac{1}{n+b}\right]\), and a gap of \(k\) leaves \(k\) survivors at each end.`,
+  R`\(a_n\sim b_n\) means \(\dfrac{a_n}{b_n}\to 1\). Safe for products, quotients, limits. Not safe for differences.`,
+  R`Conjugate: \(A-B=\dfrac{A^2-B^2}{A+B}\).`,
+  R`Integral test hypotheses: \(f\) positive, continuous, decreasing (eventually), \(a_n=f(n)\).`,
+  R`\(\sin(n\pi)=0\), \(\cos(n\pi)=(-1)^n\), \(\cos(2n\pi)=1\) at every integer \(n\).`,
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'combine convergent series':q=>({v:strQ(q.ans)}),
+  'build a divergent pair with a convergent sum':q=>({b:`${q.cs}-(${q.A.s})`,S:strQ(q.S)}),
+  'split a sum and decide':q=>({u:strQ(q.U.S),T:typeof q.total==='number'?String(q.total):'diverges'}),
+  'first term, ratio, and sum':q=>({a:strQ(q.first),r:strQ(q.r),S:strQ(q.S)}),
+  'exact value of a geometric combination':q=>({S:q.ansStr}),
+  'exact value with e or pi in the base':q=>({S:q.ansStr}),
+  'partial fractions with a gap':q=>({A:strQ(q.A),B:strQ(q.B)}),
+  'telescoping closed form and sum':q=>({s:q.sStr,S:strQ(q.sum)}),
+  'one specific partial sum':q=>({v:strQ(q.sN)}),
+  'simplest asymptotic form':q=>({b:q.ans}),
+  'are they asymptotic?':q=>({L:q.Ls||strQ(q.L),_btn:Math.abs(q.L-1)<1e-12?0:1}),
+  'conjugate-trick limit':q=>({L:strQ(q.L)}),
+  'simplify trig at integers, then sum':q=>({a:q.s,S:typeof q.sum==='number'?strQ(q.sum):'diverges'}),
+  'integral of a squared trig function':q=>({I:strQ(q.v),J:'inf'}),
+  'where f starts decreasing':q=>({x:q.x0s,m:String(q.m)}),
+  'the integral is not the sum':q=>({I:`ln(${1+q.k})/${q.k}`,S:strQ(q.S)}),
+};
+
+initModule({key:'c2-wk9',title:'Series Toolkit',sub:'Week 9 HW companion · Stewart 11.1 to 11.3'});
+</script>
+</body>
+</html>
