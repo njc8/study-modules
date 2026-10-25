@@ -43,5 +43,5 @@ http.createServer(async(req,res)=>{
     res.end(data);
   });
 }).listen(PORT,()=>{
-  console.log(`Study modules + tutor chat at http://localhost:${PORT}/  (model: ${env.CHAT_MODEL||'z-ai/glm-5.3-flash'}, key ${env.OPENROUTER_API_KEY?'loaded':'MISSING'})`);
+  console.log(`Study modules + tutor chat at http://localhost:${PORT}/  (model: ${env.CHAT_MODEL||'deepseek/deepseek-v4.1-flash-1017'}, key ${env.OPENROUTER_API_KEY?'loaded':'MISSING'})`);
 });

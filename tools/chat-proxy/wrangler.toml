@@ -3,9 +3,9 @@ main = "worker.js"
 compatibility_date = "2026-09-01"
 
 [vars]
-CHAT_MODEL = "z-ai/glm-5.3-flash"
-# "high" is the fast, still-accurate setting for this model: it thinks for a few hundred tokens instead of
-# ~1000 by default (first word in ~3 s instead of ~10 s). "low" cut TTFT further but produced arithmetic errors.
+CHAT_MODEL = "deepseek/deepseek-v4.1-flash-1017"
+# Picked 2026-10-25 from tools/chat-bench (18 of 18 at "high", reads screenshots). At "high" it thinks for
+# about 400 to 1500 tokens and finishes a typical answer in 4 to 10 s.
 CHAT_REASONING = "high"
 # ALLOWED_ORIGINS = "https://njc8.github.io"
 # The API key is a secret, not a var:  npx wrangler secret put OPENROUTER_API_KEY

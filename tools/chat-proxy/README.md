@@ -13,7 +13,7 @@ Serves the whole site plus `/chat` at http://localhost:8787 and reads the key an
 
 ```
 OPENROUTER_API_KEY=sk-or-...
-CHAT_MODEL=z-ai/glm-5.3-flash
+CHAT_MODEL=deepseek/deepseek-v4.1-flash-1017
 ```
 
 ## Host it for the GitHub Pages site

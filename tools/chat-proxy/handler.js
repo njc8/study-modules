@@ -6,7 +6,7 @@
 
    The browser never sees the API key. The model, key, and allowed origins come from env:
      OPENROUTER_API_KEY   required
-     CHAT_MODEL           OpenRouter model id, e.g. z-ai/glm-5.3-flash
+     CHAT_MODEL           OpenRouter model id, e.g. deepseek/deepseek-v4.1-flash-1017
      CHAT_REASONING       optional reasoning effort: low | medium | high
      ALLOWED_ORIGINS      comma-separated page origins allowed to call this (default: the GitHub Pages site + localhost) */
 
@@ -79,7 +79,7 @@ const DEFAULT_ORIGINS=['https://njc8.github.io','http://localhost:8787','http://
 const MAX_BODY=8*1024*1024, MAX_MESSAGES=40, MAX_CONTEXT=8000, MAX_TEXT=20000;
 
 export function createHandler(env){
-  const key=env.OPENROUTER_API_KEY, model=env.CHAT_MODEL||'z-ai/glm-5.3-flash';
+  const key=env.OPENROUTER_API_KEY, model=env.CHAT_MODEL||'deepseek/deepseek-v4.1-flash-1017';
   const origins=(env.ALLOWED_ORIGINS?env.ALLOWED_ORIGINS.split(','):DEFAULT_ORIGINS).map(s=>s.trim()).filter(Boolean);
   const cors=req=>{
     const o=req.headers.get('origin');
