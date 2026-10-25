@@ -663,6 +663,8 @@ function makeQuiz(mount,{n=10,types,pass=8,section='quiz',labels={}}){
 }
 
 /* ============================================================ 2D plotting */
+/* axis label spacing: every integer on small ranges, then 2, 5, 10, 20, 50, ... so an axis never carries more than about 14 labels */
+function labelStep(range){if(!(range>14))return 1;const raw=range/10,mag=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/mag;return (f<=2?2:f<=5?5:10)*mag;}
 class Plot2D{
   constructor(canvas,o={}){
     this.c=typeof canvas==='string'?$(canvas):canvas;this.ctx=this.c.getContext('2d');
@@ -691,7 +693,7 @@ class Plot2D{
     for(let y=Math.ceil(o.ymin/step)*step;y<=o.ymax;y+=step){const [,py]=this.px(0,y);ctx.moveTo(0,py);ctx.lineTo(this.W,py);}ctx.stroke();return this;}
   axes(color='#b9b5ab'){const ctx=this.ctx,o=this.o;ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.beginPath();const [x0,y0]=this.px(0,0);
     if(o.ymin<=0&&o.ymax>=0){ctx.moveTo(0,y0);ctx.lineTo(this.W,y0);}if(o.xmin<=0&&o.xmax>=0){ctx.moveTo(x0,0);ctx.lineTo(x0,this.H);}ctx.stroke();
-    if(o.labels){ctx.fillStyle='#8b877e';ctx.font='12px -apple-system,Segoe UI,sans-serif';for(let x=Math.ceil(o.xmin);x<=o.xmax;x++){if(x===0)continue;const [px,py]=this.px(x,0);ctx.fillText(x,px-4,clamp(py+14,12,this.H-4));}for(let y=Math.ceil(o.ymin);y<=o.ymax;y++){if(y===0)continue;const [px,py]=this.px(0,y);ctx.fillText(y,clamp(px+5,2,this.W-14),py+4);}}
+    if(o.labels){ctx.fillStyle='#8b877e';ctx.font='12px -apple-system,Segoe UI,sans-serif';const sx=labelStep(o.xmax-o.xmin),sy=labelStep(o.ymax-o.ymin);for(let x=Math.ceil(o.xmin/sx)*sx;x<=o.xmax;x+=sx){if(x===0)continue;const [px,py]=this.px(x,0);ctx.fillText(x,px-4,clamp(py+14,12,this.H-4));}for(let y=Math.ceil(o.ymin/sy)*sy;y<=o.ymax;y+=sy){if(y===0)continue;const [px,py]=this.px(0,y);ctx.fillText(y,clamp(px+5,2,this.W-14),py+4);}}
     return this;}
   fn(f,{color='#3b5bdb',width=2.2,xmin,xmax,dash}={}){const ctx=this.ctx,o=this.o;const a=xmin==null?o.xmin:xmin,b=xmax==null?o.xmax:xmax;ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash||[]);ctx.beginPath();let pen=false;
     for(let i=0;i<=400;i++){const x=a+(b-a)*i/400;const y=f(x);if(!Number.isFinite(y)||Math.abs(y)>1e4){pen=false;continue;}const [px,py]=this.px(x,y);if(pen)ctx.lineTo(px,py);else ctx.moveTo(px,py);pen=true;}ctx.stroke();ctx.setLineDash([]);return this;}
