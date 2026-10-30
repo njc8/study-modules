@@ -87,6 +87,13 @@
     <tr><td>\(dy\,dx\,dz\)</td><td>\(\displaystyle\int_0^1\!\!\int_{\sqrt z}^{1}\!\!\int_{z}^{x^2} f\,dy\,dx\,dz\)</td></tr>
   </table>
   <p>To get the \(yz\)-shadow, which the orders \(dx\,dz\,dy\) and \(dx\,dy\,dz\) need: from \(z\le y\le x^2\le1\) the shadow is the triangle \(0\le z\le y\le1\), and for each point of it \(x\) runs from \(\sqrt y\) to \(1\).</p>
+  <p>One row in full, \(dy\,dz\,dx\), using the checklist below:</p>
+  <ol>
+    <li><b>Innermost variable \(y\).</b> Every condition that involves \(y\) is \(z\le y\le x^2\). So for fixed \(x\) and \(z\), \(y\) runs from \(z\) to \(x^2\).</li>
+    <li><b>Eliminate \(y\) to get the shadow in the \(xz\)-plane.</b> A \(y\) between \(z\) and \(x^2\) exists only when \(z\le x^2\). Together with \(z\ge0\) and \(0\le x\le1\), the shadow is \(0\le z\le x^2\), \(0\le x\le1\).</li>
+    <li><b>Slice the shadow.</b> For fixed \(x\), \(z\) runs from \(0\) to \(x^2\), and \(x\) runs between the constants \(0\) and \(1\).</li>
+  </ol>
+  <p>That gives \(\int_0^1\!\int_0^{x^2}\!\int_z^{x^2}f\,dy\,dz\,dx\), the table's fifth row. The key move is step 2: the shadow is the set of outer points for which the inner interval is not empty, which is why you find it by requiring the lower limit to be at most the upper one.</p>
   <div class="note"><b>Checklist.</b> Pick the innermost variable and find its two bounding surfaces. Eliminate it to get the shadow in the plane of the other two. Describe the shadow as a slice (middle variable) inside an interval (outer variable). If any limit still contains a variable that is integrated further in, or the outer limits are not numbers, start again.</div>
 
   <div class="warn"><b>Constants on the outside.</b> An answer like \(\int_0^{1-y}\!\int_0^1 \cdots\,dx\,dy\) is wrong no matter what the solid is: the outer limits contain \(y\), the very variable being integrated there. If a variable survives to the end, you have made a mistake.</div>
@@ -101,7 +108,13 @@
   <h2>Change of variables</h2>
   <p class="lead">Substitution for double and triple integrals. You pick new coordinates that straighten the region, and pay for it with a Jacobian. Polar coordinates are the first example, and cylindrical and spherical are the next two.</p>
 
-  <p>A <b>transformation</b> \(T\) takes a region \(S\) in the \(uv\)-plane to a region \(R\) in the \(xy\)-plane through \(x=x(u,v)\), \(y=y(u,v)\). A small rectangle in \(S\) maps to a small parallelogram in \(R\). The factor by which its area changes is the <b>Jacobian</b>:</p>
+  <p>A <b>transformation</b> \(T\) takes a region \(S\) in the \(uv\)-plane to a region \(R\) in the \(xy\)-plane through \(x=x(u,v)\), \(y=y(u,v)\). A small rectangle in \(S\) maps to a small parallelogram in \(R\). Here is why, in three steps.</p>
+  <ol>
+    <li><b>Zoom in on one cell.</b> Take the \(uv\)-rectangle with corner \((u,v)\) and sides \(du\) and \(dv\). Write the map as a position vector \(\mathbf{r}(u,v)=\langle x(u,v),\,y(u,v)\rangle\).</li>
+    <li><b>Linearize.</b> Moving \(du\) in \(u\) moves the image point by about \(\mathbf{r}_u\,du=\langle x_u,y_u\rangle\,du\), the same linear approximation as a tangent plane. Moving \(dv\) moves it by \(\mathbf{r}_v\,dv=\langle x_v,y_v\rangle\,dv\). Up close the map is linear, so the cell's image is (nearly) the parallelogram spanned by those two vectors.</li>
+    <li><b>Take the area.</b> The parallelogram spanned by \(\langle a,c\rangle\) and \(\langle b,d\rangle\) has area \(|ad-bc|\), the length of their cross product (Module 1). Here that is \(|x_u y_v-x_v y_u|\,du\,dv\).</li>
+  </ol>
+  <p>The number \(x_u y_v-x_v y_u\) is the <b>Jacobian</b>, the factor by which the map stretches area near that point:</p>
   <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}\dfrac{\partial x}{\partial u}&\dfrac{\partial x}{\partial v}\\[6pt] \dfrac{\partial y}{\partial u}&\dfrac{\partial y}{\partial v}\end{vmatrix}=\frac{\partial x}{\partial u}\frac{\partial y}{\partial v}-\frac{\partial x}{\partial v}\frac{\partial y}{\partial u}\)<span class="cap">A \(2\times2\) determinant of partial derivatives. Top row is \(x\), bottom row is \(y\); first column is \(u\), second is \(v\).</span></div>
   <div class="formula">\(\displaystyle\iint_R f(x,y)\,dA=\iint_S f\big(x(u,v),y(u,v)\big)\left|\frac{\partial(x,y)}{\partial(u,v)}\right|du\,dv\)<span class="cap">Three changes, same as polar: rewrite the integrand in \(u\) and \(v\), replace \(R\) by \(S\), and multiply by the absolute value of the Jacobian.</span></div>
   <p>Polar coordinates are exactly this with \(u=r\), \(v=\theta\). From \(x=r\cos\theta\), \(y=r\sin\theta\):</p>
@@ -129,7 +142,7 @@
   <p>When you define \(u\) and \(v\) in terms of \(x\) and \(y\), the easy determinant to compute is \(\partial(u,v)/\partial(x,y)\). It is the reciprocal of the one you need:</p>
   <div class="formula">\(\displaystyle\frac{\partial(x,y)}{\partial(u,v)}=\left(\frac{\partial(u,v)}{\partial(x,y)}\right)^{-1}\)<span class="cap">For \(u=x-y\), \(v=x+y\) the determinant \(\partial(u,v)/\partial(x,y)=2\), so \(\partial(x,y)/\partial(u,v)=\tfrac12\) and \(dA=\tfrac12\,du\,dv\).</span></div>
   <div class="warn"><b>Absolute value, and the right way up.</b> The formula uses \(\left|\partial(x,y)/\partial(u,v)\right|\). A negative Jacobian only means the map flips orientation; areas stay positive. And the Jacobian rides with \(du\,dv\), never with \(dx\,dy\).</div>
-  <div class="note"><b>Why the determinant.</b> The image of the cell is the parallelogram spanned by \(\mathbf{r}_u\,du\) and \(\mathbf{r}_v\,dv\). The area of a parallelogram spanned by two vectors is the absolute value of the \(2\times2\) determinant of their components, which is exactly \(|J|\,du\,dv\).</div>
+  <div class="note"><b>Why the reciprocal.</b> The map from \(uv\) to \(xy\) and the map from \(xy\) back to \(uv\) undo each other. If one stretches area by a factor of 3 near a point, the other must shrink it by a factor of 3 near the image point, or doing both would not return every cell to its original size. So the two area factors multiply to 1. Formally, the chain rule says the two Jacobian matrices multiply to the identity matrix, and determinants multiply.</div>
 
   <h3>Finding the region in the new coordinates</h3>
   <p>Map each boundary curve of \(R\) separately, one equation at a time, and read off what the curve becomes in the \(uv\)-plane. The pieces together bound \(S\).</p>
@@ -219,7 +232,7 @@
     <ul>
       <li>\(y\ge0\) means \(0\le\theta\le\pi\). \(x\ge0\) means \(-\pi/2\le\theta\le\pi/2\).</li>
       <li>A slanted ceiling like \(z=x\) becomes \(z=r\cos\theta\), and it only makes sense where \(\cos\theta\ge0\), that is, for \(-\pi/2\le\theta\le\pi/2\). So the limits for \(z\) may depend on \(\theta\) as well as \(r\).</li>
-      <li>An off-center cylinder \(x^2+y^2=2ax\) is \(r=2a\cos\theta\) for \(-\pi/2\le\theta\le\pi/2\), so here the limits for \(r\) depend on \(\theta\).</li>
+      <li>An off-center cylinder \(x^2+y^2=2ax\) is \(r=2a\cos\theta\) for \(-\pi/2\le\theta\le\pi/2\), the angles where \(\cos\theta\ge0\) and so \(r\ge0\). Here the limits for \(r\) depend on \(\theta\).</li>
       <li>Over a solid that is symmetric about the \(z\)-axis, an integrand like \(xz\) or \(yz\) integrates to \(0\), because \(\int_0^{2\pi}\cos\theta\,d\theta=\int_0^{2\pi}\sin\theta\,d\theta=0\). Check for this before you compute anything.</li>
       <li>A rectangular iterated integral whose \(x\) and \(y\) limits trace a disk or a half disk, like \(\int_{-a}^{a}\int_0^{\sqrt{a^2-x^2}}\), is a signal to switch to cylindrical coordinates.</li>
     </ul></div>
@@ -235,6 +248,7 @@
   <p class="lead">Locate a point by how far out it is and by two angles. Balls, cones through the origin, and anything built from \(x^2+y^2+z^2\) become trivial.</p>
 
   <p>The three coordinates are \(\rho\ge 0\), the distance from the origin; \(\theta\), the same angle as in cylindrical coordinates, measured in the \(xy\)-plane from the positive \(x\)-axis; and \(\phi\), the angle down from the positive \(z\)-axis, with \(0\le\phi\le\pi\).</p>
+  <p>Why \(\phi\) stops at \(\pi\) while \(\theta\) gets a full \(2\pi\): \(\theta\) already swings the half-plane all the way around the \(z\)-axis, so \(\phi\) only has to sweep that half-plane from the north pole (\(\phi=0\)) to the south pole (\(\phi=\pi\)). Letting \(\phi\) go further would cross the \(z\)-axis into the opposite half-plane, which \(\theta\) already covers, and every point would be counted twice.</p>
 
   <div class="formula">\(x=\rho\sin\phi\cos\theta\qquad y=\rho\sin\phi\sin\theta\qquad z=\rho\cos\phi\)<br>\(\rho^2=x^2+y^2+z^2\)<span class="cap">Read them as two steps. First drop to the \(xy\)-plane: the shadow has radius \(r=\rho\sin\phi\). Then \(x=r\cos\theta\), \(y=r\sin\theta\) as always, and the height is \(z=\rho\cos\phi\).</span></div>
 
@@ -273,7 +287,7 @@
   <div class="warn"><b>Never drop \(\rho^2\sin\phi\).</b> It is the single most common lost point on this material. Write \(dV=\rho^2\sin\phi\,d\rho\,d\theta\,d\phi\) first, before you write a single limit, and the rest of the problem is arithmetic.</div>
 
   <h3>Spheres through the origin, cones, and pieces of a ball</h3>
-  <p>A sphere through the origin has a clean description: multiply \(\rho=2a\cos\phi\) by \(\rho\) to see \(x^2+y^2+z^2=2az\), the sphere of radius \(a\) centered at \((0,0,a)\). The solid inside it is \(0\le\rho\le2a\cos\phi\), and the upper limit now depends on \(\phi\).</p>
+  <p>A sphere through the origin has a clean description: multiply \(\rho=2a\cos\phi\) by \(\rho\) to see \(x^2+y^2+z^2=2az\), the sphere of radius \(a\) centered at \((0,0,a)\). The solid inside it is \(0\le\rho\le2a\cos\phi\) with \(0\le\phi\le\pi/2\), and the upper limit now depends on \(\phi\). The \(\phi\) range stops at \(\pi/2\) because \(\rho\) cannot be negative, so \(\cos\phi\ge0\). At \(\phi=\pi/2\) the radius shrinks to 0: the sphere touches the origin and sits entirely above the \(xy\)-plane, tangent to it there.</p>
   <div class="card">
     <h4>Worked example</h4>
     <p>Find the volume of the solid inside \(x^2+y^2+z^2=4z\) and above the cone \(z=\sqrt{x^2+y^2}\).</p>
