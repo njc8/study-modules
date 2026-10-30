@@ -57,6 +57,7 @@
   <p>You never compute the limit. You compute an <b>iterated integral</b> instead, and Fubini's theorem says either order gives the same number.</p>
   <div class="formula">\(\displaystyle\iint_R f(x,y)\,dA=\int_a^b\!\!\int_c^d f(x,y)\,dy\,dx=\int_c^d\!\!\int_a^b f(x,y)\,dx\,dy\)<span class="cap">The inner differential tells you which variable moves first. In \(\int_a^b\!\int_c^d f\,dy\,dx\) you integrate in \(y\) with \(x\) frozen, which leaves a function of \(x\), then you integrate that.</span></div>
   <p>Freezing a variable is the whole trick. While you do the inner integral, the other variable is a constant and can be pulled out front exactly like a 5.</p>
+  <p><b>Why Fubini is true: slicing.</b> Freeze \(x\) and look at the solid under \(z=f(x,y)\) along that one value of \(x\). The cut is a flat cross-section, and its area is \(A(x)=\int_c^d f(x,y)\,dy\), which is exactly the inner integral. Give that slice a thickness \(dx\) and it is a slab of volume \(A(x)\,dx\); the outer integral \(\int_a^b A(x)\,dx\) stacks the slabs. Slice the other way, with \(y\) frozen, and you cut the same loaf into slabs facing the other direction. Same loaf, same volume, so the two orders agree.</p>
 
   <div class="card">
     <h4>Step-by-step: an iterated integral over a rectangle</h4>
@@ -122,6 +123,9 @@
     <li>Describe the same region the other way: slide a horizontal line instead of a vertical one.</li>
     <li>Write the new iterated integral. The integrand does not change at all.</li>
   </ol>
+  <p>Worked through: the limits \(x\le y\le1\), \(0\le x\le1\) describe the triangle with vertices \((0,0)\), \((0,1)\), \((1,1)\), the part of the unit square above \(y=x\). Slice it horizontally instead: at height \(y\), a horizontal line enters at \(x=0\) and leaves at the diagonal \(x=y\), and \(y\) runs from \(0\) to \(1\). So</p>
+  <div class="formula">\(\displaystyle\int_0^1\!\!\int_x^1 e^{y^2}\,dy\,dx=\int_0^1\!\!\int_0^y e^{y^2}\,dx\,dy=\int_0^1 y\,e^{y^2}\,dy=\frac{e-1}{2}\)<span class="cap">The inner \(x\) integral of something with no \(x\) in it is just the length of the strip, \(y\). That \(y\) is exactly what the substitution \(w=y^2\) needs.</span></div>
+  <p>This is the slicing picture again: both orders slice the same region, one with vertical strips and one with horizontal strips, so they must give the same number. Reversing is only redescribing the region.</p>
   <div class="note"><b>Reversing means redrawing.</b> You cannot swap the limits mechanically. \(\int_0^1\!\int_x^1\) does not become \(\int_x^1\!\int_0^1\). Sketch the region, then read the new limits off the sketch. If the region needs two pieces in the new order, write a sum of two integrals.</div>
 
   <h3>Area as a double integral</h3>
@@ -167,7 +171,7 @@
     <li><b>Sector</b> or a quarter disk: \(0\le r\le a\) with \(\theta\) between the two bounding rays.</li>
     <li><b>Inside \(r=f(\theta)\)</b>: \(0\le r\le f(\theta)\), and \(\theta\) runs over the values where the curve is traced. The inner \(r\)-limit may depend on \(\theta\); the \(\theta\)-limits are constants.</li>
   </ul>
-  <p>Two curves worth knowing. The <b>circle</b> \(r=2a\cos\theta\) is the circle of radius \(a\) centered at \((a,0)\): multiply by \(r\) to get \(x^2+y^2=2ax\). It is traced once for \(-\pi/2\le\theta\le\pi/2\). The <b>cardioid</b> \(r=a(1+\cos\theta)\) is traced once for \(0\le\theta\le2\pi\).</p>
+  <p>Two curves worth knowing. The <b>circle</b> \(r=2a\cos\theta\) is the circle of radius \(a\) centered at \((a,0)\): multiply by \(r\) to get \(x^2+y^2=2ax\). It is traced once for \(-\pi/2\le\theta\le\pi/2\): those are exactly the angles where \(\cos\theta\ge0\), so \(r\ge0\). Outside that range the formula gives a negative \(r\) and retraces the same circle. The <b>cardioid</b> \(r=a(1+\cos\theta)\) is traced once for \(0\le\theta\le2\pi\).</p>
   <div class="formula">\(\displaystyle A=\iint_D 1\,dA=\int_\alpha^\beta\!\!\int_0^{f(\theta)} r\,dr\,d\theta=\int_\alpha^\beta \tfrac12 f(\theta)^2\,d\theta\)<span class="cap">The inner integral of \(r\,dr\) produces the \(\tfrac12 r^2\) in the polar area formula you saw in second-semester calculus. Same formula, one level down.</span></div>
   <div class="note"><b>When to switch to polar.</b> Two signals: the region is a disk, annulus, sector, or is bounded by a circle, and the integrand contains \(x^2+y^2\). Either one alone is often enough.</div>
   <div class="note"><b>Polar is a change of variables.</b> Swapping \(x,y\) for \(r,\theta\) and paying a factor of \(r\) is one instance of a general method. The general version, with the Jacobian, is in Module 8 right after triple integrals, which is where the course teaches it.</div>
@@ -187,6 +191,7 @@
   <p>The <b>moments</b> measure how the mass is distributed about the axes:</p>
   <div class="formula">\(\displaystyle M_x=\iint_D y\,\rho(x,y)\,dA,\qquad M_y=\iint_D x\,\rho(x,y)\,dA\)<span class="cap">Each bit of mass is weighted by its distance to an axis. The moment <b>about the \(x\)-axis</b> uses \(y\), because \(y\) is the distance to the \(x\)-axis.</span></div>
   <div class="formula">\(\displaystyle \bar x=\frac{M_y}{m},\qquad \bar y=\frac{M_x}{m}\)<span class="cap">The <b>center of mass</b> \((\bar x,\bar y)\) is the density-weighted average position. The plate balances there.</span></div>
+  <p>Why these ratios: think of a seesaw. Balance the plate on a knife edge along the vertical line \(x=\bar x\). Each bit of mass \(\rho\,dA\) twists the plate with a torque equal to its mass times its signed distance \(x-\bar x\) from the knife edge. The plate balances when the torques cancel: \(\iint_D(x-\bar x)\,\rho\,dA=0\). Split the integral and this says \(M_y-\bar x\,m=0\), so \(\bar x=M_y/m\). A knife edge along \(y=\bar y\) gives \(\bar y=M_x/m\) the same way.</p>
   <div class="warn"><b>Do not cross the subscripts.</b> \(M_x\) integrates \(y\rho\) and lands in \(\bar y\); \(M_y\) integrates \(x\rho\) and lands in \(\bar x\). Also check plausibility: the center of mass always lies inside the convex hull of the plate, and it shifts toward the heavy side.</div>
 
   <div class="card">
@@ -205,6 +210,8 @@
   <h3>Surface area</h3>
   <p>The piece of the surface \(z=f(x,y)\) lying above a region \(D\) has area</p>
   <div class="formula">\(\displaystyle A(S)=\iint_D\sqrt{1+f_x^2+f_y^2}\;dA\)<span class="cap">The square root is the factor by which a flat cell \(dA\) stretches when it is tilted up onto the surface. For a plane \(z=ax+by+c\) the factor is the constant \(\sqrt{1+a^2+b^2}\), so the area is just that constant times the area of \(D\).</span></div>
+  <p>Where the square root comes from: take a tiny cell in \(D\) with corner \((x,y)\) and sides \(dx\) and \(dy\). Moving \(dx\) in the \(x\) direction moves the point on the surface by \(\langle dx,0,f_x\,dx\rangle\), since the height changes at rate \(f_x\). Moving \(dy\) moves it by \(\langle 0,dy,f_y\,dy\rangle\). So the cell lifts to a small parallelogram on the surface spanned by those two vectors, and its area is the length of their cross product (Module 1):</p>
+  <div class="formula">\(\langle 1,0,f_x\rangle\times\langle 0,1,f_y\rangle=\langle -f_x,\,-f_y,\,1\rangle,\qquad dS=\big|\langle -f_x,-f_y,1\rangle\big|\,dx\,dy=\sqrt{1+f_x^2+f_y^2}\;dA\)<span class="cap">The vector \(\langle -f_x,-f_y,1\rangle\) is also an upward normal to the surface. You will meet it again in surface integrals.</span></div>
   <div class="note"><b>Tilt factor.</b> A plane with slopes \(a\) and \(b\) covers its shadow \(\sqrt{1+a^2+b^2}\) times over. A horizontal plane gives 1, and a steep plane gives a large number, which is the sanity check to run on any surface-area answer.</div>
 
   <h3>Practice</h3>
