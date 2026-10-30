@@ -40,10 +40,16 @@
       <li><b>\(D&gt;0\) and \(f_{xx}(a,b)&gt;0\):</b> local <b>minimum</b> at \((a,b)\). The surface curves up in every direction.</li>
       <li><b>\(D&gt;0\) and \(f_{xx}(a,b)&lt;0\):</b> local <b>maximum</b>. The surface curves down in every direction.</li>
       <li><b>\(D&lt;0\):</b> <b>saddle point</b>. It curves up in one direction and down in another, so it is neither.</li>
-      <li><b>\(D=0\):</b> the test is <b>inconclusive</b>. It could be any of the three, and you need another argument.</li>
+      <li><b>\(D=0\):</b> the test is <b>inconclusive</b>. It could be any of the three, and you need another argument. At the origin, \(x^4+y^4\), \(-x^4-y^4\), and \(x^4-y^4\) all have every second partial equal to 0, so \(D=0\) for each, yet they are a minimum, a maximum, and a saddle.</li>
     </ul>
   </div>
-  <p>Where does \(D\) come from? Near a critical point the surface looks like the quadratic \(f(a,b)+\tfrac12\big(f_{xx}h^2+2f_{xy}hk+f_{yy}k^2\big)\). That quadratic keeps one sign for all \((h,k)\ne(0,0)\) exactly when \(f_{xx}f_{yy}-(f_{xy})^2&gt;0\), and then the sign it keeps is the sign of \(f_{xx}\). When \(D&lt;0\) the quadratic takes both signs, which is a saddle.</p>
+  <p>Where does \(D\) come from? Near a critical point the first derivatives vanish, so the surface looks like the quadratic \(f(a,b)+\tfrac12\big(Ah^2+2Bhk+Ck^2\big)\), with \(A=f_{xx}\), \(B=f_{xy}\), \(C=f_{yy}\) at \((a,b)\) and \((h,k)\) the step away from it. The question is whether that quadratic keeps one sign. Complete the square, exactly as in high school algebra:</p>
+  <div class="formula">\(\displaystyle Ah^2+2Bhk+Ck^2=A\left[\Big(h+\frac BA\,k\Big)^2+\frac{AC-B^2}{A^2}\,k^2\right]=A\left[\Big(h+\frac BA\,k\Big)^2+\frac{D}{A^2}\,k^2\right]\)<span class="cap">Multiply out the bracket to check: the \(B^2k^2/A^2\) from the square cancels against the \(-B^2k^2/A^2\) in the second term.</span></div>
+  <ul>
+    <li><b>\(D&gt;0\):</b> the bracket is a square plus a positive multiple of a square, so it is positive for every step \((h,k)\ne(0,0)\). The quadratic then has the sign of \(A=f_{xx}\) in every direction: a minimum if \(f_{xx}&gt;0\), a maximum if \(f_{xx}&lt;0\).</li>
+    <li><b>\(D&lt;0\):</b> step along \(k=0\) and the bracket is \(h^2&gt;0\). Step so that \(h=-\tfrac BA k\) and the bracket is \(\tfrac{D}{A^2}k^2&lt;0\). One direction goes up and another goes down: a saddle.</li>
+  </ul>
+  <p>This also explains why \(f_{xx}\) and \(f_{yy}\) agree in sign when \(D&gt;0\): then \(f_{xx}f_{yy}&gt;(f_{xy})^2\ge0\), and a positive product means equal signs. (In particular \(f_{xx}\ne0\), so dividing by \(A\) above was safe.)</p>
 
   <div class="warn"><b>\(D&gt;0\) is only half the answer.</b> A positive \(D\) tells you the point is an extremum but not which kind. You must then look at the sign of \(f_{xx}\) (or of \(f_{yy}\); when \(D&gt;0\) they always agree). Writing "\(D&gt;0\), so it is a minimum" is the single most common error on this topic.</div>
 
@@ -225,7 +231,7 @@
   </div>
 
   <h3>Three variables, and two constraints</h3>
-  <p>Nothing changes in three variables: to extremize \(f(x,y,z)\) on the surface \(g(x,y,z)=c\), solve \(\nabla f=\lambda\nabla g\) together with \(g=c\). That is four equations in \(x,y,z,\lambda\).</p>
+  <p>Nothing changes in three variables: to extremize \(f(x,y,z)\) on the surface \(g(x,y,z)=c\), solve \(\nabla f=\lambda\nabla g\) together with \(g=c\). That is four equations in \(x,y,z,\lambda\). The reason is the same as before, applied to every direction at once: at an extreme point, \(f\) cannot change to first order along any curve through the point in the surface, so \(\nabla f\) is perpendicular to every direction in the tangent plane. The only vectors perpendicular to a whole plane are the normals, and \(\nabla g\) is a normal because the surface is a level surface of \(g\). So \(\nabla f\) is a multiple of \(\nabla g\).</p>
   <p>With <b>two</b> constraints \(g=c\) and \(h=k\), the feasible set is a curve, the intersection of two surfaces. At an extreme point \(\nabla f\) must be perpendicular to that curve, and the vectors perpendicular to it are exactly the combinations of \(\nabla g\) and \(\nabla h\):</p>
   <div class="formula">\(\nabla f=\lambda\,\nabla g+\mu\,\nabla h,\qquad g=c,\qquad h=k\)<span class="cap">Five equations in \(x,y,z,\lambda,\mu\).</span></div>
 
