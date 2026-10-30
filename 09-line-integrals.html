@@ -78,6 +78,7 @@
 
   <p>A constant force \(\mathbf{F}\) moving an object through a displacement \(\mathbf{D}\) does work \(\mathbf{F}\cdot\mathbf{D}\). When the force varies and the path bends, chop the path into tiny displacements \(d\mathbf{r}=\mathbf{r}'(t)\,dt\), dot each with the force there, and add:</p>
   <div class="formula">\(\displaystyle W=\int_C \mathbf{F}\cdot d\mathbf{r}=\int_a^b \mathbf{F}\big(\mathbf{r}(t)\big)\cdot\mathbf{r}'(t)\,dt\)<span class="cap">Substitute the curve into \(\mathbf{F}\), dot with the velocity, integrate. No square roots: the speed does not appear on its own.</span></div>
+  <p>The answer does not depend on how fast you trace the curve. Run along \(C\) twice as fast and \(\mathbf{r}'(t)\) doubles, but the time interval halves, so each \(\mathbf{r}'(t)\,dt\) is the same little displacement \(d\mathbf{r}\) as before. Only the path and its direction matter, never the parametrization you picked for it.</p>
   <p>Write \(\mathbf{r}'(t)\,dt=\langle dx,dy\rangle\) and the dot product becomes the <b>differential form</b> of the same integral:</p>
   <div class="formula">\(\displaystyle\int_C \mathbf{F}\cdot d\mathbf{r}=\int_C P\,dx+Q\,dy\qquad\text{and in space}\qquad \int_C P\,dx+Q\,dy+R\,dz\)<span class="cap">Same integral, different notation. To evaluate it, put \(x=x(t),\,y=y(t),\,dx=x'(t)\,dt,\,dy=y'(t)\,dt\) and integrate in \(t\).</span></div>
   <p>There is a third way to read it. Since \(\mathbf{T}=\mathbf{r}'/|\mathbf{r}'|\) is the unit tangent and \(ds=|\mathbf{r}'|\,dt\),</p>
@@ -149,6 +150,12 @@
     <li><b>Closed curves give zero.</b> If \(C\) starts and ends at the same point, \(f(\text{end})-f(\text{start})=0\). Write \(\oint_C\nabla f\cdot d\mathbf{r}=0\).</li>
     <li><b>Reversal flips the sign,</b> as always, since \(f(A)-f(B)=-(f(B)-f(A))\).</li>
   </ul>
+  <p>The name comes from physics. For a force like gravity, the work done along a path equals the drop in potential energy, so kinetic plus potential energy stays constant: energy is <b>conserved</b>.</p>
+
+  <h3>The converse: path independence gives a potential</h3>
+  <p>Path independence and "closed loops give zero" are the same statement. Take two paths \(C_1\) and \(C_2\) from \(A\) to \(B\). Out along \(C_1\) and back along \(C_2\) reversed is a closed loop, and its integral is \(\int_{C_1}\mathbf{F}\cdot d\mathbf{r}-\int_{C_2}\mathbf{F}\cdot d\mathbf{r}\). So the loop gives 0 exactly when the two paths agree.</p>
+  <p>And either one forces \(\mathbf{F}\) to be conservative. Fix a base point \(A\) and <b>define</b> \(f(x,y)\) as the work from \(A\) to \((x,y)\), along any path you like; path independence makes this a well-defined number. To get \(f_x\), finish the path with a short horizontal step from \((x,y)\) to \((x+h,y)\). Along that step only \(P\) does work, so \(f(x+h,y)-f(x,y)\approx P(x,y)\,h\), and \(f_x=P\). A vertical step gives \(f_y=Q\) the same way. So \(\nabla f=\mathbf{F}\).</p>
+  <div class="formula">\(\mathbf{F}=\nabla f\quad\iff\quad\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}\ \text{is independent of path}\quad\iff\quad\oint_C\mathbf{F}\cdot d\mathbf{r}=0\ \text{for every closed}\ C\)<span class="cap">Three ways of saying the same thing, for a continuous field on an open connected region.</span></div>
 
   <h3>Is this field conservative?</h3>
   <p>In the plane, on a domain with no holes in it (a <b>simply connected</b> region, such as all of \(\mathbb{R}^2\) or a disc), there is a clean test:</p>
@@ -158,6 +165,9 @@
 
   <h3>Finding the potential function</h3>
   <p>Once you know \(\mathbf{F}\) is conservative, recover \(f\) by partial integration. Integrate \(P\) with respect to \(x\), treating \(y\) as a constant. The "constant" of integration can be any function of \(y\), so call it \(g(y)\). Differentiate the result with respect to \(y\), set it equal to \(Q\), solve for \(g'(y)\), and integrate once more. In space there is one extra round with \(R\) and \(z\).</p>
+  <p><b>Why the test is exactly what this procedure needs.</b> After the first step \(f=\int P\,dx+g(y)\), and matching \(f_y\) with \(Q\) gives</p>
+  <div class="formula">\(\displaystyle g'(y)=Q-\frac{\partial}{\partial y}\int P\,dx\)<span class="cap">The left side is a function of \(y\) alone, so the right side had better not contain any \(x\).</span></div>
+  <p>Differentiate the right side in \(x\): you get \(Q_x-P_y\). So the \(x\)'s drop out of \(g'(y)\) <b>exactly when</b> \(P_y=Q_x\). If the test passes, the procedure always finishes. If it fails, you get stuck with an equation like \(g'(y)=x\), which no function of \(y\) can satisfy. That is the test failing in front of you.</p>
 
   <div class="card">
     <h4>Step by step: recovering \(f\) from \(\mathbf{F}\)</h4>
@@ -183,7 +193,7 @@
   </div>
 
   <div class="note"><b>Conservative means endpoints only.</b> Once you have spotted that \(\mathbf{F}=\nabla f\), stop parametrizing. Evaluate \(f\) at the two endpoints and subtract. A problem that hands you an ugly path with a conservative field is testing exactly this reflex.</div>
-  <div class="warn"><b>The test needs a domain with no holes.</b> \(P_y=Q_x\) guarantees a potential only on a simply connected region. The standard counterexample is \(\mathbf{F}=\left\langle \frac{-y}{x^2+y^2},\frac{x}{x^2+y^2}\right\rangle\) on the plane minus the origin: it passes \(P_y=Q_x\) everywhere it is defined, yet its integral around the unit circle is \(2\pi\), not 0. The hole at the origin is the culprit.</div>
+  <div class="warn"><b>The test needs a domain with no holes.</b> \(P_y=Q_x\) guarantees a potential only on a simply connected region. The standard counterexample is \(\mathbf{F}=\left\langle \frac{-y}{x^2+y^2},\frac{x}{x^2+y^2}\right\rangle\) on the plane minus the origin: it passes \(P_y=Q_x\) everywhere it is defined, yet its integral around the unit circle is \(2\pi\), not 0. The hole at the origin is the culprit.<br><br>Here is why. Away from the origin this field is \(\nabla\theta\), the gradient of the polar angle: \(\frac{\partial}{\partial x}\arctan\frac yx=\frac{-y}{x^2+y^2}\) and \(\frac{\partial}{\partial y}\arctan\frac yx=\frac{x}{x^2+y^2}\). On any region that does not circle the origin, such as the right half plane, \(\theta\) is an honest potential and the field is conservative there. But walk once around the origin and \(\theta\) gains \(2\pi\) without returning to its starting value, so no single-valued potential exists on the whole punctured plane. That \(2\pi\) is the work around the circle. "Simply connected" is exactly the condition that rules out loops around a hole like this.</div>
 
   <h3>Practice</h3>
   <div class="card" id="drill-ftc"></div>
