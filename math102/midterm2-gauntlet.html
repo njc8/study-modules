@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midterm 2 Gauntlet</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/gauntlet.js"></script>
+<script src="../assets/gauntlet-c2-m2.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<section data-id="imp" data-title="Improper integrals">
+  <p class="eyebrow">Topic 1 · Review section 1 · Stewart 7.8</p>
+  <h2>Improper integrals</h2>
+  <p class="lead">Both types, splitting at every bad point, comparison at infinity and at a blow-up, and reading what an improper integral means.</p>
+  <div class="note">Every item has two steps. First, explain an idea in your own words, naming the theorem and its conditions the way the exam wants, and the tutor grades your explanation. Then do a real problem: from the Fall 2024 MMT Practice Midterm 2, the Fall 2026 Week 7 Miniexam, or the worked examples on your review sheet. An item passes when the explanation is <b>Got it</b> and the problem is right on the first check. Anything else comes back at the end of the run, and stays on <b>Weak spots</b> until you pass it. No calculators on the exam, so none here either.</div>
+  <div class="gx" data-mode="topic" data-topic="imp"></div>
+</section>
+
+<section data-id="asym" data-title="Asymptotics and little-o">
+  <p class="eyebrow">Topic 2 · Review section 2</p>
+  <h2>Asymptotics and little-o</h2>
+  <p class="lead">Matching leading terms, deciding little-o, and the true or false questions about both.</p>
+  <div class="gx" data-mode="topic" data-topic="asym"></div>
+</section>
+
+<section data-id="seq" data-title="Sequences and partial sums">
+  <p class="eyebrow">Topic 3 · Review section 3 · Stewart 11.1 to 11.2</p>
+  <h2>Sequences and partial sums</h2>
+  <p class="lead">Closed formulas, building a sequence on demand, recovering terms from partial sums, and recursion.</p>
+  <div class="gx" data-mode="topic" data-topic="seq"></div>
+</section>
+
+<section data-id="ser" data-title="Series tests">
+  <p class="eyebrow">Topic 4 · Review sections 4, 5, and 7 · Stewart 11.3 to 11.7</p>
+  <h2>Series tests</h2>
+  <p class="lead">Absolute, conditional, or divergent. Choosing the test, stating its conditions, and finishing with the conclusion.</p>
+  <div class="gx" data-mode="topic" data-topic="ser"></div>
+</section>
+
+<section data-id="rem" data-title="Remainder estimates">
+  <p class="eyebrow">Topic 5 · Review section 6</p>
+  <h2>Remainder estimates</h2>
+  <p class="lead">The three remainder theorems, and the difference between a sufficient \(N\) and the actual minimum.</p>
+  <div class="gx" data-mode="topic" data-topic="rem"></div>
+</section>
+
+<section data-id="exam" data-title="Shuffled exam">
+  <p class="eyebrow">All topics</p>
+  <h2>Shuffled exam</h2>
+  <p class="lead">The same items, dealt across every topic in random order, the way the midterm will mix them.</p>
+  <div class="gx" data-mode="exam"></div>
+</section>
+
+<section data-id="mixed" data-title="Mixed problems">
+  <p class="eyebrow">All topics · problems only</p>
+  <h2>Mixed problems</h2>
+  <p class="lead">Just the problems, shuffled across every topic, with no concept step and no title to tip you off. Reading each one and deciding how to attack it is the skill being tested.</p>
+  <div class="gx" data-mode="mixed"></div>
+</section>
+
+<section data-id="weak" data-title="Weak spots">
+  <p class="eyebrow">Review</p>
+  <h2>Weak spots</h2>
+  <p class="lead">Every item you have not yet passed cleanly, from any run. Clear this list before the exam.</p>
+  <div class="gx" data-mode="weak"></div>
+</section>
+
+</main>
+</div>
+<script>
+initGauntlet({key:'c2-m2',items:window.GAUNTLET_C2M2,topics:[{id:'imp'},{id:'asym'},{id:'seq'},{id:'ser'},{id:'rem'}],exam:'Midterm 2',course:'MATH 102'});
+initModule({key:'gauntlet-c2-m2',title:'Midterm 2 Gauntlet',sub:'Concept first, then the real problem · Stewart 7.8 and 11.1 to 11.7'});
+</script>
+</body>
+</html>
