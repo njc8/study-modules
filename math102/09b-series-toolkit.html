@@ -430,17 +430,19 @@
   <h3>Convergence tests</h3>
   <div class="tbl-wrap"><table class="tbl">
     <tr><th>Test</th><th>Hypotheses</th><th>Conclusion</th><th>Watch out</th></tr>
-    <tr><td><b>Test for divergence</b></td><td>none</td><td>If \(\lim a_n\ne 0\) or does not exist, \(\sum a_n\) diverges.</td><td>\(a_n\to 0\) proves nothing: \(\sum\frac1n\) diverges.</td></tr>
+    <tr><td><b>Divergence Test</b><br><span class="small muted">Stewart: Test for Divergence</span></td><td>none</td><td>If \(\lim a_n\ne 0\) or does not exist, \(\sum a_n\) diverges.</td><td>\(a_n\to 0\) proves nothing: \(\sum\frac1n\) diverges.</td></tr>
     <tr><td><b>Integral test</b></td><td>\(f\) positive, continuous, decreasing on \([m,\infty)\), \(a_n=f(n)\)</td><td>\(\sum a_n\) and \(\int_m^\infty f\) converge or diverge together.</td><td>Sum \(\ne\) integral. Hypotheses matter (Chapter 6).</td></tr>
-    <tr><td><b>Integral test remainder</b></td><td>same as the integral test</td><td>\(\int_{n+1}^{\infty}f\le R_n\le\int_n^{\infty}f\).</td><td>\(R_n=s-s_n\), the part you have not added yet.</td></tr>
+    <tr><td><b>Integral Test Remainder</b></td><td>same as the integral test</td><td>\(\int_{n+1}^{\infty}f\le R_n\le\int_n^{\infty}f\).</td><td>\(R_n=s-s_n\), the part you have not added yet.</td></tr>
+    <tr><td><b>Direct Comparison Remainder</b></td><td>Both converge, \(g(k)\ge f(k)\ge 0\) for \(k\ge N\), \(g\) positive, continuous, decreasing</td><td>\(R^f_n\le R^g_n\le\int_n^{\infty}g\) for \(n\ge N\).</td><td>Sign-changing terms: pass to absolute values first.</td></tr>
     <tr><td><b>\(p\)-series</b></td><td>none</td><td>\(\sum\frac{1}{n^p}\) converges exactly when \(p&gt;1\).</td><td>\(p=1\) (harmonic) diverges.</td></tr>
-    <tr><td><b>Comparison</b></td><td>\(0\le a_n\le b_n\) eventually</td><td>\(\sum b_n\) converges \(\Rightarrow\sum a_n\) converges. \(\sum a_n\) diverges \(\Rightarrow\sum b_n\) diverges.</td><td>Smaller than divergent, or bigger than convergent, tells you nothing.</td></tr>
-    <tr><td><b>Limit comparison</b></td><td>\(a_n,b_n&gt;0\), \(\lim\frac{a_n}{b_n}=c\) with \(0&lt;c&lt;\infty\)</td><td>Both converge or both diverge.</td><td>Choose \(b_n\) as the simplest asymptotic form.</td></tr>
+    <tr><td><b>Direct Comparison</b></td><td>\(0\le a_n\le b_n\) eventually</td><td>\(\sum b_n\) converges \(\Rightarrow\sum a_n\) converges. \(\sum a_n\) diverges \(\Rightarrow\sum b_n\) diverges.</td><td>Smaller than divergent, or bigger than convergent, tells you nothing.</td></tr>
+    <tr><td><b>Asymptotic Comparison</b><br><span class="small muted">Stewart: Limit Comparison</span></td><td>\(a_n,b_n&gt;0\), \(\lim\frac{a_n}{b_n}=c\) with \(0&lt;c&lt;\infty\)</td><td>Both converge or both diverge.</td><td>Choose \(b_n\) as the simplest asymptotic form.</td></tr>
+    <tr><td><b>Little-o Comparison</b></td><td>\(a_n,b_n\) eventually positive, \(\lim\frac{a_n}{b_n}=0\)</td><td>\(\sum b_n\) converges \(\Rightarrow\sum a_n\) converges. \(\sum a_n\) diverges \(\Rightarrow\sum b_n\) diverges.</td><td>Directional. \(\frac{1}{n^2}=o(\frac1n)\), and they disagree.</td></tr>
     <tr><td><b>Alternating series test</b></td><td>\(\sum(-1)^{n}b_n\) with \(b_n&gt;0\), \(b_n\) eventually decreasing, \(b_n\to 0\)</td><td>The series converges.</td><td>Proves convergence only, never divergence.</td></tr>
-    <tr><td><b>Alternating estimate</b></td><td>same as the alternating test</td><td>\(|R_n|\le b_{n+1}\), the first term left out.</td><td></td></tr>
+    <tr><td><b>Alternating Series Remainder</b></td><td>same as the alternating test</td><td>\(|R_n|\le b_{n+1}\), the first term left out.</td><td></td></tr>
     <tr><td><b>Absolute convergence</b></td><td>\(\sum|a_n|\) converges</td><td>\(\sum a_n\) converges.</td><td>Converse false: \(\sum\frac{(-1)^n}{n}\) converges only conditionally.</td></tr>
     <tr><td><b>Ratio test</b></td><td>\(L=\lim\left|\frac{a_{n+1}}{a_n}\right|\)</td><td>\(L&lt;1\): converges absolutely. \(L&gt;1\): diverges. \(L=1\): no information.</td><td>\(L=1\) on every \(p\)-series and rational term.</td></tr>
-    <tr><td><b>Root test</b></td><td>\(L=\lim\sqrt[n]{|a_n|}\)</td><td>Same three cases as the ratio test.</td><td>Best when the whole term is a power of \(n\).</td></tr>
+    <tr><td><b>Root test</b><br><span class="small muted">not on the Midterm 2 sheet</span></td><td>\(L=\lim\sqrt[n]{|a_n|}\)</td><td>Same three cases as the ratio test.</td><td>Best when the whole term is a power of \(n\).</td></tr>
   </table></div>
 </section>
 

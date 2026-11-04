@@ -67,6 +67,8 @@
   <div class="formula">\(a_{n+1}=\sqrt{2+a_n}\;\Longrightarrow\; L=\sqrt{2+L}\;\Longrightarrow\; L^2-L-2=0\;\Longrightarrow\; L=2\)<span class="cap">The other root \(L=-1\) is thrown out: every term after the first is a square root, so \(L\ge 0\).</span></div>
   <div class="warn"><b>Solve for the limit only after you know it exists.</b> Applying \(L=g(L)\) to a divergent recursion produces a number that means nothing. For \(a_{n+1}=2a_n\) with \(a_1=1\) the equation \(L=2L\) gives \(L=0\), and the sequence marches off to infinity.</div>
 
+  <div class="note"><b>Generate terms first.</b> Your review sheet's recursive example is \(a_1=1,\ a_2=2,\ a_{n+2}=a_{n+1}-a_n\). Writing it out gives \(1,2,1,-1,-2,-1,1,2,\dots\), which repeats with period \(6\), so it diverges. Practice this kind in <a href="10b-midterm2-review.html#seqs">the Midterm 2 Review</a>.</div>
+
   <h3>The growth hierarchy</h3>
   <p>For large \(n\), each of these grows faster than everything to its left:</p>
   <div class="formula">\(\ln n \;\ll\; n^{p}\;(p&gt;0) \;\ll\; b^{\,n}\;(b&gt;1) \;\ll\; n! \;\ll\; n^{n}\)<span class="cap">Read a ratio right to left: the faster one wins. So \(\dfrac{2^n}{n!}\to 0\), \(\dfrac{n!}{2^n}\to\infty\), \(\dfrac{\ln n}{n}\to 0\), and \(\dfrac{n^{10}}{1.01^{\,n}}\to 0\) even though it takes a very long time.</span></div>
@@ -138,6 +140,9 @@
   <h3>The harmonic series</h3>
   <p>\(\sum 1/n\) diverges, even though its terms go to zero. Group the terms in blocks of \(1,1,2,4,8,\dots\):</p>
   <div class="formula">\(1+\tfrac12+\underbrace{\left(\tfrac13+\tfrac14\right)}_{&gt;\,1/2}+\underbrace{\left(\tfrac15+\cdots+\tfrac18\right)}_{&gt;\,1/2}+\cdots\)<span class="cap">Each block beats \(\tfrac12\), and there are infinitely many blocks, so the partial sums pass every bound. The growth is like \(\ln n\), which is slow but unstoppable.</span></div>
+
+  <h3>Going backwards: terms from partial sums</h3>
+  <p>Given a formula for the partial sums, \(a_1=s_1\) and \(a_n=s_n-s_{n-1}\) for \(n\ge 2\), and the sum of the series is \(\lim s_n\). Compute \(a_1\) separately: the given formula usually does not define \(s_0\), so the \(n\ge 2\) formula may not extend to \(n=1\). There are worked problems in <a href="10b-midterm2-review.html#seqs">the Midterm 2 Review</a>.</p>
 
   <h3>The test for divergence</h3>
   <div class="formula">If \(\displaystyle\lim_{n\to\infty}a_n\ne 0\) or does not exist, then \(\displaystyle\sum a_n\) diverges.<span class="cap">Contrapositive of "convergent \(\Rightarrow a_n\to 0\)". It is the first thing to check on any series, and it costs one limit.</span></div>

@@ -42,6 +42,8 @@
   <h3>When the inequality points the wrong way</h3>
   <p>Take \(\sum \dfrac{1}{n-1}\) (for \(n\ge 2\)). The obvious comparison is \(b_n=1/n\), but \(\dfrac{1}{n-1}>\dfrac{1}{n}\), and \(\sum 1/n\) diverges, so this time the direction <em>is</em> useful. Now take \(\sum \dfrac{1}{n+1}\): here \(a_n<1/n\) with \(\sum 1/n\) divergent, which is the useless combination. The fix is the <b>limit comparison test</b>, which does not care about the direction at all.</p>
   <div class="formula">\(\text{If } a_n,b_n>0 \text{ and } \displaystyle\lim_{n\to\infty}\frac{a_n}{b_n}=c \text{ with } 0\lt c\lt\infty,\)<br>\(\text{then } \sum a_n \text{ and } \sum b_n \text{ both converge or both diverge.}\)<span class="cap">A finite positive \(c\) means the two sequences are eventually within a constant factor of each other in both directions. Constant factors cannot change convergence.</span></div>
+
+  <div class="note"><b>Names on your review sheet.</b> The first test above is the <b>Direct Comparison Test</b>. This one is the <b>Asymptotic Comparison Test</b>: \(a_n\sim cb_n\) means the same thing as \(a_n/b_n\to c\). The sheet adds the <b>Little-o Comparison Test</b>, for when \(a_n/b_n\to 0\), which is what handles logarithms. The exam wants the name and the conditions, so use these names. See <a href="10b-midterm2-review.html#compare">the Midterm 2 Review</a>.</div>
   <p>In practice: pick \(b_n\) from the dominant terms, compute \(c=\lim a_n/b_n\) (usually by dividing top and bottom by the highest power), check that \(c\) is a positive number, and then quote what you know about \(\sum b_n\).</p>
 
   <div class="card">
@@ -78,6 +80,8 @@
   <p>Why it works: \(s_2\le s_4\le s_6\le\cdots\) climbs and \(s_1\ge s_3\ge s_5\ge\cdots\) falls, and every even partial sum sits below every odd one. The two sequences squeeze together because the gap between consecutive partial sums is \(b_{n+1}\to 0\). The sum is caught between them.</p>
   <p>That squeeze gives the estimate you actually use:</p>
   <div class="formula">\(|R_N|=|s-s_N|\le b_{N+1}\)<span class="cap">Stop after \(N\) terms and the error is no bigger than the first term you left out, and it has that term's sign. No other elementary test hands you an error bound this cheaply.</span></div>
+
+  <div class="note"><b>On the review sheet</b> this is the <b>Alternating Series Remainder Theorem</b>. It certifies an \(N\), but that \(N\) need not be the actual smallest one. The sheet also has remainder theorems for the integral test and for direct comparison, including the sign-changing case on your practice exam. All three are in <a href="10b-midterm2-review.html#remainder">the Midterm 2 Review</a>.</div>
 
   <div class="card">
     <h4>Explore: bracketing the sum</h4>
@@ -122,6 +126,7 @@
   <div class="warn"><b>\(L=1\) is not a verdict.</b> Every \(p\)-series gives \(L=1\): \(\sum 1/n\) diverges and \(\sum 1/n^2\) converges, and the ratio test cannot tell them apart. If you land on \(L=1\), the ratio test is over and you go back to comparison, the integral test, or the alternating series test.</div>
 
   <h3>The root test</h3>
+  <p class="small muted">The Root Test is not on the Midterm 2 review sheet. Know it, but be able to reach the same answers by direct comparison, and ask whether it is fair game this year.</p>
   <div class="formula">\(L=\lim_{n\to\infty}\sqrt[n]{|a_n|}\)<br>\(L\lt 1\Rightarrow \text{converges absolutely}\)<br>\(L>1 \text{ or } L=\infty\Rightarrow \text{diverges}\)<br>\(L=1\Rightarrow \text{no information}\)<span class="cap">Same three cases. Use it when the whole term is an \(n\)th power, because the root just peels the exponent off.</span></div>
   <p>Two limits do most of the work here: \(\sqrt[n]{n}\to 1\) and \(\left(1+\tfrac{x}{n}\right)^n\to e^{x}\). So \(\left(\dfrac{2n+3}{3n+2}\right)^{n}\) has \(\sqrt[n]{|a_n|}=\dfrac{2n+3}{3n+2}\to\tfrac23<1\), and \(\left(\dfrac{n}{n+1}\right)^{n^2}\) has \(\sqrt[n]{|a_n|}=\left(1-\tfrac{1}{n+1}\right)^{n}\to e^{-1}<1\).</p>
 
