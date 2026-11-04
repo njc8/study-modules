@@ -142,6 +142,11 @@
   <div class="note"><b>Only the tail matters.</b> The inequality has to hold from some point on, not everywhere. \(\int_1^{\infty}e^{-x^2}dx\) converges because \(x^2\ge x\) for \(x\ge1\), so \(e^{-x^2}\le e^{-x}\) there. What happens on a bounded piece can never make an integral diverge, as long as the integrand is continuous on it.</div>
   <div class="warn"><b>Comparison needs \(f\ge0\).</b> The theorem as stated is for nonnegative integrands. With a sign-changing \(f\) the right move is to compare \(|f|\) instead, which gives absolute convergence.</div>
 
+  <h3>The same theorem at a blow-up</h3>
+  <p>Comparison also works near a bad point, on the relevant one-sided interval, with continuous nonnegative functions. The benchmark flips: near \(0\), \(\int_0^1 x^{-p}\,dx\) converges exactly when \(p\lt 1\). For example, on \((0,\pi]\), \(\;0\le\dfrac{\sin^2x}{\sqrt x}\le\dfrac{1}{\sqrt x}\), and \(p=\tfrac12\lt 1\), so \(\int_0^\pi\frac{\sin^2x}{\sqrt x}\,dx\) converges.</p>
+
+  <div class="note"><b>Names on your review sheet.</b> This theorem is the <b>Direct Comparison Test</b>. The sheet adds two more for integrals: the <b>Asymptotic Comparison Test</b> (\(f\sim cg\) with \(c>0\), so both converge or both diverge) and the <b>Little-o Comparison Test</b>, where \(f\sim g\) means \(f/g\to 1\) and \(f=o(g)\) means \(f/g\to 0\). They save you from having to get an inequality to point the right way. Learn them in <a href="10b-midterm2-review.html#compare">the Midterm 2 Review</a>.</div>
+
   <div class="card">
     <h4>Explore: trapping a tail</h4>
     <div class="xf">
@@ -691,6 +696,23 @@ const CBND=[
   {ftex:R`\frac{2+\cos x}{x^{5/2}}`,f:x=>(2+Math.cos(x))/Math.pow(x,2.5),gtex:R`\frac{3}{x^{5/2}}`,g:x=>3*Math.pow(x,-2.5),Fg:x=>-2/Math.sqrt(x*x*x),val:2,valTex:'2',bound:R`2+\cos x\le3`},
   {ftex:R`e^{-2x}\left(1+\sin^{2}x\right)`,f:x=>Math.exp(-2*x)*(1+Math.pow(Math.sin(x),2)),gtex:'2e^{-2x}',g:x=>2*Math.exp(-2*x),Fg:x=>-Math.exp(-2*x),val:Math.exp(-2),valTex:'e^{-2}',bound:R`1+\sin^{2}x\le2`}
 ];
+const BLOWUPS=[
+  {t:R`\frac{\sin^{2}x}{\sqrt{x}}`,p:1/2,ps:'1/2',v:0,why:R`\(\sin^2x\le 1\), so the integrand is at most \(x^{-1/2}\)`},
+  {t:R`\frac{2+\cos x}{x^{1/3}}`,p:1/3,ps:'1/3',v:0,why:R`\(2+\cos x\le 3\), so the integrand is at most \(3x^{-1/3}\)`},
+  {t:R`\frac{e^{-x}}{x^{2/3}}`,p:2/3,ps:'2/3',v:0,why:R`\(e^{-x}\le 1\), so the integrand is at most \(x^{-2/3}\)`},
+  {t:R`\frac{2+\sin x}{x^{2}}`,p:2,ps:'2',v:1,why:R`\(2+\sin x\ge 1\), so the integrand is at least \(x^{-2}\)`},
+  {t:R`\frac{1+e^{-x}}{x}`,p:1,ps:'1',v:1,why:R`\(1+e^{-x}\ge 1\), so the integrand is at least \(x^{-1}\)`},
+];
+Q.compareBlowup={name:'comparison at a blow-up',
+  gen(){return pick(BLOWUPS);},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">Decide ${M(R`\displaystyle\int_0^{1}${q.t}\,dx`)} by the Direct Comparison Test. Give the exponent ${M('p')} of the benchmark ${M('1/x^p')} you compare with near ${M('0')}, and the verdict.</p>`;
+    numIn(el,'p',M('p='));
+    q.get=choiceButtons(el,[{label:'converges',value:0},{label:'diverges',value:1}]);
+  },
+  check(q,el){if(q.get()===null)return {ok:false,msg:'Pick a verdict.'};const r=G(el,'p',checkNumber($('[data-k=p]',el).value,q.p));return {ok:r.ok&&q.get()===q.v,err:r.err};},
+  solution(q){return `${q.why}. Near ${M('0')}, ${M(R`\int_0^1x^{-p}\,dx`)} converges exactly when ${M(R`p\lt 1`)}, and here ${M('p='+q.ps)}. So the integral <b>${q.v?'diverges':'converges'}</b>.`;}
+};
 Q.compareValueBound={name:'bound the value',
   gen(){
     for(let k=0;k<40;k++){
@@ -905,14 +927,14 @@ Q.compareValueBound={name:'bound the value',
   redrawOnShow('compare',draw);draw();
 
   new Drill({mount:'#drill-compare',section:'compare',goal:6,
-    ...mixDrill([Q.dominantPower,Q.dominantPower,Q.compareFunction,Q.compareFunction,Q.compareValueBound])});
+    ...mixDrill([Q.dominantPower,Q.dominantPower,Q.compareFunction,Q.compareFunction,Q.compareValueBound,Q.compareBlowup])});
 })();
 
 /* ============================================================ quiz */
 makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
   Q.pIntegral,Q.exponential,Q.rationalArctan,Q.twoSided,
   Q.endpointBlowup,Q.hiddenPoint,Q.pNearZero,Q.pCondition,
-  Q.dominantPower,Q.compareFunction,Q.compareValueBound]});
+  Q.dominantPower,Q.compareFunction,Q.compareValueBound,Q.compareBlowup]});
 
 /* ============================================================ know these cold */
 $('#memcard').replaceWith(memoryCard('c2-improper',[
@@ -929,6 +951,7 @@ $('#memcard').replaceWith(memoryCard('c2-improper',[
 
 /* ============================================================ test hook */
 window.__solvers={
+  'comparison at a blow-up':q=>({p:q.ps,_btn:q.v}),
   'p-integral':q=>({v:q.ansStr}),
   'exponential tails':q=>({v:q.ansStr}),
   'rational and arctan tails':q=>({v:q.ansStr}),
