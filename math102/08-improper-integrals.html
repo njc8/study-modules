@@ -121,7 +121,7 @@
   <h2>The comparison theorem</h2>
   <p class="lead">Most integrands have no elementary antiderivative. You can still decide convergence, by trapping the integrand between things you already know.</p>
 
-  <div class="formula">\(\text{If }0\le f(x)\le g(x)\text{ on }[a,\infty):\quad \int_a^{\infty}g\ \text{converges}\ \Longrightarrow\ \int_a^{\infty}f\ \text{converges};\qquad \int_a^{\infty}f\ \text{diverges}\ \Longrightarrow\ \int_a^{\infty}g\ \text{diverges}\)<span class="cap">Read it as: the small one is dragged down by a convergent big one, and the big one is dragged up by a divergent small one. It gives you convergence, not the value. It also gives you a bound: \(\int f\le\int g\).</span></div>
+  <div class="formula">\(\text{If }0\le f(x)\le g(x)\text{ on }[a,\infty):\)<br>\(\int_a^{\infty}g\ \text{converges}\ \Longrightarrow\ \int_a^{\infty}f\ \text{converges}\)<br>\(\int_a^{\infty}f\ \text{diverges}\ \Longrightarrow\ \int_a^{\infty}g\ \text{diverges}\)<span class="cap">Read it as: the small one is dragged down by a convergent big one, and the big one is dragged up by a divergent small one. It gives you convergence, not the value. It also gives you a bound: \(\int f\le\int g\).</span></div>
   <p>The two things you compare to are always the same:</p>
   <ul>
     <li><b>Powers:</b> \(\displaystyle\int_1^{\infty}\frac{dx}{x^p}\) converges exactly when \(p>1\).</li>
@@ -869,7 +869,7 @@ Q.compareValueBound={name:'bound the value',
   const PRE=[
     {n:'(2 + sin x)/x²  vs  3/x²',f:x=>(2+Math.sin(x))/(x*x),g:x=>3/(x*x),
      ftex:R`\frac{2+\sin x}{x^{2}}`,gtex:R`\frac{3}{x^{2}}`,gv:3,gvT:'3',ymax:3.4,conv:true},
-    {n:'1/√(x³+1)  vs  1/x^{3/2}',f:x=>1/Math.sqrt(Math.pow(x,3)+1),g:x=>Math.pow(x,-1.5),
+    {n:'1/√(x³+1)  vs  1/x^(3/2)',f:x=>1/Math.sqrt(Math.pow(x,3)+1),g:x=>Math.pow(x,-1.5),
      ftex:R`\frac{1}{\sqrt{x^{3}+1}}`,gtex:R`\frac{1}{x^{3/2}}`,gv:2,gvT:'2',ymax:1.25,conv:true},
     {n:'e^(−x²)  vs  e^(−x)',f:x=>Math.exp(-x*x),g:x=>Math.exp(-x),
      ftex:'e^{-x^{2}}',gtex:'e^{-x}',gv:Math.exp(-1),gvT:'e^{-1}',ymax:0.45,conv:true},
