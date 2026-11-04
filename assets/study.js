@@ -618,7 +618,7 @@ class Drill{
     this.cur=(waT&&Math.random()<0.35)?waT:this.o;
     this.q=this.cur.gen();if(this.cur._wa)this.q.type=this.cur;this.q.tried=false;this.done=false;this.qEl.innerHTML='';
     this.cur.render(this.q,this.qEl,this);this.fb.className='fb';this.fb.innerHTML='';
-    const hb=$('.hintbtn',this.mount);if(hb)hb.style.display=this.cur._wa?'none':'';
+    const hb=$('.hintbtn',this.mount);if(hb)hb.style.display=(this.cur._wa||(this.q.type&&!this.q.type.hint))?'none':'';
     typeset(this.qEl);upgradeMathInputs(this.qEl);
     const f=$('input',this.qEl);if(f&&this.mount.closest('section')&&this.mount.closest('section').classList.contains('active'))focusInput(f);
   }
