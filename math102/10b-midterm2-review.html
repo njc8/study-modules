@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midterm 2 Review</title>
+<link rel="stylesheet" href="../assets/study.css">
+<link rel="stylesheet" href="../assets/mathquill/mathquill.css">
+<script src="../assets/jquery.min.js"></script>
+<script src="../assets/mathquill/mathquill.min.js"></script>
+<script src="../assets/study.js"></script>
+<script src="../assets/calc102.js"></script>
+<script src="../assets/m102-deck.js"></script>
+<script src="../assets/mathjax-tex-svg.js"></script>
+<style>
+.tbl{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0 4px}
+.tbl th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tbl td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+.tbl tr:last-child td{border-bottom:none}
+.tbl-wrap{overflow-x:auto}
+.mono-out{font-size:13px;margin:0}
+</style>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<section data-id="asym" data-title="Asymptotics and little-o" data-goal="7">
+  <p class="eyebrow">Chapter 1 · Review sections 1 and 2</p>
+  <h2>Asymptotics and little-o</h2>
+  <p class="lead">Your course compares sizes with two symbols, \(\sim\) and \(o\). Learn to read them, and the hard comparison problems become two or three lines.</p>
+  <div id="memcard"></div>
+
+  <div class="formula">\(f\sim g\iff\displaystyle\lim_{x\to\infty}\frac{f(x)}{g(x)}=1,\qquad\qquad f=o(g)\iff\displaystyle\lim_{x\to\infty}\frac{f(x)}{g(x)}=0\)<span class="cap">\(f\sim g\) says they are the same size. \(f=o(g)\) says \(f\) is negligible next to \(g\). A <b>leading term</b> is a simpler function asymptotic to the original one.</span></div>
+  <p>If the ratio tends to some other positive constant, \(f/g\to c\), then \(f\sim cg\), not \(f\sim g\). So \(3x^2+x\sim 3x^2\), and \(3x^2+x\) is not asymptotic to \(x^2\). The theorems in the next chapter accept \(f\sim cg\), so constants never affect convergence, but they do matter when you write the symbol.</p>
+
+  <h3>Who wins as \(x\to\infty\)</h3>
+  <ul>
+    <li><b>Powers:</b> higher powers dominate lower ones. \(x^p\) grows if \(p>0\), and tends to \(0\) if \(p\lt 0\).</li>
+    <li><b>Exponentials:</b> \(a^x\) grows if \(a>1\), and tends to \(0\) if \(0\lt a\lt 1\). Exponential growth dominates powers and logs. Exponential decay beats inverse powers.</li>
+    <li><b>The three facts:</b> \((\ln x)^q=o(x^p)\) for \(p,q>0\); \(\;x^p=o(a^x)\) for \(a>1\); \(\;x^pr^x\to 0\) for \(0\lt r\lt 1\).</li>
+    <li><b>Bounded pieces:</b> \(\sin x\) and \(\cos x\) stay bounded, and \(\arctan x\to\pi/2\).</li>
+    <li><b>Logs of products:</b> \(\ln(xa^x)=\ln x+x\ln a\), so simplify first. The leading term is \(x\ln a\).</li>
+  </ul>
+
+  <h3>The five-step procedure</h3>
+  <ol>
+    <li>Separate the expression at its outermost sums.</li>
+    <li>Compare whole summands, not isolated factors. In \(x^5(0.5)^x\), the \(x^5\) does not get to compete alone.</li>
+    <li>Choose a candidate leading term and divide the whole expression by it.</li>
+    <li>Preserve outer operations. A dominant term inside a square root still gets square-rooted.</li>
+    <li>Verify that the ratio tends to \(1\), and restore a missing constant if it does not.</li>
+  </ol>
+
+  <div class="card">
+    <h4>Explore: divide by the candidate</h4>
+    <canvas class="scene wide" id="leadFig"></canvas>
+    <p class="cap">The ratio of the whole expression to your candidate, as \(x\) grows. The dashed green line is \(1\). Reaching it proves the candidate is the leading term.</p>
+    <div class="presets" id="leadPresets"></div>
+    <p class="small muted" style="margin:10px 0 4px">Candidate leading term:</p>
+    <div class="presets" id="leadCands"></div>
+    <div class="xf" style="margin-top:12px">
+      <div class="sliders" id="leadSliders"></div>
+      <div class="readout" id="leadOut"></div>
+    </div>
+    <p class="hint">Try each candidate on the first two presets, both from the worked quiz on your review sheet. The right one heads for the green line, slowly when logs are involved, since \(\arctan x/\ln x\) shrinks only as fast as \(\ln x\) grows. A candidate that is too small makes the ratio run off the top, and one that is too big sends it to \(0\), which is exactly the statement that the expression is \(o\) of it. Then watch the readout: a term that looks huge at \(x=5\), like \(x^5(0.5)^x\), is gone by \(x=60\).</p>
+  </div>
+
+  <div class="note"><b>Two facts your practice exam needs that the sheet does not list.</b> As \(u\to 0\): \(\ln(1+u)\sim u\) and \(\sin u\sim u\). L'Hospital proves both. So \(\ln\dfrac{k^2+1}{k^2-1}=\ln\!\left(1+\dfrac{2}{k^2-1}\right)\sim\dfrac{2}{k^2}\). That one line is the whole key to problem 7(b).</div>
+
+  <div class="warn"><b>\(o\) is one-directional, and it is a lot of functions.</b> Every function is \(o\) of many things: \(x^2=o(x^3)\) and \(x^2=o(e^x)\) are both true. So a question that matches \(f\) to \(g\) with \(f=o(g)\) can have several right answers. Also \(x^2\) is not \(o(x^2)\): the ratio is \(1\), not \(0\). And asymptotics do not survive subtraction, which the <a href="09b-series-toolkit.html#asymptotics">Series Toolkit</a> covers.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-asym"></div>
+</section>
+
+<section data-id="compare" data-title="The comparison theorems" data-goal="7">
+  <p class="eyebrow">Chapter 2 · Review sections 1, 2, and 4</p>
+  <h2>The comparison theorems, by their course names</h2>
+  <p class="lead">Three theorems, each with an integral version and a series version. The exam wants the name and the conditions, so learn them as a set.</p>
+
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>Theorem</th><th>Conditions</th><th>Conclusion</th></tr>
+    <tr><td><b>Direct Comparison Test</b></td><td>Integrals: \(f,g\) continuous, \(f(x)\ge g(x)\ge 0\) on \([a,\infty)\). Series: \(0\le a_n\le b_n\) for all \(n\ge M\).</td><td>Larger converges \(\Rightarrow\) smaller converges. Smaller diverges \(\Rightarrow\) larger diverges.</td></tr>
+    <tr><td><b>Asymptotic Comparison Test</b><br><span class="small muted">Stewart: Limit Comparison Test</span></td><td>Integrals: \(f,g\) continuous and positive on \([a,\infty)\), \(f\sim cg\) with \(c>0\). Series: both eventually positive, \(a_n\sim cb_n\) with \(c\ne 0\).</td><td>Both converge or both diverge.</td></tr>
+    <tr><td><b>Little-o Comparison Test</b></td><td>Integrals: \(f,g\) continuous and positive on \([a,\infty)\), \(f=o(g)\). Series: both eventually positive, \(a_n=o(b_n)\).</td><td>Big one converges \(\Rightarrow\) little one converges. Little one diverges \(\Rightarrow\) big one diverges.</td></tr>
+  </table></div>
+
+  <div class="warn"><b>Directions.</b> Direct and little-o comparison each give two useful statements and two useless ones. Convergence of the smaller says nothing about the larger, and divergence of the larger says nothing about the smaller. \(\dfrac{1}{n^2}\le\dfrac1n\) and \(\dfrac1{n^2}=o\!\left(\dfrac1n\right)\), yet the first series converges and the second diverges.</div>
+
+  <h3>Comparison also works at a blow-up</h3>
+  <p>The sheet states direct comparison for Type I and adds that a similar theorem holds for Type II: use continuous nonnegative functions on the relevant one-sided interval, and compare them as \(x\to c^-\) or \(x\to c^+\). Your benchmark then flips, because near \(0\) a small exponent is the safe one:</p>
+  <div class="formula">\(\displaystyle\int_1^\infty\frac{dx}{x^p}\text{ converges}\iff p>1,\qquad\qquad\int_0^1\frac{dx}{x^p}\text{ converges}\iff p\lt 1\)<span class="cap">\(x^{-1/2}\) is integrable near \(0\) but not near infinity. \(x^{-1}\) fails at both ends.</span></div>
+  <p>Example, from your Week 7 miniexam: on \((0,\pi]\), \(\;0\le\dfrac{\sin^2x}{\sqrt x}\le\dfrac{1}{\sqrt x}\). Since \(\int_0^\pi x^{-1/2}\,dx\) converges (\(p=\tfrac12\lt 1\)), the Direct Comparison Test says \(\int_0^\pi\frac{\sin^2 x}{\sqrt x}\,dx\) converges.</p>
+
+  <h3>Little-o is the tool for logarithms</h3>
+  <p>\(\dfrac{\ln n}{n^2}\) is not asymptotic to any \(1/n^p\), so Asymptotic Comparison has nothing to grab. But you only need room to spare. Pick an exponent strictly between \(1\) and \(2\): \(\dfrac{\ln n}{n^2}\Big/\dfrac{1}{n^{3/2}}=\dfrac{\ln n}{n^{1/2}}\to 0\), so \(\dfrac{\ln n}{n^2}=o\!\left(n^{-3/2}\right)\). The \(p\)-series with \(p=\tfrac32\) converges, so the Little-o Comparison Test finishes it.</p>
+  <p>For divergence, run it the other way: \(\dfrac{1}{\sqrt n\,\ln n}\) beats \(\dfrac1n\), since \(\dfrac1n\Big/\dfrac{1}{\sqrt n\ln n}=\dfrac{\ln n}{\sqrt n}\to 0\). So \(\dfrac1n=o\!\left(\dfrac{1}{\sqrt n\ln n}\right)\), the little one diverges, and so does the big one.</p>
+  <div class="note"><b>The family on your practice exam.</b> \(\displaystyle\sum\frac{1}{k^p\ln k}\) converges exactly when \(p>1\). For \(p>1\) compare directly with \(1/k^p\), since \(\ln k\ge 1\) for \(k\ge 3\). At \(p=1\) use the Integral Test, with \(u=\ln x\) giving \(\ln\ln x\to\infty\). For \(p\lt 1\) compare directly from below with the \(p=1\) case. A log changes the verdict only at \(p=1\) exactly.</div>
+
+  <div class="card">
+    <h4>Explore: the ratio against the two running totals</h4>
+    <div class="minis two">
+      <div><canvas class="scene short" id="cmpRatio"></canvas><p class="cap">the ratio \(a_n/b_n\)</p></div>
+      <div><canvas class="scene short" id="cmpSums"></canvas><p class="cap">partial sums: orange \(\sum a_n\), blue \(\sum b_n\)</p></div>
+    </div>
+    <div class="presets" id="cmpPresets" style="margin-top:12px"></div>
+    <div class="xf" style="margin-top:12px">
+      <div class="sliders" id="cmpSliders"></div>
+      <div class="readout" id="cmpOut"></div>
+    </div>
+    <p class="hint">Compare the presets. When the ratio settles at a positive number, the two totals live or die together. When the ratio falls to \(0\), only one direction is safe: on the second preset the ratio goes to \(0\), the orange total levels off, and the blue one climbs forever. That picture is why little-o comparison has no "both" conclusion.</p>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-compare"></div>
+</section>
+
+<section data-id="seqs" data-title="Sequences and partial sums" data-goal="7">
+  <p class="eyebrow">Chapter 3 · Review section 3</p>
+  <h2>Sequences and partial sums</h2>
+  <p class="lead">Before you pick a test, ask what object you are looking at. A sequence, a series, and a partial sum take different questions, and the exam will hand you each one.</p>
+
+  <p>A sequence can diverge by growing or by oscillating: \((-1)^n\) is bounded and diverges, while \((-1)^n/n\to 0\). A series is defined through its partial sums \(S_N=\sum_{n=1}^N a_n\), and it converges to \(S\) exactly when \(S_N\to S\). The limit of the terms is not the sum.</p>
+
+  <h3>Recovering terms from partial sums</h3>
+  <div class="formula">\(a_1=S_1,\qquad a_n=S_n-S_{n-1}\ \ (n\ge 2),\qquad\displaystyle\sum_{n=1}^\infty a_n=\lim_{k\to\infty}S_k\)<span class="cap">The sum comes straight from the partial sum formula. You never need to add up the \(a_n\).</span></div>
+  <p>Given \(S_k=\dfrac{k-8}{k+8}\): \(\;a_1=S_1=-\dfrac79\), and for \(n\ge 2\), \(\;a_n=\dfrac{n-8}{n+8}-\dfrac{n-9}{n+7}=\dfrac{16}{(n+7)(n+8)}\). The sum is \(\lim S_k=1\).</p>
+  <div class="warn"><b>The trap.</b> The difference formula needs \(S_{n-1}\), and the given formula does not define \(S_0\). So \(a_n\) for \(n\ge 2\) may not extend to \(n=1\): here it would give \(\tfrac{16}{72}=\tfrac29\), while the real \(a_1\) is \(-\tfrac79\). Always compute \(a_1\) separately.</div>
+
+  <h3>Recursive sequences: generate terms first</h3>
+  <p>For \(a_1=1,\ a_2=2,\ a_{n+2}=a_{n+1}-a_n\), do not start by taking a limit. Write the terms out: \(1,2,1,-1,-2,-1,1,2,\dots\) The pair \((a_7,a_8)=(1,2)\) is the same as the first pair, so the recurrence produces the same terms again. The sequence is periodic and nonconstant, so it diverges.</p>
+  <div class="card">
+    <h4>Explore: three rules, same starting pair</h4>
+    <canvas class="scene wide" id="recFig"></canvas>
+    <p class="cap">Each dot is one term \(a_n\).</p>
+    <div class="presets" id="recPresets"></div>
+    <div class="xf" style="margin-top:12px">
+      <div class="sliders" id="recSliders"></div>
+      <div class="readout" id="recOut"></div>
+    </div>
+    <p class="hint">Drag \(a_1\) and \(a_2\) on the first rule. The size changes, but the period is always \(6\) unless you start at \((0,0)\). Then switch rules. The averaging rule settles down, and the Fibonacci rule blows up. Nothing about the look of a rule tells you which it is, which is why you generate terms first. Solving \(L=g(L)\) from Module 9 only helps once you know the limit exists.</p>
+  </div>
+
+  <h3>Writing a closed formula</h3>
+  <p>Your practice exam asks for a closed formula for \(\sin(1),\ \ln(2),\ \sin(3),\ \ln(4),\dots\) The tool is a switch built from \((-1)^n\):</p>
+  <div class="formula">\(\dfrac{1-(-1)^n}{2}=\begin{cases}1&n\text{ odd}\\0&n\text{ even}\end{cases}\qquad\qquad\dfrac{1+(-1)^n}{2}=\begin{cases}0&n\text{ odd}\\1&n\text{ even}\end{cases}\)<span class="cap">Multiply each pattern by the switch for its positions, then add. Here \(a_n=\frac{1-(-1)^n}{2}\sin n+\frac{1+(-1)^n}{2}\ln n\).</span></div>
+
+  <h3>Building a sequence on demand</h3>
+  <p>"Find \(f(n)\) with \(f(n)e^n\to 0\)" is a little-o question in disguise: you need \(f=o(e^{-n})\). Anything that dies faster than \(e^{-n}\) works, such as \(f(n)=e^{-2n}\), since \(e^{-2n}e^{n}=e^{-n}\to 0\). The justification is that one computed limit. Note that \(f(n)=e^{-n}\) fails, because the product is \(1\).</p>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-seqs"></div>
+</section>
+
+<section data-id="remainder" data-title="Remainder estimates" data-goal="7">
+  <p class="eyebrow">Chapter 4 · Review section 6</p>
+  <h2>Remainder estimates</h2>
+  <p class="lead">"Find the smallest \(N\) you can" is asking which theorem gives you the best bound you can justify. Name the theorem, check its conditions, solve one inequality.</p>
+
+  <p>For a convergent series with sum \(S\), the <b>remainder</b> is \(R_N=S-S_N=\sum_{k=N+1}^\infty a_k\), and the absolute error is \(|R_N|\). To guarantee a tolerance \(\varepsilon\), find a justified upper bound \(U_N\ge|R_N|\) and require \(U_N\le\varepsilon\).</p>
+
+  <div class="formula">\(|R_N|\le b_{N+1}\)<span class="cap"><b>Alternating Series Remainder Theorem.</b> Conditions: \(a_k=(-1)^kb_k\) or \((-1)^{k+1}b_k\), with \(b_k>0\), \(b_{k+1}\le b_k\), and \(b_k\to 0\). Also \(S\) lies between \(S_N\) and \(S_{N+1}\), and the error has the sign of the first omitted term.</span></div>
+  <div class="formula">\(\displaystyle\int_{n+1}^\infty f(x)\,dx\le R_n\le\int_n^\infty f(x)\,dx\)<span class="cap"><b>Integral Test Remainder Theorem.</b> Conditions: \(\sum a_k\) converges, \(f(k)=a_k\), and \(f\) is positive, continuous, and decreasing for \(x\ge n\).</span></div>
+  <div class="formula">\(\displaystyle R^f_n\le R^g_n\le\int_n^\infty g(x)\,dx\)<span class="cap"><b>Direct Comparison Remainder Theorem.</b> Conditions: \(\sum f(k)\) and \(\sum g(k)\) converge, \(g(k)\ge f(k)\ge 0\) for \(k\ge N\), and \(g\) is positive, continuous, and decreasing on \([N,\infty)\). This is for an \(f\) you cannot integrate.</span></div>
+
+  <div class="warn"><b>Sign-changing terms: the point of practice problem 6.</b> \(\dfrac{\cos k+\cos^2k+\cos^3k}{k^3}\) can be negative, so the Direct Comparison Remainder Theorem does not apply to it directly, and neither does the alternating theorem, because the signs of \(\cos k\) do not alternate regularly. Pass to absolute values first. The tail of a series is at most the tail of its absolute values: \(|R_N|\le\sum_{k>N}|a_k|\). Now \(|a_k|\le\dfrac{3}{k^3}\), so \(|R_N|\le\displaystyle\int_N^\infty\frac{3}{x^3}\,dx=\frac{3}{2N^2}\le 0.001\) gives \(N\ge\sqrt{1500}\approx 38.7\), and \(N=39\).</div>
+
+  <h3>Sufficient, or actually smallest?</h3>
+  <p>A bound tells you when you are safe. It does not say smaller \(N\) fail. Be exact about which you are claiming:</p>
+  <ul>
+    <li>For \(\sum(-1)^k/k^2\) with tolerance \(0.001\): \(N=31\) is the smallest \(N\) <b>certified by the theorem</b>. It need not be the actual smallest \(N\) whose error meets the tolerance.</li>
+    <li>For \(\sum k^{-2}\): \(\frac{1}{N+1}\lt R_N\lt\frac1N\). So \(N=1000\) works, and \(R_{999}>\frac{1}{1000}\). Positive tails decrease as \(N\) grows, so every smaller index fails too. Here \(N=1000\) <b>is the actual minimum</b>, because you also have a lower bound.</li>
+    <li>For \(\sum e^{1/k}/k^3\): \(e^{1/k}\le e\) gives \(R_N\le\frac{e}{2N^2}\), so \(N\ge\sqrt{500e}\approx 36.87\) and \(N=37\) suffices. This does not prove \(37\) is the minimum.</li>
+  </ul>
+
+  <div class="card">
+    <h4>Explore: the true error against the bound</h4>
+    <canvas class="scene wide" id="remFig"></canvas>
+    <p class="cap">Log scales on both axes. Purple dots: the actual \(|R_N|\). Orange: the theorem's upper bound \(U_N\). Green dashed: your tolerance \(\varepsilon\).</p>
+    <div class="presets" id="remPresets"></div>
+    <div class="xf" style="margin-top:12px">
+      <div class="sliders" id="remSliders"></div>
+      <div class="readout" id="remOut"></div>
+    </div>
+    <p class="hint">On \(\sum k^{-2}\) the dots sit right under the bound, so the certified \(N\) is within one of the true one. Now try the alternating preset: the bound is still honest, but the true error is about half of it, so the true smallest \(N\) is lower. On the last two the gap is wider, because the comparison threw information away. That gap is what "smallest \(N\) you can" means: the smallest you can justify, not the smallest that exists.</p>
+  </div>
+
+  <div class="card">
+    <h4>Step-by-step: a smallest-N problem</h4>
+    <div class="expr" id="rwExpr"></div>
+    <div class="controls">
+      <button class="btn" id="rwPrev">◀ Back</button>
+      <button class="btn primary" id="rwNext">Next step ▶</button>
+      <button class="btn" id="rwNew">New series</button>
+      <span class="status" id="rwStatus"></span>
+    </div>
+    <p class="hint">Every problem of this kind has this shape. The only creative step is the bound on the numerator.</p>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-remainder"></div>
+</section>
+
+<section data-id="exam" data-title="Full-credit answers" data-goal="8">
+  <p class="eyebrow">Chapter 5 · Review sections 5 and 7</p>
+  <h2>Writing full-credit answers</h2>
+  <p class="lead">The sheet's first line is the instruction that matters most: <b>state the theorem name for any used theorem, and mention its conditions.</b> A correct verdict with no theorem behind it is not the answer they want.</p>
+
+  <h3>The final answer template</h3>
+  <p>Five short lines, in this order, on every comparison problem:</p>
+  <ol>
+    <li>State the simple comparison object \(b_n\) or \(g(x)\).</li>
+    <li>State the theorem you are using, and mention all its conditions.</li>
+    <li>Show the decisive inequality or ratio limit.</li>
+    <li>State why the benchmark converges or diverges, naming its test.</li>
+    <li>State the conclusion.</li>
+  </ol>
+
+  <div class="card">
+    <h4>Step-by-step: the template on real problems</h4>
+    <div class="expr" id="ewExpr"></div>
+    <div class="controls">
+      <button class="btn" id="ewPrev">◀ Back</button>
+      <button class="btn primary" id="ewNext">Next step ▶</button>
+      <button class="btn" id="ewNew">Next problem</button>
+      <span class="status" id="ewStatus"></span>
+    </div>
+    <p class="hint">Cycles through the two worked quizzes on your review sheet and two practice exam problems. Before pressing Next, say out loud what the next line has to be.</p>
+  </div>
+
+  <h3>Which test? The sheet's order</h3>
+  <ol>
+    <li><b>Identify the object.</b> Sequence, series, partial sum, improper integral, or remainder? Do not apply a series test to a sequence.</li>
+    <li><b>Look at \(a_n\).</b> If \(a_n\not\to 0\), the Divergence Test finishes it. If \(a_n\to 0\), no conclusion follows yet.</li>
+    <li><b>Recognize a benchmark.</b> Constant ratio: geometric, check \(|r|\lt 1\). \(1/n^p\): \(p\)-series, check \(p>1\). Alternating sign: test absolute convergence first, then check all three AST conditions if you need to.</li>
+    <li><b>Fractions and composites: find leading behavior first.</b> Numerator and denominator separately, whole summands, keep roots and logs. Then \(a_n\sim C/n^p\) compares with a \(p\)-series, and \(a_n\sim Cr^n\) with a geometric series. Use the Integral Test when \(f\) is manageable.</li>
+    <li><b>Factorials or adjacent exponential powers:</b> Ratio Test. If \(L=1\), choose another test.</li>
+    <li><b>Error or number-of-terms questions:</b> name the remainder theorem first, check conditions, solve, and say whether your \(N\) is merely sufficient or provably the minimum.</li>
+  </ol>
+  <div class="note"><b>A failed test is not a verdict.</b> If an AST condition fails, or an Integral Test condition fails, the test is unavailable. That alone does not prove divergence. For divergence you need the Divergence Test or a comparison.</div>
+  <div class="note"><b>\(\cos(n\pi)=(-1)^n\) and \(\cos(2n\pi)=1\).</b> Rewrite these before choosing a test. The signs of \(\cos n\) do not alternate regularly, so \(\sum\cos(n)/n^2\) is an absolute convergence problem with direct comparison, not an AST problem.</div>
+
+  <h3>Names on the sheet</h3>
+  <p>Modules 8 to 10 follow Stewart, so some names differ. Use the left column on the exam.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <tr><th>On your sheet</th><th>In Stewart and earlier modules</th><th>Learn it in</th></tr>
+    <tr><td>Direct Comparison Test</td><td>Comparison Test / Comparison Theorem</td><td><a href="08-improper-integrals.html#compare">Module 8</a>, <a href="10-series-tests.html#comparison">Module 10</a></td></tr>
+    <tr><td>Asymptotic Comparison Test</td><td>Limit Comparison Test</td><td><a href="10-series-tests.html#comparison">Module 10</a>, Chapter 2 here</td></tr>
+    <tr><td>Little-o Comparison Test</td><td>not in Stewart</td><td>Chapter 2 here</td></tr>
+    <tr><td>Divergence Test (n-th Term Test)</td><td>Test for Divergence</td><td><a href="09-sequences-series.html#series">Module 9</a></td></tr>
+    <tr><td>Alternating Series Remainder Theorem</td><td>Alternating Series Estimation Theorem</td><td><a href="10-series-tests.html#alternating">Module 10</a>, Chapter 4 here</td></tr>
+    <tr><td>Integral Test Remainder Theorem</td><td>Remainder Estimate for the Integral Test</td><td><a href="09-sequences-series.html#integraltest">Module 9</a>, Chapter 4 here</td></tr>
+    <tr><td>Direct Comparison Remainder Theorem</td><td>not in Stewart as a theorem</td><td>Chapter 4 here</td></tr>
+  </table></div>
+  <div class="note"><b>The Root Test is not on the sheet.</b> The Fall 2024 practice midterm predates this sheet, and its problem 7(c) looks built for the Root Test. It also falls to direct comparison: \(\dfrac{k^{2k}}{(1+2k^2)^k}=\left(\dfrac{k^2}{1+2k^2}\right)^k\le\left(\dfrac12\right)^k\). Module 10 still teaches the Root Test. Know it, but practice the comparison route too, and ask whether the Root Test is fair game this year.</div>
+
+  <h3>Practice</h3>
+  <p>Each one asks for a verdict and the quantity that proves it. The real practice exam problems, including the written reasoning, are in the <a href="midterm2-gauntlet.html">Midterm 2 Gauntlet</a>.</p>
+  <div class="card" id="drill-exam"></div>
+</section>
+
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 6</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions from every chapter. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+<script>
+const R=String.raw;
+const val=(el,k)=>$(`[data-k=${k}]`,el).value;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,list)=>{let ok=true,err=null;list.forEach(([k,res])=>{G(el,k,res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,opts={})=>el.appendChild(ansLine(label,k,opts));
+const pickQ=(el,q,opts)=>{q.get=choiceButtons(el,opts.map((label,value)=>({label,value})));};
+const VERDICT=['converges','diverges'];
+const VERDICT3=['converges absolutely','converges conditionally','diverges'];
+const hintP=(box,html)=>{if($('.hintp',box))return;const p=document.createElement('p');p.className='small muted hintp';p.innerHTML=html;box.appendChild(p);};
+const kp=(v,a)=>a===0?v:(a>0?`${v}+${a}`:`${v}-${-a}`);
+const Npow=P=>P===1?'N':`N^{${P}}`;
+const slashFrac=x=>{const [n,d]=ratOf2(x);return d===1?String(n):`${n}/${d}`;};
+const sci=x=>Math.abs(x)>=1e4||(Math.abs(x)<1e-3&&x!==0)?x.toExponential(2):fmtDec(x,3);
+
+/* ============================================================ chapter 1 question types */
+const Q={};
+const LEAD_ITEMS=[
+  ()=>{const a=rint(2,6),p=rint(3,6),q=rint(1,p-1),b=rint(2,9);return {tex:R`${a}x^{${p}}+${b}x^{${q}}+\ln x`,ans:`${a}x^${p}`,ansTex:R`${a}x^{${p}}`,why:R`Powers beat logs, and the highest power wins.`};},
+  ()=>{const b=pick([2,3,5]),a=rint(2,7),p=rint(3,9);return {tex:R`x^{${p}}+${a}\cdot ${b}^{x}+\sqrt{x}`,ans:`${a}*${b}^x`,ansTex:R`${a}\cdot ${b}^{x}`,why:R`Exponential growth dominates every power.`};},
+  ()=>{const a=rint(2,7);return {tex:R`x^{-2}+${a}\ln x+\arctan x`,ans:`${a}ln(x)`,ansTex:R`${a}\ln x`,why:R`\(x^{-2}\to 0\) and \(\arctan x\to\pi/2\) stays bounded, while \(\ln x\to\infty\).`};},
+  ()=>{const a=rint(2,7),p=rint(3,8);return {tex:R`x^{${p}}\left(\tfrac12\right)^{x}+${a}\sqrt{x}+\cos x`,ans:`${a}sqrt(x)`,ansTex:R`${a}\sqrt{x}`,why:R`Compare whole summands: \(x^{${p}}(1/2)^x\to 0\) however large \(${p}\) is, and \(\cos x\) is bounded.`};},
+  ()=>{const a=pick([2,3,4,5]),p=rint(2,4);return {tex:R`\sqrt{${a*a}x^{${2*p}}+x+\sin x}`,ans:`${a}x^${p}`,ansTex:R`${a}x^{${p}}`,why:R`The dominant term inside is \(${a*a}x^{${2*p}}\), and the outer root must still be applied.`};},
+  ()=>{const b=pick([2,3,5,7]);return {tex:R`\ln\!\left(x\cdot ${b}^{x}\right)`,ans:`x*ln(${b})`,ansTex:R`x\ln ${b}`,why:R`Simplify first: \(\ln(x\cdot ${b}^x)=\ln x+x\ln ${b}\), and \(\ln x=o(x)\). The constant \(\ln ${b}\) stays.`};},
+  ()=>{const a=rint(2,6),p=rint(1,3);return {tex:R`\dfrac{${a}x^{${p+2}}+x}{x^{2}+\ln x}`,ans:`${a}x^${p}`,ansTex:R`${a}x^{${p}}`,why:R`Top \(\sim ${a}x^{${p+2}}\), bottom \(\sim x^2\), and asymptotics are safe for quotients.`};},
+  ()=>{const a=rint(2,6);return {tex:R`\dfrac{x^{3}}{e^{x}}+${a}x`,ans:`${a}x`,ansTex:R`${a}x`,why:R`\(x^3/e^x\to 0\), since exponentials beat powers. So the plain \(${a}x\) leads.`};},
+  ()=>{const p=pick([3,5,7]),q=(p+1)/2;return {tex:R`x^{${q}}+\sqrt{x^{${2*q+1}}}`,ans:`x^(${2*q+1}/2)`,ansTex:R`x^{${2*q+1}/2}`,why:R`\(\sqrt{x^{${2*q+1}}}=x^{${2*q+1}/2}\), which is a higher power than \(x^{${q}}\).`};},
+];
+Q.leading={name:'leading term',
+  gen(){return pick(LEAD_ITEMS)();},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the simplest ${M('g(x)')} with ${M(R`\displaystyle ${q.tex}\sim g(x)`)} as ${M(R`x\to\infty`)}. Keep the constant.</p>`;numIn(el,'g',M('g(x)='),{wide:true});},
+  check(q,el){return G(el,'g',checkExpr(val(el,'g'),q.ans,['x'],{domain:{x:[2,6]}}));},
+  hint(q,el){hintP(el,`Separate at the outermost sums, then ask which whole summand wins.`);},
+  solution(q){return `${q.why} So ${M(R`g(x)=${q.ansTex}`)}. Divide to confirm: the ratio tends to 1.`;}
+};
+const O_PAIRS=[
+  {f:R`(\ln x)^{3}`,g:R`\sqrt{x}`,L:'0',why:R`\((\ln x)^q=o(x^p)\) for any \(p,q>0\).`},
+  {f:R`x^{10}`,g:R`(1.01)^{x}`,L:'0',why:R`\(x^p=o(a^x)\) for \(a>1\), however slow the exponential looks at first.`},
+  {f:R`2^{x}`,g:R`3^{x}`,L:'0',why:R`The ratio is \((2/3)^x\to 0\).`},
+  {f:R`x\ln x`,g:R`x^{2}`,L:'0',why:R`The ratio is \(\ln x/x\to 0\).`},
+  {f:R`3x^{2}+x`,g:R`x^{2}`,L:'3',why:R`The ratio tends to 3, so \(f\sim 3g\), which is not \(f\sim g\).`},
+  {f:R`\sqrt{x^{2}+1}`,g:R`x`,L:'1',why:R`\(\sqrt{x^2+1}/x=\sqrt{1+1/x^2}\to 1\).`},
+  {f:R`\ln(x^{2})`,g:R`\ln x`,L:'2',why:R`\(\ln(x^2)=2\ln x\), so the ratio is exactly 2.`},
+  {f:R`\ln(x+1)`,g:R`\ln x`,L:'1',why:R`\(\ln(x+1)=\ln x+\ln(1+1/x)\), and the second piece goes to 0.`},
+  {f:R`2^{x+1}`,g:R`2^{x}`,L:'2',why:R`The ratio is exactly 2. Shifting an exponent changes the constant.`},
+  {f:R`e^{x}`,g:R`x^{100}`,L:'inf',why:R`Exponentials beat powers, so here \(g=o(f)\), not the other way around.`},
+  {f:R`x^{2}`,g:R`x\ln x`,L:'inf',why:R`The ratio is \(x/\ln x\to\infty\), so \(g=o(f)\).`},
+  {f:R`x+\sin x`,g:R`x`,L:'1',why:R`\(\sin x/x\to 0\).`},
+];
+const O_OPTS=[R`\(f=o(g)\)`,R`\(f\sim g\)`,R`\(f\sim cg\) with \(c\ne 1\)`,R`\(g=o(f)\)`];
+const oClass=L=>L==='0'?0:L==='1'?1:L==='inf'?3:2;
+Q.ratioClass={name:'o, asymptotic, or neither',
+  gen(){return pick(O_PAIRS);},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`f(x)=${q.f}`)} and ${M(R`g(x)=${q.g}`)}. Find ${M(R`\displaystyle\lim_{x\to\infty}\frac{f(x)}{g(x)}`)} (type inf if it is infinite), then pick the relationship.</p>`;numIn(el,'L',M(R`\lim\frac{f}{g}=`));pickQ(el,q,O_OPTS);},
+  check(q,el){if(q.get()===null)return {ok:false,msg:'Pick a relationship.'};const r=G(el,'L',checkLimit(val(el,'L'),q.L==='inf'?'inf':Number(q.L)));return {ok:r.ok&&q.get()===oClass(q.L),err:r.err};},
+  solution(q){return `${q.why} The limit is ${M(q.L==='inf'?R`\infty`:q.L)}, so ${O_OPTS[oClass(q.L)]}.`;}
+};
+const O_MENU=[{t:R`\ln x`,r:0.01},{t:R`x`,r:1},{t:R`x^{2}`,r:2},{t:R`\sqrt{x^{7}}`,r:3.5},{t:R`x^{5}`,r:5},{t:R`2^{x}`,r:1000},{t:R`e^{x}`,r:1001}];
+const O_FS=[
+  {t:R`\ln x+x^{2}-\sin x`,r:2,w:R`x^{2}`},{t:R`\dfrac{x^{3}}{e^{x}}+x`,r:1,w:R`x`},{t:R`\sqrt{x}+\dfrac{1}{\ln x}`,r:0.5,w:R`\sqrt{x}`},{t:R`x^{3}+\sqrt{x^{9}}`,r:4.5,w:R`x^{9/2}`},
+  {t:R`3x+\arctan x`,r:1,w:R`3x`},{t:R`x^{4}+x\ln x`,r:4,w:R`x^{4}`},{t:R`\ln x+7`,r:0.01,w:R`\ln x`},{t:R`2^{x}+x^{5}`,r:1000,w:R`2^{x}`},
+];
+Q.allO={name:'every g with f = o(g)',
+  gen(){for(;;){const f=pick(O_FS),m=shuffle(O_MENU.slice()).slice(0,4);const ans=m.map((g,i)=>g.r>f.r?i+1:0).filter(Boolean);if(ans.length)return {f,m,ans};}},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`f(x)=${q.f.t}`)}. Which of these make ${M('f=o(g_j)')} true? Enter every index that works, as a comma-separated list.</p><p>${q.m.map((g,i)=>M(R`g_{${i+1}}=${g.t}`)).join(' &nbsp; ')}</p>`;numIn(el,'L','indices:',{placeholder:'like 1, 3'});},
+  check(q,el){return G(el,'L',checkNumberList(val(el,'L'),q.ans));},
+  solution(q){return `The leading term of ${M('f')} is ${M(q.f.w)}. Compare that with each ${M('g_j')}: the ones growing strictly faster are ${M('g_{'+q.ans.join('},g_{')+'}')}. A ${M('g')} of the same size gives a ratio that does not go to 0, so it does not count.`;}
+};
+const SMALL_ITEMS=[
+  ()=>{const c=rint(1,5);return {tex:R`\ln\!\left(1+\frac{${c}}{n^{2}}\right)`,ans:`${c}/n^2`,ansTex:R`\frac{${c}}{n^{2}}`,p:2,why:R`\(\ln(1+u)\sim u\) with \(u=${c}/n^2\to 0\).`};},
+  ()=>{const a=rint(1,5),b=rint(1,5);return {tex:R`\ln\!\left(\frac{n^{2}+${a}}{n^{2}-${b}}\right)`,ans:`${a+b}/n^2`,ansTex:R`\frac{${a+b}}{n^{2}}`,p:2,why:R`\(\frac{n^2+${a}}{n^2-${b}}=1+\frac{${a+b}}{n^2-${b}}\), and \(\ln(1+u)\sim u\).`};},
+  ()=>{const c=rint(1,5);return {tex:R`\sin\!\left(\frac{${c}}{n}\right)`,ans:`${c}/n`,ansTex:R`\frac{${c}}{n}`,p:1,why:R`\(\sin u\sim u\) with \(u=${c}/n\to 0\).`};},
+  ()=>{const c=rint(1,5);return {tex:R`\ln\!\left(\frac{n+${c}}{n}\right)`,ans:`${c}/n`,ansTex:R`\frac{${c}}{n}`,p:1,why:R`\(\frac{n+${c}}{n}=1+\frac{${c}}{n}\), and \(\ln(1+u)\sim u\).`};},
+  ()=>{const c=rint(1,5);return {tex:R`\sin\!\left(\frac{${c}}{n^{3}}\right)`,ans:`${c}/n^3`,ansTex:R`\frac{${c}}{n^{3}}`,p:3,why:R`\(\sin u\sim u\) with \(u=${c}/n^3\to 0\).`};},
+];
+Q.smallArg={name:'ln(1+u) and sin u for small u',
+  gen(){return pick(SMALL_ITEMS)();},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the simplest ${M('b_n')} with ${M(R`\displaystyle ${q.tex}\sim b_n`)} as ${M(R`n\to\infty`)}. Then decide ${M(R`\sum ${q.tex}`)}.</p>`;numIn(el,'b',M('b_n='),{wide:true});pickQ(el,q,VERDICT);},
+  check(q,el){if(q.get()===null)return {ok:false,msg:'Pick a verdict.'};const r=G(el,'b',checkExprInt(val(el,'b'),q.ans,['n'],{domain:{n:[1,12]}}));return {ok:r.ok&&q.get()===(q.p>1?0:1),err:r.err};},
+  solution(q){return `${q.why} So ${M(R`b_n=${q.ansTex}`)}. By the Asymptotic Comparison Test the series behaves like the ${M('p')}-series with ${M('p='+q.p)}, so it <b>${q.p>1?'converges':'diverges'}</b>.`;}
+};
+
+/* ============================================================ chapter 2 question types */
+const INT_ITEMS=[
+  {t:R`\dfrac{x^{2}+3x}{x^{4}+1}`,g:'1/x^2',gt:R`\frac{1}{x^{2}}`,v:0,bw:R`\(p=2>1\)`},
+  {t:R`\dfrac{\sqrt{x}+\ln x}{x^{3}+\sin x}`,g:'x^(-5/2)',gt:R`\frac{1}{x^{5/2}}`,v:0,bw:R`\(p=\tfrac52>1\)`},
+  {t:R`\dfrac{x+\arctan x}{x^{2}+\sqrt{x}}`,g:'1/x',gt:R`\frac{1}{x}`,v:1,bw:R`\(p=1\)`},
+  {t:R`\dfrac{2x^{3}+\sin x}{\sqrt{x^{7}+x}}`,g:'x^(-1/2)',gt:R`\frac{1}{\sqrt{x}}`,v:1,bw:R`\(p=\tfrac12\le 1\)`},
+  {t:R`\dfrac{x+\ln x}{\sqrt{x^{5}+1}}`,g:'x^(-3/2)',gt:R`\frac{1}{x^{3/2}}`,v:0,bw:R`\(p=\tfrac32>1\)`},
+  {t:R`\dfrac{e^{x}+x}{e^{2x}+1}`,g:'e^(-x)',gt:R`e^{-x}`,v:0,bw:R`\(\int_1^\infty e^{-x}\,dx\) converges`},
+  {t:R`\dfrac{x^{4}+\ln x}{e^{x}+x^{2}}`,g:'x^4*e^(-x)',gt:R`x^{4}e^{-x}`,v:0,bw:R`\(\int_1^\infty x^4e^{-x}\,dx\) converges, since exponential decay beats powers`},
+  {t:R`\dfrac{\ln x+\arctan x+1/x}{x\ln x+\sqrt{x}}`,g:'1/x',gt:R`\frac{1}{x}`,v:1,bw:R`\(p=1\)`},
+];
+Q.asymInt={name:'asymptotic comparison for an integral',
+  gen(){return pick(INT_ITEMS);},
+  render(q,el){el.innerHTML=`<p class="prompt">Decide ${M(R`\displaystyle\int_2^{\infty}F(x)\,dx`)} for ${M(R`F(x)=${q.t}`)}. Give a simple ${M('g(x)')} with ${M(R`F\sim cg`)} (any positive constant multiple is fine), and the verdict.</p>`;numIn(el,'g',M('g(x)='),{wide:true});pickQ(el,q,VERDICT);},
+  check(q,el){if(q.get()===null)return {ok:false,msg:'Pick a verdict.'};const r=G(el,'g',checkExprUpToFactor(val(el,'g'),q.g,['x'],{domain:{x:[2,8]},positive:true}));return {ok:r.ok&&q.get()===q.v,err:r.err};},
+  solution(q){return `Top and bottom separately: ${M(R`F\sim c\,${q.gt}`)}. Both functions are continuous and positive, and ${q.bw}. By the Asymptotic Comparison Test for Improper Integrals, the integral <b>${VERDICT[q.v]}</b>.`;}
+};
+const SER_ITEMS=[
+  {t:R`\dfrac{3n+2}{n^{3}+5}`,b:'1/n^2',bt:R`\frac{1}{n^{2}}`,v:0,bw:R`\(p=2>1\)`},
+  {t:R`\dfrac{2^{n}+n}{3^{n}+n^{2}}`,b:'(2/3)^n',bt:R`\left(\tfrac23\right)^{n}`,v:0,bw:R`geometric with \(|r|=\tfrac23\lt 1\)`},
+  {t:R`\dfrac{\sqrt{n+1}}{n^{2}+\ln n}`,b:'n^(-3/2)',bt:R`\frac{1}{n^{3/2}}`,v:0,bw:R`\(p=\tfrac32>1\)`},
+  {t:R`\dfrac{n+\sqrt{n}}{n^{2}+1}`,b:'1/n',bt:R`\frac{1}{n}`,v:1,bw:R`\(p=1\), the harmonic series`},
+  {t:R`\dfrac{\sqrt{4^{-n}+n^{-2}+1}+e^{-n}}{\sqrt{n^{2}+\ln n}+(1.25)^{n}}`,b:'(4/5)^n',bt:R`\left(\tfrac45\right)^{n}`,v:0,bw:R`geometric with \(|r|=\tfrac45\lt 1\)`},
+  {t:R`\dfrac{1+\sin^{2}(n)\,e^{-n}}{\sqrt{n^{2}+3n}}`,b:'1/n',bt:R`\frac{1}{n}`,v:1,bw:R`\(p=1\), the harmonic series`},
+  {t:R`\dfrac{5^{n}+n^{9}}{4^{n}+6^{n}}`,b:'(5/6)^n',bt:R`\left(\tfrac56\right)^{n}`,v:0,bw:R`geometric with \(|r|=\tfrac56\lt 1\)`},
+  {t:R`\dfrac{\sqrt{n^{3}+n}}{n^{2}+\sqrt{n}}`,b:'n^(-1/2)',bt:R`\frac{1}{\sqrt{n}}`,v:1,bw:R`\(p=\tfrac12\le 1\)`},
+];
+Q.asymSer={name:'asymptotic comparison for a series',
+  gen(){return pick(SER_ITEMS);},
+  render(q,el){el.innerHTML=`<p class="prompt">Decide ${M(R`\displaystyle\sum_{n=2}^{\infty}a_n`)} for ${M(R`a_n=${q.t}`)}. Give a simple ${M('b_n')} with ${M(R`a_n\sim cb_n`)} (any positive constant multiple is fine), and the verdict.</p>`;numIn(el,'b',M('b_n='),{wide:true});pickQ(el,q,VERDICT);},
+  check(q,el){if(q.get()===null)return {ok:false,msg:'Pick a verdict.'};const r=G(el,'b',checkExprUpToFactor(val(el,'b'),q.b,['n'],{domain:{n:[2,10]},positive:true}));return {ok:r.ok&&q.get()===q.v,err:r.err};},
+  solution(q){return `Leading terms give ${M(R`a_n\sim c\,${q.bt}`)}. Both are eventually positive, and the benchmark has ${q.bw}. By the Asymptotic Comparison Test, ${M(R`\sum a_n`)} <b>${VERDICT[q.v]}</b>.`;}
+};
+Q.littleOuse={name:'little-o with room to spare',
+  gen(){
+    const v=pick(['x','n']);
+    if(Math.random()<0.5){const p=pick([2,3,3/2,5/2]),q=rint(1,3);return {v,conv:true,p,q};}
+    const p=pick([1/2,1/3,2/3,3/4]);return {v,conv:false,p,q:1};},
+  render(q,el){
+    const ps=slashFrac(q.p),obj=q.v==='x'?(t=>R`\int_3^{\infty}${t}\,dx`):(t=>R`\sum_{n=3}^{\infty}${t}`),V=q.v;
+    const t=q.conv?R`\frac{(\ln ${V})^{${q.q}}}{${V}^{${ps}}}`:R`\frac{1}{${V}^{${ps}}\ln ${V}}`;
+    q.tex=obj(t);
+    el.innerHTML=`<p class="prompt">Decide ${M(R`\displaystyle ${q.tex}`)}. ${q.conv?`Give an exponent ${M('s>1')} with the term ${M(R`=o\!\left(1/${V}^{s}\right)`)}.`:`Give an exponent ${M(R`s\le 1`)} with ${M(R`1/${V}^{s}=o(\text{the term})`)}.`} Any valid ${M('s')} is accepted.</p>`;
+    numIn(el,'s',M('s='));pickQ(el,q,VERDICT);},
+  check(q,el){
+    if(q.get()===null)return {ok:false,msg:'Pick a verdict.'};
+    const raw=val(el,'s');let s;try{s=Expr.evalNumber(cleanAns(raw));}catch(e){return G(el,'s',{ok:false,err:'Type a number.'});}
+    const good=q.conv?(s>1&&s<q.p):(s>q.p&&s<=1);G(el,'s',{ok:good});
+    return {ok:good&&q.get()===(q.conv?0:1),msg:good?undefined:(q.conv?`You need s strictly between 1 and ${fmtDec(q.p,2)}.`:`You need s above ${fmtDec(q.p,2)} and at most 1.`)};},
+  solution(q){const V=q.v,mid=q.conv?fmtDec((1+q.p)/2,3):'1',fr=slashFrac;return q.conv
+    ?`Take ${M('s='+mid)}. The ratio is ${M(R`(\ln ${V})^{${q.q}}/${V}^{${fr(q.p)}-s}`)}, with a positive power left over, so it goes to 0 because logs lose to every power. The benchmark ${M(R`1/${V}^{s}`)} converges since ${M('s>1')}. By the Little-o Comparison Test, it <b>converges</b>.`
+    :`Take ${M('s=1')}. The ratio ${M(R`\frac{1/${V}}{1/(${V}^{${fr(q.p)}}\ln ${V})}=\frac{\ln ${V}}{${V}^{${fr(1-q.p)}}}\to 0`)}. So ${M(R`1/${V}`)} is the little one, and it diverges. By the Little-o Comparison Test, the big one <b>diverges</b>.`;}
+};
+function ratOf2(x){for(let d=1;d<=12;d++){const n=x*d;if(Math.abs(n-Math.round(n))<1e-9)return [Math.round(n),d];}return [x,1];}
+const T2_ITEMS=[
+  {t:R`\dfrac{\sin^{2}x}{\sqrt{x}}`,g:'1/sqrt(x)',gt:R`\frac{1}{\sqrt{x}}`,v:0,why:R`\(\sin^2x\le 1\), and \(p=\tfrac12\lt 1\).`},
+  {t:R`\dfrac{2+\cos x}{x^{1/3}}`,g:'3/x^(1/3)',gt:R`\frac{3}{x^{1/3}}`,v:0,why:R`\(2+\cos x\le 3\), and \(p=\tfrac13\lt 1\).`},
+  {t:R`\dfrac{1+\sin^{2}x}{x^{2/3}}`,g:'2/x^(2/3)',gt:R`\frac{2}{x^{2/3}}`,v:0,why:R`\(1+\sin^2x\le 2\), and \(p=\tfrac23\lt 1\).`},
+  {t:R`\dfrac{2+\sin x}{x^{2}}`,g:'1/x^2',gt:R`\frac{1}{x^{2}}`,v:1,why:R`\(2+\sin x\ge 1\), so the integrand is at least \(1/x^2\), and \(p=2\ge 1\) diverges near 0. Divergence needs a smaller function.`},
+  {t:R`\dfrac{1+e^{-x}}{x}`,g:'1/x',gt:R`\frac{1}{x}`,v:1,why:R`\(1+e^{-x}\ge 1\), so the integrand is at least \(1/x\), and \(p=1\) diverges near 0.`},
+  {t:R`\dfrac{3+\cos^{2}x}{x^{3/2}}`,g:'3/x^(3/2)',gt:R`\frac{3}{x^{3/2}}`,v:1,why:R`\(3+\cos^2x\ge 3\), and \(p=\tfrac32\ge 1\) diverges near 0.`},
+];
+Q.typeII={name:'direct comparison at a blow-up',
+  gen(){return pick(T2_ITEMS);},
+  render(q,el){el.innerHTML=`<p class="prompt">Decide ${M(R`\displaystyle\int_0^{1}${q.t}\,dx`)}. Use the Direct Comparison Test: give the function ${M(R`g(x)=C/x^{p}`)} you compare with, where ${M('C')} comes from the simplest bound on the numerator (a larger ${M('g')} to prove convergence, a smaller one to prove divergence), and the verdict.</p>`;numIn(el,'g',M('g(x)='),{wide:true});pickQ(el,q,VERDICT);},
+  check(q,el){if(q.get()===null)return {ok:false,msg:'Pick a verdict.'};const r=G(el,'g',checkExpr(val(el,'g'),q.g,['x'],{domain:{x:[0.2,1]}}));return {ok:r.ok&&q.get()===q.v,err:r.err};},
+  solution(q){return `${q.why} So ${M(R`g(x)=${q.gt}`)}, and the Direct Comparison Test says the integral <b>${VERDICT[q.v]}</b>. Near 0 the benchmark converges exactly when ${M(R`p\lt 1`)}.`;}
+};
+
+/* ============================================================ chapter 3 question types */
+Q.termFromSum={name:'terms from partial sums',
+  gen(){
+    const kind=pick(['rat','rat','inv','log']);
+    if(kind==='rat'){let p,q;do{p=rint(-9,9);q=rint(1,12);}while(p>=q||p===-1);const c=q-p;
+      return {kind,tex:R`\frac{${kp('k',p)}}{${kp('k',q)}}`,a1:(1+p)/(1+q),f:n=>c/((n+q)*(n+q-1)),an:`${c}/((n+${q})(n+${q-1}))`,S:1,c,p,q};}
+    if(kind==='inv'){const A=rint(2,6),B=rint(2,9);return {kind,tex:R`${A}-\frac{${B}}{k}`,a1:A-B,f:n=>B/(n*(n-1)),an:`${B}/(n(n-1))`,S:A,A,B};}
+    return {kind:'log',tex:R`\ln(k+1)`,a1:Math.LN2,a1s:'ln(2)',f:n=>Math.log((n+1)/n),an:'ln((n+1)/n)',S:'inf'};},
+  render(q,el){el.innerHTML=`<p class="prompt">The partial sums of ${M(R`\sum_{n=1}^\infty a_n`)} are ${M(R`S_k=${q.tex}`)} for ${M(R`k\ge 1`)}. Find ${M('a_1')}, the formula for ${M('a_n')} when ${M(R`n\ge 2`)}, and the sum (type diverges if it diverges).</p>`;
+    numIn(el,'a1',M('a_1='));numIn(el,'an',M(R`a_n=`),{wide:true,after:M(R`\;(n\ge 2)`)});numIn(el,'S',M(R`\sum a_n=`));},
+  check(q,el){return Gall(el,[['a1',checkNumber(val(el,'a1'),q.a1)],['an',checkExprInt(val(el,'an'),e=>q.f(e.n),['n'],{domain:{n:[2,12]}})],['S',checkLimit(val(el,'S'),q.S)]]);},
+  hint(q,el){hintP(el,`a<sub>1</sub> is S<sub>1</sub>. For n ≥ 2, subtract S<sub>n</sub> − S<sub>n−1</sub> over a common denominator. The sum is the limit of S<sub>k</sub>.`);},
+  solution(q){
+    const tail=q.S==='inf'?`${M(R`S_k=\ln(k+1)\to\infty`)}, so the series <b>diverges</b>, even though ${M('a_n\\to 0')}.`:`The sum is ${M(R`\lim S_k=${q.S}`)}.`;
+    if(q.kind==='rat')return `${M(R`a_1=S_1=${texFrac(1+q.p,1+q.q)}`)}. For ${M(R`n\ge 2`)}, ${M(R`a_n=S_n-S_{n-1}=\frac{${q.c}}{(${kp('n',q.q)})(${kp('n',q.q-1)})}`)}. Plugging ${M('n=1')} into that formula would give the wrong ${M('a_1')}, which is why it is separate. ${tail}`;
+    if(q.kind==='inv')return `${M(R`a_1=S_1=${q.A}-${q.B}=${q.A-q.B}`)}. For ${M(R`n\ge 2`)}, ${M(R`a_n=\frac{${q.B}}{n-1}-\frac{${q.B}}{n}=\frac{${q.B}}{n(n-1)}`)}, which is not even defined at ${M('n=1')}. ${tail}`;
+    return `${M(R`a_1=S_1=\ln 2`)}. For ${M(R`n\ge 2`)}, ${M(R`a_n=\ln(n+1)-\ln n=\ln\frac{n+1}{n}`)}. ${tail}`;}
+};
+const REC_RULES=[
+  {kind:'minus',tex:R`a_{n+2}=a_{n+1}-a_{n}`,step:(a,b)=>b-a,per:6},
+  {kind:'quot',tex:R`a_{n+2}=\frac{a_{n+1}}{a_{n}}`,step:(a,b)=>b/a,per:6},
+  {kind:'neg',tex:R`a_{n+2}=-a_{n}`,step:(a,b)=>-a,per:4},
+];
+Q.recurrence={name:'periodic recursion',
+  gen(){
+    const r=pick(REC_RULES);let a,b;
+    do{a=rint(1,5);b=rint(1,6);}while(a===b||(r.kind==='quot'&&(a===1||b===1)));
+    const big=pick([100,2026,1000,365,47]);const seq=[a,b];
+    for(let i=2;i<r.per+2;i++)seq.push(r.step(seq[i-2],seq[i-1]));
+    const m=(big-1)%r.per;return {r,a,b,big,seq,ans:seq[m],m};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`a_1=${q.a},\ a_2=${q.b}`)}, and ${M(q.r.tex)}. Generate terms. Find the period, and ${M(R`a_{${q.big}}`)}. Fractions like 3/2 are fine.</p>`;numIn(el,'per','period:');numIn(el,'v',M(R`a_{${q.big}}=`));},
+  check(q,el){return Gall(el,[['per',checkNumber(val(el,'per'),q.r.per)],['v',checkNumber(val(el,'v'),q.ans)]]);},
+  solution(q){return `The terms are ${M(q.seq.slice(0,q.r.per).map(x=>texNum(x)).join(',\\ ')+R`,\ \dots`)}, and then the starting pair returns, so the period is ${M(String(q.r.per))}. Since ${M(`${q.big}-1`)} leaves remainder ${M(String(q.m))} on division by ${M(String(q.r.per))}, ${M(R`a_{${q.big}}=${texNum(q.ans)}`)}. Periodic and nonconstant, so the sequence diverges.`;}
+};
+const CF_PIECES=[
+  {t:n=>R`\sin(${n})`,s:'sin(n)',l:R`\sin n`,f:n=>Math.sin(n)},{t:n=>R`\cos(${n})`,s:'cos(n)',l:R`\cos n`,f:n=>Math.cos(n)},
+  {t:n=>R`\ln(${n})`,s:'ln(n)',l:R`\ln n`,f:n=>Math.log(n)},{t:n=>R`${n*n}`,s:'n^2',l:R`n^2`,f:n=>n*n},
+  {t:n=>n===1?'1':R`\frac{1}{${n}}`,s:'1/n',l:R`\frac1n`,f:n=>1/n},{t:n=>n===1?'1':R`\sqrt{${n}}`,s:'sqrt(n)',l:R`\sqrt n`,f:n=>Math.sqrt(n)},
+];
+Q.closedForm={name:'closed formula for a pattern',
+  gen(){
+    const kind=pick(['mix','mix','mix','sign','sign2','switch']);
+    if(kind==='mix'){const [p,q]=shuffle(CF_PIECES.slice()).slice(0,2);const odd=n=>(1-Math.pow(-1,n))/2,even=n=>(1+Math.pow(-1,n))/2;
+      return {kind,list:[p.t(1),q.t(2),p.t(3),q.t(4)],f:n=>odd(n)*p.f(n)+even(n)*q.f(n),ans:`((1-(-1)^n)/2)*${p.s}+((1+(-1)^n)/2)*${q.s}`,p,q};}
+    if(kind==='sign')return {kind,list:['1',R`-\frac12`,R`\frac13`,R`-\frac14`],f:n=>Math.pow(-1,n+1)/n,ans:'(-1)^(n+1)/n',ansTex:R`\frac{(-1)^{n+1}}{n}`};
+    if(kind==='sign2')return {kind,list:[R`\frac12`,R`-\frac23`,R`\frac34`,R`-\frac45`],f:n=>Math.pow(-1,n+1)*n/(n+1),ans:'(-1)^(n+1)n/(n+1)',ansTex:R`\frac{(-1)^{n+1}\,n}{n+1}`};
+    return {kind,list:['0','1','0','1'],f:n=>(1+Math.pow(-1,n))/2,ans:'(1+(-1)^n)/2',ansTex:R`\frac{1+(-1)^{n}}{2}`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find a closed formula for ${M('a_n')}, starting at ${M('n=1')}: ${M(q.list.join(',\\ ')+R`,\ \dots`)}</p><p class="small muted">Use (-1)^n as your switch. Piecewise formulas are not accepted here.</p>`;numIn(el,'a',M('a_n='),{xwide:true});},
+  check(q,el){return G(el,'a',checkExprInt(val(el,'a'),e=>q.f(e.n),['n'],{domain:{n:[1,12]}}));},
+  solution(q){if(q.kind==='mix')return `Odd positions follow ${M(q.p.l)} and even positions follow ${M(q.q.l)}. With the switches, ${M(R`a_n=\frac{1-(-1)^n}{2}${q.p.l}+\frac{1+(-1)^n}{2}${q.q.l}`)}.`;return `${M(R`a_n=${q.ansTex}`)}. Check ${M('n=1')} and ${M('n=2')} against the list.`;}
+};
+const BUILD_ITEMS=[{w:R`e^{n}`,wf:n=>Math.exp(n),sol:'e^(-2n)',why:R`e^{-2n}e^{n}=e^{-n}\to 0`,f:R`e^{-2n}`,tr:R`e^{-n}`},{w:R`3^{n}`,wf:n=>Math.pow(3,n),sol:'9^(-n)',why:R`9^{-n}3^{n}=3^{-n}\to 0`,f:R`9^{-n}`,tr:R`3^{-n}`},{w:R`n^{2}`,wf:n=>n*n,sol:'1/n^3',why:R`\frac{1}{n^3}n^{2}=\frac1n\to 0`,f:R`\frac{1}{n^3}`,tr:R`\frac{1}{n^2}`},{w:R`\ln n`,wf:n=>Math.log(n),sol:'1/n',why:R`\frac{\ln n}{n}\to 0`,f:R`\frac1n`,tr:R`\frac{1}{\ln n}`}];
+function checkBuild(q,v){
+  const s=cleanAns(v);if(!s)return {ok:false,err:'Empty answer'};
+  let f;try{f=Expr.compile(s);}catch(e){return {ok:false,err:e.message};}
+  try{const used=Expr.vars(Expr.parse(s));for(const u of used)if(u!=='n')return {ok:false,err:`"${u}" should not appear`};
+    const p=n=>f({n})*q.wf(n),a=p(100),b=p(200),c=p(400);
+    if(!f({n:100})&&!f({n:50}))return {ok:false,msg:'Choose a nonzero sequence.'};
+    if(![a,b,c].every(x=>Number.isFinite(x)||Number.isNaN(x)))return {ok:false};
+    const clean=x=>Number.isNaN(x)?0:Math.abs(x);
+    const A=clean(a),B=clean(b),C=clean(c);
+    return {ok:A>0&&C<0.3&&(B===0||B<0.999*A)&&(C===0||C<0.999*Math.max(B,1e-300))};
+  }catch(e){return {ok:false,err:e.message};}
+}
+Q.buildDecay={name:'build a sequence with a given limit',
+  gen(){return pick(BUILD_ITEMS);},
+  render(q,el){el.innerHTML=`<p class="prompt">Find a nonzero sequence ${M('f(n)')} with ${M(R`\displaystyle\lim_{n\to\infty}f(n)\cdot ${q.w}=0`)}. Any valid answer is accepted.</p>`;numIn(el,'f',M('f(n)='),{wide:true});},
+  check(q,el){const r=checkBuild(q,val(el,'f'));G(el,'f',r);return r;},
+  solution(q){return `You need ${M('f')} to die faster than ${M(q.tr)}. One choice is ${M(R`f(n)=${q.f}`)}, since ${M(q.why)}. The computed limit is the justification. The borderline ${M(R`f(n)=${q.tr}`)} fails, because the product is 1.`;}
+};
+
+/* ============================================================ chapter 4 question types */
+const eps=(x)=>x>=0.001?String(x):x.toFixed(5).replace(/0+$/,'');
+function certN(b,e){let N=0;while(b(N+1)>e*(1+1e-12))N++;return N;}
+const AST_ITEMS=[
+  ()=>{const p=pick([1,2,3]),e=p===1?pick([0.01,0.02,0.002]):pick([0.01,0.001,0.0001]);return {t:p===1?R`\frac{(-1)^{k}}{k}`:R`\frac{(-1)^{k}}{k^{${p}}}`,b:k=>1/k**p,bt:p===1?R`\frac{1}{N+1}`:R`\frac{1}{(N+1)^{${p}}}`,e};},
+  ()=>{const e=pick([0.01,0.001]);return {t:R`\frac{(-1)^{k}}{k!}`,b:k=>{let f=1;for(let i=2;i<=k;i++)f*=i;return 1/f;},bt:R`\frac{1}{(N+1)!}`,e};},
+  ()=>{const e=pick([0.01,0.001]);return {t:R`\frac{(-1)^{k+1}}{2^{k}}`,b:k=>2**-k,bt:R`\frac{1}{2^{N+1}}`,e};},
+];
+Q.astN={name:'smallest certified N, alternating',
+  gen(){const it=pick(AST_ITEMS)();it.N=certN(it.b,it.e);it.bound=it.b(it.N+1);return it;},
+  render(q,el){el.innerHTML=`<p class="prompt">Find the smallest ${M('N')} that the Alternating Series Remainder Theorem certifies for ${M(R`\displaystyle\sum_{k=1}^{\infty}${q.t}`)} with error at most ${M(eps(q.e))}.</p>`;numIn(el,'N',M('N='));},
+  check(q,el){return G(el,'N',checkNumber(val(el,'N'),q.N));},
+  hint(q,el){hintP(el,`The bound is the first term you left out, which is term N+1, not term N.`);},
+  solution(q){return `The terms have ${M('b_k>0')}, ${M('b_{k+1}\\le b_k')}, and ${M('b_k\\to 0')}, so ${M(R`|R_N|\le b_{N+1}=${q.bt}`)}. That is at most ${M(eps(q.e))} first when ${M(R`N=${q.N}`)}. Certified, not necessarily the true minimum.`;}
+};
+const INT_N=[
+  ()=>{const m=pick([100,200,500,1000]);return {t:R`\frac{1}{k^{2}}`,U:n=>1/n,Us:'1/n',ut:R`\frac1N`,e:1/m,es:`1/${m}`,N:m};},
+  ()=>{const m=pick([10,20,50,100]);return {t:R`\frac{1}{k^{3}}`,U:n=>1/(2*n*n),Us:'1/(2n^2)',ut:R`\frac{1}{2N^{2}}`,e:1/(2*m*m),es:`1/${2*m*m}`,N:m};},
+  ()=>{const m=pick([5,10,20]);return {t:R`\frac{1}{k^{4}}`,U:n=>1/(3*n*n*n),Us:'1/(3n^3)',ut:R`\frac{1}{3N^{3}}`,e:1/(3*m*m*m),es:`1/${3*m*m*m}`,N:m};},
+  ()=>{const m=pick([2,3,4]);return {t:R`\frac{1}{k(\ln k)^{2}}`,from:2,U:n=>1/Math.log(n),Us:'1/ln(n)',ut:R`\frac{1}{\ln N}`,e:1/m,es:`1/${m}`,N:Math.ceil(Math.exp(m))};},
+];
+Q.intN={name:'smallest certified N, integral test',
+  gen(){return pick(INT_N)();},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle\sum_{k=${q.from||1}}^{\infty}${q.t}`)}, give the upper bound ${M(R`U(n)=\int_n^\infty f(x)\,dx`)} from the Integral Test Remainder Theorem, then the smallest ${M('N')} it certifies for error at most ${M(q.es)}.</p>`;numIn(el,'U',M('U(n)='),{wide:true});numIn(el,'N',M('N='));},
+  check(q,el){return Gall(el,[['U',checkExpr(val(el,'U'),e=>q.U(e.n),['n'],{domain:{n:[2,20]}})],['N',checkNumber(val(el,'N'),q.N)]]);},
+  solution(q){return `${M('f')} is positive, continuous, and decreasing, and the series converges, so ${M(R`R_N\le ${q.ut}`)}. Setting that at most ${M(q.es)} gives ${M(R`N\ge ${q.N}`)}, so ${M(R`N=${q.N}`)}.`;}
+};
+const DIR_N=[
+  {t:R`\frac{\cos k+\cos^{2}k+\cos^{3}k}{k^{3}}`,C:3,Cs:'3',p:3,abs:true,why:R`each cosine power is at most 1 in size`},
+  {t:R`\frac{2+\sin k}{k^{2}}`,C:3,Cs:'3',p:2,abs:false,why:R`\(\sin k\le 1\)`},
+  {t:R`\frac{3+2\cos k}{k^{3}}`,C:5,Cs:'5',p:3,abs:false,why:R`\(\cos k\le 1\)`},
+  {t:R`\frac{1+\sin^{2}k}{k^{4}}`,C:2,Cs:'2',p:4,abs:false,why:R`\(\sin^2k\le 1\)`},
+  {t:R`\frac{e^{1/k}}{k^{3}}`,C:Math.E,Cs:'e',p:3,abs:false,why:R`\(1/k\le 1\), so \(e^{1/k}\le e\)`},
+  {t:R`\frac{\arctan k}{k^{2}}`,C:Math.PI/2,Cs:'pi/2',p:2,abs:false,why:R`\(\arctan k\le\pi/2\)`},
+  {t:R`\frac{\sin k+\cos k+1}{k^{3}}`,C:3,Cs:'3',p:3,abs:true,why:R`the triangle inequality, with each piece at most 1 in size`},
+];
+Q.dirN={name:'smallest certified N, direct comparison',
+  gen(){const it=pick(DIR_N),e=it.p===2?pick([0.01,0.001]):pick([0.01,0.001,0.0005]);const N=Math.ceil(Math.pow(it.C/((it.p-1)*e),1/(it.p-1))-1e-9);return {...it,e,N};},
+  render(q,el){el.innerHTML=`<p class="prompt">Bound the tail of ${M(R`\displaystyle\sum_{k=1}^{\infty}${q.t}`)} using ${M(R`|a_k|\le C/k^{${q.p}}`)}, with ${M('C')} from the simplest bound on the numerator. Then find the smallest ${M('N')} this certifies for error at most ${M(eps(q.e))}.</p>`;numIn(el,'C',M('C='));numIn(el,'N',M('N='));},
+  check(q,el){return Gall(el,[['C',checkNumber(val(el,'C'),q.C)],['N',checkNumber(val(el,'N'),q.N)]]);},
+  hint(q,el){hintP(el,`Integrate the bound from N to infinity, set it at most the tolerance, and solve. Round N up.`);},
+  solution(q){const P=q.p-1;return `${q.why}, so ${M(R`|a_k|\le\frac{${q.Cs==='pi/2'?R`\pi/2`:q.Cs}}{k^{${q.p}}}`)}.${q.abs?' The terms can be negative, so pass to absolute values first: the tail is at most the tail of the absolute values.':''} Then ${M(R`|R_N|\le\int_N^\infty\frac{C}{x^{${q.p}}}\,dx=\frac{C}{${P===1?'':P}${Npow(P)}}`)}. Setting this at most ${M(eps(q.e))} gives ${M(R`N=${q.N}`)}, by the Direct Comparison Remainder Theorem. Sufficient, not proved minimal.`;}
+};
+Q.bracket={name:'both bounds on the remainder',
+  gen(){const p=pick([2,3]),N=pick([4,5,9,10,99]);const lo=p===2?1/(N+1):1/(2*(N+1)**2),hi=p===2?1/N:1/(2*N*N);return {p,N,lo,hi};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle\sum_{k=1}^{\infty}\frac{1}{k^{${q.p}}}`)}, give the lower and upper bounds on ${M(R`R_{${q.N}}`)} from the Integral Test Remainder Theorem. Exact fractions.</p>`;numIn(el,'lo','lower:');numIn(el,'hi','upper:');},
+  check(q,el){return Gall(el,[['lo',checkNumber(val(el,'lo'),q.lo)],['hi',checkNumber(val(el,'hi'),q.hi)]]);},
+  solution(q){return `${M(R`\int_{${q.N+1}}^\infty f\le R_{${q.N}}\le\int_{${q.N}}^\infty f`)}, with ${M(q.p===2?R`\int_a^\infty x^{-2}dx=\frac1a`:R`\int_a^\infty x^{-3}dx=\frac{1}{2a^2}`)}. So the bounds are ${M(texFrac(1,q.p===2?q.N+1:2*(q.N+1)**2))} and ${M(texFrac(1,q.p===2?q.N:2*q.N*q.N))}.`;}
+};
+Q.actualMin={name:'prove N is the actual minimum',
+  gen(){const p=pick([2,3]);const m=p===2?pick([50,100,250,1000]):pick([10,20,50]);return {p,m,eps:p===2?1/m:1/(2*m*m),es:p===2?`1/${m}`:`1/${2*m*m}`};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle\sum_{k=1}^\infty\frac{1}{k^{${q.p}}}`)} and tolerance ${M(q.es)}, find the ${M('N')} the upper bound certifies. Then give the lower bound on ${M(R`R_{N-1}`)} from the same theorem, the number that shows ${M('N-1')} fails.</p>`;numIn(el,'N',M('N='));numIn(el,'lo',M(R`R_{N-1}\ge`));},
+  check(q,el){return Gall(el,[['N',checkNumber(val(el,'N'),q.m)],['lo',checkNumber(val(el,'lo'),q.eps)]]);},
+  solution(q){return `The upper bound ${M(q.p===2?R`\frac1N`:R`\frac{1}{2N^2}`)} first reaches ${M(q.es)} at ${M(R`N=${q.m}`)}. The lower bound gives ${M(R`R_{${q.m-1}}\ge\int_{${q.m}}^\infty f=${q.es.replace('1/',R`\tfrac{1}{`)}}`)}, and the inequality is strict since the rectangles overshoot. So ${M(String(q.m-1))} misses the tolerance. Positive tails decrease with ${M('N')}, so every smaller index fails too, and ${M(String(q.m))} is the actual minimum.`;}
+};
+
+/* ============================================================ chapter 5 question types */
+const MIX=[
+  {t:R`\frac{n\cos(\pi n)}{\ln n+1}`,v:2,label:R`\lim|a_n|=`,ans:'inf',sol:R`\(\cos(\pi n)=(-1)^n\), so \(|a_n|=\frac{n}{\ln n+1}\to\infty\). By the Divergence Test, it diverges. "AST fails" would not be enough.`},
+  {t:R`(-1)^{n}\frac{n}{n+1}`,v:2,label:R`\lim|a_n|=`,ans:1,sol:R`\(|a_n|\to 1\ne 0\), so the terms do not tend to 0. By the Divergence Test, it diverges.`},
+  {t:R`(-1)^{n}\ln\!\left(1+\frac{1}{n^{2}}\right)`,v:0,label:R`\text{benchmark exponent }p=`,ans:2,sol:R`\(\ln(1+u)\sim u\), so \(|a_n|\sim 1/n^2\). By the Asymptotic Comparison Test, \(\sum|a_n|\) converges, so it converges absolutely.`},
+  {t:R`(-1)^{n}\ln\!\left(1+\frac{1}{n}\right)`,v:1,label:R`\text{benchmark exponent }p=`,ans:1,sol:R`\(|a_n|\sim 1/n\), so by Asymptotic Comparison \(\sum|a_n|\) diverges. But \(b_n=\ln(1+1/n)\) is positive, decreasing, and tends to 0, so AST gives convergence. Conditional.`},
+  {t:R`\frac{(-1)^{n}}{\sqrt{n}}`,v:1,label:R`\text{benchmark exponent }p=`,ans:1/2,sol:R`\(\sum|a_n|\) is a \(p\)-series with \(p=\tfrac12\), so it diverges. All three AST conditions hold, so the series converges conditionally.`},
+  {t:R`\frac{\cos n}{n^{2}}`,v:0,label:R`\text{benchmark exponent }p=`,ans:2,sol:R`\(|\cos n|/n^2\le 1/n^2\), so \(\sum|a_n|\) converges by Direct Comparison. The Absolute Convergence Theorem finishes it. Not AST: the signs of \(\cos n\) do not alternate regularly.`},
+  {t:R`\frac{(2n)!}{n^{2n}}`,v:0,label:R`L=`,ans:4/Math.E/Math.E,sol:R`\(\left|\frac{a_{n+1}}{a_n}\right|=\frac{(2n+2)(2n+1)}{(n+1)^2}\left(\frac{n}{n+1}\right)^{2n}\to 4e^{-2}\lt 1\). By the Ratio Test, it converges absolutely.`},
+  {t:R`\frac{(3n)!}{(n!)^{3}}`,v:2,label:R`L=`,ans:27,sol:R`\(\left|\frac{a_{n+1}}{a_n}\right|=\frac{(3n+3)(3n+2)(3n+1)}{(n+1)^3}\to 27>1\). By the Ratio Test, it diverges.`},
+  {t:R`\frac{2^{n}n!}{n^{n}}`,v:0,label:R`L=`,ans:2/Math.E,sol:R`\(\left|\frac{a_{n+1}}{a_n}\right|=2\left(\frac{n}{n+1}\right)^{n}\to\frac{2}{e}\lt 1\). By the Ratio Test, it converges absolutely.`},
+  {t:R`\frac{3^{n}n!}{n^{n}}`,v:2,label:R`L=`,ans:3/Math.E,sol:R`\(\left|\frac{a_{n+1}}{a_n}\right|=3\left(\frac{n}{n+1}\right)^{n}\to\frac{3}{e}>1\). By the Ratio Test, it diverges.`},
+  {t:R`\left(\frac{n^{2}}{1+3n^{2}}\right)^{n}`,v:0,label:R`\text{geometric ratio }r=`,ans:1/3,sol:R`\(\frac{n^2}{1+3n^2}\le\frac13\), so \(0\le a_n\le(1/3)^n\). The geometric series converges, so Direct Comparison gives absolute convergence.`},
+  {t:R`\frac{1}{n(\ln n)^{2}+1/n}`,v:0,label:R`\text{value of }\int_2^\infty\frac{dx}{x(\ln x)^{2}}=`,ans:1/Math.LN2,sol:R`\(a_n\le\frac{1}{n(\ln n)^2}\), and \(\int_2^\infty\frac{dx}{x(\ln x)^2}=\frac{1}{\ln 2}\) converges, so that benchmark converges by the Integral Test. Direct Comparison finishes it.`},
+];
+Q.examMix={name:'exam mix: verdict and evidence',
+  gen(){return pick(MIX);},
+  render(q,el){el.innerHTML=`<p class="prompt">Classify ${M(R`\displaystyle\sum_{n=2}^{\infty}${q.t}`)}. Enter the quantity that proves it (type inf if it is infinite).</p>`;numIn(el,'v',M(q.label));pickQ(el,q,VERDICT3);},
+  check(q,el){if(q.get()===null)return {ok:false,msg:'Pick a verdict.'};const r=G(el,'v',checkLimit(val(el,'v'),q.ans,{tol:0.005}));return {ok:r.ok&&q.get()===q.v,err:r.err};},
+  solution(q){return q.sol;}
+};
+const PF_ITEMS=[[1,2],[0,1],[1,3],[2,3],[0,2]];
+Q.subThenPF={name:'substitution, partial fractions, then a limit',
+  gen(){const [a,b]=pick(PF_ITEMS),lo=pick(['e','e2']);const u0=lo==='e'?1:2;const v=Math.log((u0+b)/(u0+a))/(b-a);return {a,b,lo,u0,v};},
+  render(q,el){const factor=(s)=>s===0?R`\ln x`:R`(\ln x+${s})`;el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\int_{${q.lo==='e'?'e':'e^{2}'}}^{\infty}\frac{dx}{x\,${factor(q.a)}${factor(q.b)}}`)}. Exact value, with ln in the answer.</p>`;numIn(el,'v',M('='),{wide:true});},
+  check(q,el){return G(el,'v',checkLimit(val(el,'v'),q.v));},
+  hint(q,el){hintP(el,`Let u = ln x, and change the limits. Partial fractions, then let the top limit run.`);},
+  solution(q){const A=q.u0+q.a,B=q.u0+q.b,K=q.b-q.a,F=K===1?'':R`\frac{1}{${K}}`;return `With ${M(R`u=\ln x`)}: ${M(R`\int_{${q.u0}}^\infty\frac{du}{(${kp('u',q.a)})(${kp('u',q.b)})}=${F}\left[\ln\frac{${kp('u',q.a)}}{${kp('u',q.b)}}\right]_{${q.u0}}^{\infty}=${F}\left(0-\ln\frac{${A}}{${B}}\right)=${F}\ln\frac{${B}}{${A}}`)}. The limit of the log is ${M(R`\ln 1=0`)}.`;}
+};
+Q.bothEnds={name:'an integral improper at both ends',
+  gen(){const k=rint(1,5);return {k};},
+  render(q,el){el.innerHTML=`<p class="prompt">For ${M(R`\displaystyle\int_{0}^{2}\frac{${q.k}(x-1)}{\sqrt[3]{x^{2}-2x}}\,dx`)}, the integrand blows up at both ends, so split at ${M('x=1')}. Find the left piece ${M(R`\int_0^1`)}, and the full value.</p>`;numIn(el,'L',M(R`\int_0^1=`));numIn(el,'T',M(R`\int_0^2=`));},
+  check(q,el){return Gall(el,[['L',checkLimit(val(el,'L'),3*q.k/4)],['T',checkLimit(val(el,'T'),0)]]);},
+  solution(q){return `Let ${M(R`u=x^2-2x`)}, ${M(R`du=2(x-1)dx`)}. Then ${M(R`\int\frac{${q.k}(x-1)}{u^{1/3}}dx=\frac{${q.k}}{2}\cdot\frac32u^{2/3}=\frac{${3*q.k}}{4}u^{2/3}`)}. On the left, ${M('u')} runs from ${M('0')} to ${M('-1')}, so the limit gives ${M(R`\frac{${3*q.k}}{4}(1-0)=${texFrac(3*q.k,4)}`)}. The right piece is the negative of that. Both converge, so the total is ${M('0')}. You may only say 0 after checking that both pieces converge.`;}
+};
+Q.logFamily={name:'for which p or q',
+  gen(){return pick([
+    {t:R`\frac{1}{n^{p}\ln n}`,v:'p',why:R`Direct comparison for \(p>1\), the Integral Test at \(p=1\), and comparison from below for \(p\lt 1\).`},
+    {t:R`\frac{1}{n(\ln n)^{q}}`,v:'q',why:R`The Integral Test with \(u=\ln x\) turns it into \(\int du/u^{q}\), which converges exactly when \(q>1\).`},
+    {t:R`\frac{(\ln n)^{2}}{n^{p}}`,v:'p',why:R`For \(p>1\) little-o comparison with an exponent strictly between 1 and \(p\). For \(p\le 1\) it eventually exceeds \(1/n\).`},
+  ]);},
+  render(q,el){el.innerHTML=`<p class="prompt">For which values of ${M(q.v)} does ${M(R`\displaystyle\sum_{n=3}^{\infty}${q.t}`)} converge? Answer like ${M(q.v+'>2')}.</p>`;numIn(el,'c',M(q.v+':'),{wide:true,placeholder:q.v+' > ...'});},
+  check(q,el){return G(el,'c',checkCondition(val(el,'c'),{v:q.v,op:'>',val:1}));},
+  solution(q){return `${q.why} So it converges exactly when ${M(q.v+'>1')}.`;}
+};
+
+/* ============================================================ chapter 1 widget */
+(function(){
+  const P=[
+    {label:'Review: numerator',terms:[['x⁻²',x=>x**-2],['ln x',Math.log],['arctan x',Math.atan],['x⁵(0.5)ˣ',x=>x**5*0.5**x]],cands:[['ln x',Math.log],['x⁵(0.5)ˣ',x=>x**5*0.5**x],['1',()=>1],['x',x=>x]]},
+    {label:'Review: denominator',terms:[['eˣ ln x',x=>Math.exp(x)*Math.log(x)],['ln(x·5ˣ)',x=>Math.log(x)+x*Math.log(5)]],cands:[['eˣ ln x',x=>Math.exp(x)*Math.log(x)],['eˣ',x=>Math.exp(x)],['x ln 5',x=>x*Math.log(5)]]},
+    {label:'Review: series bottom',terms:[['√(n²+5 ln n+sin 2n)',x=>Math.sqrt(x*x+5*Math.log(x)+Math.sin(2*x))],['1.5ⁿ',x=>1.5**x]],cands:[['1.5ⁿ',x=>1.5**x],['n',x=>x],['n²',x=>x*x]]},
+    {label:'Week 7: √x + 1/ln x',terms:[['√x',Math.sqrt],['1/ln x',x=>1/Math.log(x)]],cands:[['√x',Math.sqrt],['1/ln x',x=>1/Math.log(x)],['x',x=>x]]},
+    {label:'Constant needed: 3x² + x',terms:[['3x²',x=>3*x*x],['x',x=>x]],cands:[['3x²',x=>3*x*x],['x²',x=>x*x],['x³',x=>x**3]]},
+  ];
+  let pi=0,ci=0,X=40;
+  const plot=new Plot2D('#leadFig',{xmin:0,xmax:X,ymin:0,ymax:3,grid:true,labels:true});
+  const mk=(mount,labels,cur,on)=>{mount.innerHTML='';labels.forEach((l,i)=>{const b=el('button',{class:'btn'+(i===cur?' picked':''),type:'button'},l);b.onclick=()=>on(i);mount.appendChild(b);});};
+  function bar(){
+    mk($('#leadPresets'),P.map(p=>p.label),pi,i=>{pi=i;ci=0;bar();draw();});
+    mk($('#leadCands'),P[pi].cands.map(c=>c[0]),ci,i=>{ci=i;bar();draw();});
+  }
+  sliderRow($('#leadSliders'),{label:'x up to',min:5,max:200,step:5,value:X,fmt:v=>String(Math.round(v)),onInput:v=>{X=Math.round(v);draw();}});
+  function draw(){
+    const p=P[pi],c=p.cands[ci][1];const f=x=>p.terms.reduce((s,t)=>s+t[1](x),0);
+    plot.o.xmin=1.5;plot.o.xmax=X;plot.o.ymin=0;plot.o.ymax=3;plot.begin();
+    plot.fn(()=>1,{color:'#16a34a',width:1.5,dash:[6,5]});
+    plot.fn(x=>Math.min(f(x)/c(x),3.05),{color:'#7c3aed'});
+    const ratio=f(X)/c(X);
+    const rows=p.terms.map(t=>`<tr><td>${t[0]}</td><td>${sci(t[1](X))}</td></tr>`).join('');
+    const r0=f(X/2)/c(X/2),near1=Math.abs(ratio-1)<0.05,flat=Math.abs(ratio-r0)<0.03*Math.abs(ratio);
+    const verdict=near1?'this is the leading term':ratio>1.05&&ratio>r0*1.03?'too small: the ratio keeps growing':ratio<0.95&&ratio<r0*0.97?`too big: the expression is o(${p.cands[ci][0]})`:flat?'settled, but not at 1: a constant is missing':'approaching slowly: push x further';
+    $('#leadOut').innerHTML=`<table class="tbl mono-out"><tr><th>summand at x = ${X}</th><th>size</th></tr>${rows}</table>ratio to ${p.cands[ci][0]}: <b>${sci(ratio)}</b><br><span class="muted">${verdict}</span>`;
+  }
+  bar();redrawOnShow('asym',draw);draw();
+  new Drill({mount:'#drill-asym',section:'asym',goal:7,...mixDrill([Q.leading,Q.leading,Q.leading,Q.ratioClass,Q.ratioClass,Q.allO,Q.allO,Q.smallArg])});
+})();
+
+/* ============================================================ chapter 2 widget */
+(function(){
+  const P=[
+    {label:'ln n/n² against 1/n^1.5',a:n=>Math.log(n)/(n*n),b:n=>n**-1.5,say:'little-o, both converge'},
+    {label:'1/n² against 1/n',a:n=>1/(n*n),b:n=>1/n,say:'little-o, big one diverges, little one converges'},
+    {label:'1/n against ln n/n',a:n=>1/n,b:n=>Math.log(n)/n,say:'little-o, both diverge'},
+    {label:'(3n+2)/(n³+5) against 1/n²',a:n=>(3*n+2)/(n**3+5),b:n=>1/(n*n),say:'asymptotic, c = 3, both converge'},
+    {label:'(n+√n)/(n²+1) against 1/n',a:n=>(n+Math.sqrt(n))/(n*n+1),b:n=>1/n,say:'asymptotic, c = 1, both diverge'},
+  ];
+  let pi=0,N=150;
+  const pr=new Plot2D('#cmpRatio',{xmin:0,xmax:N,ymin:0,ymax:3,grid:false,labels:true});
+  const ps=new Plot2D('#cmpSums',{xmin:0,xmax:N,ymin:0,ymax:3,grid:false,labels:true});
+  const pb=$('#cmpPresets');
+  P.forEach((p,i)=>{const b=el('button',{class:'btn'+(i===0?' picked':''),type:'button'},p.label);b.onclick=()=>{pi=i;$$('.btn',pb).forEach((x,j)=>x.classList.toggle('picked',j===i));draw();};pb.appendChild(b);});
+  sliderRow($('#cmpSliders'),{label:'N',min:20,max:400,step:10,value:N,fmt:v=>String(Math.round(v)),onInput:v=>{N=Math.round(v);draw();}});
+  function draw(){
+    const p=P[pi];const ra=[],sa=[],sb=[];let A=0,B=0;
+    for(let n=1;n<=N;n++){A+=p.a(n);B+=p.b(n);ra.push(p.b(n)?p.a(n)/p.b(n):0);sa.push(A);sb.push(B);}
+    const r=N>200?1.6:2.4;
+    pr.o.xmax=N+2;pr.o.ymin=0;pr.o.ymax=Math.max(1.2,Math.min(4,Math.max(...ra.slice(2))*1.1));pr.begin();ra.forEach((v,i)=>{if(i>0)pr.point([i+1,Math.min(v,pr.o.ymax)],{color:'#7c3aed',r});});
+    ps.o.xmax=N+2;ps.o.ymin=0;ps.o.ymax=Math.max(sa[N-1],sb[N-1])*1.1;ps.begin();sa.forEach((v,i)=>ps.point([i+1,v],{color:'#d97706',r}));sb.forEach((v,i)=>ps.point([i+1,v],{color:'#2563eb',r}));
+    $('#cmpOut').innerHTML=`a<sub>N</sub>/b<sub>N</sub> = <b>${sci(ra[N-1])}</b><br>sum of a to N = <b>${sci(sa[N-1])}</b><br>sum of b to N = <b>${sci(sb[N-1])}</b><br><span class="muted">${p.say}</span>`;
+  }
+  redrawOnShow('compare',draw);draw();
+  new Drill({mount:'#drill-compare',section:'compare',goal:7,...mixDrill([Q.asymInt,Q.asymInt,Q.asymSer,Q.asymSer,Q.littleOuse,Q.littleOuse,Q.typeII,Q.typeII])});
+})();
+
+/* ============================================================ chapter 3 widget */
+(function(){
+  const RULES=[
+    {label:'a(n+2) = a(n+1) − a(n)',f:(a,b)=>b-a,say:'periodic: diverges unless it starts at (0, 0)'},
+    {label:'a(n+2) = (a(n+1) + a(n))/2',f:(a,b)=>(a+b)/2,say:'settles at (a₁ + 2a₂)/3: converges'},
+    {label:'a(n+2) = a(n+1) + a(n)',f:(a,b)=>a+b,say:'Fibonacci growth: diverges'},
+  ];
+  let ri=0,a1=1,a2=2;
+  const p=new Plot2D('#recFig',{xmin:0,xmax:26,ymin:-4,ymax:4,grid:true,labels:true});
+  const pb=$('#recPresets');
+  RULES.forEach((r,i)=>{const b=el('button',{class:'btn'+(i===0?' picked':''),type:'button'},r.label);b.onclick=()=>{ri=i;$$('.btn',pb).forEach((x,j)=>x.classList.toggle('picked',j===i));draw();};pb.appendChild(b);});
+  const sl=$('#recSliders');
+  sliderRow(sl,{label:'a₁',min:-3,max:3,step:1,value:a1,fmt:v=>String(Math.round(v)),onInput:v=>{a1=Math.round(v);draw();}});
+  sliderRow(sl,{label:'a₂',min:-3,max:3,step:1,value:a2,fmt:v=>String(Math.round(v)),onInput:v=>{a2=Math.round(v);draw();}});
+  function draw(){
+    const r=RULES[ri];const s=[a1,a2];for(let i=2;i<25;i++)s.push(r.f(s[i-2],s[i-1]));
+    const m=Math.max(4,Math.min(30,Math.max(...s.map(Math.abs))));
+    p.o.ymin=-m*1.1;p.o.ymax=m*1.1;p.begin();
+    s.forEach((v,i)=>{if(Math.abs(v)<=m*1.1)p.point([i+1,v],{color:'#7c3aed',r:3.5});});
+    $('#recOut').innerHTML=`first terms: <b>${s.slice(0,8).map(x=>fmtDec(x,Number.isInteger(x)?0:2)).join(', ')}</b> …<br><span class="muted">${r.say}</span>`;
+  }
+  redrawOnShow('seqs',draw);draw();
+  new Drill({mount:'#drill-seqs',section:'seqs',goal:7,...mixDrill([Q.termFromSum,Q.termFromSum,Q.termFromSum,Q.recurrence,Q.recurrence,Q.closedForm,Q.closedForm,Q.buildDecay])});
+})();
+
+/* ============================================================ chapter 4 widget and walkthrough */
+function walkthrough(ids,build){
+  let step=0,W=null;
+  const ex=$('#'+ids.expr),st=$('#'+ids.status),prev=$('#'+ids.prev),next=$('#'+ids.next);
+  function draw(){
+    const L=W.lines;
+    ex.innerHTML=L.map((l,i)=>i===0?`<span class="t b">${l}</span>`:`<span class="${step>=i?'':'faint'}">→ <span class="t ${step===i?'now':''} ${W.cls&&W.cls[i]||'a'}">${l}</span></span>`).join('<br>');
+    st.textContent=W.notes[step]||'';
+    prev.disabled=step===0;next.disabled=step===L.length-1;
+    typeset(ex);
+  }
+  prev.onclick=()=>{step=Math.max(0,step-1);draw();};
+  next.onclick=()=>{step=Math.min(W.lines.length-1,step+1);draw();};
+  $('#'+ids.fresh).onclick=()=>{W=build();step=0;draw();};
+  W=build();draw();
+}
+(function(){
+  const MAXN=3000;
+  const P=[
+    {label:'Σ 1/k²',a:k=>1/(k*k),S:Math.PI*Math.PI/6,U:n=>1/n,name:'Integral Test Remainder'},
+    {label:'Σ (−1)ᵏ/k²',a:k=>(k%2?-1:1)/(k*k),S:-Math.PI*Math.PI/12,U:n=>1/((n+1)*(n+1)),name:'Alternating Series Remainder'},
+    {label:'Σ e^(1/k)/k³',a:k=>Math.exp(1/k)/k**3,U:n=>Math.E/(2*n*n),name:'Direct Comparison Remainder'},
+    {label:'Σ (cos k + cos²k + cos³k)/k³',a:k=>{const c=Math.cos(k);return (c+c*c+c*c*c)/k**3;},U:n=>3/(2*n*n),name:'absolute values, then Direct Comparison Remainder'},
+  ];
+  /* partial sums once; series without a known sum get a long run past MAXN (tail under about 2e-9 there) */
+  P.forEach(p=>{const s=new Float64Array(MAXN+1);for(let k=1;k<=MAXN;k++)s[k]=s[k-1]+p.a(k);p.s=s;if(p.S==null){let t=s[MAXN];for(let k=MAXN+1;k<=60000;k++)t+=p.a(k);p.S=t;}});
+  let pi=0,logE=-3;
+  const plot=new Plot2D('#remFig',{xmin:-0.05,xmax:3.6,ymin:-7.2,ymax:0.5,grid:false,axes:false,labels:false});
+  const pb=$('#remPresets');
+  P.forEach((p,i)=>{const b=el('button',{class:'btn'+(i===0?' picked':''),type:'button'},p.label);b.onclick=()=>{pi=i;$$('.btn',pb).forEach((x,j)=>x.classList.toggle('picked',j===i));draw();};pb.appendChild(b);});
+  sliderRow($('#remSliders'),{label:'tolerance ε',min:-4,max:-1,step:0.1,value:logE,fmt:v=>(10**v).toExponential(1),onInput:v=>{logE=v;draw();}});
+  function draw(){
+    const p=P[pi],e=10**logE;
+    plot.begin();
+    [1,10,100,1000].forEach(n=>plot.text([Math.log10(n),-7],'N = '+n,{color:'#78716c',dy:-4}));
+    [[0,'1'],[-2,'0.01'],[-4,'0.0001'],[-6,'0.000001']].forEach(([y,t])=>{plot.fn(()=>y,{color:'#e7e5e4',width:1});plot.text([0,y],t,{color:'#78716c',dx:2,dy:-3});});
+    plot.fn(()=>logE,{color:'#16a34a',width:1.5,dash:[6,5]});
+    const pts=[];for(let n=1;n<=MAXN;n=n<40?n+1:Math.ceil(n*1.08))pts.push(n);
+    plot.fn(x=>Math.log10(p.U(10**x)),{color:'#d97706',xmin:0,xmax:Math.log10(MAXN)});
+    pts.forEach(n=>{const r=Math.abs(p.S-p.s[n]);if(r>0)plot.point([Math.log10(n),Math.log10(r)],{color:'#7c3aed',r:2.4});});
+    let cert=0;for(let n=1;n<=MAXN;n++){if(p.U(n)<=e){cert=n;break;}}
+    let real=1;for(let n=MAXN;n>=1;n--){if(Math.abs(p.S-p.s[n])>e){real=n+1;break;}}
+    if(cert)plot.point([Math.log10(cert),logE],{color:'#d97706',r:5});
+    $('#remOut').innerHTML=`theorem: <b>${p.name}</b><br>certified N: <b>${cert||'beyond '+MAXN}</b><br>true smallest N: <b>${real>MAXN?'beyond '+MAXN:real}</b><br><span class="muted">bound at N: ${cert?sci(p.U(cert)):'-'}, true error: ${cert?sci(Math.abs(p.S-p.s[cert])):'-'}</span>`;
+  }
+  redrawOnShow('remainder',draw);draw();
+
+  walkthrough({expr:'rwExpr',status:'rwStatus',prev:'rwPrev',next:'rwNext',fresh:'rwNew'},()=>{
+    const q=Q.dirN.gen();const P1=q.p-1;const c=q.Cs==='pi/2'?R`\frac{\pi}{2}`:q.Cs;
+    return {lines:[
+      M(R`\displaystyle\sum_{k=1}^{\infty}${q.t}\quad\text{within }${eps(q.e)}`),
+      M(R`|a_k|\le\frac{${c}}{k^{${q.p}}}`),
+      M(R`g(x)=\frac{${c}}{x^{${q.p}}}\text{ is positive, continuous, decreasing on }[1,\infty)`),
+      M(R`|R_N|\le\int_N^\infty\frac{${c}}{x^{${q.p}}}\,dx=\frac{${c}}{${P1===1?'':P1}${Npow(P1)}}`),
+      M(R`\frac{${c}}{${P1===1?'':P1}${Npow(P1)}}\le ${eps(q.e)}\;\Longrightarrow\; N\ge ${fmtDec(Math.pow(q.C/(P1*q.e),1/P1),2)}`),
+      M(R`N=${q.N}\text{ suffices. This does not prove it is minimal.}`),
+    ],cls:[null,'b','a','a','b','c'],notes:['A series you cannot integrate. Press Next.',`Bound the numerator: ${q.abs?'the terms can be negative, so use absolute values':'it is the only thing that varies wildly'}.`,'Check the conditions for the comparison function. Name them on the exam.','The tail is below the integral of g, by the Direct Comparison Remainder Theorem.','Set the bound at most the tolerance, and solve for N.','Round up, and say what you have proved: sufficient, not minimal.']};
+  });
+  new Drill({mount:'#drill-remainder',section:'remainder',goal:7,...mixDrill([Q.astN,Q.astN,Q.intN,Q.intN,Q.dirN,Q.dirN,Q.dirN,Q.bracket,Q.actualMin])});
+})();
+
+/* ============================================================ chapter 5 walkthrough */
+(function(){
+  const CASES=[
+    {lines:[
+      R`\text{Review quiz: }\displaystyle\sum_{n=1}^{\infty}\frac{\sqrt{5^{-n}+n^{-2}+1}+e^{-n}\ln n}{\sqrt{n^{2}+5\ln n+\sin(2n)}+(1.5)^{n}}`,
+      R`\text{Numerator: }5^{-n},\ n^{-2},\ e^{-n}\ln n\to 0,\text{ so }A_n\to 1,\ A_n\sim 1`,
+      R`\text{Denominator: the root term}\sim n,\text{ and }n/(1.5)^{n}\to 0,\text{ so }B_n\sim(1.5)^{n}`,
+      R`\text{Benchmark: }b_n=(2/3)^{n}.\ \text{Both eventually positive, and }\frac{a_n}{b_n}\to 1`,
+      R`\sum b_n\text{ converges by the Geometric Series Test, since }|r|=\tfrac23\lt 1`,
+      R`\text{By the Asymptotic Comparison Test, }\sum a_n\text{ converges.}`,
+    ],notes:['Sums on top and bottom. Separate them.','The constant 1 dominates. Neither e⁻ⁿ nor ln n is leading.','The 1.5ⁿ sits outside the root. Reading it as inside is the trap.','State the benchmark and the condition, then show the ratio.','Say why the benchmark behaves, naming the test.','Name the theorem in the conclusion.']},
+    {lines:[
+      R`\text{Review quiz: }\displaystyle\int_e^{\infty}\frac{x^{-2}+\ln x+\arctan x+x^{5}(0.5)^{x}}{e^{x}\ln x+\ln(x5^{x})}\,dx`,
+      R`\text{Numerator: bounded }\arctan x,\ x^{5}(0.5)^{x}\to 0,\text{ so numerator}\sim\ln x`,
+      R`\text{Denominator: }\ln(x5^{x})=\ln x+x\ln 5,\text{ so denominator}\sim e^{x}\ln x`,
+      R`G(x)=e^{-x}.\ F,G\text{ continuous and positive on }[e,\infty),\ \frac{F}{G}\to 1`,
+      R`\int_e^{\infty}e^{-x}\,dx\text{ converges}`,
+      R`\text{By the Asymptotic Comparison Test for Improper Integrals, it converges.}`,
+    ],notes:['A sum on top, a sum on the bottom.','Normalize by the candidate ln x and check the ratio tends to 1.','Simplify the log before comparing.','Benchmark, conditions, ratio.','The benchmark can be integrated directly.','Conclusion with the name.']},
+    {lines:[
+      R`\text{F24 practice 7(b): }\displaystyle\sum_{k=2}^{\infty}(-1)^{k}\ln\!\left(\frac{k^{2}+1}{k^{2}-1}\right)`,
+      R`\text{Alternating sign, so test absolute convergence first. }|a_k|=\ln\!\left(1+\frac{2}{k^{2}-1}\right)`,
+      R`\ln(1+u)\sim u\text{ as }u\to 0,\text{ so }|a_k|\sim\frac{2}{k^{2}}`,
+      R`|a_k|>0\text{ and }\frac{1}{k^{2}}>0,\text{ and }|a_k|\sim 2\cdot\frac{1}{k^{2}}`,
+      R`\sum\frac{1}{k^{2}}\text{ converges by the }p\text{-Series Test, }p=2>1`,
+      R`\text{Asymptotic Comparison gives }\sum|a_k|\text{ converges, so it converges absolutely.}`,
+    ],notes:['The sheet says test absolute convergence first.','Rewrite the fraction as 1 plus something small.','A fact the sheet does not list. Learn it.','Conditions for the theorem.','Why the benchmark behaves.','Absolute Convergence Theorem. AST was never needed.']},
+    {lines:[
+      R`\text{F24 practice 7(a): }\displaystyle\sum_{k=2}^{\infty}\frac{k\cos(\pi k)}{\ln k}`,
+      R`\cos(\pi k)=(-1)^{k},\text{ so }|a_k|=\frac{k}{\ln k}`,
+      R`\lim_{k\to\infty}\frac{k}{\ln k}=\infty,\text{ since }\ln k=o(k)`,
+      R`a_k\not\to 0`,
+      R`\text{By the Divergence Test, the series diverges.}`,
+    ],notes:['Inspect aₙ before anything else.','Rewrite the cosine.','Powers beat logs.','The condition for the Divergence Test.','Do not write "AST fails": that alone proves nothing.']},
+  ];
+  let i=-1;
+  walkthrough({expr:'ewExpr',status:'ewStatus',prev:'ewPrev',next:'ewNext',fresh:'ewNew'},()=>{i=(i+1)%CASES.length;const c=CASES[i];return {lines:c.lines.map(l=>M(l)),notes:c.notes,cls:c.lines.map((_,k)=>k===c.lines.length-1?'c':k%2?'a':'b')};});
+  new Drill({mount:'#drill-exam',section:'exam',goal:8,...mixDrill([Q.examMix,Q.examMix,Q.examMix,Q.examMix,Q.subThenPF,Q.bothEnds,Q.logFamily,Q.logFamily])});
+})();
+
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[Q.leading,Q.ratioClass,Q.allO,Q.smallArg,Q.asymInt,Q.asymSer,Q.littleOuse,Q.typeII,Q.termFromSum,Q.recurrence,Q.closedForm,Q.astN,Q.intN,Q.dirN,Q.actualMin,Q.examMix,Q.subThenPF,Q.logFamily]});
+
+$('#memcard').replaceWith(memoryCard('c2-m2',[
+  R`\(f\sim g\) means \(f/g\to 1\). \(f=o(g)\) means \(f/g\to 0\). \(f/g\to c\) means \(f\sim cg\).`,
+  R`Asymptotic Comparison: \(f,g\) positive and continuous, \(f\sim cg\), then both converge or both diverge.`,
+  R`Little-o Comparison: \(f=o(g)\). If \(\int g\) converges, so does \(\int f\). If \(\int f\) diverges, so does \(\int g\).`,
+  R`Benchmarks: \(\int_1^\infty x^{-p}\) converges iff \(p>1\). \(\int_0^1 x^{-p}\) converges iff \(p\lt 1\).`,
+  R`As \(u\to 0\): \(\ln(1+u)\sim u\) and \(\sin u\sim u\).`,
+  R`Alternating Remainder: \(|R_N|\le b_{N+1}\). Integral Remainder: \(\int_{n+1}^\infty f\le R_n\le\int_n^\infty f\).`,
+  R`Direct Comparison Remainder: \(R^f_n\le R^g_n\le\int_n^\infty g\) when \(g\ge f\ge 0\) and \(g\) is positive, continuous, decreasing.`,
+  R`Every answer names the theorem and its conditions, in the order: benchmark, theorem, decisive limit, why the benchmark behaves, conclusion.`,
+]));
+
+/* ============================================================ test hook */
+window.__solvers={
+  'leading term':q=>({g:q.ans}),
+  'o, asymptotic, or neither':q=>({L:q.L,_btn:oClass(q.L)}),
+  'every g with f = o(g)':q=>({L:q.ans.join(',')}),
+  'ln(1+u) and sin u for small u':q=>({b:q.ans,_btn:q.p>1?0:1}),
+  'asymptotic comparison for an integral':q=>({g:q.g,_btn:q.v}),
+  'asymptotic comparison for a series':q=>({b:q.b,_btn:q.v}),
+  'little-o with room to spare':q=>({s:q.conv?String((1+q.p)/2):'1',_btn:q.conv?0:1}),
+  'direct comparison at a blow-up':q=>({g:q.g,_btn:q.v}),
+  'terms from partial sums':q=>({a1:q.a1s||String(q.a1),an:q.an,S:q.S==='inf'?'diverges':String(q.S)}),
+  'periodic recursion':q=>({per:String(q.r.per),v:String(q.ans)}),
+  'closed formula for a pattern':q=>({a:q.ans}),
+  'build a sequence with a given limit':q=>({f:q.sol}),
+  'smallest certified N, alternating':q=>({N:String(q.N)}),
+  'smallest certified N, integral test':q=>({U:q.Us,N:String(q.N)}),
+  'smallest certified N, direct comparison':q=>({C:q.Cs,N:String(q.N)}),
+  'both bounds on the remainder':q=>({lo:String(q.lo),hi:String(q.hi)}),
+  'prove N is the actual minimum':q=>({N:String(q.m),lo:q.es}),
+  'exam mix: verdict and evidence':q=>({v:q.ans==='inf'?'inf':String(q.ans),_btn:q.v}),
+  'substitution, partial fractions, then a limit':q=>({v:String(q.v)}),
+  'an integral improper at both ends':q=>({L:String(3*q.k/4),T:'0'}),
+  'for which p or q':q=>({c:q.v+'>1'}),
+};
+
+initModule({key:'c2-m2',title:'Midterm 2 Review',sub:'Asymptotics, comparison, remainders, and full-credit answers'});
+</script>
+</body>
+</html>
