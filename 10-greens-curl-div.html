@@ -45,7 +45,21 @@
   <p>Reversing the direction of travel reverses the sign of every line integral: if \(C\) is positively oriented and \(-C\) is the same curve clockwise, then \(\oint_{-C}\mathbf{F}\cdot d\mathbf{r}=-\oint_{C}\mathbf{F}\cdot d\mathbf{r}\). So a clockwise problem is a counterclockwise problem with a minus sign in front.</p>
   <p>If \(D\) has a hole, the full boundary is the outer curve <b>counterclockwise</b> plus each inner curve <b>clockwise</b>, so that the region is on your left the whole way around. Green's theorem still holds with that combined boundary, which is how you handle \(\mathbf{F}=\left\langle \frac{-y}{x^2+y^2},\frac{x}{x^2+y^2}\right\rangle\): cut out a small circle about the origin and compare the two loops.</p>
 
-  <div class="warn"><b>Check the hypotheses first.</b> Green's theorem needs a <b>closed</b> curve with <b>positive</b> orientation, and \(P,Q\) must have continuous partials on all of \(D\), holes included. An open arc gets no \(\oint\). A clockwise loop needs a minus sign. A field that blows up inside \(D\) (like \(1/(x^2+y^2)\) at the origin) is not covered until you cut the bad point out.</div>
+  <div class="warn"><b>Check the hypotheses first.</b> Green's theorem needs a <b>closed</b> curve with <b>positive</b> orientation, and \(P,Q\) must have continuous partials on all of \(D\), holes included. An open arc gets no \(\oint\) until you close it off, which is the next trick. A clockwise loop needs a minus sign. A field that blows up inside \(D\) (like \(1/(x^2+y^2)\) at the origin) is not covered until you cut the bad point out.</div>
+
+  <h3>Closing an open path</h3>
+  <p>Green's theorem only speaks about closed curves, but you can still use it on an open path \(C\). Add a segment \(L\) from the end of \(C\) back to its start. Now \(C\) followed by \(L\) is a closed loop around a region \(D\), so</p>
+  <div class="formula">\(\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}=\pm\iint_D\left(Q_x-P_y\right)dA-\int_L\mathbf{F}\cdot d\mathbf{r}\)<span class="cap">Plus if \(C\) then \(L\) runs counterclockwise around \(D\), minus if it runs clockwise. You trade one hard line integral for a double integral and one easy segment.</span></div>
+  <p>Pick \(L\) along a line where \(\mathbf{F}\) simplifies. On a horizontal segment \(dy=0\) and \(y\) is a constant, so only \(P\) matters, and any messy \(Q\) (like \(e^{y^2}\)) never has to be integrated. That is usually the whole reason the problem gave you a \(Q\) you cannot integrate.</p>
+  <p>Example: \(\mathbf{F}=\langle x^2+3y,\;e^{y^2}+5x\rangle\), and \(C\) is three sides of the square \([0,2]\times[0,2]\), running from \((0,2)\) down to \((0,0)\), right to \((2,0)\), then up to \((2,2)\).</p>
+  <ol class="steps">
+    <li>\(Q_x-P_y=5-3=2\), a constant.</li>
+    <li>Close with \(L\), the top edge from \((2,2)\) back to \((0,2)\). Walking down the left side, the square is on your left, so \(C\) then \(L\) is counterclockwise. The double integral is \(+2\cdot\operatorname{area}=+2\cdot 4=8\).</li>
+    <li>On \(L\), \(y=2\) and \(dy=0\), so \(\displaystyle\int_L\mathbf{F}\cdot d\mathbf{r}=\int_2^0\left(x^2+6\right)dx=-\left(\tfrac83+12\right)=-\tfrac{44}{3}\).</li>
+    <li>\(\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}=8-\left(-\tfrac{44}{3}\right)=\tfrac{68}{3}\).</li>
+  </ol>
+
+  <div class="warn"><b>Walk the loop before you write ±area.</b> Decide the direction of the closed loop \(C+L\), not of \(C\) alone. A path listed by its vertices hides the direction: \((0,0)\to(0,3)\to(2,0)\to(0,0)\) goes up the \(y\)-axis first, which puts the triangle on your right, so it is clockwise and Green's theorem picks up a minus sign. Losing that sign is the most common way to get these problems wrong.</div>
 
   <div class="card">
     <h4>Step by step: Green's theorem on a rectangle</h4>
@@ -364,6 +378,78 @@ Q.greenOrient={name:'reversing the orientation',
       : `So the clockwise value is ${M(R`-\left(${q.Wtex}\right)=${q.ansTex}`)}. <b>${M(q.ansTex)}</b>.`);}
 };
 
+/* ---- (e2) close an open path, then use Green ---- */
+const par=v=>v<0?`(${v})`:String(v);
+Q.greenClose={name:'close the path, then use Green',
+  gen(){const alpha=pick([3,-3,6]);const m=rnz(-3,3);let n;do{n=rnz(-3,3);}while(n===m);const k=n-m;
+    const qy=pick([R`e^{y^{2}}`,R`\sin(y^{3})`,R`\sqrt{1+y^{4}}`,R`\tan^{-1}(y^{3})`]);
+    const Ptex=P2.tex(P2.clean([[alpha,2,0],[m,0,1]]));
+    const Qtex=qy+(n<0?' - ':' + ')+(Math.abs(n)===1?'':Math.abs(n))+'x';
+    const shape=pick(['rect','rect','semi']);const s=pick([1,-1]);
+    if(shape==='rect'){const a=rint(1,3),b=rint(1,3);
+      const I=alpha*a**3/3+m*a*b;const base=k*a*b+I;
+      const desc=s>0
+        ? `runs from ${M(R`(0,${b})`)} down to ${M(R`(0,0)`)}, then right to ${M(R`(${a},0)`)}, then up to ${M(R`(${a},${b})`)}`
+        : `runs from ${M(R`(${a},${b})`)} down to ${M(R`(${a},0)`)}, then left to ${M(R`(0,0)`)}, then up to ${M(R`(0,${b})`)}`;
+      return {shape,s,alpha,m,n,k,qy,Ptex,Qtex,a,b,desc,
+        Lfrom:s>0?[a,b]:[0,b],Lto:s>0?[0,b]:[a,b],
+        dbl:s*k*a*b,dblTex:R`${s>0?'+':'-'}${par(k)}\cdot ${a}\cdot ${b}=${s*k*a*b}`,
+        Lint:R`\int_{${s>0?a:0}}^{${s>0?0:a}}\left(${P2.tex(P2.clean([[alpha,2,0],[m*b,0,0]]))}\right)dx`,
+        Lval:-s*I,ans:s*base,ansTex:String(s*base)};}
+    const Rr=rint(1,3);const J=2*alpha*Rr**3/3;const base=k*Math.PI*Rr*Rr/2-J;
+    const desc=`is the upper half of the circle ${M(R`x^2+y^2=${Rr*Rr}`)}, from ${M(s>0?R`(${Rr},0)`:R`(-${Rr},0)`)} to ${M(s>0?R`(-${Rr},0)`:R`(${Rr},0)`)}`;
+    const cp=s*k*Rr*Rr/2,c0=-s*J;
+    return {shape,s,alpha,m,n,k,qy,Ptex,Qtex,R:Rr,desc,
+      Lfrom:s>0?[-Rr,0]:[Rr,0],Lto:s>0?[Rr,0]:[-Rr,0],
+      dbl:s*k*Math.PI*Rr*Rr/2,dblTex:R`${s>0?'+':'-'}${par(k)}\cdot\frac{\pi(${Rr})^2}{2}=${texPi(cp)}`,
+      Lint:R`\int_{${s>0?-Rr:Rr}}^{${s>0?Rr:-Rr}}\left(${texNum(alpha)}x^{2}\right)dx`,
+      Lval:s*J,ans:s*base,ansTex:texPi(cp)+(c0<0?' - ':' + ')+Math.abs(c0)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\int_C \mathbf{F}\cdot d\mathbf{r}`)} for ${M(R`\mathbf{F}=\left\langle ${q.Ptex},\; ${q.Qtex}\right\rangle`)}, where ${M('C')} ${q.desc}. ${M('C')} is not closed. Exact answers like <code>9pi/2 - 4</code> are fine.</p>`;
+    numIn(el,'v',M(R`\int_C \mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ans));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Close it with ${M('L')}, the segment from ${M(texPt(q.Lfrom))} to ${M(texPt(q.Lto))}, where ${M(q.shape==='rect'?R`y=${q.b}`:'y=0')} and ${M('dy=0')}. ${M('C')} then ${M('L')} runs <b>${q.s>0?'counterclockwise':'clockwise'}</b>.`;},
+  solution(q){const ccw=q.s>0;
+    const region=q.shape==='rect'?`the rectangle ${M(R`[0,${q.a}]\times[0,${q.b}]`)}`:`the upper half-disk of radius ${M(String(q.R))}`;
+    return `<ol class="steps">`
+      +`<li>${M(R`Q_x-P_y=${q.n}-${par(q.m)}=${q.k}`)}, a constant. The ${M(q.qy)} term has no ${M('x')}, so it dies.</li>`
+      +`<li>Close with ${M('L')}, the segment from ${M(texPt(q.Lfrom))} to ${M(texPt(q.Lto))}. ${M('C')} then ${M('L')} goes around ${region} <b>${ccw?'counterclockwise':'clockwise'}</b>, so the double integral is ${ccw?'plus':'minus'} that constant times the area: ${M(q.dblTex)}.</li>`
+      +`<li>On ${M('L')}, ${M(q.shape==='rect'?R`y=${q.b}`:'y=0')} and ${M('dy=0')}, so only ${M('P')} matters: ${M(R`\int_L \mathbf{F}\cdot d\mathbf{r}=${q.Lint}=${texNum(q.Lval)}`)}.</li>`
+      +`<li>${M(R`\int_C \mathbf{F}\cdot d\mathbf{r}=${q.shape==='rect'?q.dbl:texPi(q.dbl/Math.PI)}-\left(${texNum(q.Lval)}\right)=${q.ansTex}${Number.isInteger(q.ans)?'':R`\approx ${fmtDec(q.ans,3)}`}`)}.</li>`
+      +`</ol>`;}
+};
+
+/* ---- (e3) orientation hidden in the vertex order ---- */
+const TRAP_WHY={
+  ccw:['goes right along the x-axis first, so the triangle is on your left','goes up and to the left along the hypotenuse first, so the triangle is on your left','goes down the y-axis first, so the triangle is on your left'],
+  cw:['goes up the y-axis first, so the triangle is on your right','goes down and to the right along the hypotenuse first, so the triangle is on your right','goes left along the x-axis first, so the triangle is on your right']
+};
+Q.greenOrderTrap={name:'orientation from the vertex order',
+  gen(){const a=rint(1,3),b=rint(1,3);let P,Qp,g,ccwVal,n=0;
+    do{({P,Q:Qp,g}=genPQlin());ccwVal=P2.tri(g,a,b);n++;}while(Math.abs(ccwVal)<1e-9&&n<40);
+    const extraP=pick([R`e^{x^{2}}`,R`\cos(x^{3})`,R`\ln(1+x^{2})`]);
+    const extraQ=pick([R`\tan^{-1} y`,R`e^{-y^{2}}`,R`\sqrt{1+y^{3}}`]);
+    const cw=Math.random()<0.5;const r=rint(0,2);
+    const cyc=cw?[[0,0],[0,b],[a,0]]:[[0,0],[a,0],[0,b]];
+    const V=cyc.slice(r).concat(cyc.slice(0,r));
+    return {a,b,P,Q:Qp,g,A:P2.co(g,1,0),B:P2.co(g,0,1),C:P2.co(g,0,0),extraP,extraQ,cw,V,
+      why:TRAP_WHY[cw?'cw':'ccw'][r],ccwVal,ans:cw?-ccwVal:ccwVal};},
+  render(q,el){const [V1,V2,V3]=q.V.map(texPt);
+    el.innerHTML=`<p class="prompt">Evaluate ${M(R`\int_C \left(${P2.tex(q.P)} + ${q.extraP}\right)dx+\left(${P2.tex(q.Q)} + ${q.extraQ}\right)dy`)}, where ${M('C')} is the triangle from ${M(V1)} to ${M(V2)} to ${M(V3)} and back to ${M(V1)}. Fractions are fine.</p>`;
+    numIn(el,'v',M(R`\int_C P\,dx+Q\,dy=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ans));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML='Sketch the three vertices in order. Is the triangle on your left or your right?';},
+  solution(q){const {a,b,A,B,C}=q;
+    return `The listed order ${q.why.replace(/x-axis/,M('x')+'-axis').replace(/y-axis/,M('y')+'-axis')}. So ${M('C')} is <b>${q.cw?'clockwise':'counterclockwise'}</b>. `
+    +`${M(R`Q_x=${P2.tex(P2.dx(q.Q))}`)} and ${M(R`P_y=${P2.tex(P2.dy(q.P))}`)}: the ${M(q.extraP)} term has no ${M('y')} and the ${M(q.extraQ)} term has no ${M('x')}, so both die. That leaves ${M(R`Q_x-P_y=${P2.tex(q.g)}`)}. `
+    +`For the right triangle with legs ${M(R`a=${a}`)} along ${M('x')} and ${M(R`b=${b}`)} along ${M('y')}, `
+    +`${M(R`\iint_T dA=\tfrac{ab}{2}=${texNum(a*b/2)}`)}, ${M(R`\iint_T x\,dA=\tfrac{a^2b}{6}=${texNum(a*a*b/6)}`)}, ${M(R`\iint_T y\,dA=\tfrac{ab^2}{6}=${texNum(a*b*b/6)}`)}. The counterclockwise value is `
+    +D(R`(${texNum(A)})\!\left(${texNum(a*a*b/6)}\right)+(${texNum(B)})\!\left(${texNum(a*b*b/6)}\right)+(${texNum(C)})\!\left(${texNum(a*b/2)}\right)=${texNum(q.ccwVal)}`)
+    +(q.cw?`${M('C')} runs clockwise, so flip the sign: ${M(R`\int_C=-\left(${texNum(q.ccwVal)}\right)=${texNum(q.ans)}`)}.`
+          :`${M('C')} runs counterclockwise, so that is the answer: ${M(texNum(q.ans))}.`);}
+};
+
 /* ---- (f) identify the Green integrand ---- */
 const SPECIAL2=[
   {Ptex:R`e^{x}\sin y`,Qtex:R`e^{x}\cos y`,gtex:'0',gstr:'0',
@@ -665,7 +751,7 @@ Q.identity={name:'vector identities',
   })();
 
   new Drill({mount:'#drill-green',section:'green',goal:6,
-    ...mixDrill([Q.greenRect,Q.greenRect,Q.greenDisk,Q.greenDisk,Q.greenTri,Q.greenArea,Q.greenOrient,Q.greenIntegrand])});
+    ...mixDrill([Q.greenRect,Q.greenRect,Q.greenDisk,Q.greenDisk,Q.greenTri,Q.greenArea,Q.greenOrient,Q.greenClose,Q.greenClose,Q.greenOrderTrap,Q.greenIntegrand])});
 })();
 
 /* ============================================================ chapter 2 widgets */
@@ -771,7 +857,7 @@ Q.identity={name:'vector identities',
 
 /* ============================================================ quiz */
 makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
-  Q.greenRect,Q.greenDisk,Q.greenTri,Q.greenArea,Q.greenOrient,Q.greenIntegrand,
+  Q.greenRect,Q.greenDisk,Q.greenTri,Q.greenArea,Q.greenOrient,Q.greenClose,Q.greenOrderTrap,Q.greenIntegrand,
   Q.curlCompute,Q.divCompute,Q.conservative,Q.signPicture,Q.curl2D,Q.identity]});
 
 /* ============================================================ test hook */
@@ -781,6 +867,8 @@ window.__solvers={
   'Green over a triangle':q=>({v:String(q.val)}),
   'area from a parametrized boundary':q=>({ar:String(q.area)}),
   'reversing the orientation':q=>({v:String(q.ans)}),
+  'close the path, then use Green':q=>({v:String(q.ans)}),
+  'orientation from the vertex order':q=>({v:String(q.ans)}),
   'the Green integrand':q=>({g:q.gstr}),
   'curl of a vector field':q=>({cu:'<'+q.curlStr.join(', ')+'>'}),
   'divergence of a vector field':q=>({dv:q.divStr}),
