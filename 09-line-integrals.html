@@ -169,6 +169,11 @@
   <div class="formula">\(\displaystyle g'(y)=Q-\frac{\partial}{\partial y}\int P\,dx\)<span class="cap">The left side is a function of \(y\) alone, so the right side had better not contain any \(x\).</span></div>
   <p>Differentiate the right side in \(x\): you get \(Q_x-P_y\). So the \(x\)'s drop out of \(g'(y)\) <b>exactly when</b> \(P_y=Q_x\). If the test passes, the procedure always finishes. If it fails, you get stuck with an equation like \(g'(y)=x\), which no function of \(y\) can satisfy. That is the test failing in front of you.</p>
 
+  <h3>When the potential has an integral with no formula</h3>
+  <p>Sometimes the last step leaves you with \(g'(y)=h(y)\), where \(h\) has no elementary antiderivative, such as \(\sin(y^3)\) or \(e^{y^2}\). That is not a dead end. Write \(g(y)=\int_0^y h(t)\,dt\). That is a perfectly good function, and the Fundamental Theorem only ever needs \(f\) at the two endpoints.</p>
+  <div class="formula">\(\mathbf{F}=\langle 3x^2+y,\; x+e^{y^2}\rangle\quad\Longrightarrow\quad f(x,y)=x^3+xy+\displaystyle\int_0^y e^{t^2}\,dt\)<span class="cap">From \((-1,0)\) to \((2,0)\) along any path, the integral term is \(\int_0^0=0\) at both ends, so the answer is \(f(2,0)-f(-1,0)=8-(-1)=9\).</span></div>
+  <p>If both endpoints share the same height \(y=b\), the two integral terms are equal and cancel, so you still never evaluate the integral.</p>
+
   <div class="card">
     <h4>Step by step: recovering \(f\) from \(\mathbf{F}\)</h4>
     <ul class="steps" id="pwkSteps"></ul>
@@ -194,6 +199,14 @@
 
   <div class="note"><b>Conservative means endpoints only.</b> Once you have spotted that \(\mathbf{F}=\nabla f\), stop parametrizing. Evaluate \(f\) at the two endpoints and subtract. A problem that hands you an ugly path with a conservative field is testing exactly this reflex.</div>
   <div class="warn"><b>The test needs a domain with no holes.</b> \(P_y=Q_x\) guarantees a potential only on a simply connected region. The standard counterexample is \(\mathbf{F}=\left\langle \frac{-y}{x^2+y^2},\frac{x}{x^2+y^2}\right\rangle\) on the plane minus the origin: it passes \(P_y=Q_x\) everywhere it is defined, yet its integral around the unit circle is \(2\pi\), not 0. The hole at the origin is the culprit.<br><br>Here is why. Away from the origin this field is \(\nabla\theta\), the gradient of the polar angle: \(\frac{\partial}{\partial x}\arctan\frac yx=\frac{-y}{x^2+y^2}\) and \(\frac{\partial}{\partial y}\arctan\frac yx=\frac{x}{x^2+y^2}\). On any region that does not circle the origin, such as the right half plane, \(\theta\) is an honest potential and the field is conservative there. But walk once around the origin and \(\theta\) gains \(2\pi\) without returning to its starting value, so no single-valued potential exists on the whole punctured plane. That \(2\pi\) is the work around the circle. "Simply connected" is exactly the condition that rules out loops around a hole like this.</div>
+  <div class="note"><b>Zero curl around a hole: inconclusive, not "no."</b> When the domain has a hole, \(P_y=Q_x\) does not prove \(\mathbf{F}\) is conservative, but it does not prove \(\mathbf{F}\) is not conservative either. You have to look further. Both fields below are defined on the plane minus the origin, and both have \(Q_x-P_y=0\).
+    <table class="simple">
+      <tr><th>&nbsp;</th><th>Radial</th><th>Rotational</th></tr>
+      <tr><td>Field</td><td>\(\frac{1}{x^2+y^2}\langle x,y\rangle\)</td><td>\(\frac{1}{x^2+y^2}\langle -y,x\rangle\)</td></tr>
+      <tr><td>Conservative?</td><td>Yes: it is \(\nabla\left(\tfrac12\ln(x^2+y^2)\right)\)</td><td>No</td></tr>
+      <tr><td>Around the unit circle</td><td>\(0\) (the field is perpendicular to the circle everywhere)</td><td>\(2\pi\)</td></tr>
+    </table>
+    The decisive check is one loop around the hole. If that loop gives zero, \(\mathbf{F}\) is conservative on the punctured plane; if not, it is not. Any radial field \(g(r)\langle x,y\rangle\) has a potential \(G(r)\) with \(G'(r)=r\,g(r)\), so radial fields always pass.</div>
 
   <h3>Practice</h3>
   <div class="card" id="drill-ftc"></div>
@@ -754,6 +767,75 @@ Q.pot3dFtc={name:'potential and the fundamental theorem in 3D',
   solution(q){return `${q.sol} Then the Fundamental Theorem gives ${M(`f${texPt(q.B)}-f${texPt(q.A)}=${texNum(q.fB)}-(${texNum(q.fA)})=${texNum(q.ans)}`)}.`;}
 };
 
+const HP_P=[{p:R`x^{3}`,dp:R`3x^{2}`,f:x=>x**3,poly:true,ev:x=>String(x**3)},
+  {p:R`\tfrac12 e^{2x}`,dp:R`e^{2x}`,f:x=>Math.exp(2*x)/2,poly:false,narrow:true,ev:x=>x===0?R`\tfrac12`:R`\tfrac12 e^{${2*x}}`},
+  {p:R`x^{2}`,dp:R`2x`,f:x=>x*x,poly:true,ev:x=>String(x*x)},
+  {p:R`\sin x`,dp:R`\cos x`,f:x=>Math.sin(x),poly:false,ev:x=>x===0?'0':R`\sin(${x})`}];
+const HP_H=[v=>R`\sin(${v}^{3})`,v=>R`e^{${v}^{2}}`,v=>R`\cos(${v}^{4})`,v=>R`\sqrt{1+${v}^{4}}`];
+const HP_PATH=['a path that wanders far from the x-axis before arriving',
+  R`a path made of three line segments through \((0,4)\) and \((5,4)\)`,
+  'a curve that loops once around the origin on the way'];
+const signed=n=>n<0?`-${-n}`:`+${n}`;
+Q.hiddenPotential={name:'potential with an integral that has no formula',
+  gen(){const e=pick(HP_P),h=pick(HP_H),c=rint(1,3),mode=pick(['axis','axis','level']);
+    const lo=e.narrow?-1:-2,hi=e.narrow?1:2;
+    const x0=rint(lo,hi);let x1;do{x1=rint(lo,hi);}while(x1===x0);
+    const b=mode==='level'?rnz(-2,2):0,cs=c===1?'':String(c);
+    return {e,h,c,cs,mode,x0,x1,b,A:[x0,b],B:[x1,b],ans:e.f(x1)-e.f(x0)+c*b*b*(x1-x0),path:pick(HP_PATH),
+      Ftex:tvec([`${e.dp}+${cs}y^{2}`,`${h('y')}+${2*c}xy`])};},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`\mathbf{F}=`+q.Ftex)}. Is ${M(R`\mathbf{F}`)} conservative? Find ${M(R`\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}`)}, where ${M('C')} runs from ${M('A'+texPt(q.A))} to ${M('B'+texPt(q.B))} along ${q.path}. Exact answers like <code>e^4/2 - 1/2</code> are fine.</p>`;
+    q.get=choiceButtons(el,[{label:'Yes, it is conservative',value:true},{label:'No',value:false}]);
+    numIn(el,'I',M(R`\int_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    const r=G(el,'I',checkNumber($('[data-k=I]',el).value,q.ans));
+    return {ok:v===true&&r.ok,err:r.err,msg:v===true?'':'Compare \\(P_y\\) with \\(Q_x\\).'};},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(`P_y=${2*q.c}y`)+' and '+M(`Q_x=${2*q.c}y`)+'.';},
+  solution(q){const {e,c,cs,b,x0,x1}=q,ht=q.h('t');
+    const ends=q.mode==='axis'
+      ?R`Both endpoints have \(y=0\), so the integral term is \(\int_0^{0}=0\) at each end.`
+      :R`Both endpoints have \(y=${b}\), so the integral term is the same number \(\int_0^{${b}}${ht}\,dt\) at each end, and it cancels.`;
+    const term=x=>q.mode==='axis'?e.ev(x):`${e.ev(x)}${signed(c*x*b*b)}`;
+    const head=q.mode==='axis'?term(x1):R`\left(${term(x1)}\right)`;
+    const val=R`f${texPt(q.B)}-f${texPt(q.A)}=${head}-\left(${term(x0)}\right)`+(e.poly?`=${texNum(q.ans)}`:R`\approx ${fmtDec(q.ans,4)}`);
+    return `${M(`P_y=${2*c}y=Q_x`)} and ${M(R`\mathbf{F}`)} is defined on all of ${M(R`\mathbb{R}^{2}`)}, so <b>yes</b>, it is conservative.
+      Integrate ${M('P')} in ${M('x')}: ${M(`f=${e.p}+${cs}xy^{2}+g(y)`)}. Then ${M(`f_y=${2*c}xy+g'(y)`)} must equal ${M('Q')}, so ${M(`g'(y)=${q.h('y')}`)}, which has no elementary antiderivative.
+      Write ${M(R`g(y)=\int_0^{y}${ht}\,dt`)} instead, so ${M(R`f(x,y)=${e.p}+${cs}xy^{2}+\int_0^{y}${ht}\,dt`)}.
+      ${ends} So ${M(val)}${e.poly?'':', and the expression before the decimal is the exact answer'}.`;}
+};
+
+const coefTex=v=>v===1?'':v===-1?'-':texNum(v);
+const HF_RAD=[
+  {tex:(s,a)=>R`${s}\frac{${a}}{x^{2}+y^{2}}\langle x,\; y\rangle`,pot:k=>R`${coefTex(k/2)}\ln(x^{2}+y^{2})`},
+  {tex:(s,a)=>R`${s}\frac{${a}}{(x^{2}+y^{2})^{2}}\langle x,\; y\rangle`,
+   pot:k=>{const s=k>0?'-':'',a=Math.abs(k);return a%2===0?R`${s}\frac{${a/2}}{x^{2}+y^{2}}`:R`${s}\frac{${a}}{2(x^{2}+y^{2})}`;}},
+  {tex:(s,a)=>R`${s}\frac{${a}}{\sqrt{x^{2}+y^{2}}}\langle x,\; y\rangle`,pot:k=>R`${coefTex(k)}\sqrt{x^{2}+y^{2}}`}];
+const HF_ROT=[{vec:R`\langle -y,\; x\rangle`,circ:R`\langle -\sin t,\; \cos t\rangle`,sgn:1},
+  {vec:R`\langle y,\; -x\rangle`,circ:R`\langle \sin t,\; -\cos t\rangle`,sgn:-1}];
+Q.holeField={name:'zero curl around a hole',
+  gen(){const k=rnz(-3,3),s=k<0?'-':'',a=Math.abs(k);
+    if(Math.random()<0.5){const e=pick(HF_ROT),dot=e.sgn*k;
+      return {k,cons:false,Ftex:R`${s}\frac{${a}}{x^{2}+y^{2}}${e.vec}`,circ:e.circ,dot,loop:2*Math.PI*dot,loopTex:R`${2*dot}\pi`};}
+    const e=pick(HF_RAD);return {k,cons:true,Ftex:e.tex(s,a),pot:e.pot(k),loop:0,loopTex:'0'};},
+  render(q,box){box.innerHTML=`<p class="prompt">The field ${M(R`\mathbf{F}=`+q.Ftex)} is defined on the plane minus the origin, and ${M('Q_x-P_y=0')} at every point where ${M(R`\mathbf{F}`)} is defined.</p>`;
+    box.appendChild(el('div',{class:'wa-partlabel'},'(a) From that fact alone, can you conclude '+M(R`\mathbf{F}`)+' is conservative?'));
+    q.getA=choiceButtons(box,[{label:'Yes, zero curl proves it',value:0},{label:'No, the domain has a hole, so the test is inconclusive',value:1}]);
+    box.appendChild(el('div',{class:'wa-partlabel'},'(b) Is '+M(R`\mathbf{F}`)+' actually conservative on its domain?'));
+    q.getB=choiceButtons(box,[{label:'Yes',value:true},{label:'No',value:false}]);
+    box.appendChild(el('div',{class:'wa-partlabel'},'(c) Let '+M('C')+' be the unit circle, traversed once counterclockwise. Exact answers like <code>4pi</code> are fine.'));
+    numIn(box,'L',M(R`\oint_C\mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,box){const a=q.getA(),b=q.getB();if(a===null||b===null)return {ok:false,msg:'Pick an option for every part.'};
+    const r=G(box,'L',checkNumber($('[data-k=L]',box).value,q.loop));
+    const ok=a===1&&b===q.cons&&r.ok;
+    return {ok,err:r.err,msg:ok?'':a!==1?'Part (a): what does the test need from the domain?':b!==q.cons?'Part (b): one loop around the hole decides it.':''};},
+  solution(q){const pa=`<b>(a) No.</b> ${M('P_y=Q_x')} proves a potential exists only on a simply connected domain, and the plane minus the origin has a hole. So that fact alone is inconclusive.`;
+    if(q.cons)return `${pa} <b>(b) Yes.</b> This field is radial, of the form ${M(R`g(r)\langle x,y\rangle`)}, and ${M(R`\mathbf{F}=\nabla f`)} with ${M('f='+q.pot)} on the whole punctured plane.
+      <b>(c) 0.</b> On the unit circle ${M(R`\mathbf{F}`)} points along ${M(R`\langle x,y\rangle`)}, straight out from the origin, so it is perpendicular to the tangent ${M(R`\mathbf{r}'`)} and ${M(R`\mathbf{F}\cdot\mathbf{r}'=0`)} at every point. The Fundamental Theorem agrees: a closed curve gives ${M(R`f(\text{end})-f(\text{start})=0`)}.`;
+    const kt=q.k===1?'':q.k===-1?'-':String(q.k);
+    return `${pa} <b>(c)</b> Parametrize ${M(R`\mathbf{r}(t)=\langle\cos t,\,\sin t\rangle`)}, ${M(R`0\le t\le 2\pi`)}. On the circle ${M('x^{2}+y^{2}=1')}, so ${M(R`\mathbf{F}=${kt}${q.circ}`)} and ${M(R`\mathbf{r}'=\langle -\sin t,\; \cos t\rangle`)}, giving ${M(R`\mathbf{F}\cdot\mathbf{r}'=${q.dot}`)}, a constant. So ${M(R`\oint_C\mathbf{F}\cdot d\mathbf{r}=2\pi(${q.dot})=${q.loopTex}`)}.
+      <b>(b) No.</b> A conservative field gives 0 around every closed curve, and this loop gives ${M(q.loopTex+R`\ne 0`)}, so ${M(R`\mathbf{F}`)} is not conservative on its domain.`;}
+};
+
 /* ============================================================ chapter 1: field plotter + flow */
 (function(){
   const plot=new Plot2D('#fldPlot',{xmin:-4,xmax:4,ymin:-4,ymax:4});
@@ -967,7 +1049,7 @@ const stepUI=(mountId,statusId,prevId,nextId)=>({
   POTS.forEach((p,i)=>{const b=el('button',{class:'btn small'+(i===0?' on':'')},p.n);
     b.onclick=()=>{pi=i;$$('.btn',box).forEach((x,j)=>x.classList.toggle('on',j===i));draw();};box.appendChild(b);});
   redrawOnShow('ftc',draw);draw();
-  new Drill({mount:'#drill-ftc',section:'ftc',goal:6,...mixDrill([Q.isConservative,Q.isConservative,Q.findPotential,Q.findPotential,Q.ftcEval,Q.closedLoop,Q.pot3dFtc])});
+  new Drill({mount:'#drill-ftc',section:'ftc',goal:6,...mixDrill([Q.isConservative,Q.isConservative,Q.findPotential,Q.findPotential,Q.ftcEval,Q.closedLoop,Q.pot3dFtc,Q.hiddenPotential,Q.holeField])});
 })();
 
 /* ============================================================ test hook */
@@ -989,12 +1071,14 @@ window.__solvers={
   'fundamental theorem for line integrals':q=>({I:String(q.ans)}),
   'work around a closed curve':q=>({I:String(q.ans)}),
   'potential and the fundamental theorem in 3D':q=>({f:q.fStr,I:String(q.ans)}),
+  'potential with an integral that has no formula':q=>({_btn:0,I:String(q.ans)}),
+  'zero curl around a hole':q=>({_btn:1,_btn1:q.cons?0:1,L:String(q.loop)}),
 };
 
 /* ============================================================ quiz */
 makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
   Q.evalField,Q.gradField,Q.isGradient,Q.workSeg,Q.workGraph,Q.pdxqdy,
-  Q.circleWork,Q.work3D,Q.work3Dform,Q.workSign,Q.isConservative,Q.findPotential,Q.ftcEval,Q.closedLoop]});
+  Q.circleWork,Q.work3D,Q.work3Dform,Q.workSign,Q.isConservative,Q.findPotential,Q.ftcEval,Q.closedLoop,Q.hiddenPotential,Q.holeField]});
 
 initModule({key:'line-integrals',title:'Vector Fields and Line Integrals',sub:'Module 9 · Stewart 16.1 to 16.3',hub:'math212.html'});
 </script>
