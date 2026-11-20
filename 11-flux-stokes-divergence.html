@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Surface Integrals, Stokes, Divergence Theorem</title>
+<title>Flux, Curl, Stokes, and the Divergence Theorem</title>
 <link rel="stylesheet" href="assets/study.css">
 <link rel="stylesheet" href="assets/mathquill/mathquill.css">
 <script src="assets/jquery.min.js"></script>
@@ -17,128 +17,9 @@
 <nav class="side" id="nav"></nav>
 <main>
 
-<!-- ============================================================ 1 PARAMETRIC SURFACES -->
-<section data-id="param" data-title="Parametric surfaces and surface area" data-goal="6">
-  <p class="eyebrow">Chapter 1 · Stewart 16.6</p>
-  <h2>Parametric surfaces and surface area</h2>
-  <p class="lead">A curve needs one parameter. A surface needs two. Everything else follows from that one fact.</p>
-
-  <p>A <b>parametric surface</b> is a vector function of two variables,</p>
-  <div class="formula">\(\mathbf{r}(u,v)=\langle x(u,v),\,y(u,v),\,z(u,v)\rangle,\qquad (u,v)\in D\)<span class="cap">\(D\) is the <b>parameter domain</b>, a flat region in the \(uv\)-plane. The surface \(S\) is the image of \(D\).</span></div>
-  <p>Freezing one parameter gives a <b>grid curve</b>. Fix \(u=u_0\) and let \(v\) run: you get a curve lying in \(S\). Fix \(v=v_0\) and let \(u\) run: another curve. The two families of grid curves are the mesh you see drawn on every surface picture.</p>
-
-  <h3>The parametrizations you should know cold</h3>
-  <div class="card tint">
-    <table class="simple">
-      <tr><th>Surface</th><th>Parametrization</th><th>Domain</th></tr>
-      <tr><td>Plane through \(P\) spanned by \(\mathbf{a},\mathbf{b}\)</td><td>\(\mathbf{r}=\mathbf{p}+u\,\mathbf{a}+v\,\mathbf{b}\)</td><td>\(u,v\in\mathbb{R}\)</td></tr>
-      <tr><td>Graph \(z=f(x,y)\)</td><td>\(\mathbf{r}=\langle x,\,y,\,f(x,y)\rangle\)</td><td>\((x,y)\in D\)</td></tr>
-      <tr><td>Cylinder \(x^2+y^2=a^2\)</td><td>\(\mathbf{r}=\langle a\cos u,\,a\sin u,\,v\rangle\)</td><td>\(0\le u\le 2\pi\)</td></tr>
-      <tr><td>Sphere of radius \(a\)</td><td>\(\mathbf{r}=\langle a\sin\phi\cos\theta,\,a\sin\phi\sin\theta,\,a\cos\phi\rangle\)</td><td>\(0\le\phi\le\pi,\ 0\le\theta\le 2\pi\)</td></tr>
-      <tr><td>Cone \(z=\sqrt{x^2+y^2}\)</td><td>\(\mathbf{r}=\langle u\cos v,\,u\sin v,\,u\rangle\)</td><td>\(u\ge 0,\ 0\le v\le 2\pi\)</td></tr>
-      <tr><td>Revolving \(y=f(x)\), \(a\le x\le b\), about the \(x\)-axis</td><td>\(\mathbf{r}=\langle u,\,f(u)\cos v,\,f(u)\sin v\rangle\)</td><td>\(a\le u\le b,\ 0\le v\le 2\pi\)</td></tr>
-    </table>
-    <p class="hint">Pattern: whenever a circle is involved, one parameter is the angle. Whenever the surface is a graph, the two parameters are just \(x\) and \(y\).</p>
-  </div>
-
-  <h3>Tangent vectors and the normal</h3>
-  <p>Differentiate along each grid curve:</p>
-  <div class="formula">\(\mathbf{r}_u=\left\langle \dfrac{\partial x}{\partial u},\dfrac{\partial y}{\partial u},\dfrac{\partial z}{\partial u}\right\rangle,\qquad \mathbf{r}_v=\left\langle \dfrac{\partial x}{\partial v},\dfrac{\partial y}{\partial v},\dfrac{\partial z}{\partial v}\right\rangle\)<span class="cap">\(\mathbf{r}_u\) is tangent to the curve where \(v\) is frozen; \(\mathbf{r}_v\) is tangent to the curve where \(u\) is frozen. Both are tangent to \(S\).</span></div>
-  <p>Two tangent vectors determine the tangent plane, and their cross product is perpendicular to it:</p>
-  <div class="formula">\(\mathbf{n}=\mathbf{r}_u\times\mathbf{r}_v\)<span class="cap">The normal vector. The surface is <b>smooth</b> where \(\mathbf{r}_u\times\mathbf{r}_v\neq\mathbf{0}\). The tangent plane at \(\mathbf{r}(u_0,v_0)\) is the plane through that point with this normal.</span></div>
-  <p>For a graph \(\mathbf{r}=\langle u,v,f(u,v)\rangle\) this collapses to something worth memorizing: \(\mathbf{r}_u=\langle 1,0,f_u\rangle\), \(\mathbf{r}_v=\langle 0,1,f_v\rangle\), so</p>
-  <div class="formula">\(\mathbf{r}_u\times\mathbf{r}_v=\langle -f_u,\,-f_v,\,1\rangle\)<span class="cap">The \(z\)-component is \(+1\), so this normal always points <b>upward</b>. You will use it constantly in the flux chapter.</span></div>
-
-  <h3>Where two surfaces meet</h3>
-  <p>Two surfaces that cross meet in a curve. That curve lies in both surfaces, so its tangent direction is perpendicular to both normals. For a level surface \(G(x,y,z)=c\) the normal is \(\nabla G\); for a parametric surface it is \(\mathbf r_u\times\mathbf r_v\). So a direction vector for the tangent line is their cross product:</p>
-  <div class="formula">\(\mathbf{v}=\nabla G(P)\times\left(\mathbf r_u\times\mathbf r_v\right)(u_0,v_0)\)<span class="cap">Find the \((u_0,v_0)\) that lands on \(P\) first; then the line is \(P+t\,\mathbf v\).</span></div>
-
-  <div class="card">
-    <h4>Explore: grid curves, \(\mathbf{r}_u\), \(\mathbf{r}_v\), and \(\mathbf{r}_u\times\mathbf{r}_v\)</h4>
-    <div class="xf">
-      <div><canvas class="scene" id="pScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. Purple curves are the two grid curves through the marked point. Arrows are drawn to a common scale, not to true length.</p></div>
-      <div>
-        <div class="controls"><select id="pSel"></select></div>
-        <div class="sliders" id="pSliders"></div>
-        <div class="readout" id="pOut"></div>
-        <p class="hint">Put the point on the sphere's north pole (\(u=0\)): \(\mathbf{r}_v\) collapses to zero and the normal dies with it, which is why the sphere's parametrization is not smooth at the poles. On the cone, do the same at \(u=0\): the vertex is the one bad point. On the helicoid, notice \(|\mathbf{r}_u\times\mathbf{r}_v|=\sqrt{1+u^2}\) grows as you move out along the ramp.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="note"><b>The normal is not unique.</b> Swapping the roles of \(u\) and \(v\) reverses the cross product: \(\mathbf{r}_v\times\mathbf{r}_u=-(\mathbf{r}_u\times\mathbf{r}_v)\). For area it makes no difference, because area uses the length. For flux it flips the sign of the answer, so from Chapter 3 on you must check which way your normal points.</div>
-
-  <h3>Surface area</h3>
-  <p>A small rectangle \(\Delta u\times\Delta v\) in the parameter domain maps to a small patch on \(S\) that is almost the parallelogram spanned by \(\mathbf{r}_u\,\Delta u\) and \(\mathbf{r}_v\,\Delta v\). The area of that parallelogram is \(|\mathbf{r}_u\times\mathbf{r}_v|\,\Delta u\,\Delta v\). Add up and take the limit:</p>
-  <div class="formula">\(A(S)=\displaystyle\iint_D |\mathbf{r}_u\times\mathbf{r}_v|\,dA\)<span class="cap">\(|\mathbf{r}_u\times\mathbf{r}_v|\) is the <b>stretch factor</b>: how much area the map from \(D\) to \(S\) creates at each point.</span></div>
-  <p>For a graph \(z=f(x,y)\), \(|\langle -f_x,-f_y,1\rangle|=\sqrt{1+f_x^2+f_y^2}\), which gives the version you have probably seen first:</p>
-  <div class="formula">\(A(S)=\displaystyle\iint_D \sqrt{1+f_x^2+f_y^2}\;dA\)</div>
-
-  <div class="warn"><b>Do not integrate over the surface's shadow and forget the stretch.</b> \(dA\) is area in the parameter domain; \(dS=|\mathbf{r}_u\times\mathbf{r}_v|\,dA\) is area on the surface. Dropping that factor is the single most common error in this chapter, and it always makes the answer too small.</div>
-
-  <h3>Pieces of a sphere</h3>
-  <p>On the sphere \(x^2+y^2+z^2=a^2\), use \(\phi\) and \(\theta\). Since \(z=a\cos\phi\), a cut \(z\ge h\) becomes \(0\le\phi\le\phi_0\) with \(\cos\phi_0=h/a\), and \(z\le h\) becomes \(\phi_0\le\phi\le\pi\). Sign conditions on \(x\) and \(y\) choose the \(\theta\) interval: \(x\ge 0\) and \(y\ge 0\) is \(0\) to \(\pi/2\), \(x\le 0\) and \(y\ge 0\) is \(\pi/2\) to \(\pi\), and so on around the circle. Since \(|\mathbf r_\phi\times\mathbf r_\theta|=a^2\sin\phi\), the area is a product of two easy integrals:</p>
-  <div class="formula">\(A=a^2\,(\theta_2-\theta_1)\,(\cos\phi_1-\cos\phi_2)\)<span class="cap">The \(\theta\) integral is the length of the \(\theta\) interval. The \(\phi\) integral is \(\int_{\phi_1}^{\phi_2}\sin\phi\,d\phi=\cos\phi_1-\cos\phi_2\).</span></div>
-
-  <h3>Practice</h3>
-  <div class="card" id="drill-param"></div>
-</section>
-
-<!-- ============================================================ 2 SCALAR SURFACE INTEGRALS -->
-<section data-id="scalar" data-title="Surface integrals of scalar functions" data-goal="5">
-  <p class="eyebrow">Chapter 2 · Stewart 16.7</p>
-  <h2>Surface integrals of scalar functions</h2>
-  <p class="lead">Same idea as a line integral, one dimension up: chop the surface, weight each piece by \(f\), add.</p>
-
-  <p>Cut \(D\) into small rectangles, map them to patches on \(S\), multiply the value of \(f\) at a sample point by the patch's area, and add. The patch area is \(|\mathbf{r}_u\times\mathbf{r}_v|\,\Delta u\,\Delta v\), so:</p>
-  <div class="formula">\(\displaystyle\iint_S f\,dS=\iint_D f\big(\mathbf{r}(u,v)\big)\,\big|\mathbf{r}_u\times\mathbf{r}_v\big|\,dA\)<span class="cap">Substitute the parametrization into \(f\), multiply by the stretch factor, integrate over the flat parameter domain.</span></div>
-  <p>For a graph \(z=g(x,y)\) over a region \(D\) in the \(xy\)-plane:</p>
-  <div class="formula">\(\displaystyle\iint_S f\,dS=\iint_D f\big(x,y,g(x,y)\big)\,\sqrt{1+g_x^2+g_y^2}\;dA\)<span class="cap">The \(z\) inside \(f\) gets replaced by \(g(x,y)\). Nothing is left over the surface: everything is now a function of \(x\) and \(y\).</span></div>
-
-  <p>Three things this computes:</p>
-  <ul>
-    <li><b>Area</b>, when \(f=1\).</li>
-    <li><b>Mass</b> of a thin sheet with surface density \(\rho(x,y,z)\): \(m=\iint_S \rho\,dS\). Centers of mass and moments work the same way as in earlier chapters.</li>
-    <li><b>Average value</b> of \(f\) on \(S\): \(\dfrac{1}{A(S)}\iint_S f\,dS\).</li>
-  </ul>
-  <p>If \(S\) is made of several smooth pieces (a box, a closed cylinder with its two lids), integrate over each piece and add. That is legal because area adds.</p>
-
-  <div class="card">
-    <h4>Step by step: \(\iint_S z\,dS\) over a piece of a plane</h4>
-    <div class="given" id="w1Given"></div>
-    <ol class="steps" id="w1Steps"></ol>
-    <div class="controls">
-      <button class="btn" id="w1Prev">◀ Back</button>
-      <button class="btn primary" id="w1Next">Next step ▶</button>
-      <button class="btn" id="w1New">New problem</button>
-      <span class="status" id="w1Status"></span>
-    </div>
-    <p class="hint">Notice where the work actually is: the stretch factor is a constant for a plane, so it slides straight out of the integral, and what remains is a first-year double integral of a linear function over a rectangle.</p>
-  </div>
-
-  <div class="card">
-    <h4>Explore: how one parameter cell stretches</h4>
-    <div class="xf">
-      <div><canvas class="scene" id="sScene"></canvas><p class="plotcap">Color shows the value of \(f\) on the surface: blue is low, orange is high. The purple outline is the image of one parameter cell \(\Delta u\times\Delta v\).</p></div>
-      <div>
-        <div class="controls"><select id="sSel"></select></div>
-        <div class="sliders" id="sSliders"></div>
-        <div class="readout" id="sOut"></div>
-        <p class="hint">Move the cell around and watch the two areas in the readout. On the sphere the cell shrinks to nothing near the poles even though \(\Delta u\,\Delta v\) never changes: that is the \(\sin\phi\) in \(dS=a^2\sin\phi\,d\phi\,d\theta\). On the plane the ratio is the same everywhere, which is why a plane's stretch factor comes out of the integral.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="note"><b>Orientation does not matter here.</b> \(dS\) is an area, always positive. Reversing \(u\) and \(v\), or walking the surface the other way, changes nothing: \(\iint_S f\,dS\) has one value. That is the difference between this chapter and the next one.</div>
-  <div class="warn"><b>Substitute before you integrate.</b> \(\iint_S z\,dS\) over \(z=g(x,y)\) is <i>not</i> \(\iint_D z\,dA\). Replace \(z\) by \(g(x,y)\) and attach \(\sqrt{1+g_x^2+g_y^2}\). If any \(z\) is still standing after you set up the double integral, you have made this mistake.</div>
-
-  <h3>Practice</h3>
-  <div class="card" id="drill-scalar"></div>
-</section>
-
-<!-- ============================================================ 3 FLUX -->
+<!-- ============================================================ 1 FLUX -->
 <section data-id="flux" data-title="Surface integrals of vector fields" data-goal="6">
-  <p class="eyebrow">Chapter 3 · Stewart 16.7</p>
+  <p class="eyebrow">Chapter 1 · Stewart 16.7</p>
   <h2>Surface integrals of vector fields: flux</h2>
   <p class="lead">How much of the field crosses the surface, and which way. This is the integral the last two theorems are about.</p>
 
@@ -189,9 +70,74 @@
   <div class="card" id="drill-flux"></div>
 </section>
 
-<!-- ============================================================ 4 STOKES -->
+<!-- ============================================================ 2 CURL AND DIV -->
+<section data-id="curl" data-title="Curl and divergence" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 16.5</p>
+  <h2>Curl and divergence</h2>
+  <p class="lead">Two derivatives of a vector field. One is a vector and measures spin. One is a number and measures spreading. You need curl for Stokes' theorem in the next chapter and divergence for the divergence theorem after it.</p>
+
+  <p>Treat \(\nabla\) as a vector of operators, \(\nabla=\left\langle \dfrac{\partial}{\partial x},\dfrac{\partial}{\partial y},\dfrac{\partial}{\partial z}\right\rangle\). Applied to a scalar function it gives the gradient \(\nabla f\). Crossed into a vector field it gives the curl. Dotted into a vector field it gives the divergence.</p>
+
+  <p>For \(\mathbf{F}=P\,\mathbf{i}+Q\,\mathbf{j}+R\,\mathbf{k}\):</p>
+  <div class="formula">\(\operatorname{curl}\mathbf{F}=\nabla\times\mathbf{F}=\begin{vmatrix}\mathbf{i}&\mathbf{j}&\mathbf{k}\\[2pt] \dfrac{\partial}{\partial x}&\dfrac{\partial}{\partial y}&\dfrac{\partial}{\partial z}\\[4pt] P&Q&R\end{vmatrix}=\left\langle \frac{\partial R}{\partial y}-\frac{\partial Q}{\partial z},\;\frac{\partial P}{\partial z}-\frac{\partial R}{\partial x},\;\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right\rangle\)<span class="cap">Same determinant as a cross product, with the middle row replaced by derivative operators. Each component skips its own letter: the \(\mathbf{i}\) slot uses only \(y\) and \(z\) derivatives, the \(\mathbf{j}\) slot only \(z\) and \(x\), the \(\mathbf{k}\) slot only \(x\) and \(y\).</span></div>
+  <div class="formula">\(\operatorname{div}\mathbf{F}=\nabla\cdot\mathbf{F}=\frac{\partial P}{\partial x}+\frac{\partial Q}{\partial y}+\frac{\partial R}{\partial z}\)<span class="cap">Each component differentiated by its own variable, then added. The output is a scalar function, not a vector.</span></div>
+
+  <div class="warn"><b>The middle component is the one people lose.</b> Expanding the determinant along the top row puts a minus in front of the \(\mathbf{j}\) term, so the middle slot is \(-\left(R_x-P_z\right)=P_z-R_x\), with the derivative of \(P\) written <b>first</b>. The \(\mathbf{i}\) and \(\mathbf{k}\) slots run in the order \(R_y-Q_z\) and \(Q_x-P_y\); only the middle one is reversed. If your \(\mathbf{j}\) component came out as \(R_x-P_z\), you dropped the sign.</div>
+
+  <h3>What they mean</h3>
+  <ul>
+    <li><b>Curl is rotation.</b> Drop a tiny paddle wheel into the flow at a point. It spins about the axis \(\operatorname{curl}\mathbf{F}\), with angular speed \(|\operatorname{curl}\mathbf{F}|/2\), in the right-hand sense about that axis. Where \(\operatorname{curl}\mathbf{F}=\mathbf{0}\) the field is called <b>irrotational</b>: the wheel drifts without turning.</li>
+    <li><b>Divergence is expansion.</b> Put a tiny balloon at a point. Positive divergence means more flow out than in, a <b>source</b>; negative means a <b>sink</b>. Where \(\operatorname{div}\mathbf{F}=0\) the field is <b>incompressible</b>: whatever enters leaves.</li>
+  </ul>
+
+  <h3>Two identities</h3>
+  <div class="formula">\(\operatorname{curl}(\nabla f)=\mathbf{0}\qquad\qquad \operatorname{div}(\operatorname{curl}\mathbf{F})=0\)<span class="cap">Both are just Clairaut's theorem: the mixed second partials cancel in pairs. The first output is the zero <b>vector</b>, the second is the <b>number</b> zero.</span></div>
+  <p>The first identity gives the <b>curl test</b>: if \(\mathbf{F}\) is conservative then \(\operatorname{curl}\mathbf{F}=\mathbf{0}\). The converse needs a condition on the domain: if \(\mathbf{F}\) has continuous partials on all of \(\mathbb{R}^3\) and \(\operatorname{curl}\mathbf{F}=\mathbf{0}\), then \(\mathbf{F}\) <b>is</b> conservative, so a potential \(f\) with \(\nabla f=\mathbf{F}\) exists.</p>
+  <p>Not every combination is legal. \(\operatorname{div}\mathbf{F}\) is a scalar, so \(\operatorname{curl}(\operatorname{div}\mathbf{F})\) is meaningless. \(\operatorname{curl}\mathbf{F}\) is a vector, so \(\operatorname{div}(\operatorname{curl}\mathbf{F})\) is fine. And \(\operatorname{div}(\nabla f)=f_{xx}+f_{yy}+f_{zz}\) is the Laplacian \(\nabla^2 f\), not zero.</p>
+
+  <div class="note"><b>Curl of a gradient is always zero.</b> \(\operatorname{curl}(\nabla f)=\langle f_{zy}-f_{yz},\,f_{xz}-f_{zx},\,f_{yx}-f_{xy}\rangle=\mathbf{0}\) whenever the second partials are continuous. So the fastest conservative test in 3D is: compute the curl, and if any component survives, the field is not conservative and no potential exists.</div>
+
+  <h3>Back to the plane</h3>
+  <p>A plane field \(\langle P,Q\rangle\) becomes \(\langle P,Q,0\rangle\) in space. Its curl has only one surviving slot:</p>
+  <div class="formula">\(\operatorname{curl}\langle P,Q,0\rangle=\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\mathbf{k}\)<span class="cap">The Green's theorem integrand is exactly the \(\mathbf{k}\)-component of the curl. It is called the <b>scalar curl</b> of the plane field.</span></div>
+  <p>That rewrites Green's theorem twice. The <b>circulation</b> form and the <b>flux</b> form:</p>
+  <div class="formula">\(\displaystyle\oint_C\mathbf{F}\cdot d\mathbf{r}=\iint_D(\operatorname{curl}\mathbf{F})\cdot\mathbf{k}\,dA\qquad\qquad \oint_C\mathbf{F}\cdot\mathbf{n}\,ds=\iint_D\operatorname{div}\mathbf{F}\,dA\)<span class="cap">Left: circulation around the edge equals total spin inside. This is Stokes' theorem in the plane. Right: flux out through the edge equals total expansion inside. This is the divergence theorem in the plane. Here \(\mathbf{n}\) is the outward unit normal.</span></div>
+
+  <div class="card">
+    <h4>Step by step: expanding the curl determinant</h4>
+    <div class="row" id="clMats"></div>
+    <div class="expr" id="clExpr"></div>
+    <div class="controls">
+      <button class="btn" id="clPrev">◀ Back</button>
+      <button class="btn primary" id="clNext">Next step ▶</button>
+      <button class="btn" id="clNew">New field</button>
+      <span class="status" id="clStatus"></span>
+    </div>
+    <p class="hint">Cover the column of the basis vector you are computing. What is left is a 2×2 determinant of operators over functions: down-right minus up-right. The signs across the top row go \(+,-,+\), which is what reverses the middle component.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: the paddle wheel</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene" id="cdCanvas"></canvas>
+        <p class="plotcap">Move the pointer over the field. The purple wheel shows which way a tiny paddle wheel at that point would turn.</p>
+      </div>
+      <div>
+        <div class="presets" id="cdFields"></div>
+        <div class="readout" id="cdOut"></div>
+        <p class="hint">Compare \(\langle x,y\rangle\) and \(\langle -y,x\rangle\): one has divergence everywhere and no spin, the other has spin everywhere and no divergence. Then try \(\langle y,0\rangle\), a pure shear with perfectly parallel arrows: it still has nonzero curl, because the arrows above the point are longer than the ones below. Rotation does not require curved arrows.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-curl"></div>
+</section>
+
+<!-- ============================================================ 3 STOKES -->
 <section data-id="stokes" data-title="Stokes' theorem" data-goal="5">
-  <p class="eyebrow">Chapter 4 · Stewart 16.8</p>
+  <p class="eyebrow">Chapter 3 · Stewart 16.8</p>
   <h2>Stokes' theorem</h2>
   <p class="lead">The circulation around the edge equals the total curl through the inside. Green's theorem, lifted off the plane.</p>
 
@@ -248,9 +194,9 @@
   <div class="card" id="drill-stokes"></div>
 </section>
 
-<!-- ============================================================ 5 DIVERGENCE THEOREM -->
+<!-- ============================================================ 4 DIVERGENCE THEOREM -->
 <section data-id="div" data-title="The divergence theorem" data-goal="5">
-  <p class="eyebrow">Chapter 5 · Stewart 16.9</p>
+  <p class="eyebrow">Chapter 4 · Stewart 16.9</p>
   <h2>The divergence theorem</h2>
   <p class="lead">Total outflow through the skin equals the sum of the sources inside.</p>
 
@@ -297,11 +243,11 @@
   <div class="card" id="drill-div"></div>
 </section>
 
-<!-- ============================================================ 6 QUIZ -->
+<!-- ============================================================ 5 QUIZ -->
 <section data-id="quiz" data-title="Mastery quiz">
-  <p class="eyebrow">Chapter 6</p>
+  <p class="eyebrow">Chapter 5</p>
   <h2>Mastery quiz</h2>
-  <p class="lead">Twelve mixed questions, each a different type, drawn from all five chapters. Score 10 or more to complete the module.</p>
+  <p class="lead">Twelve mixed questions, each a different type, drawn from all four chapters. Score 10 or more to complete the module.</p>
   <div class="card" id="quizBox"></div>
 </section>
 
@@ -316,7 +262,6 @@ const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
 const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
 const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
 const vecIn=(el,k,label,ph='⟨ , , ⟩')=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
-const eqIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
 const PI=Math.PI;
 const EXACT='Exact (like <code>12pi/5</code> or <code>6sqrt(14)</code>) or a decimal to three places.';
 /* rational multiple of pi, as TeX */
@@ -325,10 +270,6 @@ const piTex=v=>{const c=v/PI;if(Math.abs(c)<1e-12)return '0';const s=texNum(c);r
 function radTex(c,D){let A=1,B=Math.round(D);for(let k=2;k*k<=B;k++){while(B%(k*k)===0){B/=k*k;A*=k;}}
   const co=c*A;if(B===1)return texNum(co);
   return (near(co,1)?'':near(co,-1)?'-':texNum(co))+R`\sqrt{${B}}`;}
-const C1=n=>n===1?'':(n===-1?'-':String(n));
-const negStr=s=>s.trim().startsWith('-')?s.trim().slice(1):'-('+s+')';
-const negTex=s=>s.trim().startsWith('-')?s.trim().slice(1):'-'+(/[+-]/.test(s.trim().slice(1))?`(${s})`:s);
-const fv=v=>'⟨'+v.map(x=>fmtDec(x,2)).join(', ')+'⟩';
 const texFld=c=>R`\langle ${c[0]},\; ${c[1]},\; ${c[2]}\rangle`;
 /* numeric differential geometry, used by the widgets */
 const RU=(r,u,v,h=1e-4)=>vscale(1/(2*h),vsub(r(u+h,v),r(u-h,v)));
@@ -343,336 +284,102 @@ function curlNum(F,p,h=1e-4){const d=(i,j)=>{const a=p.slice(),b=p.slice();a[j]+
 function divNum(F,p,h=1e-4){let s=0;for(let j=0;j<3;j++){const a=p.slice(),b=p.slice();a[j]+=h;b[j]-=h;s+=(F(a)[j]-F(b)[j])/(2*h);}return s;}
 function lineNum(F,c,t0,t1,n=900){let s=0;const dt=(t1-t0)/n,h=1e-5;
   for(let i=0;i<n;i++){const t=t0+(i+0.5)*dt;const rp=vscale(1/(2*h),vsub(c(t+h),c(t-h)));s+=dot(F(c(t)),rp)*dt;}return s;}
+function hintBox(){const d=document.createElement('div');d.className='hintbox expr';return d;}
+const exprIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+const fact=n=>{let r=1;for(let k=2;k<=n;k++)r*=k;return r;};
+const ORANGE='#d97706',BLUE='#2563eb',GREEN='#16a34a',PURPLE='#7c3aed',GRAY='#a8a49a';
+
+/* ---- polynomials in x,y as lists of [coef, i, j] meaning coef*x^i*y^j ---- */
+const mon2=(i,j)=>(i?('x'+(i>1?`^{${i}}`:'')):'')+(j?('y'+(j>1?`^{${j}}`:'')):'');
+const P2={
+  clean(A){const m=new Map();A.forEach(([c,i,j])=>{const k=i+'|'+j;m.set(k,(m.get(k)||0)+c);});
+    const out=[];m.forEach((c,k)=>{if(Math.abs(c)>1e-12){const [i,j]=k.split('|').map(Number);out.push([c,i,j]);}});
+    out.sort((u,v)=>(v[1]+v[2])-(u[1]+u[2])||v[1]-u[1]);return out;},
+  dx(A){return P2.clean(A.filter(t=>t[1]>0).map(([c,i,j])=>[c*i,i-1,j]));},
+  dy(A){return P2.clean(A.filter(t=>t[2]>0).map(([c,i,j])=>[c*j,i,j-1]));},
+  sub(A,B){return P2.clean(A.concat(B.map(([c,i,j])=>[-c,i,j])));},
+  tex(A){if(!A.length)return '0';return A.map(([c,i,j],n)=>{const m=mon2(i,j);const g=Math.abs(c);
+      const co=(Math.abs(g-1)<1e-12&&m)?'':texNum(g);
+      return (n===0?(c<0?'-':''):(c<0?' - ':' + '))+co+m;}).join('');},
+  str(A){if(!A.length)return '0';return A.map(([c,i,j])=>{let s='('+c+')';if(i)s+='*x^'+i;if(j)s+='*y^'+j;return s;}).join('+');},
+  rect(A,a,b){return A.reduce((s,[c,i,j])=>s+c*Math.pow(a,i+1)/(i+1)*Math.pow(b,j+1)/(j+1),0);},
+  tri(A,a,b){return A.reduce((s,[c,i,j])=>s+c*Math.pow(a,i+1)*Math.pow(b,j+1)*fact(i)*fact(j)/fact(i+j+2),0);},
+  intY(A,b){return P2.clean(A.map(([c,i,j])=>[c*Math.pow(b,j+1)/(j+1),i,0]));},
+  co(A,i,j){const t=A.find(u=>u[1]===i&&u[2]===j);return t?t[0]:0;}
+};
+/* degree <= 3, integrand may be quadratic */
+function genPQany(){
+  const mons=[[1,0],[0,1],[2,0],[1,1],[0,2],[3,0],[2,1],[1,2],[0,3]];
+  const T=()=>P2.clean(shuffle(mons).slice(0,rint(2,3)).map(([i,j])=>[rnz(-3,3),i,j]));
+  let P,Q,g,n=0;
+  do{P=T();Q=T();g=P2.sub(P2.dx(Q),P2.dy(P));n++;}while(g.length===0&&n<60);
+  return {P,Q,g};
+}
+
+/* ---- polynomials in x,y,z as lists of [coef, i, j, k] ---- */
+const mon3=(i,j,k)=>(i?('x'+(i>1?`^{${i}}`:'')):'')+(j?('y'+(j>1?`^{${j}}`:'')):'')+(k?('z'+(k>1?`^{${k}}`:'')):'');
+const P3={
+  clean(A){const m=new Map();A.forEach(([c,i,j,k])=>{const key=i+'|'+j+'|'+k;m.set(key,(m.get(key)||0)+c);});
+    const out=[];m.forEach((c,key)=>{if(Math.abs(c)>1e-12){const [i,j,k]=key.split('|').map(Number);out.push([c,i,j,k]);}});
+    out.sort((u,v)=>(v[1]+v[2]+v[3])-(u[1]+u[2]+u[3])||v[1]-u[1]||v[2]-u[2]);return out;},
+  d(A,v){const q={x:1,y:2,z:3}[v];return P3.clean(A.filter(t=>t[q]>0).map(t=>{const u=t.slice();u[0]=t[0]*t[q];u[q]=t[q]-1;return u;}));},
+  sub(A,B){return P3.clean(A.concat(B.map(t=>[-t[0],t[1],t[2],t[3]])));},
+  add(A,B){return P3.clean(A.concat(B));},
+  tex(A){if(!A.length)return '0';return A.map(([c,i,j,k],n)=>{const m=mon3(i,j,k);const g=Math.abs(c);
+      const co=(Math.abs(g-1)<1e-12&&m)?'':texNum(g);
+      return (n===0?(c<0?'-':''):(c<0?' - ':' + '))+co+m;}).join('');},
+  str(A){if(!A.length)return '0';return A.map(([c,i,j,k])=>{let s='('+c+')';if(i)s+='*x^'+i;if(j)s+='*y^'+j;if(k)s+='*z^'+k;return s;}).join('+');}
+};
+const MONS3=[[1,0,0],[0,1,0],[0,0,1],[2,0,0],[0,2,0],[0,0,2],[1,1,0],[0,1,1],[1,0,1],[1,1,1],[2,1,0],[0,2,1],[1,0,2],[2,0,1]];
+const randComp3=(maxTerms=2)=>P3.clean(shuffle(MONS3).slice(0,rint(1,maxTerms)).map(m=>[rnz(-3,3),m[0],m[1],m[2]]));
+
+/* build every quantity a curl / divergence question needs from a polynomial field */
+function polyField3(maxTerms){
+  let P,Q,Rr,c0,c1,c2,n=0;
+  do{
+    P=randComp3(maxTerms);Q=randComp3(maxTerms);Rr=randComp3(maxTerms);
+    c0=P3.sub(P3.d(Rr,'y'),P3.d(Q,'z'));
+    c1=P3.sub(P3.d(P,'z'),P3.d(Rr,'x'));
+    c2=P3.sub(P3.d(Q,'x'),P3.d(P,'y'));
+    n++;
+  }while(!c0.length&&!c1.length&&!c2.length&&n<40);
+  const dv=P3.clean(P3.d(P,'x').concat(P3.d(Q,'y'),P3.d(Rr,'z')));
+  return {
+    Ftex:[P3.tex(P),P3.tex(Q),P3.tex(Rr)],
+    curlTex:[P3.tex(c0),P3.tex(c1),P3.tex(c2)],
+    curlStr:[P3.str(c0),P3.str(c1),P3.str(c2)],
+    divTex:P3.tex(dv),divStr:P3.str(dv),
+    pd:[P3.tex(P3.d(Rr,'y')),P3.tex(P3.d(Q,'z')),P3.tex(P3.d(P,'z')),P3.tex(P3.d(Rr,'x')),P3.tex(P3.d(Q,'x')),P3.tex(P3.d(P,'y'))],
+    dd:[P3.tex(P3.d(P,'x')),P3.tex(P3.d(Q,'y')),P3.tex(P3.d(Rr,'z'))],
+    dom:null
+  };
+}
+/* hand-checked non-polynomial fields. pd = [R_y, Q_z, P_z, R_x, Q_x, P_y], dd = [P_x, Q_y, R_z] */
+const POOL3=[
+  {Ftex:[R`xyz`,'0',R`-x^2y`],curlTex:[R`-x^2`,R`3xy`,R`-xz`],curlStr:['-x^2','3*x*y','-x*z'],
+   divTex:R`yz`,divStr:'y*z',pd:[R`-x^2`,'0',R`xy`,R`-2xy`,'0',R`xz`],dd:[R`yz`,'0','0']},
+  {Ftex:[R`e^{x}\sin y`,R`e^{x}\cos y`,'z'],curlTex:['0','0','0'],curlStr:['0','0','0'],
+   divTex:'1',divStr:'1',pd:['0','0','0','0',R`e^{x}\cos y`,R`e^{x}\cos y`],dd:[R`e^{x}\sin y`,R`-e^{x}\sin y`,'1']},
+  {Ftex:[R`x^2y`,R`y^2z`,R`z^2x`],curlTex:[R`-y^2`,R`-z^2`,R`-x^2`],curlStr:['-y^2','-z^2','-x^2'],
+   divTex:R`2xy+2yz+2zx`,divStr:'2*x*y+2*y*z+2*z*x',pd:['0',R`y^2`,'0',R`z^2`,'0',R`x^2`],dd:[R`2xy`,R`2yz`,R`2zx`]},
+  {Ftex:['y','z','x'],curlTex:['-1','-1','-1'],curlStr:['-1','-1','-1'],
+   divTex:'0',divStr:'0',pd:['0','1','0','1','0','1'],dd:['0','0','0']},
+  {Ftex:[R`z\cos y`,R`x\sin z`,R`ye^{x}`],curlTex:[R`e^{x}-x\cos z`,R`\cos y-ye^{x}`,R`\sin z+z\sin y`],
+   curlStr:['exp(x)-x*cos(z)','cos(y)-y*exp(x)','sin(z)+z*sin(y)'],
+   divTex:'0',divStr:'0',pd:[R`e^{x}`,R`x\cos z`,R`\cos y`,R`ye^{x}`,R`\sin z`,R`-z\sin y`],dd:['0','0','0'],
+   dom:{x:[-1.4,1.4],y:[-1.4,1.4],z:[-1.4,1.4]}},
+  {Ftex:[R`xy^2`,R`yz^2`,R`zx^2`],curlTex:[R`-2yz`,R`-2zx`,R`-2xy`],curlStr:['-2*y*z','-2*z*x','-2*x*y'],
+   divTex:R`y^2+z^2+x^2`,divStr:'y^2+z^2+x^2',pd:['0',R`2yz`,'0',R`2zx`,'0',R`2xy`],dd:[R`y^2`,R`z^2`,R`x^2`]}
+];
+const genField3=()=>Math.random()<0.5?polyField3(2):{...pick(POOL3)};
+const texF3=f=>R`\mathbf{F}=\langle `+f.Ftex.join(',\\; ')+R` \rangle`;
+
+const PLANE_AB=[[1,1],[2,1],[1,2],[2,2],[3,1],[1,3],[2,3],[3,2],[1,0],[0,1],[2,0],[0,2],[-1,2],[2,-1],[-2,1],[1,-2],[-1,-1],[-2,-2],[3,3]];
 
 /* ============================================================ question types */
 const Q={};
 
 /* ---------------------------------------------------------- chapter 1 */
-const ID_KINDS=['plane','cylinder','sphere','cone','paraboloid','helicoid','torus'];
-Q.idSurface={name:'identify the surface',
-  gen(){
-    const kind=pick(ID_KINDS);const a=rint(2,4),k=rint(2,3);let tex,dom,why;
-    if(kind==='plane'){let A,B;do{A=[rnz(-2,2),rint(-2,2),rint(-2,2)];B=[rint(-2,2),rnz(-2,2),rint(-2,2)];}while(vzero(cross(A,B)));
-      const p=[rint(-2,2),rint(-2,2),rint(-2,2)];
-      tex=R`\langle ${texLin([A[0],B[0]],['u','v'],{constant:p[0]})},\; ${texLin([A[1],B[1]],['u','v'],{constant:p[1]})},\; ${texLin([A[2],B[2]],['u','v'],{constant:p[2]})}\rangle`;
-      dom=R`u,\,v\in\mathbb{R}`;
-      why=`Every component is a linear function of \\(u\\) and \\(v\\), so this is \\(\\mathbf r=\\mathbf p+u\\,\\mathbf a+v\\,\\mathbf b\\) with \\(\\mathbf p=${texPt(p)}\\), \\(\\mathbf a=${texVec(A)}\\), \\(\\mathbf b=${texVec(B)}\\): a <b>plane</b>. No squares, no trig, nothing but \\(u\\) and \\(v\\) to the first power.`;}
-    else if(kind==='cylinder'){tex=R`\langle ${a}\cos u,\; ${a}\sin u,\; v\rangle`;dom=R`0\le u\le 2\pi,\; 0\le v\le 4`;
-      why=`\\(x^2+y^2=${a}^2\\cos^2u+${a}^2\\sin^2u=${a*a}\\) no matter what \\(u\\) is, while \\(z=v\\) runs free. Every point sits at distance ${a} from the \\(z\\)-axis: a <b>cylinder</b> of radius ${a}.`;}
-    else if(kind==='sphere'){tex=R`\langle ${a}\sin u\cos v,\; ${a}\sin u\sin v,\; ${a}\cos u\rangle`;dom=R`0\le u\le \pi,\; 0\le v\le 2\pi`;
-      why=`Add the squares: \\(x^2+y^2+z^2=${a*a}\\sin^2u+${a*a}\\cos^2u=${a*a}\\). Every point is ${a} units from the origin, so this is a <b>sphere</b> of radius ${a}, with \\(u=\\phi\\) and \\(v=\\theta\\).`;}
-    else if(kind==='cone'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}u\rangle`;dom=R`0\le u\le 3,\; 0\le v\le 2\pi`;
-      why=`Here \\(x^2+y^2=u^2\\) and \\(z=${k}u\\), so \\(z=${k}\\sqrt{x^2+y^2}\\): the height is proportional to the distance from the axis, which is a <b>cone</b>. (Compare the paraboloid, where \\(z\\) is proportional to \\(u^2\\) instead.)`;}
-    else if(kind==='paraboloid'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}u^2\rangle`;dom=R`0\le u\le 2,\; 0\le v\le 2\pi`;
-      why=`\\(x^2+y^2=u^2\\) and \\(z=${k}u^2\\), so \\(z=${k}(x^2+y^2)\\): a circular <b>paraboloid</b> opening upward.`;}
-    else if(kind==='helicoid'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}v\rangle`;dom=R`0\le u\le 2,\; 0\le v\le 4\pi`;
-      why=`Freeze \\(v\\): you get a straight ray out from the \\(z\\)-axis, sitting at the fixed height \\(z=${k}v\\). As \\(v\\) increases the ray rotates and rises at the same time, sweeping out a spiral ramp: a <b>helicoid</b>.`;}
-    else {const b=a+3;tex=R`\langle (${b}+${a}\cos u)\cos v,\; (${b}+${a}\cos u)\sin v,\; ${a}\sin u\rangle`;dom=R`0\le u\le 2\pi,\; 0\le v\le 2\pi`;
-      why=`The distance from the \\(z\\)-axis is \\(\\sqrt{x^2+y^2}=${b}+${a}\\cos u\\) and the height is \\(${a}\\sin u\\), so in each vertical half-plane you see a circle of radius ${a} centered ${b} units out. Spinning that circle around the axis with \\(v\\) gives a <b>torus</b>.`;}
-    return {kind,tex,dom,why,ai:ID_KINDS.indexOf(kind)};},
-  render(q,el){el.innerHTML=`<p class="prompt">What surface does this parametrization describe?</p>${D(R`\mathbf r(u,v)=`+q.tex)}<p class="prompt" style="font-weight:400">for ${M(q.dom)}.</p>`;
-    q.get=choiceButtons(el,ID_KINDS.map(k=>({label:k,value:k})));},
-  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
-    return {ok:v===q.kind,msg:v===q.kind?'':'Two questions sort almost all of these out: what is \\(x^2+y^2\\), and how does \\(z\\) depend on the parameters?'};},
-  solution(q){return q.why;}
-};
-
-Q.normalPlane={name:'normal vector to a parametrized plane',
-  gen(){let A,B;do{A=[rnz(-3,3),rint(-3,3),rint(-3,3)];B=[rint(-3,3),rnz(-3,3),rint(-3,3)];}while(vzero(cross(A,B)));
-    const p=[rint(-3,3),rint(-3,3),rint(-3,3)];return {A,B,p,n:cross(A,B)};},
-  render(q,el){el.innerHTML=`<p class="prompt">A plane is parametrized by ${M(R`\mathbf r(u,v)=\mathbf p+u\,\mathbf a+v\,\mathbf b`)} with ${M(R`\mathbf p=`+texVec(q.p))}, ${M(R`\mathbf a=`+texVec(q.A))}, ${M(R`\mathbf b=`+texVec(q.B))}. Compute ${M(R`\mathbf r_u\times\mathbf r_v`)}.</p>`;
-    vecIn(el,'n',M(R`\mathbf r_u\times\mathbf r_v=`),'⟨a, b, c⟩');},
-  check(q,el){return G(el,'n',checkVector($('[data-k=n]',el).value,q.n));},
-  solution(q){return `Differentiate: the constant ${M(R`\mathbf p`)} dies, so ${M(R`\mathbf r_u=\mathbf a=`+texVec(q.A))} and ${M(R`\mathbf r_v=\mathbf b=`+texVec(q.B))}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\mathbf a\times\mathbf b=`+texVec(q.n))}. It is the same at every point, which is exactly what you expect from a plane.`;}
-};
-
-const GRAPH_POOL=[
-  {tex:'u^2+v^2',fu:'2u',fv:'2v',fuT:'2u',fvT:'2v'},
-  {tex:'u^2-v^2',fu:'2u',fv:'-2v',fuT:'2u',fvT:'-2v'},
-  {tex:'uv',fu:'v',fv:'u',fuT:'v',fvT:'u'},
-  {tex:'3u^2+v^2',fu:'6u',fv:'2v',fuT:'6u',fvT:'2v'},
-  {tex:'u^2v',fu:'2u*v',fv:'u^2',fuT:'2uv',fvT:'u^2'},
-  {tex:'u^3-v',fu:'3u^2',fv:'-1',fuT:'3u^2',fvT:'-1'},
-  {tex:'4-u^2-2v^2',fu:'-2u',fv:'-4v',fuT:'-2u',fvT:'-4v'}
-];
-Q.normalParam={name:'cross product r_u x r_v',
-  gen(){const kind=pick(['cyl','cone','graph','graph','sphere']);
-    if(kind==='cyl'){const a=rint(2,5);
-      return {kind,tex:R`\langle ${a}\cos u,\; ${a}\sin u,\; v\rangle`,
-        ruT:R`\langle -${a}\sin u,\; ${a}\cos u,\; 0\rangle`,rvT:R`\langle 0,\;0,\;1\rangle`,
-        refs:[`${a}cos(u)`,`${a}sin(u)`,'0'],ansT:R`\langle ${a}\cos u,\; ${a}\sin u,\; 0\rangle`,
-        ans:`<${a}cos(u), ${a}sin(u), 0>`,
-        note:`This normal is horizontal and points straight out from the \\(z\\)-axis, which is what an outward normal on a cylinder should do. Its length is ${a}, the radius.`};}
-    if(kind==='cone'){const k=rint(1,3);const kt=k===1?'':k;
-      return {kind,tex:R`\langle u\cos v,\; u\sin v,\; ${kt}u\rangle`,
-        ruT:R`\langle \cos v,\; \sin v,\; ${k}\rangle`,rvT:R`\langle -u\sin v,\; u\cos v,\; 0\rangle`,
-        refs:[`-${k}u*cos(v)`,`-${k}u*sin(v)`,'u'],ansT:R`\langle -${kt}u\cos v,\; -${kt}u\sin v,\; u\rangle`,
-        ans:`<-${k}u*cos(v), -${k}u*sin(v), u>`,
-        note:`Its length is \\(u\\sqrt{${k*k+1}}\\), which vanishes at the vertex \\(u=0\\): the cone is not smooth at its tip.`};}
-    if(kind==='graph'){const g=pick(GRAPH_POOL);
-      return {kind,tex:R`\langle u,\; v,\; ${g.tex}\rangle`,
-        ruT:R`\langle 1,\;0,\;${g.fuT}\rangle`,rvT:R`\langle 0,\;1,\;${g.fvT}\rangle`,
-        refs:[negStr(g.fu),negStr(g.fv),'1'],ansT:R`\langle ${negTex(g.fuT)},\; ${negTex(g.fvT)},\; 1\rangle`,
-        ans:`<${negStr(g.fu)}, ${negStr(g.fv)}, 1>`,
-        note:`For any graph \\(\\langle u,v,f\\rangle\\) the normal is \\(\\langle -f_u,-f_v,1\\rangle\\). The \\(+1\\) in the last slot means it points upward.`};}
-    const a=rint(2,3);
-    return {kind,tex:R`\langle ${a}\sin u\cos v,\; ${a}\sin u\sin v,\; ${a}\cos u\rangle`,
-      ruT:R`\langle ${a}\cos u\cos v,\; ${a}\cos u\sin v,\; -${a}\sin u\rangle`,rvT:R`\langle -${a}\sin u\sin v,\; ${a}\sin u\cos v,\; 0\rangle`,
-      refs:[`${a*a}sin(u)^2*cos(v)`,`${a*a}sin(u)^2*sin(v)`,`${a*a}sin(u)*cos(u)`],
-      ansT:R`${a*a}\sin u\,\langle \sin u\cos v,\; \sin u\sin v,\; \cos u\rangle`,
-      ans:`<${a*a}sin(u)^2cos(v), ${a*a}sin(u)^2sin(v), ${a*a}sin(u)cos(u)>`,
-      note:`Factor it: \\(${a*a}\\sin u\\,\\langle\\sin u\\cos v,\\sin u\\sin v,\\cos u\\rangle=${a}\\sin u\\;\\mathbf r\\). The normal is parallel to the position vector, pointing outward, and its length is \\(${a*a}\\sin u\\): that is the \\(a^2\\sin\\phi\\) in \\(dS\\).`};},
-  render(q,el){el.innerHTML=`<p class="prompt">For the surface ${M(R`\mathbf r(u,v)=`+q.tex)}, compute ${M(R`\mathbf r_u\times\mathbf r_v`)}. Write the components as expressions in ${M('u')} and ${M('v')}, for example <code>&lt;-2u, -2v, 1&gt;</code>.</p>`;
-    vecIn(el,'n',M(R`\mathbf r_u\times\mathbf r_v=`),'⟨ , , ⟩');},
-  check(q,el){return G(el,'n',checkExprVector($('[data-k=n]',el).value,q.refs,['u','v']));},
-  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el2());}h.innerHTML=`${M(R`\mathbf r_u=`+q.ruT)} and ${M(R`\mathbf r_v=`+q.rvT)}. Now take the cross product.`;},
-  solution(q){return `Differentiate each component: ${M(R`\mathbf r_u=`+q.ruT)} and ${M(R`\mathbf r_v=`+q.rvT)}. The cross product is ${M(R`\mathbf r_u\times\mathbf r_v=`+q.ansT)}. ${q.note}`;}
-};
-function el2(){const d=document.createElement('div');d.className='hintbox expr';return d;}
-
-const TP_POOL=[
-  {tex:R`\langle u^2,\; v^2,\; u+2v\rangle`,r:(u,v)=>[u*u,v*v,u+2*v],ru:(u,v)=>[2*u,0,1],rv:(u,v)=>[0,2*v,2],
-   ruT:R`\langle 2u,\;0,\;1\rangle`,rvT:R`\langle 0,\;2v,\;2\rangle`},
-  {tex:R`\langle u+v,\; u-v,\; uv\rangle`,r:(u,v)=>[u+v,u-v,u*v],ru:(u,v)=>[1,1,v],rv:(u,v)=>[1,-1,u],
-   ruT:R`\langle 1,\;1,\;v\rangle`,rvT:R`\langle 1,\;-1,\;u\rangle`},
-  {tex:R`\langle u^2,\; uv,\; v^2\rangle`,r:(u,v)=>[u*u,u*v,v*v],ru:(u,v)=>[2*u,v,0],rv:(u,v)=>[0,u,2*v],
-   ruT:R`\langle 2u,\;v,\;0\rangle`,rvT:R`\langle 0,\;u,\;2v\rangle`},
-  {tex:R`\langle uv,\; u+v,\; u-v\rangle`,r:(u,v)=>[u*v,u+v,u-v],ru:(u,v)=>[v,1,1],rv:(u,v)=>[u,1,-1],
-   ruT:R`\langle v,\;1,\;1\rangle`,rvT:R`\langle u,\;1,\;-1\rangle`}
-];
-Q.tangentPlane={name:'tangent plane to a parametric surface',
-  gen(){const it=pick(TP_POOL);let u0,v0,n,A,B;
-    do{u0=pick([-2,-1,1,2]);v0=pick([-2,-1,1,2]);A=it.ru(u0,v0);B=it.rv(u0,v0);n=cross(A,B);}while(vzero(n));
-    const P=it.r(u0,v0);return {it,u0,v0,A,B,n,P,d:dot(n,P),ans:`${n[0]}*x+${n[1]}*y+${n[2]}*z=${dot(n,P)}`};},
-  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the tangent plane to ${M(R`\mathbf r(u,v)=`+q.it.tex)} at the point where ${M(R`(u,v)=(${q.u0},${q.v0})`)}. Any equivalent form is accepted.</p>`;
-    eqIn(el,'p','Plane:','e.g.  2x - y + 3z = 5');},
-  check(q,el){const n=q.n,d=q.d;return G(el,'p',checkEquation($('[data-k=p]',el).value,e=>n[0]*e.x+n[1]*e.y+n[2]*e.z-d,['x','y','z']));},
-  solution(q){return `The point is ${M(R`\mathbf r(${q.u0},${q.v0})=`+texPt(q.P))}. The tangent vectors are ${M(R`\mathbf r_u=`+q.it.ruT+'='+texVec(q.A))} and ${M(R`\mathbf r_v=`+q.it.rvT+'='+texVec(q.B))}, so the normal is ${M(R`\mathbf n=\mathbf r_u\times\mathbf r_v=`+texVec(q.n))}. The plane through ${M(texPt(q.P))} with that normal is ${M(R`${q.n[0]}(x-(${q.P[0]}))+${q.n[1]}(y-(${q.P[1]}))+${q.n[2]}(z-(${q.P[2]}))=0`)}, that is ${M(R`${texLin(q.n,['x','y','z'])}=${q.d}`)}.`;}
-};
-
-Q.surfArea={name:'surface area',
-  gen(){const k=pick(['sphere','cyl','cone','plane','parab','helicoid']);
-    if(k==='sphere'){const a=rint(1,5);return {k,val:4*PI*a*a,
-      prompt:`Find the surface area of the sphere of radius ${a}.`,
-      sol:`With ${M(R`\mathbf r(\phi,\theta)=\langle ${C1(a)}\sin\phi\cos\theta,\,${C1(a)}\sin\phi\sin\theta,\,${C1(a)}\cos\phi\rangle`)} the stretch factor is ${M(R`|\mathbf r_\phi\times\mathbf r_\theta|=${C1(a*a)}\sin\phi`)}, so ${M(R`A=\int_0^{2\pi}\!\!\int_0^{\pi}${C1(a*a)}\sin\phi\,d\phi\,d\theta=${a*a}\cdot 2\cdot 2\pi=${4*a*a}\pi\approx ${fmtDec(4*PI*a*a,3)}`)}. In general \\(A=4\\pi a^2\\).`};}
-    if(k==='cyl'){const a=rint(2,5),h=rint(2,6);return {k,val:2*PI*a*h,
-      prompt:`Find the area of the lateral surface of the cylinder ${M(R`x^2+y^2=${a*a}`)} between ${M('z=0')} and ${M(`z=${h}`)} (no top or bottom).`,
-      sol:`Use ${M(R`\mathbf r(u,v)=\langle ${a}\cos u,\,${a}\sin u,\,v\rangle`)} on ${M(R`0\le u\le 2\pi,\;0\le v\le ${h}`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${a}\cos u,\,${a}\sin u,\,0\rangle`)} has length ${a}, so ${M(R`A=\int_0^{${h}}\!\!\int_0^{2\pi}${a}\,du\,dv=${a}(2\pi)(${h})=${2*a*h}\pi\approx ${fmtDec(2*PI*a*h,3)}`)}. This is the "unroll it into a rectangle" answer ${M(R`2\pi a h`)}.`};}
-    if(k==='cone'){const h=rint(2,5);return {k,val:PI*h*h*Math.SQRT2,
-      prompt:`Find the area of the part of the cone ${M(R`z=\sqrt{x^2+y^2}`)} with ${M(`0\\le z\\le ${h}`)}.`,
-      sol:`Parametrize ${M(R`\mathbf r=\langle u\cos v,\,u\sin v,\,u\rangle`)} with ${M(R`0\le u\le ${h}`)}, ${M(R`0\le v\le 2\pi`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle -u\cos v,\,-u\sin v,\,u\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=u\sqrt2`)}. So ${M(R`A=\int_0^{2\pi}\!\!\int_0^{${h}}\sqrt2\,u\,du\,dv=\sqrt2\,(2\pi)\frac{${h}^2}{2}=${radTex(h*h,2)}\,\pi\approx ${fmtDec(PI*h*h*Math.SQRT2,3)}`)}. (Same as \\(\\pi r\\ell\\) with \\(r=${h}\\), \\(\\ell=${h}\\sqrt2\\).)`};}
-    if(k==='plane'){const [a,b]=pick([[1,1],[2,1],[1,2],[2,2],[3,1],[1,3],[2,3],[3,2],[1,0],[0,2],[-1,2],[2,-1],[-2,-2]]);
-      const c=rint(0,4),p=rint(1,4),q=rint(1,4);const D=1+a*a+b*b;
-      return {k,val:p*q*Math.sqrt(D),
-        prompt:`Find the area of the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} that lies above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}.`,
-        sol:`For a graph, ${M(R`dS=\sqrt{1+z_x^2+z_y^2}\,dA=\sqrt{1+(${a})^2+(${b})^2}\,dA=\sqrt{${D}}\,dA`)}, a constant. So the area is that constant times the area of the shadow: ${M(R`A=\sqrt{${D}}\cdot(${p})(${q})=${radTex(p*q,D)}\approx ${fmtDec(p*q*Math.sqrt(D),3)}`)}. A tilted plane's area is always its shadow's area times ${M(R`\sqrt{1+a^2+b^2}`)}.`};}
-    if(k==='parab'){const a=pick([2,6,12]);const s=Math.pow(1+4*a,1.5);
-      return {k,val:PI/6*(s-1),
-        prompt:`Find the area of the part of the paraboloid ${M('z=x^2+y^2')} that lies below the plane ${M(`z=${a}`)}.`,
-        sol:`The shadow is the disk ${M(`x^2+y^2\\le ${a}`)} and ${M(R`\sqrt{1+z_x^2+z_y^2}=\sqrt{1+4x^2+4y^2}`)}. In polar coordinates ${M(R`A=\int_0^{2\pi}\!\!\int_0^{\sqrt{${a}}}\sqrt{1+4r^2}\;r\,dr\,d\theta=2\pi\Big[\tfrac{1}{12}(1+4r^2)^{3/2}\Big]_0^{\sqrt{${a}}}=\tfrac{\pi}{6}\big((1+4\cdot${a})^{3/2}-1\big)`)}. Since ${M(`1+4\\cdot${a}=${1+4*a}`)} and ${M(`${1+4*a}^{3/2}=${Math.round(s)}`)}, this is ${M(R`\tfrac{\pi}{6}(${Math.round(s)}-1)=${piTex(PI/6*(s-1))}\approx ${fmtDec(PI/6*(s-1),3)}`)}.`};}
-    return {k,val:PI*(Math.SQRT2+Math.log(1+Math.SQRT2)),
-      prompt:`Find the area of the helicoid ${M(R`\mathbf r(u,v)=\langle u\cos v,\,u\sin v,\,v\rangle`)} for ${M(R`0\le u\le 1`)}, ${M(R`0\le v\le 2\pi`)}.`,
-      sol:`${M(R`\mathbf r_u=\langle\cos v,\sin v,0\rangle`)} and ${M(R`\mathbf r_v=\langle -u\sin v,u\cos v,1\rangle`)}, so ${M(R`\mathbf r_u\times\mathbf r_v=\langle \sin v,\,-\cos v,\,u\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+u^2}`)}. Then ${M(R`A=\int_0^{2\pi}\!\!\int_0^1\sqrt{1+u^2}\,du\,dv=2\pi\cdot\tfrac12\big[u\sqrt{1+u^2}+\ln(u+\sqrt{1+u^2})\big]_0^1=\pi\big(\sqrt2+\ln(1+\sqrt2)\big)\approx ${fmtDec(PI*(Math.SQRT2+Math.log(1+Math.SQRT2)),3)}`)}.`};},
-  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt} ${EXACT}</p>`;numIn(el,'a','Area =');},
-  check(q,el){return G(el,'a',checkNumber($('[data-k=a]',el).value,q.val,TOL));},
-  solution(q){return q.sol;}
-};
-
-const PARAM_CHOICE=[
-  {desc:`the part of the cylinder ${M('x^2+y^2=9')} between ${M('z=0')} and ${M('z=2')}`,
-   ok:R`\langle 3\cos u,\,3\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ 0\le v\le 2`,
-   bad:[R`\langle 9\cos u,\,9\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ 0\le v\le 2`,
-        R`\langle 3\sin u\cos v,\,3\sin u\sin v,\,3\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`,
-        R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 3,\ 0\le v\le 2\pi`],
-   why:`The radius is ${M(R`\sqrt9=3`)}, not 9, so the circle is ${M(R`\langle 3\cos u,3\sin u\rangle`)}; the height is a free parameter running from 0 to 2. The third option is a sphere and the fourth is a cone.`},
-  {desc:`the sphere of radius 2 centered at the origin`,
-   ok:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`,
-   bad:[R`\langle 2\cos u,\,2\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ -2\le v\le 2`,
-        R`\langle u\cos v,\,u\sin v,\,\sqrt{4-u^2}\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`,
-        R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`],
-   why:`Spherical coordinates with ${M(R`\rho=2`)} fixed, ${M('u=\\phi')} from 0 to ${M('\\pi')} and ${M('v=\\theta')} from 0 to ${M('2\\pi')}. The second option is a cylinder, the third covers only the upper half, and the fourth has radius 4.`},
-  {desc:`the part of the plane ${M('z=3-x-y')} that lies above the unit square ${M('0\\le x\\le 1')}, ${M('0\\le y\\le 1')}`,
-   ok:R`\langle u,\,v,\,3-u-v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`,
-   bad:[R`\langle u,\,v,\,3-u-v\rangle,\ 0\le u\le 3,\ 0\le v\le 3`,
-        R`\langle u,\,v,\,3+u+v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`,
-        R`\langle 3-u-v,\,u,\,v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`],
-   why:`A graph is parametrized by its own ${M('x')} and ${M('y')}: ${M(R`\mathbf r=\langle x,y,f(x,y)\rangle`)}. The parameter domain must be the square, not a bigger region, and the components have to stay in the order ${M('x,y,z')}.`},
-  {desc:`the part of the cone ${M('z=2\\sqrt{x^2+y^2}')} below ${M('z=4')}`,
-   ok:R`\langle u\cos v,\,u\sin v,\,2u\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`,
-   bad:[R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`,
-        R`\langle 2u\cos v,\,2u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`,
-        R`\langle u\cos v,\,u\sin v,\,2u^2\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`],
-   why:`Let ${M('u')} be the distance from the axis, so ${M(R`x^2+y^2=u^2`)} and ${M('z=2u')}. The ceiling ${M('z=4')} means ${M('2u\\le 4')}, that is ${M('u\\le 2')}. The last option is a paraboloid, and the middle one has the cone opening the wrong way (${M('z=\\tfrac12\\sqrt{x^2+y^2}')}).`},
-  {desc:`the part of the sphere ${M('x^2+y^2+z^2=16')} that lies above the cone ${M('z=\\sqrt{x^2+y^2}')}`,
-   ok:R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le \tfrac{\pi}{4},\ 0\le v\le 2\pi`,
-   bad:[R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le \tfrac{\pi}{2},\ 0\le v\le 2\pi`,
-        R`\langle 16\sin u\cos v,\,16\sin u\sin v,\,16\cos u\rangle,\ 0\le u\le \tfrac{\pi}{4},\ 0\le v\le 2\pi`,
-        R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`],
-   why:`Radius ${M(R`\sqrt{16}=4`)}. The cone ${M(R`z=\sqrt{x^2+y^2}`)} is the surface ${M(R`\phi=\pi/4`)}, so "above the cone" is ${M(R`0\le\phi\le\pi/4`)}. Stopping at ${M(R`\pi/2`)} would give the whole upper hemisphere.`}
-];
-Q.chooseParam={name:'choose the parametrization',
-  gen(){const it=pick(PARAM_CHOICE);const opts=shuffle([{label:M(it.ok),value:1},...it.bad.map(b=>({label:M(b),value:0}))]);
-    return {it,opts,ai:opts.findIndex(o=>o.value===1)};},
-  render(q,el){el.innerHTML=`<p class="prompt">Which parametrization describes ${q.it.desc}?</p>`;q.get=choiceButtons(el,q.opts);},
-  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
-    return {ok:v===1,msg:v===1?'':'Check two things: does the parametrization land on the right surface, and does the parameter domain cover exactly the right piece?'};},
-  solution(q){return `The correct choice is ${M(q.it.ok)}. ${q.it.why}`;}
-};
-
-const IT_POOL=[
-  {tex:R`\langle u+v,\; u-v,\; uv\rangle`,r:(u,v)=>[u+v,u-v,u*v],ru:(u,v)=>[1,1,v],rv:(u,v)=>[1,-1,u],
-   ruT:R`\langle 1,\;1,\;v\rangle`,rvT:R`\langle 1,\;-1,\;u\rangle`,how:P=>`${M(`u+v=${P[0]}`)} and ${M(`u-v=${P[1]}`)}`},
-  {tex:R`\langle u,\; v^2,\; u+v\rangle`,r:(u,v)=>[u,v*v,u+v],ru:(u,v)=>[1,0,1],rv:(u,v)=>[0,2*v,1],
-   ruT:R`\langle 1,\;0,\;1\rangle`,rvT:R`\langle 0,\;2v,\;1\rangle`,how:P=>`${M(`u=${P[0]}`)} and ${M(`u+v=${P[2]}`)}`},
-  {tex:R`\langle u^2,\; uv,\; v\rangle`,r:(u,v)=>[u*u,u*v,v],ru:(u,v)=>[2*u,v,0],rv:(u,v)=>[0,u,1],
-   ruT:R`\langle 2u,\;v,\;0\rangle`,rvT:R`\langle 0,\;u,\;1\rangle`,how:P=>`${M(`v=${P[2]}`)} and ${M(`uv=${P[1]}`)}`},
-  {tex:R`\langle u,\; v,\; u^2-v^2\rangle`,r:(u,v)=>[u,v,u*u-v*v],ru:(u,v)=>[1,0,2*u],rv:(u,v)=>[0,1,-2*v],
-   ruT:R`\langle 1,\;0,\;2u\rangle`,rvT:R`\langle 0,\;1,\;-2v\rangle`,how:P=>`${M(`u=${P[0]}`)} and ${M(`v=${P[1]}`)}`}
-];
-Q.intersectTangent={name:'tangent line where two surfaces meet',
-  gen(){let it,u0,v0,P,A,B,n2,a,b,c,n1,w;
-    do{it=pick(IT_POOL);u0=rnz(-2,2);v0=rnz(-2,2);P=it.r(u0,v0);A=it.ru(u0,v0);B=it.rv(u0,v0);n2=cross(A,B);
-      a=rint(1,3);b=rint(1,3);c=rint(1,3);n1=[2*a*P[0],2*b*P[1],2*c*P[2]];w=cross(n1,n2);}
-    while(vzero(n1)||vzero(w)||P.every(x=>x===1));
-    const g=gcd(gcd(w[0],w[1]),w[2]);const v=w.map(x=>x/g||0);
-    return {it,u0,v0,P,A,B,n2,a,b,c,n1,w,g,v,d:a*P[0]**2+b*P[1]**2+c*P[2]**2};},
-  render(q,el){el.innerHTML=`<p class="prompt">The surface ${M('S')}: ${M(texLin([q.a,q.b,q.c],['x^2','y^2','z^2'])+'='+q.d)} and the surface ${M('T')}: ${M(R`\mathbf r(u,v)=`+q.it.tex)} intersect in a curve through ${M('P='+texPt(q.P))}. Find parametric equations of the tangent line to that curve at ${M('P')}.</p>`;
-    eqIn(el,'L','Line:','<x0+at, y0+bt, z0+ct>');},
-  check(q,el){return G(el,'L',checkLine($('[data-k=L]',el).value,q.P,q.v));},
-  solution(q){const line=R`\langle `+q.P.map((p,i)=>texLin([q.v[i]],['t'],{constant:p})).join(R`,\; `)+R`\rangle`;
-    return `First find where ${M('T')} hits ${M('P')}: ${q.it.how(q.P)} give ${M(`(u_0,v_0)=(${q.u0},${q.v0})`)}. There ${M(R`\mathbf r_u=`+q.it.ruT+'='+texVec(q.A))} and ${M(R`\mathbf r_v=`+q.it.rvT+'='+texVec(q.B))}, so the normal to ${M('T')} is ${M(R`\mathbf r_u\times\mathbf r_v=`+texVec(q.n2))}. For ${M('S')}, ${M(R`\nabla G=\langle ${texLin([2*q.a],['x'])},\,${texLin([2*q.b],['y'])},\,${texLin([2*q.c],['z'])}\rangle`)}, so ${M(R`\nabla G(P)=`+texVec(q.n1))}. The curve's tangent is perpendicular to both normals: ${M(R`\nabla G(P)\times(\mathbf r_u\times\mathbf r_v)=`+texVec(q.w))}${q.g>1?`, or ${M(texVec(q.v))} after dividing by ${q.g}`:''}. The tangent line is ${M(R`\mathbf r(t)=`+line)}.`;}
-};
-
-const SP_ZONES=[
-  {txt:R`x\ge 0,\ y\ge 0`,t1:0,t2:PI/2},
-  {txt:R`x\le 0,\ y\ge 0`,t1:PI/2,t2:PI},
-  {txt:R`x\le 0,\ y\le 0`,t1:PI,t2:3*PI/2},
-  {txt:R`x\ge 0,\ y\le 0`,t1:3*PI/2,t2:2*PI},
-  {txt:R`y\ge 0`,t1:0,t2:PI},
-  {txt:R`x\ge 0`,t1:-PI/2,t2:PI/2}
-];
-Q.spherePiece={name:'a piece of a sphere: bounds and area',
-  gen(){let a,c,dir,zone;
-    /* skip z <= 1 with x >= 0, y <= 0: too close to an open homework setup */
-    do{a=pick([2,3,4]);c=pick([1/2,-1/2,0]);dir=pick(['ge','le']);zone=pick(SP_ZONES);}
-    while(dir==='le'&&a*c===1&&zone===SP_ZONES[3]);
-    const h=a*c,p0=Math.acos(c);const [p1,p2]=dir==='ge'?[0,p0]:[p0,PI];
-    const cd=dir==='ge'?1-c:1+c;
-    return {a,c,h,dir,zone,p0,p1,p2,t1:zone.t1,t2:zone.t2,cd,area:a*a*(zone.t2-zone.t1)*cd};},
-  render(q,el){el.innerHTML=`<p class="prompt">${M('S')} is the part of the sphere ${M(`x^2+y^2+z^2=${q.a*q.a}`)} where ${M(`z${q.dir==='ge'?'\\ge':'\\le'} ${texNum(q.h)}`)} and ${M(q.zone.txt)}. Parametrize it with ${M(R`\mathbf r=\langle ${q.a}\sin\phi\cos\theta,\,${q.a}\sin\phi\sin\theta,\,${q.a}\cos\phi\rangle`)}. Give the ${M(R`\phi`)} and ${M(R`\theta`)} intervals, then the surface area. Angles like <code>pi/3</code> are fine. ${EXACT}</p>`;
-    numIn(el,'p1',M(R`\phi`)+' from');numIn(el,'p2',M(R`\phi`)+' to');
-    numIn(el,'t1',M(R`\theta`)+' from');numIn(el,'t2',M(R`\theta`)+' to');
-    numIn(el,'A','Area =');},
-  check(q,el){const val=k=>$(`[data-k=${k}]`,el).value;
-    /* theta: same start modulo 2pi and same length */
-    let rt2;try{const T2=Expr.evalNumber(cleanAns(val('t2')));
-      try{const T1=Expr.evalNumber(cleanAns(val('t1')));rt2=checkNumber(String(T2-T1),q.t2-q.t1,TOL);}catch(e){rt2={ok:false};}}
-    catch(e){rt2={ok:false,err:e.message};}
-    return Gall(el,[['p1',checkNumber(val('p1'),q.p1,TOL)],['p2',checkNumber(val('p2'),q.p2,TOL)],
-      ['t1',checkAngle(val('t1'),q.t1,TOL)],['t2',rt2],['A',checkNumber(val('A'),q.area,TOL)]]);},
-  solution(q){const cmp=q.dir==='ge'?R`\ge`:R`\le`;const a2=q.a*q.a;
-    return `On the sphere ${M(R`z=${q.a}\cos\phi`)}, so ${M(`z${cmp} ${texNum(q.h)}`)} means ${M(R`\cos\phi${cmp} ${texNum(q.c)}`)}. The edge is at ${M(R`\cos\phi_0=\tfrac{h}{a}=${texNum(q.c)}`)}, that is ${M(R`\phi_0=${piTex(q.p0)}`)}. Cosine decreases on ${M(R`[0,\pi]`)}, so ${M(R`${piTex(q.p1)}\le\phi\le ${piTex(q.p2)}`)}. Since ${M(R`\sin\phi\ge 0`)}, the sign of ${M('x')} is the sign of ${M(R`\cos\theta`)} and the sign of ${M('y')} is the sign of ${M(R`\sin\theta`)}, so ${M(q.zone.txt)} is ${M(R`${piTex(q.t1)}\le\theta\le ${piTex(q.t2)}`)} (shifting both ends by ${M(R`2\pi`)} describes the same piece). With ${M(R`|\mathbf r_\phi\times\mathbf r_\theta|=${a2}\sin\phi`)}, ${D(R`A=${a2}\,\Big(${piTex(q.t2-q.t1)}\Big)\Big(\cos ${piTex(q.p1)}-\cos ${piTex(q.p2)}\Big)=${a2}\cdot ${piTex(q.t2-q.t1)}\cdot ${texNum(q.cd)}=${piTex(q.area)}\approx ${fmtDec(q.area,3)}`)}`;}
-};
-
-/* ---------------------------------------------------------- chapter 2 */
-const PLANE_AB=[[1,1],[2,1],[1,2],[2,2],[3,1],[1,3],[2,3],[3,2],[1,0],[0,1],[2,0],[0,2],[-1,2],[2,-1],[-2,1],[1,-2],[-1,-1],[-2,-2],[3,3]];
-const planeSetup=(a,b,c,p,q)=>`Parametrize the piece as ${M(R`\mathbf r(u,v)=\langle u,\,v,\,${texLin([a,b],['u','v'],{constant:c})}\rangle`)} over ${M(`0\\le u\\le ${p}`)}, ${M(`0\\le v\\le ${q}`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${-a},\,${-b},\,1\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+(${a})^2+(${b})^2}=\sqrt{${1+a*a+b*b}}`)}.`;
-
-Q.scalarPlane={name:'surface integral over a plane piece',
-  gen(){const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);const f=pick(['z','s']);
-    const D=1+a*a+b*b;
-    const I=f==='z'?a*p*p*q/2+b*p*q*q/2+c*p*q:(1+a)*p*p*q/2+(1+b)*p*q*q/2+c*p*q;
-    return {a,b,c,p,q,f,D,I,val:Math.sqrt(D)*I};},
-  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.f==='z'?'z':'(x+y+z)'}\,dS`)} where ${M('S')} is the part of the plane ${M(`z=${texLin([q.a,q.b],['x','y'],{constant:q.c})}`)} that lies above the rectangle ${M(`0\\le x\\le ${q.p}`)}, ${M(`0\\le y\\le ${q.q}`)}. ${EXACT}</p>`;
-    numIn(el,'v','Value =');},
-  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
-  solution(q){const inner=q.f==='z'?texLin([q.a,q.b],['u','v'],{constant:q.c}):texLin([1+q.a,1+q.b],['u','v'],{constant:q.c});
-    return `${planeSetup(q.a,q.b,q.c,q.p,q.q)} On the surface ${q.f==='z'?M(`z=${texLin([q.a,q.b],['u','v'],{constant:q.c})}`):M(`x+y+z=u+v+(${texLin([q.a,q.b],['u','v'],{constant:q.c})})=${inner}`)}, so ${D(R`\iint_S f\,dS=\sqrt{${q.D}}\int_0^{${q.q}}\!\!\int_0^{${q.p}}\big(${inner}\big)\,du\,dv=\sqrt{${q.D}}\,\big(${texNum(q.I)}\big)=${radTex(q.I,q.D)}\approx ${fmtDec(q.val,3)}`)} The stretch factor is constant on a plane, so it comes straight out of the integral.`;}
-};
-
-const SPH_SCALAR=[
-  {f:R`(x^2+y^2)`,val:a=>8*PI*a**4/3,tex:a=>R`\tfrac{8\pi a^4}{3}`,
-   why:a=>`On the sphere ${M(`x^2+y^2+z^2=${a*a}`)}, so ${M(R`\iint_S (x^2+y^2+z^2)\,dS=${a*a}\cdot 4\pi(${a})^2=${4*a**4}\pi`)}. By symmetry the three pieces ${M(R`\iint x^2`)}, ${M(R`\iint y^2`)}, ${M(R`\iint z^2`)} are equal, so each is ${M(R`\tfrac{${4*a**4}\pi}{3}`)} and ${M(R`\iint (x^2+y^2)\,dS=\tfrac{2}{3}(${4*a**4}\pi)=\tfrac{8\pi a^4}{3}=${piTex(8*PI*a**4/3)}`)}.`},
-  {f:R`z^2`,val:a=>4*PI*a**4/3,tex:a=>R`\tfrac{4\pi a^4}{3}`,
-   why:a=>`Directly: ${M(R`z=${C1(a)}\cos\phi`)} and ${M(R`dS=${C1(a*a)}\sin\phi\,d\phi\,d\theta`)}, so ${M(R`\iint_S z^2\,dS=\int_0^{2\pi}\!\!\int_0^\pi ${C1(a**4)}\cos^2\phi\sin\phi\,d\phi\,d\theta=${C1(a**4)}(2\pi)\tfrac{2}{3}=${piTex(4*PI*a**4/3)}`)}. Or use symmetry: it is one third of ${M(R`\iint(x^2+y^2+z^2)dS=${4*a**4}\pi`)}.`},
-  {f:R`(x^2+y^2+z^2)`,val:a=>4*PI*a**4,tex:a=>R`4\pi a^4`,
-   why:a=>`The integrand is constant on the sphere: ${M(`x^2+y^2+z^2=${a*a}`)} everywhere. So the integral is ${M(`${a*a}`)} times the area: ${M(R`${a*a}\cdot 4\pi(${a})^2=${4*a**4}\pi`)}.`},
-  {f:R`1`,val:a=>4*PI*a*a,tex:a=>R`4\pi a^2`,
-   why:a=>`With ${M('f=1')} the surface integral is just the area, ${M(R`4\pi(${a})^2=${4*a*a}\pi`)}.`},
-  {f:R`z`,half:true,val:a=>PI*a**3,tex:a=>R`\pi a^3`,
-   why:a=>`On the upper hemisphere ${M(R`z=${C1(a)}\cos\phi`)}, ${M(R`dS=${C1(a*a)}\sin\phi\,d\phi\,d\theta`)}, and ${M(R`0\le\phi\le\pi/2`)}: ${M(R`\int_0^{2\pi}\!\!\int_0^{\pi/2}${C1(a**3)}\cos\phi\sin\phi\,d\phi\,d\theta=${C1(a**3)}(2\pi)\big[\tfrac{\sin^2\phi}{2}\big]_0^{\pi/2}=${C1(a**3)}(2\pi)\tfrac12=${piTex(PI*a**3)}`)}. Over the whole sphere it would be 0, since the bottom half cancels the top.`}
-];
-Q.scalarSphere={name:'surface integral over a sphere',
-  gen(){const it=pick(SPH_SCALAR);const a=rint(1,3);return {it,a,val:it.val(a)};},
-  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.it.f}\,dS`)} where ${M('S')} is ${q.it.half?`the upper half (${M('z\\ge 0')}) of the sphere`:'the sphere'} ${M(`x^2+y^2+z^2=${q.a*q.a}`)}. ${EXACT}</p>`;
-    numIn(el,'v','Value =');},
-  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
-  solution(q){return q.it.why(q.a)+` In symbols the answer is ${M(q.it.tex(q.a))} with ${M(`a=${q.a}`)}, that is ${M(piTex(q.val))}.`;}
-};
-
-const CYL_SCALAR=[
-  {f:R`z`,val:(a,h)=>PI*a*h*h,tex:R`\pi a h^2`,
-   why:(a,h)=>`${M(R`dS=${C1(a)}\,d\theta\,dz`)}, so ${M(R`\iint_S z\,dS=\int_0^{2\pi}\!\!\int_0^{${h}} z\,(${a})\,dz\,d\theta=${C1(a)}(2\pi)\tfrac{${h}^2}{2}=${piTex(PI*a*h*h)}`)}.`},
-  {f:R`(x^2+y^2)`,val:(a,h)=>2*PI*a**3*h,tex:R`2\pi a^3 h`,
-   why:(a,h)=>`On the cylinder ${M(`x^2+y^2=${a*a}`)} is constant, so the integral is ${M(`${a*a}`)} times the area ${M(R`2\pi(${a})(${h})=${2*a*h}\pi`)}, giving ${M(piTex(2*PI*a**3*h))}.`},
-  {f:R`x^2`,val:(a,h)=>PI*a**3*h,tex:R`\pi a^3 h`,
-   why:(a,h)=>`${M(R`x=${C1(a)}\cos\theta`)} and ${M(R`dS=${C1(a)}\,d\theta\,dz`)}: ${M(R`\int_0^{${h}}\!\!\int_0^{2\pi}${C1(a*a)}\cos^2\theta\,(${a})\,d\theta\,dz=${C1(a**3)}(${h})\pi=${piTex(PI*a**3*h)}`)}, using ${M(R`\int_0^{2\pi}\cos^2\theta\,d\theta=\pi`)}. By symmetry ${M(R`\iint x^2\,dS`)} is exactly half of ${M(R`\iint (x^2+y^2)\,dS`)}.`},
-  {f:R`z^2`,val:(a,h)=>2*PI*a*h**3/3,tex:R`\tfrac{2\pi a h^3}{3}`,
-   why:(a,h)=>`${M(R`\int_0^{2\pi}\!\!\int_0^{${h}} z^2(${a})\,dz\,d\theta=${C1(a)}(2\pi)\tfrac{${h}^3}{3}=${piTex(2*PI*a*h**3/3)}`)}.`}
-];
-Q.scalarCylinder={name:'surface integral over a cylinder',
-  gen(){const it=pick(CYL_SCALAR);const a=rint(1,3),h=rint(2,5);return {it,a,h,val:it.val(a,h)};},
-  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.it.f}\,dS`)} where ${M('S')} is the lateral surface of the cylinder ${M(`x^2+y^2=${q.a*q.a}`)}, ${M(`0\\le z\\le ${q.h}`)} (no top or bottom). ${EXACT}</p>`;
-    numIn(el,'v','Value =');},
-  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
-  solution(q){return `Use ${M(R`\mathbf r=\langle ${C1(q.a)}\cos\theta,\,${C1(q.a)}\sin\theta,\,z\rangle`)}, whose normal ${M(R`\langle ${C1(q.a)}\cos\theta,\,${C1(q.a)}\sin\theta,\,0\rangle`)} has length ${q.a}, so ${M(R`dS=${C1(q.a)}\,d\theta\,dz`)}. ${q.it.why(q.a,q.h)} The general formula is ${M(q.it.tex)}.`;}
-};
-
-Q.scalarMass={name:'mass of a thin sheet',
-  gen(){const k=pick(['coneZ','coneK','planeK']);
-    if(k==='coneZ'){const h=rint(2,4);return {k,h,val:2*PI*Math.SQRT2*h**3/3,
-      prompt:`A thin sheet has the shape of the cone ${M(R`z=\sqrt{x^2+y^2}`)}, ${M(`0\\le z\\le ${h}`)}, with density ${M(R`\rho(x,y,z)=z`)}. Find its mass.`,
-      sol:`Parametrize ${M(R`\mathbf r=\langle u\cos v,u\sin v,u\rangle`)}, so ${M(R`|\mathbf r_u\times\mathbf r_v|=u\sqrt2`)} and ${M(R`\rho=z=u`)}. Then ${M(R`m=\int_0^{2\pi}\!\!\int_0^{${h}} u\cdot\sqrt2\,u\,du\,dv=\sqrt2\,(2\pi)\tfrac{${h}^3}{3}=\tfrac{2\pi\sqrt2\,(${h})^3}{3}\approx ${fmtDec(2*PI*Math.SQRT2*h**3/3,3)}`)}.`};}
-    if(k==='coneK'){const h=rint(2,4),c=rint(2,6);return {k,h,c,val:c*Math.SQRT2*PI*h*h,
-      prompt:`A thin sheet has the shape of the cone ${M(R`z=\sqrt{x^2+y^2}`)}, ${M(`0\\le z\\le ${h}`)}, with constant density ${M(`\\rho=${c}`)}. Find its mass.`,
-      sol:`Constant density means mass is density times area. The cone's area is ${M(R`\pi h^2\sqrt2=${radTex(h*h,2)}\,\pi`)}, so ${M(R`m=${c}\cdot ${radTex(h*h,2)}\,\pi=${radTex(c*h*h,2)}\,\pi\approx ${fmtDec(c*Math.SQRT2*PI*h*h,3)}`)}.`};}
-    const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3),k2=rint(2,5);const Dv=1+a*a+b*b;
-    return {k,a,b,c,p,q,k2,D:Dv,val:k2*p*q*Math.sqrt(Dv),
-      prompt:`A thin sheet is the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}, with constant density ${M(`\\rho=${k2}`)}. Find its mass.`,
-      sol:`${planeSetup(a,b,c,p,q)} With constant density, ${M(R`m=${k2}\iint_S dS=${k2}\cdot(${p})(${q})\sqrt{${Dv}}=${radTex(k2*p*q,Dv)}\approx ${fmtDec(k2*p*q*Math.sqrt(Dv),3)}`)}.`};},
-  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt} ${EXACT}</p>`;numIn(el,'m','m =');},
-  check(q,el){return G(el,'m',checkNumber($('[data-k=m]',el).value,q.val,TOL));},
-  solution(q){return q.sol;}
-};
-
-Q.funnelMass={name:'mass of a funnel',
-  gen(){let m,r1,r2,kind;
-    /* skip density c - z on 1 <= z <= 4 of z = sqrt(x^2+y^2): an open homework setup */
-    do{m=pick([1,3/4,4/3]);
-      if(m===1){r1=rint(0,2);r2=r1+rint(1,3);}
-      else if(m===3/4)[r1,r2]=pick([[0,4],[4,8]]);
-      else [r1,r2]=pick([[0,3],[3,6]]);
-      kind=pick(['cminusz','kz','kr2']);}
-    while(m===1&&r1===1&&r2===4&&kind==='cminusz');
-    const z1=Math.round(m*r1),z2=Math.round(m*r2),S=Math.sqrt(1+m*m);
-    const mT=m===1?'':texNum(m),ST=m===1?R`\sqrt2`:texNum(S);
-    const p2=(r2**2-r1**2)/2,p3=(r2**3-r1**3)/3,p4=(r2**4-r1**4)/4;
-    let dT,dr,ig,I;
-    if(kind==='cminusz'){const c=z2+rint(1,4);dT=`${c}-z`;dr=`${c}-${mT}r`;ig=`${c}r-${mT}r^2`;I=c*p2-m*p3;}
-    else if(kind==='kz'){const k=rint(1,4);const km=k*m;const kmT=km===1?'':texNum(km);dT=`${C1(k)}z`;dr=`${kmT}r`;ig=`${kmT}r^2`;I=km*p3;}
-    else{const k=rint(1,3);dT=k===1?'x^2+y^2':`${k}(x^2+y^2)`;dr=`${C1(k)}r^2`;ig=`${C1(k)}r^3`;I=k*p4;}
-    const val=2*PI*S*I;
-    return {m,r1,r2,z1,z2,S,mT,ST,kind,dT,dr,ig,I,val,
-      coneT:m===1?R`z=\sqrt{x^2+y^2}`:R`z=${mT}\sqrt{x^2+y^2}`,
-      exT:m===1?radTex(2*I,2)+R`\,\pi`:piTex(val)};},
-  render(q,el){el.innerHTML=`<p class="prompt">A thin funnel has the shape of the cone ${M(q.coneT)} for ${M(`${q.z1}\\le z\\le ${q.z2}`)}, with density ${M(R`\delta(x,y,z)=${q.dT}`)}. Find its mass. ${EXACT}</p>`;
-    numIn(el,'m','m =');},
-  check(q,el){return G(el,'m',checkNumber($('[data-k=m]',el).value,q.val,TOL));},
-  solution(q){const mT=q.mT;
-    return `Parametrize ${M(R`\mathbf r(r,\theta)=\langle r\cos\theta,\,r\sin\theta,\,${mT}r\rangle`)}. Then ${M(R`\mathbf r_r\times\mathbf r_\theta=\langle -${mT}r\cos\theta,\,-${mT}r\sin\theta,\,r\rangle`)}, whose length is ${M(R`r\sqrt{1+(${q.m===1?'1':mT})^2}=${q.ST}\,r`)}. Since ${M(`z=${mT}r`)}, the band ${M(`${q.z1}\\le z\\le ${q.z2}`)} is ${M(`${q.r1}\\le r\\le ${q.r2}`)}. On the cone ${M(R`x^2+y^2=r^2`)} and ${M(`z=${mT}r`)}, so ${M(R`\delta=${q.dr}`)}. Then ${D(R`m=\int_0^{2\pi}\!\!\int_{${q.r1}}^{${q.r2}}\big(${q.dr}\big)\,${q.ST}\,r\,dr\,d\theta=2\pi\cdot ${q.ST}\int_{${q.r1}}^{${q.r2}}\big(${q.ig}\big)\,dr=2\pi\cdot ${q.ST}\cdot ${texNum(q.I)}=${q.exT}\approx ${fmtDec(q.val,3)}`)}`;}
-};
-
-/* ---------------------------------------------------------- chapter 3 */
 /* F = <A x + d1, B y + d2, C z + d3> through z = a x + b y + c over [0,p]x[0,q], upward */
 const fluxPlaneVal=(a,b,c,p,q,A,B,C,d)=>a*(C-A)*p*p*q/2+b*(C-B)*p*q*q/2+(C*c-a*d[0]-b*d[1]+d[2])*p*q;
 Q.fluxPlane={name:'flux through a plane piece',
@@ -688,7 +395,7 @@ Q.fluxPlane={name:'flux through a plane piece',
   render(q,el){el.innerHTML=`<p class="prompt">Find the flux of ${M(R`\mathbf F=`+texFld(q.comp))} through the part of the plane ${M(`z=${texLin([q.a,q.b],['x','y'],{constant:q.c})}`)} that lies above the rectangle ${M(`0\\le x\\le ${q.p}`)}, ${M(`0\\le y\\le ${q.q}`)}, oriented <b>${q.up?'upward':'downward'}</b>. ${EXACT}</p>`;
     numIn(el,'v',M(R`\iint_S\mathbf F\cdot d\mathbf S=`));},
   check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
-  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el2());}
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(hintBox());}
     h.innerHTML=`For a graph, ${M(R`\mathbf r_u\times\mathbf r_v=\langle -z_x,-z_y,1\rangle=\langle ${-q.a},${-q.b},1\rangle`)}, which points upward. Dot ${M(R`\mathbf F`)} with it, then integrate over the rectangle${q.up?'':', and remember to negate at the end'}.`;},
   solution(q){const P=texLin([q.A],['u'],{constant:q.d[0]}),Qc=texLin([q.B],['v'],{constant:q.d[1]});
     const zz=texLin([q.a,q.b],['u','v'],{constant:q.c});
@@ -809,7 +516,170 @@ Q.fluxSign={name:'sign of a flux without computing it',
     return `For ${M(`z=f(x,y)=${q.c}-x^2-y^2`)} the upward normal is ${M(R`\langle -f_x,-f_y,1\rangle=\langle 2x,\,2y,\,1\rangle`)}, so the upward flux is ${M(R`\iint_D\big(2xP+2yQ+R\big)\,dA=\iint_D ${q.it.ig}\,dA`)} over the disk ${M(`x^2+y^2\\le ${q.c}`)}. ${q.it.why} ${q.orient==='downward'?`So the upward flux is ${FS_WORD(s)}. Here the normal points downward, which negates it${s===0?', and the negative of 0 is still 0':''}: the flux is <b>${FS_WORD(q.sign)}</b>.`:`So the flux is <b>${FS_WORD(q.sign)}</b>.`}`;}
 };
 
-/* ---------------------------------------------------------- chapter 4 */
+/* ---------------------------------------------------------- chapter 2 */
+/* plane fields for the scalar curl: hand-checked specials or a random polynomial pair */
+const SPECIAL2=[
+  {Ptex:R`e^{x}\sin y`,Qtex:R`e^{x}\cos y`,gtex:'0',gstr:'0',
+   why:R`Q_x=e^{x}\cos y`,why2:R`P_y=e^{x}\cos y`},
+  {Ptex:R`y\cos x`,Qtex:R`x\sin y`,gtex:R`\sin y-\cos x`,gstr:'sin(y)-cos(x)',
+   why:R`Q_x=\sin y`,why2:R`P_y=\cos x`},
+  {Ptex:R`xe^{y}`,Qtex:R`ye^{x}`,gtex:R`ye^{x}-xe^{y}`,gstr:'y*exp(x)-x*exp(y)',
+   why:R`Q_x=ye^{x}`,why2:R`P_y=xe^{y}`},
+  {Ptex:R`\sin(xy)`,Qtex:R`\cos(xy)`,gtex:R`-y\sin(xy)-x\cos(xy)`,gstr:'-y*sin(x*y)-x*cos(x*y)',
+   why:R`Q_x=-y\sin(xy)`,why2:R`P_y=x\cos(xy)`},
+  {Ptex:R`x^2\cos y`,Qtex:R`y^2\sin x`,gtex:R`y^2\cos x+x^2\sin y`,gstr:'y^2*cos(x)+x^2*sin(y)',
+   why:R`Q_x=y^2\cos x`,why2:R`P_y=-x^2\sin y`}
+];
+function genIntegrand2(){
+  if(Math.random()<0.6){const {P,Q:Qp,g}=genPQany();
+    return {Ptex:P2.tex(P),Qtex:P2.tex(Qp),gtex:P2.tex(g),gstr:P2.str(g),
+      why:R`Q_x=${P2.tex(P2.dx(Qp))}`,why2:R`P_y=${P2.tex(P2.dy(P))}`};}
+  return {...pick(SPECIAL2)};
+}
+
+/* ---- curl of a 3D field ---- */
+Q.curlCompute={name:'curl of a vector field',
+  gen(){return genField3();},
+  render(q,el){el.innerHTML=`<p class="prompt">Compute ${M(R`\operatorname{curl}\mathbf{F}`)} for `+D(texF3(q))+`</p>`;
+    exprIn(el,'cu',M(R`\operatorname{curl}\mathbf{F}=`),'<..., ..., ...>');},
+  check(q,el){return G(el,'cu',checkExprVector($('[data-k=cu]',el).value,q.curlStr,['x','y','z'],q.dom?{domain:q.dom}:{}));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`R_y=${q.pd[0]},\quad Q_z=${q.pd[1]},\quad P_z=${q.pd[2]},\quad R_x=${q.pd[3]},\quad Q_x=${q.pd[4]},\quad P_y=${q.pd[5]}`);},
+  solution(q){return `Expand the determinant along the top row:`
+    +D(R`\operatorname{curl}\mathbf{F}=\left\langle R_y-Q_z,\;P_z-R_x,\;Q_x-P_y\right\rangle`)
+    +`Here ${M(R`R_y=${q.pd[0]}`)}, ${M(R`Q_z=${q.pd[1]}`)}, ${M(R`P_z=${q.pd[2]}`)}, ${M(R`R_x=${q.pd[3]}`)}, ${M(R`Q_x=${q.pd[4]}`)}, ${M(R`P_y=${q.pd[5]}`)}. Substituting, `
+    +D(R`\operatorname{curl}\mathbf{F}=\left\langle \left(${q.pd[0]}\right)-\left(${q.pd[1]}\right),\;\left(${q.pd[2]}\right)-\left(${q.pd[3]}\right),\;\left(${q.pd[4]}\right)-\left(${q.pd[5]}\right)\right\rangle=\left\langle ${q.curlTex.join(',\\; ')}\right\rangle`)
+    +`Remember the middle slot is ${M(R`P_z-R_x`)}, not ${M(R`R_x-P_z`)}.`;}
+};
+
+/* ---- divergence of a 3D field ---- */
+Q.divCompute={name:'divergence of a vector field',
+  gen(){return genField3();},
+  render(q,el){el.innerHTML=`<p class="prompt">Compute ${M(R`\operatorname{div}\mathbf{F}`)} for `+D(texF3(q))+`</p>`;
+    exprIn(el,'dv',M(R`\operatorname{div}\mathbf{F}=`),'an expression in x, y, z');},
+  check(q,el){return G(el,'dv',checkExpr($('[data-k=dv]',el).value,q.divStr,['x','y','z'],q.dom?{domain:q.dom}:{}));},
+  solution(q){return `Differentiate each component by its own variable and add: ${M(R`P_x=${q.dd[0]}`)}, ${M(R`Q_y=${q.dd[1]}`)}, ${M(R`R_z=${q.dd[2]}`)}. So `
+    +D(R`\operatorname{div}\mathbf{F}=\left(${q.dd[0]}\right)+\left(${q.dd[1]}\right)+\left(${q.dd[2]}\right)=${q.divTex}`)
+    +`The result is a scalar function, not a vector.`;}
+};
+
+/* ---- conservative by the curl test ---- */
+const CONS=[
+  {F:[R`yz`,R`xz`,R`xy`],f:R`xyz`},
+  {F:['2x','2y','2z'],f:R`x^2+y^2+z^2`},
+  {F:[R`e^{y}`,R`xe^{y}`,'1'],f:R`xe^{y}+z`},
+  {F:[R`\cos x\cos y`,R`-\sin x\sin y`,'2z'],f:R`\sin x\cos y+z^2`},
+  {F:['1','z','y'],f:R`yz+x`},
+  {F:['2xy',R`x^2`,R`3z^2`],f:R`x^2y+z^3`},
+  {F:['y+z','x+z','x+y'],f:R`xy+yz+zx`}
+];
+const NOTCONS=[
+  {F:['-y','x','0'],c:R`\langle 0,\,0,\,2\rangle`,slot:R`Q_x-P_y=1-(-1)=2`},
+  {F:['z','x','y'],c:R`\langle 1,\,1,\,1\rangle`,slot:R`R_y-Q_z=1-0=1`},
+  {F:[R`y^2`,'0','0'],c:R`\langle 0,\,0,\,-2y\rangle`,slot:R`Q_x-P_y=0-2y=-2y`},
+  {F:['0',R`xz`,'0'],c:R`\langle -x,\,0,\,z\rangle`,slot:R`R_y-Q_z=0-x=-x`},
+  {F:[R`xy`,R`yz`,R`zx`],c:R`\langle -y,\,-z,\,-x\rangle`,slot:R`R_y-Q_z=0-y=-y`},
+  {F:[R`\sin z`,'0','0'],c:R`\langle 0,\,\cos z,\,0\rangle`,slot:R`P_z-R_x=\cos z-0=\cos z`}
+];
+Q.conservative={name:'conservative by the curl test',
+  gen(){const yes=Math.random()<0.5;const s=pick(yes?CONS:NOTCONS);return {yes,...s};},
+  render(q,el){el.innerHTML=`<p class="prompt">Is `+D(R`\mathbf{F}=\langle ${q.F.join(',\\; ')} \rangle`)+` conservative on ${M(R`\mathbb{R}^3`)}? Use the curl test.</p>`;
+    q.get=choiceButtons(el,[{label:'yes, conservative',value:true},{label:'no, not conservative',value:false}]);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.yes,msg:v===q.yes?'':(q.yes?'Every component of the curl works out to zero here.':'At least one component of the curl is not zero.')};},
+  solution(q){return q.yes
+    ? `Computing the curl gives ${M(R`\mathbf{0}`)}, and ${M(R`\mathbf{F}`)} has continuous partials on all of ${M(R`\mathbb{R}^3`)}, so ${M(R`\mathbf{F}`)} <b>is conservative</b>. A potential function is ${M(R`f=${q.f}`)}: check that ${M(R`\nabla f=\mathbf{F}`)}.`
+    : `The curl is ${M(R`\operatorname{curl}\mathbf{F}=${q.c}`)}, not the zero vector (for instance ${M(q.slot)}). Since a conservative field must have zero curl, ${M(R`\mathbf{F}`)} is <b>not conservative</b>.`;}
+};
+
+/* ---- signs of curl and divergence from a picture ---- */
+const SIGNF=[
+  {tex:R`\langle -y,\;x\rangle`,F:(x,y)=>[-y,x],cs:1,ds:0,say:'pure counterclockwise rotation'},
+  {tex:R`\langle y,\;-x\rangle`,F:(x,y)=>[y,-x],cs:-1,ds:0,say:'pure clockwise rotation'},
+  {tex:R`\langle x,\;y\rangle`,F:(x,y)=>[x,y],cs:0,ds:1,say:'a radial source'},
+  {tex:R`\langle -x,\;-y\rangle`,F:(x,y)=>[-x,-y],cs:0,ds:-1,say:'a radial sink'},
+  {tex:R`\langle y,\;0\rangle`,F:(x,y)=>[y,0],cs:-1,ds:0,say:'a horizontal shear'},
+  {tex:R`\langle 0,\;x\rangle`,F:(x,y)=>[0,x],cs:1,ds:0,say:'a vertical shear'},
+  {tex:R`\langle x,\;-y\rangle`,F:(x,y)=>[x,-y],cs:0,ds:0,say:'a saddle flow: in along one axis, out along the other'},
+  {tex:R`\langle x-y,\;x+y\rangle`,F:(x,y)=>[x-y,x+y],cs:1,ds:1,say:'a counterclockwise spiral flowing outward'},
+  {tex:R`\langle -x-y,\;x-y\rangle`,F:(x,y)=>[-x-y,x-y],cs:1,ds:-1,say:'a counterclockwise spiral flowing inward'},
+  {tex:R`\langle x+y,\;y-x\rangle`,F:(x,y)=>[x+y,y-x],cs:-1,ds:1,say:'a clockwise spiral flowing outward'},
+  {tex:R`\langle y-x,\;-x-y\rangle`,F:(x,y)=>[y-x,-x-y],cs:-1,ds:-1,say:'a clockwise spiral flowing inward'},
+  {tex:R`\langle y,\;x\rangle`,F:(x,y)=>[y,x],cs:0,ds:0,say:'the gradient of xy, which neither spins nor spreads'}
+];
+const SIGNIDX=s=>s>0?0:(s<0?1:2);
+let __signN=0;
+Q.signPicture={name:'curl and divergence signs from a picture',
+  gen(){const f=pick(SIGNF);return {...f,ci:SIGNIDX(f.cs),di:SIGNIDX(f.ds),id:'signPlot'+(++__signN)};},
+  render(q,el){
+    el.innerHTML=`<p class="prompt">The plane vector field below is sketched near the origin. Decide the sign of the scalar curl ${M(R`Q_x-P_y`)} and of the divergence ${M(R`P_x+Q_y`)} <b>at the origin</b>.</p>
+      <canvas class="scene short" style="max-width:380px" id="${q.id}"></canvas>
+      <p class="muted" style="margin:10px 0 2px">Scalar curl at the origin is</p>`;
+    q.getC=choiceButtons(el,[{label:'positive',value:0},{label:'negative',value:1},{label:'zero',value:2}]);
+    el.appendChild(el2('p','muted','Divergence at the origin is'));
+    q.getD=choiceButtons(el,[{label:'positive',value:0},{label:'negative',value:1},{label:'zero',value:2}]);
+    const cv=$('#'+q.id,el);const p=new Plot2D(cv,{xmin:-2.6,xmax:2.6,ymin:-2.6,ymax:2.6,labels:false});
+    const drawIt=()=>{if(!cv.isConnected)return;p.begin().field(q.F,{step:0.5,scale:0.22,color:GRAY,width:1.3});
+      p.point([0,0],{color:PURPLE,r:5,ring:true});};
+    drawIt();setTimeout(drawIt,50);},
+  check(q){const a=q.getC(),b=q.getD();
+    if(a===null||b===null)return {ok:false,msg:'Pick an answer in both rows.'};
+    if(a!==q.ci)return {ok:false,msg:'The curl answer is not right. Imagine a paddle wheel at the origin: does the flow on one side push harder than on the other?'};
+    if(b!==q.di)return {ok:false,msg:'The divergence answer is not right. Imagine a small circle at the origin: is more arrow leaving it than entering?'};
+    return {ok:true,msg:'This is '+q.say+'.'};},
+  solution(q){const w=['positive','negative','zero'];
+    return `The field is ${M(q.tex)}, so ${M(R`Q_x-P_y`)} is <b>${w[q.ci]}</b> and ${M(R`P_x+Q_y`)} is <b>${w[q.di]}</b> at the origin. It is ${q.say}. Curl is about arrows on opposite sides pushing in opposite tangential directions; divergence is about net arrow leaving a small circle.`;}
+};
+const el2=(tag,cls,txt)=>{const e=document.createElement(tag);e.className=cls;e.textContent=txt;e.style.margin='10px 0 2px';return e;};
+
+/* ---- 2D scalar curl ---- */
+Q.curl2D={name:'scalar curl in the plane',
+  gen(){return genIntegrand2();},
+  render(q,el){el.innerHTML=`<p class="prompt">Let ${M(R`\mathbf{F}=\langle ${q.Ptex},\; ${q.Qtex}\rangle`)} be a plane field. Find its scalar curl, the ${M(R`\mathbf{k}`)}-component of ${M(R`\operatorname{curl}\langle P,Q,0\rangle`)}.</p>`;
+    exprIn(el,'g',M(R`Q_x-P_y=`),'an expression in x and y');},
+  check(q,el){return G(el,'g',checkExpr($('[data-k=g]',el).value,q.gstr,['x','y']));},
+  solution(q){return `With ${M('R=0')} the ${M(R`\mathbf{i}`)} and ${M(R`\mathbf{j}`)} slots of the curl vanish, leaving only ${M(R`Q_x-P_y`)}. Here ${M(q.why)} and ${M(q.why2)}, so `
+    +D(R`\operatorname{curl}\mathbf{F}=\left(${q.gtex}\right)\mathbf{k}`)
+    +`This scalar is exactly what Green's theorem integrates over ${M('D')}.`;}
+};
+
+/* ---- identities ---- */
+const IDS=[
+  {q:`For every vector field ${M(R`\mathbf{F}`)} whose components have continuous second partial derivatives, ${M(R`\operatorname{div}(\operatorname{curl}\mathbf{F})`)} equals:`,
+   opts:[[M('0'),true],[M(R`\operatorname{curl}(\operatorname{div}\mathbf{F})`),false],[M(R`\nabla f`),false],[M(R`|\mathbf{F}|^2`),false]],
+   why:`Writing it out, ${M(R`\operatorname{div}(\operatorname{curl}\mathbf{F})=R_{yx}-Q_{zx}+P_{zy}-R_{xy}+Q_{xz}-P_{yz}`)}. Clairaut's theorem pairs the terms and every pair cancels, so the answer is the number 0.`},
+  {q:`For every scalar function ${M('f')} with continuous second partial derivatives, ${M(R`\operatorname{curl}(\nabla f)`)} equals:`,
+   opts:[[M(R`\mathbf{0}`),true],[M(R`\nabla f`),false],[M(R`f_{xx}+f_{yy}+f_{zz}`),false],[M('f'),false]],
+   why:`Each component is a difference of equal mixed partials, for instance ${M(R`f_{zy}-f_{yz}=0`)}. The result is the zero <b>vector</b>. This is exactly why a conservative field must have zero curl.`},
+  {q:`${M(R`\operatorname{div}(\nabla f)`)} equals:`,
+   opts:[[M(R`f_{xx}+f_{yy}+f_{zz}`),true],[M('0'),false],[M(R`\mathbf{0}`),false],[M(R`\nabla f`),false]],
+   why:`Dotting ${M(R`\nabla`)} into ${M(R`\nabla f=\langle f_x,f_y,f_z\rangle`)} gives ${M(R`f_{xx}+f_{yy}+f_{zz}`)}, the Laplacian ${M(R`\nabla^2 f`)}. It is not automatically zero; functions where it is zero are called harmonic.`},
+  {q:`Which of these expressions is <b>meaningless</b>?`,
+   opts:[[M(R`\operatorname{curl}(\operatorname{div}\mathbf{F})`),true],[M(R`\operatorname{div}(\operatorname{curl}\mathbf{F})`),false],[M(R`\operatorname{curl}(\nabla f)`),false],[M(R`\nabla(\operatorname{div}\mathbf{F})`),false]],
+   why:`${M(R`\operatorname{div}\mathbf{F}`)} is a scalar function, and curl only accepts a vector field, so ${M(R`\operatorname{curl}(\operatorname{div}\mathbf{F})`)} is not defined. The other three are all legal: curl of a field, curl of a gradient, gradient of a scalar.`},
+  {q:`If ${M(R`\operatorname{curl}\mathbf{F}=\mathbf{0}`)} everywhere and the components of ${M(R`\mathbf{F}`)} have continuous partials on all of ${M(R`\mathbb{R}^3`)}, then ${M(R`\mathbf{F}`)} is:`,
+   opts:[['conservative',true],['incompressible',false],['the zero field',false],['not determined by this information',false]],
+   why:`On a domain with no holes, zero curl is enough: ${M(R`\mathbf{F}=\nabla f`)} for some potential ${M('f')}. The hypothesis about all of ${M(R`\mathbb{R}^3`)} is what makes the converse of ${M(R`\operatorname{curl}(\nabla f)=\mathbf{0}`)} true.`},
+  {q:`A vector field with ${M(R`\operatorname{div}\mathbf{F}=0`)} is called:`,
+   opts:[['incompressible',true],['conservative',false],['irrotational',false],['constant',false]],
+   why:`Zero divergence means nothing is created or destroyed: the field is <b>incompressible</b>. Zero <b>curl</b> is the one called irrotational, and conservative means ${M(R`\mathbf{F}=\nabla f`)}.`},
+  {q:`${M(R`\operatorname{curl}\mathbf{F}`)} and ${M(R`\operatorname{div}\mathbf{F}`)} are, respectively:`,
+   opts:[['a vector field and a scalar function',true],['a scalar function and a vector field',false],['both vector fields',false],['both scalar functions',false]],
+   why:`Curl comes from a cross product, so it is a vector field. Divergence comes from a dot product, so it is a scalar function. Getting this backwards is what produces meaningless expressions.`},
+  {q:`For a plane field ${M(R`\mathbf{F}=\langle P,Q\rangle`)}, the quantity ${M(R`Q_x-P_y`)} is:`,
+   opts:[[`the ${M(R`\mathbf{k}`)}-component of ${M(R`\operatorname{curl}\langle P,Q,0\rangle`)}`,true],[M(R`\operatorname{div}\mathbf{F}`),false],[`the ${M(R`\mathbf{i}`)}-component of ${M(R`\operatorname{curl}\langle P,Q,0\rangle`)}`,false],['always zero',false]],
+   why:`Padding with a zero third component kills the ${M(R`\mathbf{i}`)} and ${M(R`\mathbf{j}`)} slots and leaves ${M(R`(Q_x-P_y)\mathbf{k}`)}. That is why Green's theorem can be written ${M(R`\oint_C\mathbf{F}\cdot d\mathbf{r}=\iint_D(\operatorname{curl}\mathbf{F})\cdot\mathbf{k}\,dA`)}.`}
+];
+Q.identity={name:'vector identities',
+  gen(){const s=pick(IDS);const opts=shuffle(s.opts);return {text:s.q,opts,why:s.why,ansIdx:opts.findIndex(o=>o[1])};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.text}</p>`;
+    q.get=choiceButtons(el,q.opts.map((o,i)=>({label:o[0],value:i})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.ansIdx,msg:v===q.ansIdx?'':'Not that one. Check whether each side is a scalar or a vector first.'};},
+  solution(q){return `The correct choice is ${q.opts[q.ansIdx][0]}. ${q.why}`;}
+};
+
+/* ---------------------------------------------------------- chapter 3 */
 const CCURL=[
   {F:R`\langle -y,\,x,\,z\rangle`,c:[0,0,2],cT:R`\langle 0,\,0,\,2\rangle`,dot:a=>`${a*a}`},
   {F:R`\langle z,\,x,\,y\rangle`,c:[1,1,1],cT:R`\langle 1,\,1,\,1\rangle`,dot:a=>`${a*a}\\cos^2 t`},
@@ -912,7 +782,7 @@ Q.stokesPolygon={name:'Stokes on a flat polygon',
     return `The terms ${M(q.jP)}, ${M(q.jQ)}, ${M(q.jR)} each depend only on their own variable, so they are gradients and drop out of the curl: ${M(R`\operatorname{curl}\mathbf F=\langle R_y-Q_z,\;P_z-R_x,\;Q_x-P_y\rangle=`+texVec(q.cu))}, a constant vector. Counterclockwise as viewed from ${M(texPt(q.V))} means the compatible normal points toward that viewer: ${M(R`\mathbf n=${q.sv<0?'-':''}\mathbf ${e}`)}. So ${M(R`\operatorname{curl}\mathbf F\cdot\mathbf n=${q.cn}`)} everywhere on the flat region, and its area is ${M(q.areaW)}. By Stokes' theorem ${D(R`\oint_C\mathbf F\cdot d\mathbf r=(${q.cn})\cdot\text{area}=${q.ansT}${q.kind==='hex'?R`\approx ${fmtDec(q.ans,3)}`:''}`)}`;}
 };
 
-/* ---------------------------------------------------------- chapter 5 */
+/* ---------------------------------------------------------- chapter 4 */
 const BOX_F=[
   {F:R`\langle x,\,y,\,z\rangle`,div:R`3`,val:(a,b,c)=>3*a*b*c,
    why:(a,b,c)=>`${M(R`\operatorname{div}\mathbf F=1+1+1=3`)} is constant, so the flux is ${M(`3V=3(${a})(${b})(${c})=${3*a*b*c}`)}.`},
@@ -1035,132 +905,7 @@ function makeWalk(pfx,build){
   fresh();
 }
 
-/* ============================================================ chapter 1: parametric surface explorer */
-const PSURF=[
-  {label:'cylinder',tex:R`\langle 2\cos u,\,2\sin u,\,v\rangle`,r:(u,v)=>[2*Math.cos(u),2*Math.sin(u),v],
-   U:[0,2*PI],V:[-2,2],rng:3.2},
-  {label:'sphere',tex:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle`,
-   r:(u,v)=>[2*Math.sin(u)*Math.cos(v),2*Math.sin(u)*Math.sin(v),2*Math.cos(u)],U:[0,PI],V:[0,2*PI],rng:3},
-  {label:'cone',tex:R`\langle u\cos v,\,u\sin v,\,u\rangle`,r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),u],
-   U:[0,2.4],V:[0,2*PI],rng:3},
-  {label:'helicoid',tex:R`\langle u\cos v,\,u\sin v,\,v\rangle`,r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),v],
-   U:[0,2],V:[0,2*PI],rng:3.4},
-  {label:'torus',tex:R`\langle (2+\cos u)\cos v,\,(2+\cos u)\sin v,\,\sin u\rangle`,
-   r:(u,v)=>[(2+Math.cos(u))*Math.cos(v),(2+Math.cos(u))*Math.sin(v),Math.sin(u)],U:[0,2*PI],V:[0,2*PI],rng:3.4},
-  {label:'graph  z = x² − y²',tex:R`\langle u,\,v,\,u^2-v^2\rangle`,r:(u,v)=>[u,v,u*u-v*v],
-   U:[-1.6,1.6],V:[-1.6,1.6],rng:3},
-  {label:'plane',tex:R`\langle 1+u,\,v,\,2-u+v\rangle`,r:(u,v)=>[1+u,v,2-u+v],U:[-2,2],V:[-2,2],rng:3.4}
-];
-(function(){
-  const scene=new Scene3D('#pScene',{range:3.2});
-  let cur=0,u0=0,v0=0,su=null,sv=null;
-  const sel=$('#pSel');PSURF.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
-  function build(i){
-    cur=i;const P=PSURF[i];scene.o.range=P.rng;scene.o.zoom=1;
-    u0=P.U[0]+(P.U[1]-P.U[0])*0.35;v0=P.V[0]+(P.V[1]-P.V[0])*0.3;
-    const box=$('#pSliders');box.innerHTML='';
-    su=sliderRow(box,{label:'u',min:P.U[0],max:P.U[1],step:(P.U[1]-P.U[0])/60,value:u0,onInput:x=>{u0=x;draw();}});
-    sv=sliderRow(box,{label:'v',min:P.V[0],max:P.V[1],step:(P.V[1]-P.V[0])/60,value:v0,onInput:x=>{v0=x;draw();}});
-    draw();
-  }
-  function draw(){
-    const P=PSURF[cur],r=P.r;
-    scene.clear();
-    scene.param(r,P.U,P.V,{n:34,m:34,base:SURF.blue,alpha:0.22,stroke:'rgba(30,40,80,.16)'});
-    scene.curve(t=>r(u0,t),P.V[0],P.V[1],{color:'#7c3aed',width:2.2,n:160});
-    scene.curve(t=>r(t,v0),P.U[0],P.U[1],{color:'#a78bfa',width:2.2,n:160});
-    const p=r(u0,v0),ru=RU(r,u0,v0),rv=RV(r,u0,v0),n=cross(ru,rv);
-    const L=Math.max(norm(ru),norm(rv),1e-9),sc=1.3/L;
-    if(norm(ru)>1e-7)scene.vector(p,vadd(p,vscale(sc,ru)),{color:'#d97706',width:3,label:'r_u'});
-    if(norm(rv)>1e-7)scene.vector(p,vadd(p,vscale(sc,rv)),{color:'#2563eb',width:3,label:'r_v'});
-    if(norm(n)>1e-7)scene.vector(p,vadd(p,vscale(1.4/norm(n),n)),{color:'#16a34a',width:3,label:'r_u × r_v'});
-    scene.point(p,{color:'#7c3aed',r:5});
-    scene.render();
-    $('#pOut').innerHTML=`r(u, v) = <b>${fv(p)}</b><br>r<sub>u</sub> = ${fv(ru)}<br>r<sub>v</sub> = ${fv(rv)}<br>`+
-      `r<sub>u</sub> × r<sub>v</sub> = <b>${fv(n)}</b><br>|r<sub>u</sub> × r<sub>v</sub>| = <b>${fmtDec(norm(n),3)}</b>`+
-      (norm(n)<1e-6?' &nbsp;<span style="color:#dc2626">not smooth here</span>':'');
-  }
-  sel.onchange=()=>build(+sel.value);
-  build(0);
-  redrawOnShow('param',draw);
-  new Drill({mount:'#drill-param',section:'param',goal:6,
-    ...mixDrill([Q.idSurface,Q.normalPlane,Q.normalParam,Q.normalParam,Q.tangentPlane,Q.surfArea,Q.surfArea,Q.chooseParam,Q.intersectTangent,Q.spherePiece])});
-})();
-
-/* ============================================================ chapter 2: walkthrough + cell explorer */
-makeWalk('w1',()=>{
-  const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);
-  const Dv=1+a*a+b*b,zz=texLin([a,b],['u','v'],{constant:c});
-  const t1=a*p*p*q/2,t2=b*p*q*q/2,t3=c*p*q,I=t1+t2+t3;
-  return {given:`Compute ${M(R`\displaystyle\iint_S z\,dS`)} where ${M('S')} is the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}.`,
-    steps:[
-      {title:'Parametrize the surface.',
-       html:`<b>Parametrize.</b> It is a graph, so the parameters are just ${M('x')} and ${M('y')}: ${M(R`\mathbf r(u,v)=\langle u,\,v,\,${zz}\rangle`)} on ${M(`0\\le u\\le ${p},\\; 0\\le v\\le ${q}`)}.`},
-      {title:'Find the stretch factor |r_u × r_v|.',
-       html:`<b>Stretch factor.</b> ${M(R`\mathbf r_u=\langle 1,0,${a}\rangle`)}, ${M(R`\mathbf r_v=\langle 0,1,${b}\rangle`)}, so ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${-a},\,${-b},\,1\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+${a*a}+${b*b}}=\sqrt{${Dv}}`)}. It is constant, because a plane stretches the same way everywhere.`},
-      {title:'Write the integrand on the surface.',
-       html:`<b>Substitute.</b> On ${M('S')}, ${M(`z=${zz}`)}. Every ${M('z')} in the integrand is now gone: ${M(R`f(\mathbf r(u,v))=${zz}`)}.`},
-      {title:'Set up the double integral.',
-       html:`<b>Set up.</b> ${D(R`\iint_S z\,dS=\int_0^{${q}}\!\!\int_0^{${p}}\big(${zz}\big)\sqrt{${Dv}}\;du\,dv`)} The constant ${M(R`\sqrt{${Dv}}`)} pulls out front.`},
-      {title:'Evaluate.',
-       html:`<b>Evaluate.</b> ${M(R`\int_0^{${q}}\!\!\int_0^{${p}}(${zz})\,du\,dv=${a===0?'0':R`${a}\tfrac{(${p})^2}{2}(${q})`}+${b===0?'0':R`${b}(${p})\tfrac{(${q})^2}{2}`}+${c}(${p})(${q})=${texNum(I)}`)}, so the answer is ${M(R`\sqrt{${Dv}}\cdot ${texNum(I)}=${radTex(I,Dv)}\approx ${fmtDec(Math.sqrt(Dv)*I,3)}`)}.`}
-    ]};
-});
-
-const SSURF=[
-  {label:'sphere,  f = z²',tex:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle`,fTex:R`f=z^2`,
-   r:(u,v)=>[2*Math.sin(u)*Math.cos(v),2*Math.sin(u)*Math.sin(v),2*Math.cos(u)],f:p=>p[2]*p[2],U:[0,PI],V:[0,2*PI],rng:3},
-  {label:'cylinder,  f = z',tex:R`\langle 2\cos u,\,2\sin u,\,v\rangle`,fTex:R`f=z`,
-   r:(u,v)=>[2*Math.cos(u),2*Math.sin(u),v],f:p=>p[2],U:[0,2*PI],V:[0,3],rng:3.2},
-  {label:'plane,  f = x + y + z',tex:R`\langle u,\,v,\,3-u-v\rangle`,fTex:R`f=x+y+z`,
-   r:(u,v)=>[u,v,3-u-v],f:p=>p[0]+p[1]+p[2],U:[0,2],V:[0,2],rng:3.2}
-];
-(function(){
-  const scene=new Scene3D('#sScene',{range:3,azim:-58,elev:22});
-  let cur=0,u0=0,v0=0,frac=0.18,lo=0,hi=1;
-  const sel=$('#sSel');SSURF.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
-  function build(i){
-    cur=i;const P=SSURF[i];scene.o.range=P.rng;scene.o.zoom=1;
-    lo=Infinity;hi=-Infinity;
-    for(let a=0;a<=20;a++)for(let b=0;b<=20;b++){const w=P.f(P.r(P.U[0]+(P.U[1]-P.U[0])*a/20,P.V[0]+(P.V[1]-P.V[0])*b/20));if(w<lo)lo=w;if(w>hi)hi=w;}
-    if(hi-lo<1e-9)hi=lo+1;
-    u0=P.U[0]+(P.U[1]-P.U[0])*0.3;v0=P.V[0]+(P.V[1]-P.V[0])*0.25;
-    const box=$('#sSliders');box.innerHTML='';
-    sliderRow(box,{label:'u',min:P.U[0],max:P.U[1]-(P.U[1]-P.U[0])*frac,step:(P.U[1]-P.U[0])/60,value:u0,onInput:x=>{u0=x;draw();}});
-    sliderRow(box,{label:'v',min:P.V[0],max:P.V[1]-(P.V[1]-P.V[0])*frac,step:(P.V[1]-P.V[0])/60,value:v0,onInput:x=>{v0=x;draw();}});
-    draw();
-  }
-  const mixCol=(t,sh)=>{const c0=[59,91,219],c1=[217,119,6];const c=c0.map((x,k)=>x+(c1[k]-x)*clamp(t,0,1));
-    return `rgba(${c.map(x=>Math.round(x*sh+255*(1-sh)*0.45)).join(',')},0.85)`;};
-  function draw(){
-    const P=SSURF[cur],r=P.r;
-    const du=(P.U[1]-P.U[0])*frac,dv=(P.V[1]-P.V[0])*frac;
-    scene.clear();
-    scene.param(r,P.U,P.V,{n:30,m:30,colorFn:(p,sh)=>mixCol((P.f(p)-lo)/(hi-lo),sh),stroke:'rgba(30,40,80,.10)'});
-    const corners=[[u0,v0],[u0+du,v0],[u0+du,v0+dv],[u0,v0+dv],[u0,v0]];
-    scene.polyline(corners.map(([u,v])=>r(u,v)),{color:'#7c3aed',width:3.4});
-    const p=r(u0,v0),ru=RU(r,u0,v0),rv=RV(r,u0,v0),n=cross(ru,rv);
-    scene.vector(p,vadd(p,vscale(du,ru)),{color:'#d97706',width:3});
-    scene.vector(p,vadd(p,vscale(dv,rv)),{color:'#2563eb',width:3});
-    scene.point(p,{color:'#7c3aed',r:4});
-    scene.render();
-    const cell=du*dv,str=norm(n),patch=str*cell,fval=P.f(p);
-    $('#sOut').innerHTML=`Δu Δv = ${fmtDec(du,3)} × ${fmtDec(dv,3)} = <b>${fmtDec(cell,4)}</b> &nbsp;(flat parameter cell)<br>`+
-      `|r<sub>u</sub> × r<sub>v</sub>| = <b>${fmtDec(str,3)}</b> &nbsp;(stretch factor here)<br>`+
-      `patch area ≈ |r<sub>u</sub> × r<sub>v</sub>| Δu Δv = <b>${fmtDec(patch,4)}</b><br>`+
-      `f at this point = ${fmtDec(fval,3)} → contribution f·dS ≈ <b>${fmtDec(fval*patch,4)}</b><br>`+
-      `total ∫∫ f dS ≈ ${fmtDec(scalarNum(P.f,r,P.U,P.V),3)}, &nbsp; area ≈ ${fmtDec(areaNum(r,P.U,P.V),3)}`;
-  }
-  function scalarNum(f,r,U,V,n=40){let s=0;const du=(U[1]-U[0])/n,dv=(V[1]-V[0])/n;
-    for(let i=0;i<n;i++)for(let j=0;j<n;j++){const u=U[0]+(i+0.5)*du,v=V[0]+(j+0.5)*dv;const w=f(r(u,v))*norm(NRM(r,u,v));if(Number.isFinite(w))s+=w*du*dv;}return s;}
-  sel.onchange=()=>build(+sel.value);
-  build(0);
-  redrawOnShow('scalar',draw);
-  new Drill({mount:'#drill-scalar',section:'scalar',goal:5,
-    ...mixDrill([Q.scalarPlane,Q.scalarPlane,Q.scalarSphere,Q.scalarSphere,Q.scalarCylinder,Q.scalarMass,Q.funnelMass])});
-})();
-
-/* ============================================================ chapter 3: walkthrough + flux explorer */
+/* ============================================================ chapter 1: walkthrough + flux explorer */
 makeWalk('w2',()=>{
   const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);
   const A=pick([1,2,-1]),B=pick([1,2,-1]),C=pick([1,2,3]);
@@ -1223,7 +968,108 @@ const FFLD=[
     ...mixDrill([Q.fluxPlane,Q.fluxPlane,Q.fluxSphere,Q.fluxCylinder,Q.fluxCube,Q.fluxOrient,Q.fluxSign])});
 })();
 
-/* ============================================================ chapter 4: walkthrough + Stokes explorer */
+/* ============================================================ chapter 2 widgets */
+(function(){
+  /* ---------- walkthrough: the curl determinant ---------- */
+  let F3=null,step=0;
+  function newF(){
+    let f,n=0;
+    do{f=polyField3(Math.random()<0.65?1:2);n++;}while(f.curlTex.every(t=>t==='0')&&n<20);
+    F3=f;step=0;drawC();
+  }
+  function drawC(){
+    const box=$('#clMats');box.innerHTML='';
+    const col=step>=1&&step<=3?step-1:-1;
+    const rows=[[R`\mathbf{i}`,R`\mathbf{j}`,R`\mathbf{k}`],
+      [R`\dfrac{\partial}{\partial x}`,R`\dfrac{\partial}{\partial y}`,R`\dfrac{\partial}{\partial z}`],
+      F3.Ftex];
+    const mat=renderMat(rows,{cls:'det',fmt:v=>M(v),
+      cellClass:(i,j)=>{if(col<0)return '';if(j===col)return i===0?'hl-cell':'dim';return i===0?'':(i===1?'hl-row':'hl-col');}});
+    box.appendChild(opRow([M(R`\operatorname{curl}\mathbf{F}=`),mat]));
+    const head=[R`\left(\frac{\partial R}{\partial y}-\frac{\partial Q}{\partial z}\right)\mathbf{i}`,
+      R`\left(\frac{\partial P}{\partial z}-\frac{\partial R}{\partial x}\right)\mathbf{j}`,
+      R`\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\mathbf{k}`];
+    const basis=[R`\mathbf{i}`,R`\mathbf{j}`,R`\mathbf{k}`];
+    const pairs=[[F3.pd[0],F3.pd[1]],[F3.pd[2],F3.pd[3]],[F3.pd[4],F3.pd[5]]];
+    const lines=head.map((h,i)=>{
+      const on=step>=i+1;const sign=i===0?'':'+';
+      const body=on?` = ${M(R`\left(${pairs[i][0]}\right)-\left(${pairs[i][1]}\right)`)} = ${M(R`\left(${F3.curlTex[i]}\right)${basis[i]}`)}`:'';
+      return `<span class="${on?'':'faint'}">${sign} <span class="t ${i===step-1?'now':''} ${i===0?'a':i===1?'b':'c'}">${M(h)}</span>${body}</span>`;});
+    $('#clExpr').innerHTML=lines.join('<br>')
+      +(step>=4?`<br><span class="t c now">${M(R`\operatorname{curl}\mathbf{F}=\left\langle ${F3.curlTex.join(',\\; ')}\right\rangle`)}</span>`:'');
+    const st=['Cover one basis vector’s column at a time. Start with i.',
+      'i-component: cover the i column. What is left is R_y − Q_z.',
+      'j-component: cover the j column. The top-row sign is minus, which flips this one to P_z − R_x.',
+      'k-component: cover the k column. Plus sign again, so Q_x − P_y.',
+      'Collect the three components.'];
+    $('#clStatus').textContent=st[step];
+    $('#clPrev').disabled=step===0;$('#clNext').disabled=step===4;
+    typeset(box);typeset($('#clExpr'));
+  }
+  $('#clNext').onclick=()=>{step=Math.min(4,step+1);drawC();};
+  $('#clPrev').onclick=()=>{step=Math.max(0,step-1);drawC();};
+  $('#clNew').onclick=newF;
+  newF();
+
+  /* ---------- explore: the paddle wheel ---------- */
+  const CF=[
+    {tex:R`\langle -y,\;x\rangle`,F:(x,y)=>[-y,x]},
+    {tex:R`\langle x,\;y\rangle`,F:(x,y)=>[x,y]},
+    {tex:R`\langle -x,\;-y\rangle`,F:(x,y)=>[-x,-y]},
+    {tex:R`\langle y,\;0\rangle`,F:(x,y)=>[y,0]},
+    {tex:R`\langle x,\;-y\rangle`,F:(x,y)=>[x,-y]},
+    {tex:R`\langle x-y,\;x+y\rangle`,F:(x,y)=>[x-y,x+y]},
+    {tex:R`\langle \sin y,\;\cos x\rangle`,F:(x,y)=>[Math.sin(y),Math.cos(x)]}
+  ];
+  const p=new Plot2D('#cdCanvas',{xmin:-3,xmax:3,ymin:-3,ymax:3});
+  let ci=0,pt=[1.2,0.8];
+  const H=1e-4;
+  const curl2=(F,x,y)=>((F(x+H,y)[1]-F(x-H,y)[1])-(F(x,y+H)[0]-F(x,y-H)[0]))/(2*H);
+  const div2=(F,x,y)=>((F(x+H,y)[0]-F(x-H,y)[0])+(F(x,y+H)[1]-F(x,y-H)[1]))/(2*H);
+
+  function paddle(x,y,c){
+    const ctx=p.ctx;const [cx,cy]=p.px(x,y);const Rr=27;
+    ctx.save();ctx.setLineDash([]);
+    ctx.strokeStyle='rgba(124,58,237,.35)';ctx.lineWidth=1.4;
+    for(let k=0;k<4;k++){const a=k*Math.PI/2+0.4;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Rr*Math.cos(a),cy+Rr*Math.sin(a));ctx.stroke();}
+    ctx.strokeStyle=PURPLE;ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,Rr,0,Math.PI*2);ctx.stroke();
+    if(Math.abs(c)>1e-6){
+      const r2=Rr*0.62;const sweep=Math.PI*(0.6+0.7*clamp(Math.abs(c)/3,0,1));
+      const ccw=c>0;                          /* world counterclockwise */
+      const phi0=-0.6,phi1=phi0+(ccw?-sweep:sweep);   /* canvas y points down, so angles run the other way */
+      ctx.strokeStyle=ccw?BLUE:ORANGE;ctx.lineWidth=2.6;
+      ctx.beginPath();ctx.arc(cx,cy,r2,phi0,phi1,ccw);ctx.stroke();
+      const e=phi1+(ccw?-0.001:0.001);
+      p._head(cx+r2*Math.cos(phi1),cy+r2*Math.sin(phi1),cx+r2*Math.cos(e+(ccw?-0.18:0.18)),cy+r2*Math.sin(e+(ccw?-0.18:0.18)),ccw?BLUE:ORANGE,9);
+    }
+    ctx.restore();
+  }
+  function draw(){
+    const f=CF[ci];
+    p.begin();
+    p.field(f.F,{step:0.45,scale:0.2,color:GRAY,width:1.2});
+    const c=curl2(f.F,pt[0],pt[1]),d=div2(f.F,pt[0],pt[1]);
+    paddle(pt[0],pt[1],c);
+    p.point(pt,{color:PURPLE,r:4});
+    const spin=c>0.05?'spins counterclockwise':(c<-0.05?'spins clockwise':'does not rotate');
+    const flow=d>0.05?'expanding, a source':(d<-0.05?'compressing, a sink':'no expansion, incompressible here');
+    $('#cdOut').innerHTML=
+      `point = (${fmtDec(pt[0],2)}, ${fmtDec(pt[1],2)}) &nbsp; F = (${fmtDec(f.F(pt[0],pt[1])[0],2)}, ${fmtDec(f.F(pt[0],pt[1])[1],2)})<br>`
+     +`<span style="color:${c>0.05?BLUE:(c<-0.05?ORANGE:'inherit')}">scalar curl &nbsp;Q<sub>x</sub> − P<sub>y</sub> = <b>${fmtDec(c,2)}</b></span> &nbsp;→ the wheel ${spin}<br>`
+     +`<span style="color:${d>0.05?BLUE:(d<-0.05?ORANGE:'inherit')}">divergence &nbsp;P<sub>x</sub> + Q<sub>y</sub> = <b>${fmtDec(d,2)}</b></span> &nbsp;→ ${flow}<br>`
+     +`angular speed = |curl| / 2 = ${fmtDec(Math.abs(c)/2,2)}`;
+  }
+  const fBox=$('#cdFields');
+  CF.forEach((f,i)=>{const b=el('button',{class:'btn small'},M(f.tex));b.onclick=()=>{ci=i;$$('.btn',fBox).forEach((x,k)=>x.classList.toggle('on',k===i));draw();};fBox.appendChild(b);});
+  $$('.btn',fBox)[0].classList.add('on');typeset(fBox);
+  p.on('move',w=>{pt=[clamp(w[0],-2.7,2.7),clamp(w[1],-2.7,2.7)];draw();});
+  redrawOnShow('curl',draw);draw();
+
+  new Drill({mount:'#drill-curl',section:'curl',goal:6,
+    ...mixDrill([Q.curlCompute,Q.curlCompute,Q.divCompute,Q.divCompute,Q.conservative,Q.signPicture,Q.curl2D,Q.identity])});
+})();
+
+/* ============================================================ chapter 3: walkthrough + Stokes explorer */
 makeWalk('w3',()=>{
   const it=pick(CCURL);const a=rint(1,3),c=rint(-2,3);const val=it.c[2]*PI*a*a;
   return {given:`Compute ${M(R`\displaystyle\oint_C\mathbf F\cdot d\mathbf r`)} for ${M(R`\mathbf F=`+it.F)}, where ${M('C')} is the circle ${M(`x^2+y^2=${a*a}`)} in the plane ${M(`z=${c}`)}, counterclockwise seen from above.`,
@@ -1289,7 +1135,7 @@ const KFLD=[
     ...mixDrill([Q.stokesLine,Q.stokesLine,Q.stokesSurf,Q.curlFlux,Q.stokesOrient,Q.stokesPolygon])});
 })();
 
-/* ============================================================ chapter 5: divergence explorer */
+/* ============================================================ chapter 4: divergence explorer */
 const DSOLID=[
   {label:'box  −1 ≤ x, y, z ≤ 1',vol:8,rng:3,inside:p=>Math.abs(p[0])<=1&&Math.abs(p[1])<=1&&Math.abs(p[2])<=1,box:[[-1,1],[-1,1],[-1,1]],
    patches:[{r:(u,v)=>[1,u,v],U:[-1,1],V:[-1,1]},{r:(u,v)=>[-1,v,u],U:[-1,1],V:[-1,1]},
@@ -1348,44 +1194,38 @@ const DFLD=[
 
 /* ============================================================ quiz */
 makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
-  Q.idSurface,Q.normalParam,Q.tangentPlane,Q.surfArea,Q.scalarPlane,Q.scalarSphere,
-  Q.fluxPlane,Q.fluxSphere,Q.stokesLine,Q.curlFlux,Q.divSphere,Q.whichTheorem,
-  Q.intersectTangent,Q.spherePiece,Q.fluxSign,Q.stokesPolygon]});
+  Q.fluxPlane,Q.fluxSphere,Q.fluxSign,
+  Q.curlCompute,Q.divCompute,Q.conservative,Q.signPicture,Q.curl2D,Q.identity,
+  Q.stokesLine,Q.curlFlux,Q.stokesPolygon,
+  Q.divSphere,Q.whichTheorem]});
 
 /* ============================================================ test hook */
 window.__solvers={
-  'identify the surface':q=>({_btn:q.ai}),
-  'normal vector to a parametrized plane':q=>({n:'<'+q.n.join(',')+'>'}),
-  'cross product r_u x r_v':q=>({n:q.ans}),
-  'tangent plane to a parametric surface':q=>({p:q.ans}),
-  'surface area':q=>({a:String(q.val)}),
-  'choose the parametrization':q=>({_btn:q.ai}),
-  'surface integral over a plane piece':q=>({v:String(q.val)}),
-  'surface integral over a sphere':q=>({v:String(q.val)}),
-  'surface integral over a cylinder':q=>({v:String(q.val)}),
-  'mass of a thin sheet':q=>({m:String(q.val)}),
   'flux through a plane piece':q=>({v:String(q.val)}),
   'flux through a sphere':q=>({v:String(q.val)}),
   'flux through a cylinder':q=>({v:String(q.val)}),
   'flux through a cube':q=>({v:String(q.val)}),
   'orientation and the sign of flux':q=>q.mode==='num'?{v:String(q.val)}:{_btn:q.ai},
+  'sign of a flux without computing it':q=>({_btn:q.ai}),
+  'curl of a vector field':q=>({cu:'<'+q.curlStr.join(', ')+'>'}),
+  'divergence of a vector field':q=>({dv:q.divStr}),
+  'conservative by the curl test':q=>({_btn:q.yes?0:1}),
+  'curl and divergence signs from a picture':q=>({_btn:q.ci,_btn1:q.di}),
+  'scalar curl in the plane':q=>({g:q.gstr}),
+  'vector identities':q=>({_btn:q.ansIdx}),
   'Stokes: a line integral from a flat surface':q=>({v:String(q.val)}),
   'Stokes: a surface integral from the boundary':q=>({v:String(q.val)}),
   'curl and its flux through a disk':q=>({c:q.it.ans,v:String(q.val)}),
   'compatible orientation':q=>({_btn:q.ai}),
+  'Stokes on a flat polygon':q=>({v:String(q.ans)}),
   'divergence theorem: a box':q=>({v:String(q.val)}),
   'divergence theorem: a sphere':q=>({v:String(q.val)}),
   'divergence theorem: a cylinder':q=>({v:String(q.val)}),
   'which theorem applies':q=>({_btn:q.ai}),
-  'what zero divergence means':q=>({_btn:q.ai}),
-  'tangent line where two surfaces meet':q=>({L:'<'+q.P.map((x,i)=>x+'+('+q.v[i]+')t').join(',')+'>'}),
-  'a piece of a sphere: bounds and area':q=>({p1:String(q.p1),p2:String(q.p2),t1:String(q.t1),t2:String(q.t2),A:String(q.area)}),
-  'mass of a funnel':q=>({m:String(q.val)}),
-  'sign of a flux without computing it':q=>({_btn:q.ai}),
-  'Stokes on a flat polygon':q=>({v:String(q.ans)})
+  'what zero divergence means':q=>({_btn:q.ai})
 };
 
-initModule({key:'surfaces',title:'Surface Integrals, Stokes, Divergence Theorem',sub:'Module 11 · Stewart 16.6 to 16.9',hub:'math212.html'});
+initModule({key:'flux-stokes-div',title:'Flux, Curl, Stokes, and the Divergence Theorem',sub:'Module 11 · Stewart 16.5, 16.7 to 16.9',hub:'math212.html'});
 </script>
 </body>
 </html>

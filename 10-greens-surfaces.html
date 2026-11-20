@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Green's Theorem and Parametric Surfaces</title>
+<link rel="stylesheet" href="assets/study.css">
+<link rel="stylesheet" href="assets/mathquill/mathquill.css">
+<script src="assets/jquery.min.js"></script>
+<script src="assets/mathquill/mathquill.min.js"></script>
+<script src="assets/study.js"></script>
+<script src="assets/webassign-data.js"></script>
+<script src="assets/mathjax-tex-svg.js"></script>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="nav"></nav>
+<main>
+
+<!-- ============================================================ 1 GREEN -->
+<section data-id="green" data-title="Green's theorem" data-goal="6">
+  <p class="eyebrow">Chapter 1 · Stewart 16.4</p>
+  <h2>Green's theorem</h2>
+  <p class="lead">A line integral around a closed curve equals a double integral over the region the curve encloses. Ugly boundary, nice region: use the region.</p>
+
+  <p>Let \(C\) be a <b>positively oriented</b>, piecewise-smooth, <b>simple closed</b> curve in the plane, and let \(D\) be the region it bounds. If \(P\) and \(Q\) have continuous partial derivatives on an open set containing \(D\), then:</p>
+
+  <div class="formula">\(\displaystyle\oint_C P\,dx+Q\,dy=\iint_D\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)dA\)<span class="cap">Read it right to left too: the double integral of \(Q_x-P_y\) over a region equals the loop integral around its edge. Both sides are written \(\oint_C \mathbf{F}\cdot d\mathbf{r}\) when \(\mathbf{F}=\langle P,Q\rangle\).</span></div>
+
+  <p><b>Positive orientation</b> means counterclockwise: as you walk along \(C\), the region \(D\) stays on your <b>left</b>. <b>Simple</b> means the curve does not cross itself. <b>Closed</b> means it ends where it started. Stewart writes \(\oint\) for a line integral around a positively oriented closed curve.</p>
+
+  <h3>When to reach for it</h3>
+  <ul>
+    <li>The boundary is made of several pieces (three sides of a triangle, an arc plus a segment) but the region is a single easy double integral.</li>
+    <li>\(Q_x-P_y\) collapses to something simple: a constant, or \(x^2+y^2\), which polar coordinates eat instantly.</li>
+    <li>You want an <b>area</b> and you only know the boundary curve.</li>
+  </ul>
+
+  <p>That last one comes from choosing \(P\) and \(Q\) so that \(Q_x-P_y=1\). Three standard choices give three formulas for the same number:</p>
+  <div class="formula">\(A=\oint_C x\,dy=-\oint_C y\,dx=\tfrac12\oint_C x\,dy-y\,dx\)<span class="cap">Take \(\langle P,Q\rangle=\langle 0,x\rangle\), then \(\langle -y,0\rangle\), then the average of the two. The symmetric third form is the one to use on a parametrized curve.</span></div>
+
+  <p>On a curve given by \(x=x(t)\), \(y=y(t)\) for \(a\le t\le b\), that last formula reads \(A=\tfrac12\int_a^b\left(x\,y'-y\,x'\right)dt\).</p>
+
+  <h3>Orientation and holes</h3>
+  <p>Reversing the direction of travel reverses the sign of every line integral: if \(C\) is positively oriented and \(-C\) is the same curve clockwise, then \(\oint_{-C}\mathbf{F}\cdot d\mathbf{r}=-\oint_{C}\mathbf{F}\cdot d\mathbf{r}\). So a clockwise problem is a counterclockwise problem with a minus sign in front.</p>
+  <p>If \(D\) has a hole, the full boundary is the outer curve <b>counterclockwise</b> plus each inner curve <b>clockwise</b>, so that the region is on your left the whole way around. Green's theorem still holds with that combined boundary, which is how you handle \(\mathbf{F}=\left\langle \frac{-y}{x^2+y^2},\frac{x}{x^2+y^2}\right\rangle\): cut out a small circle about the origin and compare the two loops.</p>
+
+  <div class="warn"><b>Check the hypotheses first.</b> Green's theorem needs a <b>closed</b> curve with <b>positive</b> orientation, and \(P,Q\) must have continuous partials on all of \(D\), holes included. An open arc gets no \(\oint\) until you close it off, which is the next trick. A clockwise loop needs a minus sign. A field that blows up inside \(D\) (like \(1/(x^2+y^2)\) at the origin) is not covered until you cut the bad point out.</div>
+
+  <h3>Closing an open path</h3>
+  <p>Green's theorem only speaks about closed curves, but you can still use it on an open path \(C\). Add a segment \(L\) from the end of \(C\) back to its start. Now \(C\) followed by \(L\) is a closed loop around a region \(D\), so</p>
+  <div class="formula">\(\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}=\pm\iint_D\left(Q_x-P_y\right)dA-\int_L\mathbf{F}\cdot d\mathbf{r}\)<span class="cap">Plus if \(C\) then \(L\) runs counterclockwise around \(D\), minus if it runs clockwise. You trade one hard line integral for a double integral and one easy segment.</span></div>
+  <p>Pick \(L\) along a line where \(\mathbf{F}\) simplifies. On a horizontal segment \(dy=0\) and \(y\) is a constant, so only \(P\) matters, and any messy \(Q\) (like \(e^{y^2}\)) never has to be integrated. That is usually the whole reason the problem gave you a \(Q\) you cannot integrate.</p>
+  <p>Example: \(\mathbf{F}=\langle x^2+3y,\;e^{y^2}+5x\rangle\), and \(C\) is three sides of the square \([0,2]\times[0,2]\), running from \((0,2)\) down to \((0,0)\), right to \((2,0)\), then up to \((2,2)\).</p>
+  <ol class="steps">
+    <li>\(Q_x-P_y=5-3=2\), a constant.</li>
+    <li>Close with \(L\), the top edge from \((2,2)\) back to \((0,2)\). Walking down the left side, the square is on your left, so \(C\) then \(L\) is counterclockwise. The double integral is \(+2\cdot\operatorname{area}=+2\cdot 4=8\).</li>
+    <li>On \(L\), \(y=2\) and \(dy=0\), so \(\displaystyle\int_L\mathbf{F}\cdot d\mathbf{r}=\int_2^0\left(x^2+6\right)dx=-\left(\tfrac83+12\right)=-\tfrac{44}{3}\).</li>
+    <li>\(\displaystyle\int_C\mathbf{F}\cdot d\mathbf{r}=8-\left(-\tfrac{44}{3}\right)=\tfrac{68}{3}\).</li>
+  </ol>
+
+  <div class="warn"><b>Walk the loop before you write ±area.</b> Decide the direction of the closed loop \(C+L\), not of \(C\) alone. A path listed by its vertices hides the direction: \((0,0)\to(0,3)\to(2,0)\to(0,0)\) goes up the \(y\)-axis first, which puts the triangle on your right, so it is clockwise and Green's theorem picks up a minus sign. Losing that sign is the most common way to get these problems wrong.</div>
+
+  <div class="card">
+    <h4>Step by step: Green's theorem on a rectangle</h4>
+    <div class="expr" id="gwHead"></div>
+    <ol class="steps" id="gwSteps"></ol>
+    <div class="controls">
+      <button class="btn" id="gwPrev">◀ Back</button>
+      <button class="btn primary" id="gwNext">Next step ▶</button>
+      <button class="btn" id="gwNew">New problem</button>
+      <span class="status" id="gwStatus"></span>
+    </div>
+    <p class="hint">Notice how much of \(P\) and \(Q\) never matters. Any term of \(P\) with no \(y\) in it dies under \(\partial/\partial y\), and any term of \(Q\) with no \(x\) in it dies under \(\partial/\partial x\). Those terms are free.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: both sides of the equation</h4>
+    <div class="xf">
+      <div>
+        <canvas class="scene" id="gCanvas"></canvas>
+        <p class="plotcap">The shaded color is \(Q_x-P_y\) inside \(D\) only: <span style="color:var(--b)"><b>blue</b></span> where it is positive, <span style="color:var(--a)"><b>orange</b></span> where it is negative. Gray arrows are \(\mathbf{F}\). The purple dot walks the boundary.</p>
+      </div>
+      <div>
+        <div class="given"><b>Region D</b></div>
+        <div class="presets" id="gRegions"></div>
+        <div class="given"><b>Field F</b></div>
+        <div class="presets" id="gFields"></div>
+        <div class="controls"><label class="chk"><input type="checkbox" id="gCW"> traverse C clockwise</label></div>
+        <div class="readout" id="gOut"></div>
+        <p class="hint">Try every region with \(\mathbf{F}=\langle -y,x\rangle\): the integrand is the constant 2, so the loop integral is always twice the area. Then switch to \(\langle x^2,y^2\rangle\), where \(Q_x-P_y=0\): the shading vanishes and both sides read zero for every region. Tick <b>clockwise</b> and watch only the left side flip sign.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>The shortcut worth memorizing.</b> If \(Q_x-P_y\) is a constant \(k\), you do not need to integrate anything: \(\oint_C P\,dx+Q\,dy=k\cdot\operatorname{area}(D)\). The field \(\langle -y,x\rangle\) has \(k=2\), which is why \(\oint_C -y\,dx+x\,dy\) is always twice the enclosed area.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-green"></div>
+</section>
+
+<!-- ============================================================ 2 PARAMETRIC SURFACES -->
+<section data-id="param" data-title="Parametric surfaces and surface area" data-goal="6">
+  <p class="eyebrow">Chapter 2 · Stewart 16.6</p>
+  <h2>Parametric surfaces and surface area</h2>
+  <p class="lead">A curve needs one parameter. A surface needs two. Everything else follows from that one fact.</p>
+
+  <p>A <b>parametric surface</b> is a vector function of two variables,</p>
+  <div class="formula">\(\mathbf{r}(u,v)=\langle x(u,v),\,y(u,v),\,z(u,v)\rangle,\qquad (u,v)\in D\)<span class="cap">\(D\) is the <b>parameter domain</b>, a flat region in the \(uv\)-plane. The surface \(S\) is the image of \(D\).</span></div>
+  <p>Freezing one parameter gives a <b>grid curve</b>. Fix \(u=u_0\) and let \(v\) run: you get a curve lying in \(S\). Fix \(v=v_0\) and let \(u\) run: another curve. The two families of grid curves are the mesh you see drawn on every surface picture.</p>
+
+  <h3>The parametrizations you should know cold</h3>
+  <div class="card tint">
+    <table class="simple">
+      <tr><th>Surface</th><th>Parametrization</th><th>Domain</th></tr>
+      <tr><td>Plane through \(P\) spanned by \(\mathbf{a},\mathbf{b}\)</td><td>\(\mathbf{r}=\mathbf{p}+u\,\mathbf{a}+v\,\mathbf{b}\)</td><td>\(u,v\in\mathbb{R}\)</td></tr>
+      <tr><td>Graph \(z=f(x,y)\)</td><td>\(\mathbf{r}=\langle x,\,y,\,f(x,y)\rangle\)</td><td>\((x,y)\in D\)</td></tr>
+      <tr><td>Cylinder \(x^2+y^2=a^2\)</td><td>\(\mathbf{r}=\langle a\cos u,\,a\sin u,\,v\rangle\)</td><td>\(0\le u\le 2\pi\)</td></tr>
+      <tr><td>Sphere of radius \(a\)</td><td>\(\mathbf{r}=\langle a\sin\phi\cos\theta,\,a\sin\phi\sin\theta,\,a\cos\phi\rangle\)</td><td>\(0\le\phi\le\pi,\ 0\le\theta\le 2\pi\)</td></tr>
+      <tr><td>Cone \(z=\sqrt{x^2+y^2}\)</td><td>\(\mathbf{r}=\langle u\cos v,\,u\sin v,\,u\rangle\)</td><td>\(u\ge 0,\ 0\le v\le 2\pi\)</td></tr>
+      <tr><td>Revolving \(y=f(x)\), \(a\le x\le b\), about the \(x\)-axis</td><td>\(\mathbf{r}=\langle u,\,f(u)\cos v,\,f(u)\sin v\rangle\)</td><td>\(a\le u\le b,\ 0\le v\le 2\pi\)</td></tr>
+    </table>
+    <p class="hint">Pattern: whenever a circle is involved, one parameter is the angle. Whenever the surface is a graph, the two parameters are just \(x\) and \(y\).</p>
+  </div>
+
+  <h3>Tangent vectors and the normal</h3>
+  <p>Differentiate along each grid curve:</p>
+  <div class="formula">\(\mathbf{r}_u=\left\langle \dfrac{\partial x}{\partial u},\dfrac{\partial y}{\partial u},\dfrac{\partial z}{\partial u}\right\rangle,\qquad \mathbf{r}_v=\left\langle \dfrac{\partial x}{\partial v},\dfrac{\partial y}{\partial v},\dfrac{\partial z}{\partial v}\right\rangle\)<span class="cap">\(\mathbf{r}_u\) is tangent to the curve where \(v\) is frozen; \(\mathbf{r}_v\) is tangent to the curve where \(u\) is frozen. Both are tangent to \(S\).</span></div>
+  <p>Two tangent vectors determine the tangent plane, and their cross product is perpendicular to it:</p>
+  <div class="formula">\(\mathbf{n}=\mathbf{r}_u\times\mathbf{r}_v\)<span class="cap">The normal vector. The surface is <b>smooth</b> where \(\mathbf{r}_u\times\mathbf{r}_v\neq\mathbf{0}\). The tangent plane at \(\mathbf{r}(u_0,v_0)\) is the plane through that point with this normal.</span></div>
+  <p>For a graph \(\mathbf{r}=\langle u,v,f(u,v)\rangle\) this collapses to something worth memorizing: \(\mathbf{r}_u=\langle 1,0,f_u\rangle\), \(\mathbf{r}_v=\langle 0,1,f_v\rangle\), so</p>
+  <div class="formula">\(\mathbf{r}_u\times\mathbf{r}_v=\langle -f_u,\,-f_v,\,1\rangle\)<span class="cap">The \(z\)-component is \(+1\), so this normal always points <b>upward</b>. You will use it constantly in the flux chapter of Module 11.</span></div>
+
+  <h3>Where two surfaces meet</h3>
+  <p>Two surfaces that cross meet in a curve. That curve lies in both surfaces, so its tangent direction is perpendicular to both normals. For a level surface \(G(x,y,z)=c\) the normal is \(\nabla G\); for a parametric surface it is \(\mathbf r_u\times\mathbf r_v\). So a direction vector for the tangent line is their cross product:</p>
+  <div class="formula">\(\mathbf{v}=\nabla G(P)\times\left(\mathbf r_u\times\mathbf r_v\right)(u_0,v_0)\)<span class="cap">Find the \((u_0,v_0)\) that lands on \(P\) first; then the line is \(P+t\,\mathbf v\).</span></div>
+
+  <div class="card">
+    <h4>Explore: grid curves, \(\mathbf{r}_u\), \(\mathbf{r}_v\), and \(\mathbf{r}_u\times\mathbf{r}_v\)</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="pScene"></canvas><p class="plotcap">Drag to rotate, scroll to zoom. Purple curves are the two grid curves through the marked point. Arrows are drawn to a common scale, not to true length.</p></div>
+      <div>
+        <div class="controls"><select id="pSel"></select></div>
+        <div class="sliders" id="pSliders"></div>
+        <div class="readout" id="pOut"></div>
+        <p class="hint">Put the point on the sphere's north pole (\(u=0\)): \(\mathbf{r}_v\) collapses to zero and the normal dies with it, which is why the sphere's parametrization is not smooth at the poles. On the cone, do the same at \(u=0\): the vertex is the one bad point. On the helicoid, notice \(|\mathbf{r}_u\times\mathbf{r}_v|=\sqrt{1+u^2}\) grows as you move out along the ramp.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>The normal is not unique.</b> Swapping the roles of \(u\) and \(v\) reverses the cross product: \(\mathbf{r}_v\times\mathbf{r}_u=-(\mathbf{r}_u\times\mathbf{r}_v)\). For area it makes no difference, because area uses the length. For flux it flips the sign of the answer, so once you reach flux in Module 11 you must check which way your normal points.</div>
+
+  <h3>Surface area</h3>
+  <p>A small rectangle \(\Delta u\times\Delta v\) in the parameter domain maps to a small patch on \(S\) that is almost the parallelogram spanned by \(\mathbf{r}_u\,\Delta u\) and \(\mathbf{r}_v\,\Delta v\). The area of that parallelogram is \(|\mathbf{r}_u\times\mathbf{r}_v|\,\Delta u\,\Delta v\). Add up and take the limit:</p>
+  <div class="formula">\(A(S)=\displaystyle\iint_D |\mathbf{r}_u\times\mathbf{r}_v|\,dA\)<span class="cap">\(|\mathbf{r}_u\times\mathbf{r}_v|\) is the <b>stretch factor</b>: how much area the map from \(D\) to \(S\) creates at each point.</span></div>
+  <p>For a graph \(z=f(x,y)\), \(|\langle -f_x,-f_y,1\rangle|=\sqrt{1+f_x^2+f_y^2}\), which gives the version you have probably seen first:</p>
+  <div class="formula">\(A(S)=\displaystyle\iint_D \sqrt{1+f_x^2+f_y^2}\;dA\)</div>
+
+  <div class="warn"><b>Do not integrate over the surface's shadow and forget the stretch.</b> \(dA\) is area in the parameter domain; \(dS=|\mathbf{r}_u\times\mathbf{r}_v|\,dA\) is area on the surface. Dropping that factor is the single most common error in this chapter, and it always makes the answer too small.</div>
+
+  <h3>Pieces of a sphere</h3>
+  <p>On the sphere \(x^2+y^2+z^2=a^2\), use \(\phi\) and \(\theta\). Since \(z=a\cos\phi\), a cut \(z\ge h\) becomes \(0\le\phi\le\phi_0\) with \(\cos\phi_0=h/a\), and \(z\le h\) becomes \(\phi_0\le\phi\le\pi\). Sign conditions on \(x\) and \(y\) choose the \(\theta\) interval: \(x\ge 0\) and \(y\ge 0\) is \(0\) to \(\pi/2\), \(x\le 0\) and \(y\ge 0\) is \(\pi/2\) to \(\pi\), and so on around the circle. Since \(|\mathbf r_\phi\times\mathbf r_\theta|=a^2\sin\phi\), the area is a product of two easy integrals:</p>
+  <div class="formula">\(A=a^2\,(\theta_2-\theta_1)\,(\cos\phi_1-\cos\phi_2)\)<span class="cap">The \(\theta\) integral is the length of the \(\theta\) interval. The \(\phi\) integral is \(\int_{\phi_1}^{\phi_2}\sin\phi\,d\phi=\cos\phi_1-\cos\phi_2\).</span></div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-param"></div>
+</section>
+
+<!-- ============================================================ 3 SCALAR SURFACE INTEGRALS -->
+<section data-id="scalar" data-title="Surface integrals of scalar functions" data-goal="5">
+  <p class="eyebrow">Chapter 3 · Stewart 16.7</p>
+  <h2>Surface integrals of scalar functions</h2>
+  <p class="lead">Same idea as a line integral, one dimension up: chop the surface, weight each piece by \(f\), add.</p>
+
+  <p>Cut \(D\) into small rectangles, map them to patches on \(S\), multiply the value of \(f\) at a sample point by the patch's area, and add. The patch area is \(|\mathbf{r}_u\times\mathbf{r}_v|\,\Delta u\,\Delta v\), so:</p>
+  <div class="formula">\(\displaystyle\iint_S f\,dS=\iint_D f\big(\mathbf{r}(u,v)\big)\,\big|\mathbf{r}_u\times\mathbf{r}_v\big|\,dA\)<span class="cap">Substitute the parametrization into \(f\), multiply by the stretch factor, integrate over the flat parameter domain.</span></div>
+  <p>For a graph \(z=g(x,y)\) over a region \(D\) in the \(xy\)-plane:</p>
+  <div class="formula">\(\displaystyle\iint_S f\,dS=\iint_D f\big(x,y,g(x,y)\big)\,\sqrt{1+g_x^2+g_y^2}\;dA\)<span class="cap">The \(z\) inside \(f\) gets replaced by \(g(x,y)\). Nothing is left over the surface: everything is now a function of \(x\) and \(y\).</span></div>
+
+  <p>Three things this computes:</p>
+  <ul>
+    <li><b>Area</b>, when \(f=1\).</li>
+    <li><b>Mass</b> of a thin sheet with surface density \(\rho(x,y,z)\): \(m=\iint_S \rho\,dS\). Centers of mass and moments work the same way as in earlier chapters.</li>
+    <li><b>Average value</b> of \(f\) on \(S\): \(\dfrac{1}{A(S)}\iint_S f\,dS\).</li>
+  </ul>
+  <p>If \(S\) is made of several smooth pieces (a box, a closed cylinder with its two lids), integrate over each piece and add. That is legal because area adds.</p>
+
+  <div class="card">
+    <h4>Step by step: \(\iint_S z\,dS\) over a piece of a plane</h4>
+    <div class="given" id="w1Given"></div>
+    <ol class="steps" id="w1Steps"></ol>
+    <div class="controls">
+      <button class="btn" id="w1Prev">◀ Back</button>
+      <button class="btn primary" id="w1Next">Next step ▶</button>
+      <button class="btn" id="w1New">New problem</button>
+      <span class="status" id="w1Status"></span>
+    </div>
+    <p class="hint">Notice where the work actually is: the stretch factor is a constant for a plane, so it slides straight out of the integral, and what remains is a first-year double integral of a linear function over a rectangle.</p>
+  </div>
+
+  <div class="card">
+    <h4>Explore: how one parameter cell stretches</h4>
+    <div class="xf">
+      <div><canvas class="scene" id="sScene"></canvas><p class="plotcap">Color shows the value of \(f\) on the surface: blue is low, orange is high. The purple outline is the image of one parameter cell \(\Delta u\times\Delta v\).</p></div>
+      <div>
+        <div class="controls"><select id="sSel"></select></div>
+        <div class="sliders" id="sSliders"></div>
+        <div class="readout" id="sOut"></div>
+        <p class="hint">Move the cell around and watch the two areas in the readout. On the sphere the cell shrinks to nothing near the poles even though \(\Delta u\,\Delta v\) never changes: that is the \(\sin\phi\) in \(dS=a^2\sin\phi\,d\phi\,d\theta\). On the plane the ratio is the same everywhere, which is why a plane's stretch factor comes out of the integral.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>Orientation does not matter here.</b> \(dS\) is an area, always positive. Reversing \(u\) and \(v\), or walking the surface the other way, changes nothing: \(\iint_S f\,dS\) has one value. That is the difference between this chapter and the flux chapter in Module 11.</div>
+  <div class="warn"><b>Substitute before you integrate.</b> \(\iint_S z\,dS\) over \(z=g(x,y)\) is <i>not</i> \(\iint_D z\,dA\). Replace \(z\) by \(g(x,y)\) and attach \(\sqrt{1+g_x^2+g_y^2}\). If any \(z\) is still standing after you set up the double integral, you have made this mistake.</div>
+
+  <h3>Practice</h3>
+  <div class="card" id="drill-scalar"></div>
+</section>
+
+<!-- ============================================================ 4 QUIZ -->
+<section data-id="quiz" data-title="Mastery quiz">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Mastery quiz</h2>
+  <p class="lead">Twelve mixed questions, each a different type, drawn from all three chapters. Score 10 or more to complete the module.</p>
+  <div class="card" id="quizBox"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============================================================ helpers */
+const R=String.raw;
+const G=(el,k,res)=>{gradeInput($(`[data-k=${k}]`,el),res);return res;};
+const Gall=(el,pairs)=>{let ok=true,err;pairs.forEach(([k,res])=>{gradeInput($(`[data-k=${k}]`,el),res);if(!res.ok)ok=false;if(res.err&&!err)err=res.err;});return {ok,err};};
+const numIn=(el,k,label,after)=>el.appendChild(ansLine(label,k,{after}));
+const exprIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+const fact=n=>{let r=1;for(let k=2;k<=n;k++)r*=k;return r;};
+const texPi=k=>{if(Math.abs(k)<1e-12)return '0';if(Math.abs(k-1)<1e-12)return R`\pi`;if(Math.abs(k+1)<1e-12)return R`-\pi`;return texNum(k)+R`\pi`;};
+const ORANGE='#d97706',BLUE='#2563eb',GREEN='#16a34a',PURPLE='#7c3aed',GRAY='#a8a49a';
+
+/* ---- polynomials in x,y as lists of [coef, i, j] meaning coef*x^i*y^j ---- */
+const mon2=(i,j)=>(i?('x'+(i>1?`^{${i}}`:'')):'')+(j?('y'+(j>1?`^{${j}}`:'')):'');
+const P2={
+  clean(A){const m=new Map();A.forEach(([c,i,j])=>{const k=i+'|'+j;m.set(k,(m.get(k)||0)+c);});
+    const out=[];m.forEach((c,k)=>{if(Math.abs(c)>1e-12){const [i,j]=k.split('|').map(Number);out.push([c,i,j]);}});
+    out.sort((u,v)=>(v[1]+v[2])-(u[1]+u[2])||v[1]-u[1]);return out;},
+  dx(A){return P2.clean(A.filter(t=>t[1]>0).map(([c,i,j])=>[c*i,i-1,j]));},
+  dy(A){return P2.clean(A.filter(t=>t[2]>0).map(([c,i,j])=>[c*j,i,j-1]));},
+  sub(A,B){return P2.clean(A.concat(B.map(([c,i,j])=>[-c,i,j])));},
+  tex(A){if(!A.length)return '0';return A.map(([c,i,j],n)=>{const m=mon2(i,j);const g=Math.abs(c);
+      const co=(Math.abs(g-1)<1e-12&&m)?'':texNum(g);
+      return (n===0?(c<0?'-':''):(c<0?' - ':' + '))+co+m;}).join('');},
+  str(A){if(!A.length)return '0';return A.map(([c,i,j])=>{let s='('+c+')';if(i)s+='*x^'+i;if(j)s+='*y^'+j;return s;}).join('+');},
+  rect(A,a,b){return A.reduce((s,[c,i,j])=>s+c*Math.pow(a,i+1)/(i+1)*Math.pow(b,j+1)/(j+1),0);},
+  tri(A,a,b){return A.reduce((s,[c,i,j])=>s+c*Math.pow(a,i+1)*Math.pow(b,j+1)*fact(i)*fact(j)/fact(i+j+2),0);},
+  intY(A,b){return P2.clean(A.map(([c,i,j])=>[c*Math.pow(b,j+1)/(j+1),i,0]));},
+  co(A,i,j){const t=A.find(u=>u[1]===i&&u[2]===j);return t?t[0]:0;}
+};
+/* degree <= 2 in P and Q, so Qx - Py is linear */
+function genPQlin(){
+  const mons=[[1,0],[0,1],[2,0],[1,1],[0,2]];
+  const T=()=>P2.clean(shuffle(mons).slice(0,rint(2,3)).map(([i,j])=>[rnz(-3,3),i,j]));
+  let P,Q,g,n=0;
+  do{P=T();Q=T();g=P2.sub(P2.dx(Q),P2.dy(P));n++;}while(g.length===0&&n<60);
+  if(Math.random()<0.35)P=P2.clean(P.concat([[rnz(-4,4),0,0]]));
+  if(Math.random()<0.35)Q=P2.clean(Q.concat([[rnz(-4,4),0,0]]));
+  return {P,Q,g};
+}
+/* degree <= 3, integrand may be quadratic */
+function genPQany(){
+  const mons=[[1,0],[0,1],[2,0],[1,1],[0,2],[3,0],[2,1],[1,2],[0,3]];
+  const T=()=>P2.clean(shuffle(mons).slice(0,rint(2,3)).map(([i,j])=>[rnz(-3,3),i,j]));
+  let P,Q,g,n=0;
+  do{P=T();Q=T();g=P2.sub(P2.dx(Q),P2.dy(P));n++;}while(g.length===0&&n<60);
+  return {P,Q,g};
+}
+
+/* ---- surface helpers ---- */
+const TOL={tol:1e-3};
+const vecIn=(el,k,label,ph='⟨ , , ⟩')=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+const eqIn=(el,k,label,ph)=>el.appendChild(ansLine(label,k,{xwide:true,placeholder:ph}));
+const PI=Math.PI;
+const EXACT='Exact (like <code>12pi/5</code> or <code>6sqrt(14)</code>) or a decimal to three places.';
+/* rational multiple of pi, as TeX */
+const piTex=v=>{const c=v/PI;if(Math.abs(c)<1e-12)return '0';const s=texNum(c);return s==='1'?R`\pi`:s==='-1'?R`-\pi`:s+R`\pi`;};
+/* c*sqrt(D) as TeX, with the radical simplified and integer parts folded in */
+function radTex(c,D){let A=1,B=Math.round(D);for(let k=2;k*k<=B;k++){while(B%(k*k)===0){B/=k*k;A*=k;}}
+  const co=c*A;if(B===1)return texNum(co);
+  return (near(co,1)?'':near(co,-1)?'-':texNum(co))+R`\sqrt{${B}}`;}
+const C1=n=>n===1?'':(n===-1?'-':String(n));
+const negStr=s=>s.trim().startsWith('-')?s.trim().slice(1):'-('+s+')';
+const negTex=s=>s.trim().startsWith('-')?s.trim().slice(1):'-'+(/[+-]/.test(s.trim().slice(1))?`(${s})`:s);
+const fv=v=>'⟨'+v.map(x=>fmtDec(x,2)).join(', ')+'⟩';
+/* numeric differential geometry, used by the widgets */
+const RU=(r,u,v,h=1e-4)=>vscale(1/(2*h),vsub(r(u+h,v),r(u-h,v)));
+const RV=(r,u,v,h=1e-4)=>vscale(1/(2*h),vsub(r(u,v+h),r(u,v-h)));
+const NRM=(r,u,v)=>cross(RU(r,u,v),RV(r,u,v));
+function areaNum(r,[u0,u1],[v0,v1],n=44){let s=0;const du=(u1-u0)/n,dv=(v1-v0)/n;
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const w=norm(NRM(r,u0+(i+0.5)*du,v0+(j+0.5)*dv));if(Number.isFinite(w))s+=w*du*dv;}return s;}
+
+/* ============================================================ question types */
+const Q={};
+
+/* ---- (a) Green over a rectangle ---- */
+Q.greenRect={name:'Green over a rectangle',
+  gen(){const a=rint(1,3),b=rint(1,3);const {P,Q:Qp,g}=genPQlin();
+    return {a,b,P,Q:Qp,g,inner:P2.intY(g,b),val:P2.rect(g,a,b)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use Green's theorem to evaluate ${M(R`\oint_C \left(${P2.tex(q.P)}\right)dx+\left(${P2.tex(q.Q)}\right)dy`)}, where ${M('C')} is the boundary of the rectangle ${M(R`0\le x\le ${q.a},\; 0\le y\le ${q.b}`)} traversed counterclockwise. Fractions like <code>27/2</code> are fine.</p>`;
+    numIn(el,'v',M(R`\oint_C \mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`\frac{\partial Q}{\partial x}=${P2.tex(P2.dx(q.Q))}`)+' and '+M(R`\frac{\partial P}{\partial y}=${P2.tex(P2.dy(q.P))}`);},
+  solution(q){return `${M(R`Q_x=${P2.tex(P2.dx(q.Q))}`)} and ${M(R`P_y=${P2.tex(P2.dy(q.P))}`)}, so the integrand is ${M(R`Q_x-P_y=${P2.tex(q.g)}`)}. Green's theorem gives `
+    +D(R`\int_0^{${q.a}}\!\!\int_0^{${q.b}}\left(${P2.tex(q.g)}\right)dy\,dx=\int_0^{${q.a}}\left(${P2.tex(q.inner)}\right)dx=${texNum(q.val)}`)
+    +`The inner integral runs in ${M('y')} with ${M('x')} held fixed, which is why every ${M('y')} disappears after the first step.`;}
+};
+
+/* ---- (b) Green over a disk ---- */
+Q.greenDisk={name:'Green over a disk',
+  gen(){
+    if(Math.random()<0.5){
+      const a=rint(1,3);const k1=rint(-4,4),k2=rint(-4,4),m1=rint(-4,4),m2=rint(-4,4);
+      const kk=m1-k1;
+      const P=P2.clean([[k1,0,1],[k2,1,0]]),Qp=P2.clean([[m1,1,0],[m2,0,1]]);
+      return {mode:'lin',a,P,Q:Qp,g:P2.clean([[kk,0,0]]),kk,val:kk*Math.PI*a*a};
+    }
+    const a=pick([1,2,2]);const c=rnz(-3,3),d=rnz(-3,3),e=rint(-3,3),f=rint(-3,3);
+    const P=P2.clean([[-c,0,3],[e,2,0]]),Qp=P2.clean([[d,3,0],[f,0,2]]);
+    const g=P2.clean([[3*d,2,0],[3*c,0,2]]);
+    return {mode:'quad',a,c,d,P,Q:Qp,g,kc:3*(c+d)*Math.pow(a,4)/4,val:3*(c+d)*Math.PI*Math.pow(a,4)/4};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use Green's theorem to evaluate ${M(R`\oint_C \left(${P2.tex(q.P)}\right)dx+\left(${P2.tex(q.Q)}\right)dy`)}, where ${M('C')} is the circle ${M(R`x^2+y^2=${q.a*q.a}`)} traversed counterclockwise. Give an exact value such as <code>8pi</code> or <code>9pi/4</code>.</p>`;
+    numIn(el,'v',M(R`\oint_C \mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`Q_x-P_y=${P2.tex(q.g)}`)+(q.mode==='lin'?' (a constant, so multiply by the area)':' (use polar, or the symmetry facts below)');},
+  solution(q){const head=`${M(R`Q_x=${P2.tex(P2.dx(q.Q))}`)} and ${M(R`P_y=${P2.tex(P2.dy(q.P))}`)}, so ${M(R`Q_x-P_y=${P2.tex(q.g)}`)}. `;
+    if(q.mode==='lin')return head+`The integrand is the constant ${M(texNum(q.kk))}, so the double integral is that constant times the area of the disk: `+D(R`${texNum(q.kk)}\cdot\pi(${q.a})^2=${texPi(q.kk*q.a*q.a)}`);
+    return head+`Over a disk of radius ${M(String(q.a))}, polar coordinates give ${M(R`\iint_D (x^2+y^2)\,dA=\int_0^{2\pi}\!\!\int_0^{${q.a}} r^2\cdot r\,dr\,d\theta=\frac{\pi(${q.a})^4}{2}`)}, and by symmetry ${M(R`\iint_D x^2\,dA=\iint_D y^2\,dA=\frac{\pi(${q.a})^4}{4}=${texPi(Math.pow(q.a,4)/4)}`)}. So `
+      +D(R`\iint_D\left(${P2.tex(q.g)}\right)dA=(${3*q.d})\cdot${texPi(Math.pow(q.a,4)/4)}+(${3*q.c})\cdot${texPi(Math.pow(q.a,4)/4)}=${texPi(q.kc)}`);}
+};
+
+/* ---- (c) Green over a triangle ---- */
+Q.greenTri={name:'Green over a triangle',
+  gen(){const a=rint(1,3),b=rint(1,3);const {P,Q:Qp,g}=genPQlin();
+    return {a,b,P,Q:Qp,g,A:P2.co(g,1,0),B:P2.co(g,0,1),C:P2.co(g,0,0),val:P2.tri(g,a,b)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use Green's theorem to evaluate ${M(R`\oint_C \left(${P2.tex(q.P)}\right)dx+\left(${P2.tex(q.Q)}\right)dy`)}, where ${M('C')} is the triangle with vertices ${M(R`(0,0)`)}, ${M(R`(${q.a},0)`)}, ${M(R`(0,${q.b})`)} traversed counterclockwise. Fractions are fine.</p>`;
+    numIn(el,'v',M(R`\oint_C \mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=M(R`Q_x-P_y=${P2.tex(q.g)}`)+'; the hypotenuse is '+M(R`y=${q.b}\left(1-\frac{x}{${q.a}}\right)`);},
+  solution(q){const {a,b,A,B,C}=q;
+    return `${M(R`Q_x=${P2.tex(P2.dx(q.Q))}`)} and ${M(R`P_y=${P2.tex(P2.dy(q.P))}`)}, so ${M(R`Q_x-P_y=${P2.tex(q.g)}`)}. `
+    +`For the right triangle with legs ${M(R`a=${a}`)} along ${M('x')} and ${M(R`b=${b}`)} along ${M('y')}, `
+    +`${M(R`\iint_T dA=\tfrac{ab}{2}=${texNum(a*b/2)}`)}, ${M(R`\iint_T x\,dA=\tfrac{a^2b}{6}=${texNum(a*a*b/6)}`)}, ${M(R`\iint_T y\,dA=\tfrac{ab^2}{6}=${texNum(a*b*b/6)}`)}. Combining, `
+    +D(R`(${texNum(A)})\!\left(${texNum(a*a*b/6)}\right)+(${texNum(B)})\!\left(${texNum(a*b*b/6)}\right)+(${texNum(C)})\!\left(${texNum(a*b/2)}\right)=${texNum(q.val)}`);}
+};
+
+/* ---- (d) area from a parametrized boundary ---- */
+Q.greenArea={name:'area from a parametrized boundary',
+  gen(){
+    const kind=pick(['ellipse','ellipse','astroid','loop']);
+    if(kind==='ellipse'){let a=rint(1,5),b=rint(1,5);return {kind,a,b,
+      curve:R`x=${a===1?'':a}\cos t,\quad y=${b===1?'':b}\sin t,\quad 0\le t\le 2\pi`,area:Math.PI*a*b};}
+    if(kind==='astroid'){const a=rint(1,3);return {kind,a,
+      curve:R`x=${a===1?'':a}\cos^3 t,\quad y=${a===1?'':a}\sin^3 t,\quad 0\le t\le 2\pi`,area:3*Math.PI*a*a/8};}
+    return {kind,curve:R`x=t^2-1,\quad y=t^3-t,\quad -1\le t\le 1`,area:8/15};},
+  render(q,el){el.innerHTML=`<p class="prompt">Use ${M(R`A=\tfrac12\oint_C x\,dy-y\,dx`)} to find the area enclosed by ${q.kind==='loop'?'the loop of the curve':'the curve'} `+D(q.curve)+`<span class="muted">Exact answers such as <code>6pi</code>, <code>3pi/2</code>, or <code>8/15</code>.</span></p>`;
+    numIn(el,'ar','Area =');},
+  check(q,el){return G(el,'ar',checkNumber($('[data-k=ar]',el).value,q.area));},
+  solution(q){
+    if(q.kind==='ellipse')return `${M(R`x\,y'-y\,x'=(${q.a}\cos t)(${q.b}\cos t)-(${q.b}\sin t)(-${q.a}\sin t)=${q.a*q.b===1?'':q.a*q.b}(\cos^2t+\sin^2t)=${q.a*q.b}`)}, a constant. So `
+      +D(R`A=\tfrac12\int_0^{2\pi}${q.a*q.b}\,dt=\tfrac12\cdot ${q.a*q.b}\cdot 2\pi=${texPi(q.a*q.b)}`)+`Every ellipse has area ${M(R`\pi ab`)}.`;
+    if(q.kind==='astroid')return `${M(R`x'=-3${q.a===1?'':q.a}\cos^2t\sin t`)} and ${M(R`y'=3${q.a===1?'':q.a}\sin^2t\cos t`)}, so ${M(R`x\,y'-y\,x'=3(${q.a})^2\sin^2t\cos^2t(\cos^2t+\sin^2t)=\tfrac{3(${q.a})^2}{4}\sin^2 2t`)}. Then `
+      +D(R`A=\tfrac12\cdot\tfrac{3(${q.a})^2}{4}\int_0^{2\pi}\sin^2 2t\,dt=\tfrac12\cdot\tfrac{3(${q.a})^2}{4}\cdot\pi=${texPi(3*q.a*q.a/8)}`);
+    return `${M(R`x'=2t`)} and ${M(R`y'=3t^2-1`)}, so ${M(R`x\,y'-y\,x'=(t^2-1)(3t^2-1)-(t^3-t)(2t)=t^4-2t^2+1=(t^2-1)^2`)}. Then `
+      +D(R`A=\tfrac12\int_{-1}^{1}(t^2-1)^2dt=\tfrac12\left[\tfrac{t^5}{5}-\tfrac{2t^3}{3}+t\right]_{-1}^{1}=\tfrac12\cdot\tfrac{16}{15}=\tfrac{8}{15}`)
+      +`The answer came out positive, which confirms the parametrization runs counterclockwise.`;}
+};
+
+/* ---- (e) reversing the orientation ---- */
+Q.greenOrient={name:'reversing the orientation',
+  gen(){const kind=pick(['pi','int','int']);const k=rnz(-12,12);
+    const W=kind==='pi'?k*Math.PI:k;const Wtex=kind==='pi'?texPi(k):String(k);
+    const flip=Math.random()<0.5;
+    return {kind,k,W,Wtex,flip,ans:-W,ansTex:kind==='pi'?texPi(-k):String(-k)};},
+  render(q,el){
+    el.innerHTML=q.flip
+      ? `<p class="prompt">${M('C')} is a piecewise-smooth simple closed curve, and the field ${M(R`\mathbf{F}=\langle P,Q\rangle`)} has continuous partials on the region ${M('D')} it bounds. Traversed <b>clockwise</b>, ${M(R`\int_C P\,dx+Q\,dy=${q.Wtex}`)}. What is ${M(R`\iint_D (Q_x-P_y)\,dA`)}?</p>`
+      : `<p class="prompt">${M('C')} is a positively oriented piecewise-smooth simple closed curve and ${M(R`\oint_C P\,dx+Q\,dy=${q.Wtex}`)}. What is the value of ${M(R`\int_{-C} P\,dx+Q\,dy`)}, the same integral with ${M('C')} traversed <b>clockwise</b>?</p>`;
+    numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ans));},
+  solution(q){return `Reversing the direction of travel negates every line integral, because ${M(R`d\mathbf{r}`)} flips sign while the field does not. `
+    +(q.flip
+      ? `Green's theorem applies to the <b>positively oriented</b> curve, whose integral is ${M(R`-\left(${q.Wtex}\right)=${q.ansTex}`)}. That is the value of the double integral: <b>${M(q.ansTex)}</b>.`
+      : `So the clockwise value is ${M(R`-\left(${q.Wtex}\right)=${q.ansTex}`)}. <b>${M(q.ansTex)}</b>.`);}
+};
+
+/* ---- (e2) close an open path, then use Green ---- */
+const par=v=>v<0?`(${v})`:String(v);
+Q.greenClose={name:'close the path, then use Green',
+  gen(){const alpha=pick([3,-3,6]);const m=rnz(-3,3);let n;do{n=rnz(-3,3);}while(n===m);const k=n-m;
+    const qy=pick([R`e^{y^{2}}`,R`\sin(y^{3})`,R`\sqrt{1+y^{4}}`,R`\tan^{-1}(y^{3})`]);
+    const Ptex=P2.tex(P2.clean([[alpha,2,0],[m,0,1]]));
+    const Qtex=qy+(n<0?' - ':' + ')+(Math.abs(n)===1?'':Math.abs(n))+'x';
+    const shape=pick(['rect','rect','semi']);const s=pick([1,-1]);
+    if(shape==='rect'){const a=rint(1,3),b=rint(1,3);
+      const I=alpha*a**3/3+m*a*b;const base=k*a*b+I;
+      const desc=s>0
+        ? `runs from ${M(R`(0,${b})`)} down to ${M(R`(0,0)`)}, then right to ${M(R`(${a},0)`)}, then up to ${M(R`(${a},${b})`)}`
+        : `runs from ${M(R`(${a},${b})`)} down to ${M(R`(${a},0)`)}, then left to ${M(R`(0,0)`)}, then up to ${M(R`(0,${b})`)}`;
+      return {shape,s,alpha,m,n,k,qy,Ptex,Qtex,a,b,desc,
+        Lfrom:s>0?[a,b]:[0,b],Lto:s>0?[0,b]:[a,b],
+        dbl:s*k*a*b,dblTex:R`${s>0?'+':'-'}${par(k)}\cdot ${a}\cdot ${b}=${s*k*a*b}`,
+        Lint:R`\int_{${s>0?a:0}}^{${s>0?0:a}}\left(${P2.tex(P2.clean([[alpha,2,0],[m*b,0,0]]))}\right)dx`,
+        Lval:-s*I,ans:s*base,ansTex:String(s*base)};}
+    const Rr=rint(1,3);const J=2*alpha*Rr**3/3;const base=k*Math.PI*Rr*Rr/2-J;
+    const desc=`is the upper half of the circle ${M(R`x^2+y^2=${Rr*Rr}`)}, from ${M(s>0?R`(${Rr},0)`:R`(-${Rr},0)`)} to ${M(s>0?R`(-${Rr},0)`:R`(${Rr},0)`)}`;
+    const cp=s*k*Rr*Rr/2,c0=-s*J;
+    return {shape,s,alpha,m,n,k,qy,Ptex,Qtex,R:Rr,desc,
+      Lfrom:s>0?[-Rr,0]:[Rr,0],Lto:s>0?[Rr,0]:[-Rr,0],
+      dbl:s*k*Math.PI*Rr*Rr/2,dblTex:R`${s>0?'+':'-'}${par(k)}\cdot\frac{\pi(${Rr})^2}{2}=${texPi(cp)}`,
+      Lint:R`\int_{${s>0?-Rr:Rr}}^{${s>0?Rr:-Rr}}\left(${texNum(alpha)}x^{2}\right)dx`,
+      Lval:s*J,ans:s*base,ansTex:texPi(cp)+(c0<0?' - ':' + ')+Math.abs(c0)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\int_C \mathbf{F}\cdot d\mathbf{r}`)} for ${M(R`\mathbf{F}=\left\langle ${q.Ptex},\; ${q.Qtex}\right\rangle`)}, where ${M('C')} ${q.desc}. ${M('C')} is not closed. Exact answers like <code>9pi/2 - 4</code> are fine.</p>`;
+    numIn(el,'v',M(R`\int_C \mathbf{F}\cdot d\mathbf{r}=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ans));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML=`Close it with ${M('L')}, the segment from ${M(texPt(q.Lfrom))} to ${M(texPt(q.Lto))}, where ${M(q.shape==='rect'?R`y=${q.b}`:'y=0')} and ${M('dy=0')}. ${M('C')} then ${M('L')} runs <b>${q.s>0?'counterclockwise':'clockwise'}</b>.`;},
+  solution(q){const ccw=q.s>0;
+    const region=q.shape==='rect'?`the rectangle ${M(R`[0,${q.a}]\times[0,${q.b}]`)}`:`the upper half-disk of radius ${M(String(q.R))}`;
+    return `<ol class="steps">`
+      +`<li>${M(R`Q_x-P_y=${q.n}-${par(q.m)}=${q.k}`)}, a constant. The ${M(q.qy)} term has no ${M('x')}, so it dies.</li>`
+      +`<li>Close with ${M('L')}, the segment from ${M(texPt(q.Lfrom))} to ${M(texPt(q.Lto))}. ${M('C')} then ${M('L')} goes around ${region} <b>${ccw?'counterclockwise':'clockwise'}</b>, so the double integral is ${ccw?'plus':'minus'} that constant times the area: ${M(q.dblTex)}.</li>`
+      +`<li>On ${M('L')}, ${M(q.shape==='rect'?R`y=${q.b}`:'y=0')} and ${M('dy=0')}, so only ${M('P')} matters: ${M(R`\int_L \mathbf{F}\cdot d\mathbf{r}=${q.Lint}=${texNum(q.Lval)}`)}.</li>`
+      +`<li>${M(R`\int_C \mathbf{F}\cdot d\mathbf{r}=${q.shape==='rect'?q.dbl:texPi(q.dbl/Math.PI)}-\left(${texNum(q.Lval)}\right)=${q.ansTex}${Number.isInteger(q.ans)?'':R`\approx ${fmtDec(q.ans,3)}`}`)}.</li>`
+      +`</ol>`;}
+};
+
+/* ---- (e3) orientation hidden in the vertex order ---- */
+const TRAP_WHY={
+  ccw:['goes right along the x-axis first, so the triangle is on your left','goes up and to the left along the hypotenuse first, so the triangle is on your left','goes down the y-axis first, so the triangle is on your left'],
+  cw:['goes up the y-axis first, so the triangle is on your right','goes down and to the right along the hypotenuse first, so the triangle is on your right','goes left along the x-axis first, so the triangle is on your right']
+};
+Q.greenOrderTrap={name:'orientation from the vertex order',
+  gen(){const a=rint(1,3),b=rint(1,3);let P,Qp,g,ccwVal,n=0;
+    do{({P,Q:Qp,g}=genPQlin());ccwVal=P2.tri(g,a,b);n++;}while(Math.abs(ccwVal)<1e-9&&n<40);
+    const extraP=pick([R`e^{x^{2}}`,R`\cos(x^{3})`,R`\ln(1+x^{2})`]);
+    const extraQ=pick([R`\tan^{-1} y`,R`e^{-y^{2}}`,R`\sqrt{1+y^{3}}`]);
+    const cw=Math.random()<0.5;const r=rint(0,2);
+    const cyc=cw?[[0,0],[0,b],[a,0]]:[[0,0],[a,0],[0,b]];
+    const V=cyc.slice(r).concat(cyc.slice(0,r));
+    return {a,b,P,Q:Qp,g,A:P2.co(g,1,0),B:P2.co(g,0,1),C:P2.co(g,0,0),extraP,extraQ,cw,V,
+      why:TRAP_WHY[cw?'cw':'ccw'][r],ccwVal,ans:cw?-ccwVal:ccwVal};},
+  render(q,el){const [V1,V2,V3]=q.V.map(texPt);
+    el.innerHTML=`<p class="prompt">Evaluate ${M(R`\int_C \left(${P2.tex(q.P)} + ${q.extraP}\right)dx+\left(${P2.tex(q.Q)} + ${q.extraQ}\right)dy`)}, where ${M('C')} is the triangle from ${M(V1)} to ${M(V2)} to ${M(V3)} and back to ${M(V1)}. Fractions are fine.</p>`;
+    numIn(el,'v',M(R`\int_C P\,dx+Q\,dy=`));},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.ans));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(document.createElement('div'));h.className='hintbox expr';}
+    h.innerHTML='Sketch the three vertices in order. Is the triangle on your left or your right?';},
+  solution(q){const {a,b,A,B,C}=q;
+    return `The listed order ${q.why.replace(/x-axis/,M('x')+'-axis').replace(/y-axis/,M('y')+'-axis')}. So ${M('C')} is <b>${q.cw?'clockwise':'counterclockwise'}</b>. `
+    +`${M(R`Q_x=${P2.tex(P2.dx(q.Q))}`)} and ${M(R`P_y=${P2.tex(P2.dy(q.P))}`)}: the ${M(q.extraP)} term has no ${M('y')} and the ${M(q.extraQ)} term has no ${M('x')}, so both die. That leaves ${M(R`Q_x-P_y=${P2.tex(q.g)}`)}. `
+    +`For the right triangle with legs ${M(R`a=${a}`)} along ${M('x')} and ${M(R`b=${b}`)} along ${M('y')}, `
+    +`${M(R`\iint_T dA=\tfrac{ab}{2}=${texNum(a*b/2)}`)}, ${M(R`\iint_T x\,dA=\tfrac{a^2b}{6}=${texNum(a*a*b/6)}`)}, ${M(R`\iint_T y\,dA=\tfrac{ab^2}{6}=${texNum(a*b*b/6)}`)}. The counterclockwise value is `
+    +D(R`(${texNum(A)})\!\left(${texNum(a*a*b/6)}\right)+(${texNum(B)})\!\left(${texNum(a*b*b/6)}\right)+(${texNum(C)})\!\left(${texNum(a*b/2)}\right)=${texNum(q.ccwVal)}`)
+    +(q.cw?`${M('C')} runs clockwise, so flip the sign: ${M(R`\int_C=-\left(${texNum(q.ccwVal)}\right)=${texNum(q.ans)}`)}.`
+          :`${M('C')} runs counterclockwise, so that is the answer: ${M(texNum(q.ans))}.`);}
+};
+
+/* ---- (f) identify the Green integrand ---- */
+const SPECIAL2=[
+  {Ptex:R`e^{x}\sin y`,Qtex:R`e^{x}\cos y`,gtex:'0',gstr:'0',
+   why:R`Q_x=e^{x}\cos y`,why2:R`P_y=e^{x}\cos y`},
+  {Ptex:R`y\cos x`,Qtex:R`x\sin y`,gtex:R`\sin y-\cos x`,gstr:'sin(y)-cos(x)',
+   why:R`Q_x=\sin y`,why2:R`P_y=\cos x`},
+  {Ptex:R`xe^{y}`,Qtex:R`ye^{x}`,gtex:R`ye^{x}-xe^{y}`,gstr:'y*exp(x)-x*exp(y)',
+   why:R`Q_x=ye^{x}`,why2:R`P_y=xe^{y}`},
+  {Ptex:R`\sin(xy)`,Qtex:R`\cos(xy)`,gtex:R`-y\sin(xy)-x\cos(xy)`,gstr:'-y*sin(x*y)-x*cos(x*y)',
+   why:R`Q_x=-y\sin(xy)`,why2:R`P_y=x\cos(xy)`},
+  {Ptex:R`x^2\cos y`,Qtex:R`y^2\sin x`,gtex:R`y^2\cos x+x^2\sin y`,gstr:'y^2*cos(x)+x^2*sin(y)',
+   why:R`Q_x=y^2\cos x`,why2:R`P_y=-x^2\sin y`}
+];
+function genIntegrand2(){
+  if(Math.random()<0.6){const {P,Q:Qp,g}=genPQany();
+    return {Ptex:P2.tex(P),Qtex:P2.tex(Qp),gtex:P2.tex(g),gstr:P2.str(g),
+      why:R`Q_x=${P2.tex(P2.dx(Qp))}`,why2:R`P_y=${P2.tex(P2.dy(P))}`};}
+  return {...pick(SPECIAL2)};
+}
+Q.greenIntegrand={name:'the Green integrand',
+  gen(){return genIntegrand2();},
+  render(q,el){el.innerHTML=`<p class="prompt">A line integral ${M(R`\oint_C P\,dx+Q\,dy`)} has ${M(R`P=${q.Ptex}`)} and ${M(R`Q=${q.Qtex}`)}. Write the integrand that Green's theorem puts inside the double integral.</p>`;
+    exprIn(el,'g',M(R`Q_x-P_y=`),'an expression in x and y');},
+  check(q,el){return G(el,'g',checkExpr($('[data-k=g]',el).value,q.gstr,['x','y']));},
+  solution(q){return `${M(q.why)} and ${M(q.why2)}, so `+D(R`\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}=${q.gtex}`)
+    +`Differentiate ${M('Q')} by ${M('x')} only, and ${M('P')} by ${M('y')} only. The other two partials never appear.`;}
+};
+
+/* ---------------------------------------------------------- chapter 2 */
+const ID_KINDS=['plane','cylinder','sphere','cone','paraboloid','helicoid','torus'];
+Q.idSurface={name:'identify the surface',
+  gen(){
+    const kind=pick(ID_KINDS);const a=rint(2,4),k=rint(2,3);let tex,dom,why;
+    if(kind==='plane'){let A,B;do{A=[rnz(-2,2),rint(-2,2),rint(-2,2)];B=[rint(-2,2),rnz(-2,2),rint(-2,2)];}while(vzero(cross(A,B)));
+      const p=[rint(-2,2),rint(-2,2),rint(-2,2)];
+      tex=R`\langle ${texLin([A[0],B[0]],['u','v'],{constant:p[0]})},\; ${texLin([A[1],B[1]],['u','v'],{constant:p[1]})},\; ${texLin([A[2],B[2]],['u','v'],{constant:p[2]})}\rangle`;
+      dom=R`u,\,v\in\mathbb{R}`;
+      why=`Every component is a linear function of \\(u\\) and \\(v\\), so this is \\(\\mathbf r=\\mathbf p+u\\,\\mathbf a+v\\,\\mathbf b\\) with \\(\\mathbf p=${texPt(p)}\\), \\(\\mathbf a=${texVec(A)}\\), \\(\\mathbf b=${texVec(B)}\\): a <b>plane</b>. No squares, no trig, nothing but \\(u\\) and \\(v\\) to the first power.`;}
+    else if(kind==='cylinder'){tex=R`\langle ${a}\cos u,\; ${a}\sin u,\; v\rangle`;dom=R`0\le u\le 2\pi,\; 0\le v\le 4`;
+      why=`\\(x^2+y^2=${a}^2\\cos^2u+${a}^2\\sin^2u=${a*a}\\) no matter what \\(u\\) is, while \\(z=v\\) runs free. Every point sits at distance ${a} from the \\(z\\)-axis: a <b>cylinder</b> of radius ${a}.`;}
+    else if(kind==='sphere'){tex=R`\langle ${a}\sin u\cos v,\; ${a}\sin u\sin v,\; ${a}\cos u\rangle`;dom=R`0\le u\le \pi,\; 0\le v\le 2\pi`;
+      why=`Add the squares: \\(x^2+y^2+z^2=${a*a}\\sin^2u+${a*a}\\cos^2u=${a*a}\\). Every point is ${a} units from the origin, so this is a <b>sphere</b> of radius ${a}, with \\(u=\\phi\\) and \\(v=\\theta\\).`;}
+    else if(kind==='cone'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}u\rangle`;dom=R`0\le u\le 3,\; 0\le v\le 2\pi`;
+      why=`Here \\(x^2+y^2=u^2\\) and \\(z=${k}u\\), so \\(z=${k}\\sqrt{x^2+y^2}\\): the height is proportional to the distance from the axis, which is a <b>cone</b>. (Compare the paraboloid, where \\(z\\) is proportional to \\(u^2\\) instead.)`;}
+    else if(kind==='paraboloid'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}u^2\rangle`;dom=R`0\le u\le 2,\; 0\le v\le 2\pi`;
+      why=`\\(x^2+y^2=u^2\\) and \\(z=${k}u^2\\), so \\(z=${k}(x^2+y^2)\\): a circular <b>paraboloid</b> opening upward.`;}
+    else if(kind==='helicoid'){tex=R`\langle u\cos v,\; u\sin v,\; ${k}v\rangle`;dom=R`0\le u\le 2,\; 0\le v\le 4\pi`;
+      why=`Freeze \\(v\\): you get a straight ray out from the \\(z\\)-axis, sitting at the fixed height \\(z=${k}v\\). As \\(v\\) increases the ray rotates and rises at the same time, sweeping out a spiral ramp: a <b>helicoid</b>.`;}
+    else {const b=a+3;tex=R`\langle (${b}+${a}\cos u)\cos v,\; (${b}+${a}\cos u)\sin v,\; ${a}\sin u\rangle`;dom=R`0\le u\le 2\pi,\; 0\le v\le 2\pi`;
+      why=`The distance from the \\(z\\)-axis is \\(\\sqrt{x^2+y^2}=${b}+${a}\\cos u\\) and the height is \\(${a}\\sin u\\), so in each vertical half-plane you see a circle of radius ${a} centered ${b} units out. Spinning that circle around the axis with \\(v\\) gives a <b>torus</b>.`;}
+    return {kind,tex,dom,why,ai:ID_KINDS.indexOf(kind)};},
+  render(q,el){el.innerHTML=`<p class="prompt">What surface does this parametrization describe?</p>${D(R`\mathbf r(u,v)=`+q.tex)}<p class="prompt" style="font-weight:400">for ${M(q.dom)}.</p>`;
+    q.get=choiceButtons(el,ID_KINDS.map(k=>({label:k,value:k})));},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===q.kind,msg:v===q.kind?'':'Two questions sort almost all of these out: what is \\(x^2+y^2\\), and how does \\(z\\) depend on the parameters?'};},
+  solution(q){return q.why;}
+};
+
+Q.normalPlane={name:'normal vector to a parametrized plane',
+  gen(){let A,B;do{A=[rnz(-3,3),rint(-3,3),rint(-3,3)];B=[rint(-3,3),rnz(-3,3),rint(-3,3)];}while(vzero(cross(A,B)));
+    const p=[rint(-3,3),rint(-3,3),rint(-3,3)];return {A,B,p,n:cross(A,B)};},
+  render(q,el){el.innerHTML=`<p class="prompt">A plane is parametrized by ${M(R`\mathbf r(u,v)=\mathbf p+u\,\mathbf a+v\,\mathbf b`)} with ${M(R`\mathbf p=`+texVec(q.p))}, ${M(R`\mathbf a=`+texVec(q.A))}, ${M(R`\mathbf b=`+texVec(q.B))}. Compute ${M(R`\mathbf r_u\times\mathbf r_v`)}.</p>`;
+    vecIn(el,'n',M(R`\mathbf r_u\times\mathbf r_v=`),'⟨a, b, c⟩');},
+  check(q,el){return G(el,'n',checkVector($('[data-k=n]',el).value,q.n));},
+  solution(q){return `Differentiate: the constant ${M(R`\mathbf p`)} dies, so ${M(R`\mathbf r_u=\mathbf a=`+texVec(q.A))} and ${M(R`\mathbf r_v=\mathbf b=`+texVec(q.B))}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\mathbf a\times\mathbf b=`+texVec(q.n))}. It is the same at every point, which is exactly what you expect from a plane.`;}
+};
+
+const GRAPH_POOL=[
+  {tex:'u^2+v^2',fu:'2u',fv:'2v',fuT:'2u',fvT:'2v'},
+  {tex:'u^2-v^2',fu:'2u',fv:'-2v',fuT:'2u',fvT:'-2v'},
+  {tex:'uv',fu:'v',fv:'u',fuT:'v',fvT:'u'},
+  {tex:'3u^2+v^2',fu:'6u',fv:'2v',fuT:'6u',fvT:'2v'},
+  {tex:'u^2v',fu:'2u*v',fv:'u^2',fuT:'2uv',fvT:'u^2'},
+  {tex:'u^3-v',fu:'3u^2',fv:'-1',fuT:'3u^2',fvT:'-1'},
+  {tex:'4-u^2-2v^2',fu:'-2u',fv:'-4v',fuT:'-2u',fvT:'-4v'}
+];
+Q.normalParam={name:'cross product r_u x r_v',
+  gen(){const kind=pick(['cyl','cone','graph','graph','sphere']);
+    if(kind==='cyl'){const a=rint(2,5);
+      return {kind,tex:R`\langle ${a}\cos u,\; ${a}\sin u,\; v\rangle`,
+        ruT:R`\langle -${a}\sin u,\; ${a}\cos u,\; 0\rangle`,rvT:R`\langle 0,\;0,\;1\rangle`,
+        refs:[`${a}cos(u)`,`${a}sin(u)`,'0'],ansT:R`\langle ${a}\cos u,\; ${a}\sin u,\; 0\rangle`,
+        ans:`<${a}cos(u), ${a}sin(u), 0>`,
+        note:`This normal is horizontal and points straight out from the \\(z\\)-axis, which is what an outward normal on a cylinder should do. Its length is ${a}, the radius.`};}
+    if(kind==='cone'){const k=rint(1,3);const kt=k===1?'':k;
+      return {kind,tex:R`\langle u\cos v,\; u\sin v,\; ${kt}u\rangle`,
+        ruT:R`\langle \cos v,\; \sin v,\; ${k}\rangle`,rvT:R`\langle -u\sin v,\; u\cos v,\; 0\rangle`,
+        refs:[`-${k}u*cos(v)`,`-${k}u*sin(v)`,'u'],ansT:R`\langle -${kt}u\cos v,\; -${kt}u\sin v,\; u\rangle`,
+        ans:`<-${k}u*cos(v), -${k}u*sin(v), u>`,
+        note:`Its length is \\(u\\sqrt{${k*k+1}}\\), which vanishes at the vertex \\(u=0\\): the cone is not smooth at its tip.`};}
+    if(kind==='graph'){const g=pick(GRAPH_POOL);
+      return {kind,tex:R`\langle u,\; v,\; ${g.tex}\rangle`,
+        ruT:R`\langle 1,\;0,\;${g.fuT}\rangle`,rvT:R`\langle 0,\;1,\;${g.fvT}\rangle`,
+        refs:[negStr(g.fu),negStr(g.fv),'1'],ansT:R`\langle ${negTex(g.fuT)},\; ${negTex(g.fvT)},\; 1\rangle`,
+        ans:`<${negStr(g.fu)}, ${negStr(g.fv)}, 1>`,
+        note:`For any graph \\(\\langle u,v,f\\rangle\\) the normal is \\(\\langle -f_u,-f_v,1\\rangle\\). The \\(+1\\) in the last slot means it points upward.`};}
+    const a=rint(2,3);
+    return {kind,tex:R`\langle ${a}\sin u\cos v,\; ${a}\sin u\sin v,\; ${a}\cos u\rangle`,
+      ruT:R`\langle ${a}\cos u\cos v,\; ${a}\cos u\sin v,\; -${a}\sin u\rangle`,rvT:R`\langle -${a}\sin u\sin v,\; ${a}\sin u\cos v,\; 0\rangle`,
+      refs:[`${a*a}sin(u)^2*cos(v)`,`${a*a}sin(u)^2*sin(v)`,`${a*a}sin(u)*cos(u)`],
+      ansT:R`${a*a}\sin u\,\langle \sin u\cos v,\; \sin u\sin v,\; \cos u\rangle`,
+      ans:`<${a*a}sin(u)^2cos(v), ${a*a}sin(u)^2sin(v), ${a*a}sin(u)cos(u)>`,
+      note:`Factor it: \\(${a*a}\\sin u\\,\\langle\\sin u\\cos v,\\sin u\\sin v,\\cos u\\rangle=${a}\\sin u\\;\\mathbf r\\). The normal is parallel to the position vector, pointing outward, and its length is \\(${a*a}\\sin u\\): that is the \\(a^2\\sin\\phi\\) in \\(dS\\).`};},
+  render(q,el){el.innerHTML=`<p class="prompt">For the surface ${M(R`\mathbf r(u,v)=`+q.tex)}, compute ${M(R`\mathbf r_u\times\mathbf r_v`)}. Write the components as expressions in ${M('u')} and ${M('v')}, for example <code>&lt;-2u, -2v, 1&gt;</code>.</p>`;
+    vecIn(el,'n',M(R`\mathbf r_u\times\mathbf r_v=`),'⟨ , , ⟩');},
+  check(q,el){return G(el,'n',checkExprVector($('[data-k=n]',el).value,q.refs,['u','v']));},
+  hint(q,el){let h=$('.hintbox',el);if(!h){h=el.appendChild(el2());}h.innerHTML=`${M(R`\mathbf r_u=`+q.ruT)} and ${M(R`\mathbf r_v=`+q.rvT)}. Now take the cross product.`;},
+  solution(q){return `Differentiate each component: ${M(R`\mathbf r_u=`+q.ruT)} and ${M(R`\mathbf r_v=`+q.rvT)}. The cross product is ${M(R`\mathbf r_u\times\mathbf r_v=`+q.ansT)}. ${q.note}`;}
+};
+function el2(){const d=document.createElement('div');d.className='hintbox expr';return d;}
+
+const TP_POOL=[
+  {tex:R`\langle u^2,\; v^2,\; u+2v\rangle`,r:(u,v)=>[u*u,v*v,u+2*v],ru:(u,v)=>[2*u,0,1],rv:(u,v)=>[0,2*v,2],
+   ruT:R`\langle 2u,\;0,\;1\rangle`,rvT:R`\langle 0,\;2v,\;2\rangle`},
+  {tex:R`\langle u+v,\; u-v,\; uv\rangle`,r:(u,v)=>[u+v,u-v,u*v],ru:(u,v)=>[1,1,v],rv:(u,v)=>[1,-1,u],
+   ruT:R`\langle 1,\;1,\;v\rangle`,rvT:R`\langle 1,\;-1,\;u\rangle`},
+  {tex:R`\langle u^2,\; uv,\; v^2\rangle`,r:(u,v)=>[u*u,u*v,v*v],ru:(u,v)=>[2*u,v,0],rv:(u,v)=>[0,u,2*v],
+   ruT:R`\langle 2u,\;v,\;0\rangle`,rvT:R`\langle 0,\;u,\;2v\rangle`},
+  {tex:R`\langle uv,\; u+v,\; u-v\rangle`,r:(u,v)=>[u*v,u+v,u-v],ru:(u,v)=>[v,1,1],rv:(u,v)=>[u,1,-1],
+   ruT:R`\langle v,\;1,\;1\rangle`,rvT:R`\langle u,\;1,\;-1\rangle`}
+];
+Q.tangentPlane={name:'tangent plane to a parametric surface',
+  gen(){const it=pick(TP_POOL);let u0,v0,n,A,B;
+    do{u0=pick([-2,-1,1,2]);v0=pick([-2,-1,1,2]);A=it.ru(u0,v0);B=it.rv(u0,v0);n=cross(A,B);}while(vzero(n));
+    const P=it.r(u0,v0);return {it,u0,v0,A,B,n,P,d:dot(n,P),ans:`${n[0]}*x+${n[1]}*y+${n[2]}*z=${dot(n,P)}`};},
+  render(q,el){el.innerHTML=`<p class="prompt">Find an equation of the tangent plane to ${M(R`\mathbf r(u,v)=`+q.it.tex)} at the point where ${M(R`(u,v)=(${q.u0},${q.v0})`)}. Any equivalent form is accepted.</p>`;
+    eqIn(el,'p','Plane:','e.g.  2x - y + 3z = 5');},
+  check(q,el){const n=q.n,d=q.d;return G(el,'p',checkEquation($('[data-k=p]',el).value,e=>n[0]*e.x+n[1]*e.y+n[2]*e.z-d,['x','y','z']));},
+  solution(q){return `The point is ${M(R`\mathbf r(${q.u0},${q.v0})=`+texPt(q.P))}. The tangent vectors are ${M(R`\mathbf r_u=`+q.it.ruT+'='+texVec(q.A))} and ${M(R`\mathbf r_v=`+q.it.rvT+'='+texVec(q.B))}, so the normal is ${M(R`\mathbf n=\mathbf r_u\times\mathbf r_v=`+texVec(q.n))}. The plane through ${M(texPt(q.P))} with that normal is ${M(R`${q.n[0]}(x-(${q.P[0]}))+${q.n[1]}(y-(${q.P[1]}))+${q.n[2]}(z-(${q.P[2]}))=0`)}, that is ${M(R`${texLin(q.n,['x','y','z'])}=${q.d}`)}.`;}
+};
+
+Q.surfArea={name:'surface area',
+  gen(){const k=pick(['sphere','cyl','cone','plane','parab','helicoid']);
+    if(k==='sphere'){const a=rint(1,5);return {k,val:4*PI*a*a,
+      prompt:`Find the surface area of the sphere of radius ${a}.`,
+      sol:`With ${M(R`\mathbf r(\phi,\theta)=\langle ${C1(a)}\sin\phi\cos\theta,\,${C1(a)}\sin\phi\sin\theta,\,${C1(a)}\cos\phi\rangle`)} the stretch factor is ${M(R`|\mathbf r_\phi\times\mathbf r_\theta|=${C1(a*a)}\sin\phi`)}, so ${M(R`A=\int_0^{2\pi}\!\!\int_0^{\pi}${C1(a*a)}\sin\phi\,d\phi\,d\theta=${a*a}\cdot 2\cdot 2\pi=${4*a*a}\pi\approx ${fmtDec(4*PI*a*a,3)}`)}. In general \\(A=4\\pi a^2\\).`};}
+    if(k==='cyl'){const a=rint(2,5),h=rint(2,6);return {k,val:2*PI*a*h,
+      prompt:`Find the area of the lateral surface of the cylinder ${M(R`x^2+y^2=${a*a}`)} between ${M('z=0')} and ${M(`z=${h}`)} (no top or bottom).`,
+      sol:`Use ${M(R`\mathbf r(u,v)=\langle ${a}\cos u,\,${a}\sin u,\,v\rangle`)} on ${M(R`0\le u\le 2\pi,\;0\le v\le ${h}`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${a}\cos u,\,${a}\sin u,\,0\rangle`)} has length ${a}, so ${M(R`A=\int_0^{${h}}\!\!\int_0^{2\pi}${a}\,du\,dv=${a}(2\pi)(${h})=${2*a*h}\pi\approx ${fmtDec(2*PI*a*h,3)}`)}. This is the "unroll it into a rectangle" answer ${M(R`2\pi a h`)}.`};}
+    if(k==='cone'){const h=rint(2,5);return {k,val:PI*h*h*Math.SQRT2,
+      prompt:`Find the area of the part of the cone ${M(R`z=\sqrt{x^2+y^2}`)} with ${M(`0\\le z\\le ${h}`)}.`,
+      sol:`Parametrize ${M(R`\mathbf r=\langle u\cos v,\,u\sin v,\,u\rangle`)} with ${M(R`0\le u\le ${h}`)}, ${M(R`0\le v\le 2\pi`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle -u\cos v,\,-u\sin v,\,u\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=u\sqrt2`)}. So ${M(R`A=\int_0^{2\pi}\!\!\int_0^{${h}}\sqrt2\,u\,du\,dv=\sqrt2\,(2\pi)\frac{${h}^2}{2}=${radTex(h*h,2)}\,\pi\approx ${fmtDec(PI*h*h*Math.SQRT2,3)}`)}. (Same as \\(\\pi r\\ell\\) with \\(r=${h}\\), \\(\\ell=${h}\\sqrt2\\).)`};}
+    if(k==='plane'){const [a,b]=pick([[1,1],[2,1],[1,2],[2,2],[3,1],[1,3],[2,3],[3,2],[1,0],[0,2],[-1,2],[2,-1],[-2,-2]]);
+      const c=rint(0,4),p=rint(1,4),q=rint(1,4);const D=1+a*a+b*b;
+      return {k,val:p*q*Math.sqrt(D),
+        prompt:`Find the area of the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} that lies above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}.`,
+        sol:`For a graph, ${M(R`dS=\sqrt{1+z_x^2+z_y^2}\,dA=\sqrt{1+(${a})^2+(${b})^2}\,dA=\sqrt{${D}}\,dA`)}, a constant. So the area is that constant times the area of the shadow: ${M(R`A=\sqrt{${D}}\cdot(${p})(${q})=${radTex(p*q,D)}\approx ${fmtDec(p*q*Math.sqrt(D),3)}`)}. A tilted plane's area is always its shadow's area times ${M(R`\sqrt{1+a^2+b^2}`)}.`};}
+    if(k==='parab'){const a=pick([2,6,12]);const s=Math.pow(1+4*a,1.5);
+      return {k,val:PI/6*(s-1),
+        prompt:`Find the area of the part of the paraboloid ${M('z=x^2+y^2')} that lies below the plane ${M(`z=${a}`)}.`,
+        sol:`The shadow is the disk ${M(`x^2+y^2\\le ${a}`)} and ${M(R`\sqrt{1+z_x^2+z_y^2}=\sqrt{1+4x^2+4y^2}`)}. In polar coordinates ${M(R`A=\int_0^{2\pi}\!\!\int_0^{\sqrt{${a}}}\sqrt{1+4r^2}\;r\,dr\,d\theta=2\pi\Big[\tfrac{1}{12}(1+4r^2)^{3/2}\Big]_0^{\sqrt{${a}}}=\tfrac{\pi}{6}\big((1+4\cdot${a})^{3/2}-1\big)`)}. Since ${M(`1+4\\cdot${a}=${1+4*a}`)} and ${M(`${1+4*a}^{3/2}=${Math.round(s)}`)}, this is ${M(R`\tfrac{\pi}{6}(${Math.round(s)}-1)=${piTex(PI/6*(s-1))}\approx ${fmtDec(PI/6*(s-1),3)}`)}.`};}
+    return {k,val:PI*(Math.SQRT2+Math.log(1+Math.SQRT2)),
+      prompt:`Find the area of the helicoid ${M(R`\mathbf r(u,v)=\langle u\cos v,\,u\sin v,\,v\rangle`)} for ${M(R`0\le u\le 1`)}, ${M(R`0\le v\le 2\pi`)}.`,
+      sol:`${M(R`\mathbf r_u=\langle\cos v,\sin v,0\rangle`)} and ${M(R`\mathbf r_v=\langle -u\sin v,u\cos v,1\rangle`)}, so ${M(R`\mathbf r_u\times\mathbf r_v=\langle \sin v,\,-\cos v,\,u\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+u^2}`)}. Then ${M(R`A=\int_0^{2\pi}\!\!\int_0^1\sqrt{1+u^2}\,du\,dv=2\pi\cdot\tfrac12\big[u\sqrt{1+u^2}+\ln(u+\sqrt{1+u^2})\big]_0^1=\pi\big(\sqrt2+\ln(1+\sqrt2)\big)\approx ${fmtDec(PI*(Math.SQRT2+Math.log(1+Math.SQRT2)),3)}`)}.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt} ${EXACT}</p>`;numIn(el,'a','Area =');},
+  check(q,el){return G(el,'a',checkNumber($('[data-k=a]',el).value,q.val,TOL));},
+  solution(q){return q.sol;}
+};
+
+const PARAM_CHOICE=[
+  {desc:`the part of the cylinder ${M('x^2+y^2=9')} between ${M('z=0')} and ${M('z=2')}`,
+   ok:R`\langle 3\cos u,\,3\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ 0\le v\le 2`,
+   bad:[R`\langle 9\cos u,\,9\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ 0\le v\le 2`,
+        R`\langle 3\sin u\cos v,\,3\sin u\sin v,\,3\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`,
+        R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 3,\ 0\le v\le 2\pi`],
+   why:`The radius is ${M(R`\sqrt9=3`)}, not 9, so the circle is ${M(R`\langle 3\cos u,3\sin u\rangle`)}; the height is a free parameter running from 0 to 2. The third option is a sphere and the fourth is a cone.`},
+  {desc:`the sphere of radius 2 centered at the origin`,
+   ok:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`,
+   bad:[R`\langle 2\cos u,\,2\sin u,\,v\rangle,\ 0\le u\le 2\pi,\ -2\le v\le 2`,
+        R`\langle u\cos v,\,u\sin v,\,\sqrt{4-u^2}\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`,
+        R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le\pi,\ 0\le v\le 2\pi`],
+   why:`Spherical coordinates with ${M(R`\rho=2`)} fixed, ${M('u=\\phi')} from 0 to ${M('\\pi')} and ${M('v=\\theta')} from 0 to ${M('2\\pi')}. The second option is a cylinder, the third covers only the upper half, and the fourth has radius 4.`},
+  {desc:`the part of the plane ${M('z=3-x-y')} that lies above the unit square ${M('0\\le x\\le 1')}, ${M('0\\le y\\le 1')}`,
+   ok:R`\langle u,\,v,\,3-u-v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`,
+   bad:[R`\langle u,\,v,\,3-u-v\rangle,\ 0\le u\le 3,\ 0\le v\le 3`,
+        R`\langle u,\,v,\,3+u+v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`,
+        R`\langle 3-u-v,\,u,\,v\rangle,\ 0\le u\le 1,\ 0\le v\le 1`],
+   why:`A graph is parametrized by its own ${M('x')} and ${M('y')}: ${M(R`\mathbf r=\langle x,y,f(x,y)\rangle`)}. The parameter domain must be the square, not a bigger region, and the components have to stay in the order ${M('x,y,z')}.`},
+  {desc:`the part of the cone ${M('z=2\\sqrt{x^2+y^2}')} below ${M('z=4')}`,
+   ok:R`\langle u\cos v,\,u\sin v,\,2u\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`,
+   bad:[R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`,
+        R`\langle 2u\cos v,\,2u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`,
+        R`\langle u\cos v,\,u\sin v,\,2u^2\rangle,\ 0\le u\le 2,\ 0\le v\le 2\pi`],
+   why:`Let ${M('u')} be the distance from the axis, so ${M(R`x^2+y^2=u^2`)} and ${M('z=2u')}. The ceiling ${M('z=4')} means ${M('2u\\le 4')}, that is ${M('u\\le 2')}. The last option is a paraboloid, and the middle one has the cone opening the wrong way (${M('z=\\tfrac12\\sqrt{x^2+y^2}')}).`},
+  {desc:`the part of the sphere ${M('x^2+y^2+z^2=16')} that lies above the cone ${M('z=\\sqrt{x^2+y^2}')}`,
+   ok:R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le \tfrac{\pi}{4},\ 0\le v\le 2\pi`,
+   bad:[R`\langle 4\sin u\cos v,\,4\sin u\sin v,\,4\cos u\rangle,\ 0\le u\le \tfrac{\pi}{2},\ 0\le v\le 2\pi`,
+        R`\langle 16\sin u\cos v,\,16\sin u\sin v,\,16\cos u\rangle,\ 0\le u\le \tfrac{\pi}{4},\ 0\le v\le 2\pi`,
+        R`\langle u\cos v,\,u\sin v,\,u\rangle,\ 0\le u\le 4,\ 0\le v\le 2\pi`],
+   why:`Radius ${M(R`\sqrt{16}=4`)}. The cone ${M(R`z=\sqrt{x^2+y^2}`)} is the surface ${M(R`\phi=\pi/4`)}, so "above the cone" is ${M(R`0\le\phi\le\pi/4`)}. Stopping at ${M(R`\pi/2`)} would give the whole upper hemisphere.`}
+];
+Q.chooseParam={name:'choose the parametrization',
+  gen(){const it=pick(PARAM_CHOICE);const opts=shuffle([{label:M(it.ok),value:1},...it.bad.map(b=>({label:M(b),value:0}))]);
+    return {it,opts,ai:opts.findIndex(o=>o.value===1)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Which parametrization describes ${q.it.desc}?</p>`;q.get=choiceButtons(el,q.opts);},
+  check(q){const v=q.get();if(v===null)return {ok:false,msg:'Pick one.'};
+    return {ok:v===1,msg:v===1?'':'Check two things: does the parametrization land on the right surface, and does the parameter domain cover exactly the right piece?'};},
+  solution(q){return `The correct choice is ${M(q.it.ok)}. ${q.it.why}`;}
+};
+
+const IT_POOL=[
+  {tex:R`\langle u+v,\; u-v,\; uv\rangle`,r:(u,v)=>[u+v,u-v,u*v],ru:(u,v)=>[1,1,v],rv:(u,v)=>[1,-1,u],
+   ruT:R`\langle 1,\;1,\;v\rangle`,rvT:R`\langle 1,\;-1,\;u\rangle`,how:P=>`${M(`u+v=${P[0]}`)} and ${M(`u-v=${P[1]}`)}`},
+  {tex:R`\langle u,\; v^2,\; u+v\rangle`,r:(u,v)=>[u,v*v,u+v],ru:(u,v)=>[1,0,1],rv:(u,v)=>[0,2*v,1],
+   ruT:R`\langle 1,\;0,\;1\rangle`,rvT:R`\langle 0,\;2v,\;1\rangle`,how:P=>`${M(`u=${P[0]}`)} and ${M(`u+v=${P[2]}`)}`},
+  {tex:R`\langle u^2,\; uv,\; v\rangle`,r:(u,v)=>[u*u,u*v,v],ru:(u,v)=>[2*u,v,0],rv:(u,v)=>[0,u,1],
+   ruT:R`\langle 2u,\;v,\;0\rangle`,rvT:R`\langle 0,\;u,\;1\rangle`,how:P=>`${M(`v=${P[2]}`)} and ${M(`uv=${P[1]}`)}`},
+  {tex:R`\langle u,\; v,\; u^2-v^2\rangle`,r:(u,v)=>[u,v,u*u-v*v],ru:(u,v)=>[1,0,2*u],rv:(u,v)=>[0,1,-2*v],
+   ruT:R`\langle 1,\;0,\;2u\rangle`,rvT:R`\langle 0,\;1,\;-2v\rangle`,how:P=>`${M(`u=${P[0]}`)} and ${M(`v=${P[1]}`)}`}
+];
+Q.intersectTangent={name:'tangent line where two surfaces meet',
+  gen(){let it,u0,v0,P,A,B,n2,a,b,c,n1,w;
+    do{it=pick(IT_POOL);u0=rnz(-2,2);v0=rnz(-2,2);P=it.r(u0,v0);A=it.ru(u0,v0);B=it.rv(u0,v0);n2=cross(A,B);
+      a=rint(1,3);b=rint(1,3);c=rint(1,3);n1=[2*a*P[0],2*b*P[1],2*c*P[2]];w=cross(n1,n2);}
+    while(vzero(n1)||vzero(w)||P.every(x=>x===1));
+    const g=gcd(gcd(w[0],w[1]),w[2]);const v=w.map(x=>x/g||0);
+    return {it,u0,v0,P,A,B,n2,a,b,c,n1,w,g,v,d:a*P[0]**2+b*P[1]**2+c*P[2]**2};},
+  render(q,el){el.innerHTML=`<p class="prompt">The surface ${M('S')}: ${M(texLin([q.a,q.b,q.c],['x^2','y^2','z^2'])+'='+q.d)} and the surface ${M('T')}: ${M(R`\mathbf r(u,v)=`+q.it.tex)} intersect in a curve through ${M('P='+texPt(q.P))}. Find parametric equations of the tangent line to that curve at ${M('P')}.</p>`;
+    eqIn(el,'L','Line:','<x0+at, y0+bt, z0+ct>');},
+  check(q,el){return G(el,'L',checkLine($('[data-k=L]',el).value,q.P,q.v));},
+  solution(q){const line=R`\langle `+q.P.map((p,i)=>texLin([q.v[i]],['t'],{constant:p})).join(R`,\; `)+R`\rangle`;
+    return `First find where ${M('T')} hits ${M('P')}: ${q.it.how(q.P)} give ${M(`(u_0,v_0)=(${q.u0},${q.v0})`)}. There ${M(R`\mathbf r_u=`+q.it.ruT+'='+texVec(q.A))} and ${M(R`\mathbf r_v=`+q.it.rvT+'='+texVec(q.B))}, so the normal to ${M('T')} is ${M(R`\mathbf r_u\times\mathbf r_v=`+texVec(q.n2))}. For ${M('S')}, ${M(R`\nabla G=\langle ${texLin([2*q.a],['x'])},\,${texLin([2*q.b],['y'])},\,${texLin([2*q.c],['z'])}\rangle`)}, so ${M(R`\nabla G(P)=`+texVec(q.n1))}. The curve's tangent is perpendicular to both normals: ${M(R`\nabla G(P)\times(\mathbf r_u\times\mathbf r_v)=`+texVec(q.w))}${q.g>1?`, or ${M(texVec(q.v))} after dividing by ${q.g}`:''}. The tangent line is ${M(R`\mathbf r(t)=`+line)}.`;}
+};
+
+const SP_ZONES=[
+  {txt:R`x\ge 0,\ y\ge 0`,t1:0,t2:PI/2},
+  {txt:R`x\le 0,\ y\ge 0`,t1:PI/2,t2:PI},
+  {txt:R`x\le 0,\ y\le 0`,t1:PI,t2:3*PI/2},
+  {txt:R`x\ge 0,\ y\le 0`,t1:3*PI/2,t2:2*PI},
+  {txt:R`y\ge 0`,t1:0,t2:PI},
+  {txt:R`x\ge 0`,t1:-PI/2,t2:PI/2}
+];
+Q.spherePiece={name:'a piece of a sphere: bounds and area',
+  gen(){let a,c,dir,zone;
+    /* skip z <= 1 with x >= 0, y <= 0: too close to an open homework setup */
+    do{a=pick([2,3,4]);c=pick([1/2,-1/2,0]);dir=pick(['ge','le']);zone=pick(SP_ZONES);}
+    while(dir==='le'&&a*c===1&&zone===SP_ZONES[3]);
+    const h=a*c,p0=Math.acos(c);const [p1,p2]=dir==='ge'?[0,p0]:[p0,PI];
+    const cd=dir==='ge'?1-c:1+c;
+    return {a,c,h,dir,zone,p0,p1,p2,t1:zone.t1,t2:zone.t2,cd,area:a*a*(zone.t2-zone.t1)*cd};},
+  render(q,el){el.innerHTML=`<p class="prompt">${M('S')} is the part of the sphere ${M(`x^2+y^2+z^2=${q.a*q.a}`)} where ${M(`z${q.dir==='ge'?'\\ge':'\\le'} ${texNum(q.h)}`)} and ${M(q.zone.txt)}. Parametrize it with ${M(R`\mathbf r=\langle ${q.a}\sin\phi\cos\theta,\,${q.a}\sin\phi\sin\theta,\,${q.a}\cos\phi\rangle`)}. Give the ${M(R`\phi`)} and ${M(R`\theta`)} intervals, then the surface area. Angles like <code>pi/3</code> are fine. ${EXACT}</p>`;
+    numIn(el,'p1',M(R`\phi`)+' from');numIn(el,'p2',M(R`\phi`)+' to');
+    numIn(el,'t1',M(R`\theta`)+' from');numIn(el,'t2',M(R`\theta`)+' to');
+    numIn(el,'A','Area =');},
+  check(q,el){const val=k=>$(`[data-k=${k}]`,el).value;
+    /* theta: same start modulo 2pi and same length */
+    let rt2;try{const T2=Expr.evalNumber(cleanAns(val('t2')));
+      try{const T1=Expr.evalNumber(cleanAns(val('t1')));rt2=checkNumber(String(T2-T1),q.t2-q.t1,TOL);}catch(e){rt2={ok:false};}}
+    catch(e){rt2={ok:false,err:e.message};}
+    return Gall(el,[['p1',checkNumber(val('p1'),q.p1,TOL)],['p2',checkNumber(val('p2'),q.p2,TOL)],
+      ['t1',checkAngle(val('t1'),q.t1,TOL)],['t2',rt2],['A',checkNumber(val('A'),q.area,TOL)]]);},
+  solution(q){const cmp=q.dir==='ge'?R`\ge`:R`\le`;const a2=q.a*q.a;
+    return `On the sphere ${M(R`z=${q.a}\cos\phi`)}, so ${M(`z${cmp} ${texNum(q.h)}`)} means ${M(R`\cos\phi${cmp} ${texNum(q.c)}`)}. The edge is at ${M(R`\cos\phi_0=\tfrac{h}{a}=${texNum(q.c)}`)}, that is ${M(R`\phi_0=${piTex(q.p0)}`)}. Cosine decreases on ${M(R`[0,\pi]`)}, so ${M(R`${piTex(q.p1)}\le\phi\le ${piTex(q.p2)}`)}. Since ${M(R`\sin\phi\ge 0`)}, the sign of ${M('x')} is the sign of ${M(R`\cos\theta`)} and the sign of ${M('y')} is the sign of ${M(R`\sin\theta`)}, so ${M(q.zone.txt)} is ${M(R`${piTex(q.t1)}\le\theta\le ${piTex(q.t2)}`)} (shifting both ends by ${M(R`2\pi`)} describes the same piece). With ${M(R`|\mathbf r_\phi\times\mathbf r_\theta|=${a2}\sin\phi`)}, ${D(R`A=${a2}\,\Big(${piTex(q.t2-q.t1)}\Big)\Big(\cos ${piTex(q.p1)}-\cos ${piTex(q.p2)}\Big)=${a2}\cdot ${piTex(q.t2-q.t1)}\cdot ${texNum(q.cd)}=${piTex(q.area)}\approx ${fmtDec(q.area,3)}`)}`;}
+};
+
+/* ---------------------------------------------------------- chapter 3 */
+const PLANE_AB=[[1,1],[2,1],[1,2],[2,2],[3,1],[1,3],[2,3],[3,2],[1,0],[0,1],[2,0],[0,2],[-1,2],[2,-1],[-2,1],[1,-2],[-1,-1],[-2,-2],[3,3]];
+const planeSetup=(a,b,c,p,q)=>`Parametrize the piece as ${M(R`\mathbf r(u,v)=\langle u,\,v,\,${texLin([a,b],['u','v'],{constant:c})}\rangle`)} over ${M(`0\\le u\\le ${p}`)}, ${M(`0\\le v\\le ${q}`)}. Then ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${-a},\,${-b},\,1\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+(${a})^2+(${b})^2}=\sqrt{${1+a*a+b*b}}`)}.`;
+
+Q.scalarPlane={name:'surface integral over a plane piece',
+  gen(){const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);const f=pick(['z','s']);
+    const D=1+a*a+b*b;
+    const I=f==='z'?a*p*p*q/2+b*p*q*q/2+c*p*q:(1+a)*p*p*q/2+(1+b)*p*q*q/2+c*p*q;
+    return {a,b,c,p,q,f,D,I,val:Math.sqrt(D)*I};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.f==='z'?'z':'(x+y+z)'}\,dS`)} where ${M('S')} is the part of the plane ${M(`z=${texLin([q.a,q.b],['x','y'],{constant:q.c})}`)} that lies above the rectangle ${M(`0\\le x\\le ${q.p}`)}, ${M(`0\\le y\\le ${q.q}`)}. ${EXACT}</p>`;
+    numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){const inner=q.f==='z'?texLin([q.a,q.b],['u','v'],{constant:q.c}):texLin([1+q.a,1+q.b],['u','v'],{constant:q.c});
+    return `${planeSetup(q.a,q.b,q.c,q.p,q.q)} On the surface ${q.f==='z'?M(`z=${texLin([q.a,q.b],['u','v'],{constant:q.c})}`):M(`x+y+z=u+v+(${texLin([q.a,q.b],['u','v'],{constant:q.c})})=${inner}`)}, so ${D(R`\iint_S f\,dS=\sqrt{${q.D}}\int_0^{${q.q}}\!\!\int_0^{${q.p}}\big(${inner}\big)\,du\,dv=\sqrt{${q.D}}\,\big(${texNum(q.I)}\big)=${radTex(q.I,q.D)}\approx ${fmtDec(q.val,3)}`)} The stretch factor is constant on a plane, so it comes straight out of the integral.`;}
+};
+
+const SPH_SCALAR=[
+  {f:R`(x^2+y^2)`,val:a=>8*PI*a**4/3,tex:a=>R`\tfrac{8\pi a^4}{3}`,
+   why:a=>`On the sphere ${M(`x^2+y^2+z^2=${a*a}`)}, so ${M(R`\iint_S (x^2+y^2+z^2)\,dS=${a*a}\cdot 4\pi(${a})^2=${4*a**4}\pi`)}. By symmetry the three pieces ${M(R`\iint x^2`)}, ${M(R`\iint y^2`)}, ${M(R`\iint z^2`)} are equal, so each is ${M(R`\tfrac{${4*a**4}\pi}{3}`)} and ${M(R`\iint (x^2+y^2)\,dS=\tfrac{2}{3}(${4*a**4}\pi)=\tfrac{8\pi a^4}{3}=${piTex(8*PI*a**4/3)}`)}.`},
+  {f:R`z^2`,val:a=>4*PI*a**4/3,tex:a=>R`\tfrac{4\pi a^4}{3}`,
+   why:a=>`Directly: ${M(R`z=${C1(a)}\cos\phi`)} and ${M(R`dS=${C1(a*a)}\sin\phi\,d\phi\,d\theta`)}, so ${M(R`\iint_S z^2\,dS=\int_0^{2\pi}\!\!\int_0^\pi ${C1(a**4)}\cos^2\phi\sin\phi\,d\phi\,d\theta=${C1(a**4)}(2\pi)\tfrac{2}{3}=${piTex(4*PI*a**4/3)}`)}. Or use symmetry: it is one third of ${M(R`\iint(x^2+y^2+z^2)dS=${4*a**4}\pi`)}.`},
+  {f:R`(x^2+y^2+z^2)`,val:a=>4*PI*a**4,tex:a=>R`4\pi a^4`,
+   why:a=>`The integrand is constant on the sphere: ${M(`x^2+y^2+z^2=${a*a}`)} everywhere. So the integral is ${M(`${a*a}`)} times the area: ${M(R`${a*a}\cdot 4\pi(${a})^2=${4*a**4}\pi`)}.`},
+  {f:R`1`,val:a=>4*PI*a*a,tex:a=>R`4\pi a^2`,
+   why:a=>`With ${M('f=1')} the surface integral is just the area, ${M(R`4\pi(${a})^2=${4*a*a}\pi`)}.`},
+  {f:R`z`,half:true,val:a=>PI*a**3,tex:a=>R`\pi a^3`,
+   why:a=>`On the upper hemisphere ${M(R`z=${C1(a)}\cos\phi`)}, ${M(R`dS=${C1(a*a)}\sin\phi\,d\phi\,d\theta`)}, and ${M(R`0\le\phi\le\pi/2`)}: ${M(R`\int_0^{2\pi}\!\!\int_0^{\pi/2}${C1(a**3)}\cos\phi\sin\phi\,d\phi\,d\theta=${C1(a**3)}(2\pi)\big[\tfrac{\sin^2\phi}{2}\big]_0^{\pi/2}=${C1(a**3)}(2\pi)\tfrac12=${piTex(PI*a**3)}`)}. Over the whole sphere it would be 0, since the bottom half cancels the top.`}
+];
+Q.scalarSphere={name:'surface integral over a sphere',
+  gen(){const it=pick(SPH_SCALAR);const a=rint(1,3);return {it,a,val:it.val(a)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.it.f}\,dS`)} where ${M('S')} is ${q.it.half?`the upper half (${M('z\\ge 0')}) of the sphere`:'the sphere'} ${M(`x^2+y^2+z^2=${q.a*q.a}`)}. ${EXACT}</p>`;
+    numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return q.it.why(q.a)+` In symbols the answer is ${M(q.it.tex(q.a))} with ${M(`a=${q.a}`)}, that is ${M(piTex(q.val))}.`;}
+};
+
+const CYL_SCALAR=[
+  {f:R`z`,val:(a,h)=>PI*a*h*h,tex:R`\pi a h^2`,
+   why:(a,h)=>`${M(R`dS=${C1(a)}\,d\theta\,dz`)}, so ${M(R`\iint_S z\,dS=\int_0^{2\pi}\!\!\int_0^{${h}} z\,(${a})\,dz\,d\theta=${C1(a)}(2\pi)\tfrac{${h}^2}{2}=${piTex(PI*a*h*h)}`)}.`},
+  {f:R`(x^2+y^2)`,val:(a,h)=>2*PI*a**3*h,tex:R`2\pi a^3 h`,
+   why:(a,h)=>`On the cylinder ${M(`x^2+y^2=${a*a}`)} is constant, so the integral is ${M(`${a*a}`)} times the area ${M(R`2\pi(${a})(${h})=${2*a*h}\pi`)}, giving ${M(piTex(2*PI*a**3*h))}.`},
+  {f:R`x^2`,val:(a,h)=>PI*a**3*h,tex:R`\pi a^3 h`,
+   why:(a,h)=>`${M(R`x=${C1(a)}\cos\theta`)} and ${M(R`dS=${C1(a)}\,d\theta\,dz`)}: ${M(R`\int_0^{${h}}\!\!\int_0^{2\pi}${C1(a*a)}\cos^2\theta\,(${a})\,d\theta\,dz=${C1(a**3)}(${h})\pi=${piTex(PI*a**3*h)}`)}, using ${M(R`\int_0^{2\pi}\cos^2\theta\,d\theta=\pi`)}. By symmetry ${M(R`\iint x^2\,dS`)} is exactly half of ${M(R`\iint (x^2+y^2)\,dS`)}.`},
+  {f:R`z^2`,val:(a,h)=>2*PI*a*h**3/3,tex:R`\tfrac{2\pi a h^3}{3}`,
+   why:(a,h)=>`${M(R`\int_0^{2\pi}\!\!\int_0^{${h}} z^2(${a})\,dz\,d\theta=${C1(a)}(2\pi)\tfrac{${h}^3}{3}=${piTex(2*PI*a*h**3/3)}`)}.`}
+];
+Q.scalarCylinder={name:'surface integral over a cylinder',
+  gen(){const it=pick(CYL_SCALAR);const a=rint(1,3),h=rint(2,5);return {it,a,h,val:it.val(a,h)};},
+  render(q,el){el.innerHTML=`<p class="prompt">Evaluate ${M(R`\displaystyle\iint_S ${q.it.f}\,dS`)} where ${M('S')} is the lateral surface of the cylinder ${M(`x^2+y^2=${q.a*q.a}`)}, ${M(`0\\le z\\le ${q.h}`)} (no top or bottom). ${EXACT}</p>`;
+    numIn(el,'v','Value =');},
+  check(q,el){return G(el,'v',checkNumber($('[data-k=v]',el).value,q.val,TOL));},
+  solution(q){return `Use ${M(R`\mathbf r=\langle ${C1(q.a)}\cos\theta,\,${C1(q.a)}\sin\theta,\,z\rangle`)}, whose normal ${M(R`\langle ${C1(q.a)}\cos\theta,\,${C1(q.a)}\sin\theta,\,0\rangle`)} has length ${q.a}, so ${M(R`dS=${C1(q.a)}\,d\theta\,dz`)}. ${q.it.why(q.a,q.h)} The general formula is ${M(q.it.tex)}.`;}
+};
+
+Q.scalarMass={name:'mass of a thin sheet',
+  gen(){const k=pick(['coneZ','coneK','planeK']);
+    if(k==='coneZ'){const h=rint(2,4);return {k,h,val:2*PI*Math.SQRT2*h**3/3,
+      prompt:`A thin sheet has the shape of the cone ${M(R`z=\sqrt{x^2+y^2}`)}, ${M(`0\\le z\\le ${h}`)}, with density ${M(R`\rho(x,y,z)=z`)}. Find its mass.`,
+      sol:`Parametrize ${M(R`\mathbf r=\langle u\cos v,u\sin v,u\rangle`)}, so ${M(R`|\mathbf r_u\times\mathbf r_v|=u\sqrt2`)} and ${M(R`\rho=z=u`)}. Then ${M(R`m=\int_0^{2\pi}\!\!\int_0^{${h}} u\cdot\sqrt2\,u\,du\,dv=\sqrt2\,(2\pi)\tfrac{${h}^3}{3}=\tfrac{2\pi\sqrt2\,(${h})^3}{3}\approx ${fmtDec(2*PI*Math.SQRT2*h**3/3,3)}`)}.`};}
+    if(k==='coneK'){const h=rint(2,4),c=rint(2,6);return {k,h,c,val:c*Math.SQRT2*PI*h*h,
+      prompt:`A thin sheet has the shape of the cone ${M(R`z=\sqrt{x^2+y^2}`)}, ${M(`0\\le z\\le ${h}`)}, with constant density ${M(`\\rho=${c}`)}. Find its mass.`,
+      sol:`Constant density means mass is density times area. The cone's area is ${M(R`\pi h^2\sqrt2=${radTex(h*h,2)}\,\pi`)}, so ${M(R`m=${c}\cdot ${radTex(h*h,2)}\,\pi=${radTex(c*h*h,2)}\,\pi\approx ${fmtDec(c*Math.SQRT2*PI*h*h,3)}`)}.`};}
+    const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3),k2=rint(2,5);const Dv=1+a*a+b*b;
+    return {k,a,b,c,p,q,k2,D:Dv,val:k2*p*q*Math.sqrt(Dv),
+      prompt:`A thin sheet is the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}, with constant density ${M(`\\rho=${k2}`)}. Find its mass.`,
+      sol:`${planeSetup(a,b,c,p,q)} With constant density, ${M(R`m=${k2}\iint_S dS=${k2}\cdot(${p})(${q})\sqrt{${Dv}}=${radTex(k2*p*q,Dv)}\approx ${fmtDec(k2*p*q*Math.sqrt(Dv),3)}`)}.`};},
+  render(q,el){el.innerHTML=`<p class="prompt">${q.prompt} ${EXACT}</p>`;numIn(el,'m','m =');},
+  check(q,el){return G(el,'m',checkNumber($('[data-k=m]',el).value,q.val,TOL));},
+  solution(q){return q.sol;}
+};
+
+Q.funnelMass={name:'mass of a funnel',
+  gen(){let m,r1,r2,kind;
+    /* skip density c - z on 1 <= z <= 4 of z = sqrt(x^2+y^2): an open homework setup */
+    do{m=pick([1,3/4,4/3]);
+      if(m===1){r1=rint(0,2);r2=r1+rint(1,3);}
+      else if(m===3/4)[r1,r2]=pick([[0,4],[4,8]]);
+      else [r1,r2]=pick([[0,3],[3,6]]);
+      kind=pick(['cminusz','kz','kr2']);}
+    while(m===1&&r1===1&&r2===4&&kind==='cminusz');
+    const z1=Math.round(m*r1),z2=Math.round(m*r2),S=Math.sqrt(1+m*m);
+    const mT=m===1?'':texNum(m),ST=m===1?R`\sqrt2`:texNum(S);
+    const p2=(r2**2-r1**2)/2,p3=(r2**3-r1**3)/3,p4=(r2**4-r1**4)/4;
+    let dT,dr,ig,I;
+    if(kind==='cminusz'){const c=z2+rint(1,4);dT=`${c}-z`;dr=`${c}-${mT}r`;ig=`${c}r-${mT}r^2`;I=c*p2-m*p3;}
+    else if(kind==='kz'){const k=rint(1,4);const km=k*m;const kmT=km===1?'':texNum(km);dT=`${C1(k)}z`;dr=`${kmT}r`;ig=`${kmT}r^2`;I=km*p3;}
+    else{const k=rint(1,3);dT=k===1?'x^2+y^2':`${k}(x^2+y^2)`;dr=`${C1(k)}r^2`;ig=`${C1(k)}r^3`;I=k*p4;}
+    const val=2*PI*S*I;
+    return {m,r1,r2,z1,z2,S,mT,ST,kind,dT,dr,ig,I,val,
+      coneT:m===1?R`z=\sqrt{x^2+y^2}`:R`z=${mT}\sqrt{x^2+y^2}`,
+      exT:m===1?radTex(2*I,2)+R`\,\pi`:piTex(val)};},
+  render(q,el){el.innerHTML=`<p class="prompt">A thin funnel has the shape of the cone ${M(q.coneT)} for ${M(`${q.z1}\\le z\\le ${q.z2}`)}, with density ${M(R`\delta(x,y,z)=${q.dT}`)}. Find its mass. ${EXACT}</p>`;
+    numIn(el,'m','m =');},
+  check(q,el){return G(el,'m',checkNumber($('[data-k=m]',el).value,q.val,TOL));},
+  solution(q){const mT=q.mT;
+    return `Parametrize ${M(R`\mathbf r(r,\theta)=\langle r\cos\theta,\,r\sin\theta,\,${mT}r\rangle`)}. Then ${M(R`\mathbf r_r\times\mathbf r_\theta=\langle -${mT}r\cos\theta,\,-${mT}r\sin\theta,\,r\rangle`)}, whose length is ${M(R`r\sqrt{1+(${q.m===1?'1':mT})^2}=${q.ST}\,r`)}. Since ${M(`z=${mT}r`)}, the band ${M(`${q.z1}\\le z\\le ${q.z2}`)} is ${M(`${q.r1}\\le r\\le ${q.r2}`)}. On the cone ${M(R`x^2+y^2=r^2`)} and ${M(`z=${mT}r`)}, so ${M(R`\delta=${q.dr}`)}. Then ${D(R`m=\int_0^{2\pi}\!\!\int_{${q.r1}}^{${q.r2}}\big(${q.dr}\big)\,${q.ST}\,r\,dr\,d\theta=2\pi\cdot ${q.ST}\int_{${q.r1}}^{${q.r2}}\big(${q.ig}\big)\,dr=2\pi\cdot ${q.ST}\cdot ${texNum(q.I)}=${q.exT}\approx ${fmtDec(q.val,3)}`)}`;}
+};
+
+/* ============================================================ chapter 1 widgets */
+(function(){
+  /* ---------- walkthrough: Green on a rectangle ---------- */
+  let W=null,step=0;
+  function newProb(){
+    const a=rint(1,3),b=rint(1,3);const {P,Q:Qp,g}=genPQlin();
+    W={a,b,P,Q:Qp,g,Qx:P2.dx(Qp),Py:P2.dy(P),inner:P2.intY(g,b),val:P2.rect(g,a,b)};
+    step=0;drawW();
+  }
+  function drawW(){
+    const {a,b,P,Q:Qp,g,Qx,Py,inner,val}=W;
+    $('#gwHead').innerHTML=M(R`\oint_C\left(${P2.tex(P)}\right)dx+\left(${P2.tex(Qp)}\right)dy`)
+      +`<span class="muted" style="font-size:14px"> &nbsp;over the boundary of &nbsp;</span>`+M(R`0\le x\le ${a},\; 0\le y\le ${b}`);
+    const items=[
+      ['Differentiate Q by x.',M(R`\frac{\partial Q}{\partial x}=\frac{\partial}{\partial x}\left(${P2.tex(Qp)}\right)=${P2.tex(Qx)}`)],
+      ['Differentiate P by y.',M(R`\frac{\partial P}{\partial y}=\frac{\partial}{\partial y}\left(${P2.tex(P)}\right)=${P2.tex(Py)}`)],
+      ['Subtract, in that order.',M(R`Q_x-P_y=\left(${P2.tex(Qx)}\right)-\left(${P2.tex(Py)}\right)=${P2.tex(g)}`)],
+      ['Set up the double integral over the rectangle.',M(R`\iint_D\left(${P2.tex(g)}\right)dA=\int_0^{${a}}\!\!\int_0^{${b}}\left(${P2.tex(g)}\right)dy\,dx`)],
+      ['Integrate in y, then in x.',M(R`\int_0^{${a}}\left(${P2.tex(inner)}\right)dx=${texNum(val)}`)]
+    ];
+    $('#gwSteps').innerHTML=items.map(([t,body],i)=>{
+      const on=i<step,now=i===step-1;
+      return `<li class="${now?'now':(on?'':'dim')}"><b>${t}</b>${on?`<div style="margin-top:6px">${body}</div>`:''}</li>`;}).join('');
+    const st=['Two partial derivatives, one subtraction, one double integral. Start with Q.',
+      'That is the first half of the integrand.','Now the other half, from P.',
+      'Order matters: Q by x minus P by y.','The region is a rectangle, so both limits are constants.',
+      `Done: the loop integral equals ${fmt(val)}.`];
+    $('#gwStatus').textContent=st[step];
+    $('#gwPrev').disabled=step===0;$('#gwNext').disabled=step===5;
+    typeset($('#gwSteps'));typeset($('#gwHead'));
+  }
+  $('#gwNext').onclick=()=>{step=Math.min(5,step+1);drawW();};
+  $('#gwPrev').onclick=()=>{step=Math.max(0,step-1);drawW();};
+  $('#gwNew').onclick=newProb;
+  newProb();
+
+  /* ---------- explore: both sides of Green's theorem ---------- */
+  const bdPoly=pts=>{const segs=[];let tot=0;
+    for(let i=0;i<pts.length;i++){const A=pts[i],B=pts[(i+1)%pts.length];const L=Math.hypot(B[0]-A[0],B[1]-A[1]);segs.push([A,B,L]);tot+=L;}
+    return s=>{let t=(((s%1)+1)%1)*tot;
+      for(const [A,B,L] of segs){if(t<=L){const u=L?t/L:0;return [A[0]+(B[0]-A[0])*u,A[1]+(B[1]-A[1])*u];}t-=L;}
+      return pts[0].slice();};};
+  const REGIONS=[
+    {name:'rectangle',tex:R`-1.6\le x\le 1.6,\;-1.1\le y\le 1.1`,xa:-1.6,xb:1.6,
+     lo:()=>-1.1,hi:()=>1.1,inside:(x,y)=>x>=-1.6&&x<=1.6&&y>=-1.1&&y<=1.1,
+     bd:bdPoly([[-1.6,-1.1],[1.6,-1.1],[1.6,1.1],[-1.6,1.1]])},
+    {name:'disk',tex:R`x^2+y^2\le 1.8^2`,xa:-1.8,xb:1.8,
+     lo:x=>-Math.sqrt(Math.max(0,3.24-x*x)),hi:x=>Math.sqrt(Math.max(0,3.24-x*x)),
+     inside:(x,y)=>x*x+y*y<=3.24,bd:s=>[1.8*Math.cos(2*Math.PI*s),1.8*Math.sin(2*Math.PI*s)]},
+    {name:'triangle',tex:R`(0,0),\,(2,0),\,(0,1.8)`,xa:0,xb:2,
+     lo:()=>0,hi:x=>1.8*(1-x/2),inside:(x,y)=>x>=0&&y>=0&&(x/2+y/1.8)<=1,
+     bd:bdPoly([[0,0],[2,0],[0,1.8]])},
+    {name:'between y = x² and y = 1',tex:R`x^2\le y\le 1`,xa:-1,xb:1,
+     lo:x=>x*x,hi:()=>1,inside:(x,y)=>x>=-1&&x<=1&&y>=x*x&&y<=1,
+     bd:s=>{const u=(((s%1)+1)%1);if(u<=0.5){const x=-1+4*u;return [x,x*x];}const x=1-4*(u-0.5);return [x,1];}}
+  ];
+  const FIELDS=[
+    {tex:R`\langle -y,\;x\rangle`,F:(x,y)=>[-y,x],g:()=>2,gtex:'2'},
+    {tex:R`\langle xy,\;x^2\rangle`,F:(x,y)=>[x*y,x*x],g:x=>x,gtex:'x'},
+    {tex:R`\langle -y^3,\;x^3\rangle`,F:(x,y)=>[-y*y*y,x*x*x],g:(x,y)=>3*x*x+3*y*y,gtex:R`3x^2+3y^2`},
+    {tex:R`\langle \sin y,\;\cos x\rangle`,F:(x,y)=>[Math.sin(y),Math.cos(x)],g:(x,y)=>-Math.sin(x)-Math.cos(y),gtex:R`-\sin x-\cos y`},
+    {tex:R`\langle x^2,\;y^2\rangle`,F:(x,y)=>[x*x,y*y],g:()=>0,gtex:'0'}
+  ];
+  const p=new Plot2D('#gCanvas',{xmin:-2.4,xmax:2.4,ymin:-2.4,ymax:2.4});
+  const sec=$('section[data-id="green"]');
+  let ri=1,fi=0,cw=false,snap=null,sPos=0,lineVal=0,areaVal=0,hmax=1;
+
+  function lineInt(bd,F,N=1440){let s=0,prev=bd(0);
+    for(let n=1;n<=N;n++){const cur=bd(n/N);const dx=cur[0]-prev[0],dy=cur[1]-prev[1];
+      const v=F((cur[0]+prev[0])/2,(cur[1]+prev[1])/2);s+=v[0]*dx+v[1]*dy;prev=cur;}
+    return s;}
+  function dblInt(g,r,N=600,Mn=400){let s=0;const dx=(r.xb-r.xa)/N;
+    for(let i=0;i<N;i++){const x=r.xa+(i+0.5)*dx;const y0=r.lo(x),y1=r.hi(x);const dy=(y1-y0)/Mn;let t=0;
+      for(let j=0;j<Mn;j++)t+=g(x,y0+(j+0.5)*dy);
+      s+=t*dy*dx;}
+    return s;}
+
+  function drawStatic(){
+    const r=REGIONS[ri],f=FIELDS[fi];
+    p.begin();
+    p.heat((x,y)=>r.inside(x,y)?f.g(x,y):NaN,{n:70,colorFn:v=>{
+      const t=clamp(Math.abs(v)/(hmax||1),0,1);
+      return v>=0?`rgba(37,99,235,${(0.07+0.42*t).toFixed(3)})`:`rgba(217,119,6,${(0.07+0.42*t).toFixed(3)})`;}});
+    p.field(f.F,{step:0.4,scale:0.13,color:'#c3bfb5',width:1.1});
+    p.param(s=>r.bd(s),0,1,{color:PURPLE,width:2.4,n:420});
+    try{snap=p.ctx.getImageData(0,0,p.c.width,p.c.height);}catch(e){snap=null;}
+  }
+  function marker(){
+    const r=REGIONS[ri];const t=cw?1-sPos:sPos;const eps=cw?-0.004:0.004;
+    const A=r.bd(t),B=r.bd(t+eps);
+    const d=[B[0]-A[0],B[1]-A[1]];const n=Math.hypot(d[0],d[1])||1;const L=0.42;
+    p.vector(A,[A[0]+d[0]/n*L,A[1]+d[1]/n*L],{color:PURPLE,width:3.2});
+    p.point(A,{color:PURPLE,r:6,ring:true});
+  }
+  function recompute(){
+    const r=REGIONS[ri],f=FIELDS[fi];
+    hmax=0;
+    for(let i=0;i<60;i++){const x=r.xa+(i+0.5)*(r.xb-r.xa)/60;const y0=r.lo(x),y1=r.hi(x);
+      for(let j=0;j<60;j++){const v=Math.abs(f.g(x,y0+(j+0.5)*(y1-y0)/60));if(Number.isFinite(v)&&v>hmax)hmax=v;}}
+    if(hmax<1e-9)hmax=1;
+    lineVal=lineInt(r.bd,f.F)*(cw?-1:1);
+    areaVal=dblInt(f.g,r);
+    drawStatic();report();
+  }
+  function report(){
+    const r=REGIONS[ri],f=FIELDS[fi];
+    $('#gOut').innerHTML=
+      `D = ${r.name} &nbsp;·&nbsp; F = ⟨P, Q⟩<br>`
+     +`Q<sub>x</sub> − P<sub>y</sub> = <b>${f.gtex.replace(/\\langle|\\rangle|\\/g,'').replace(/\^\{?(\d)\}?/g,'<sup>$1</sup>')}</b><br>`
+     +`<span style="color:${cw?ORANGE:PURPLE}">∮<sub>C</sub> P dx + Q dy = <b>${fmtDec(lineVal,3)}</b></span> &nbsp;(${cw?'clockwise':'counterclockwise'})<br>`
+     +`<span style="color:${GREEN}">∬<sub>D</sub> (Q<sub>x</sub> − P<sub>y</sub>) dA = <b>${fmtDec(areaVal,3)}</b></span><br>`
+     +(cw?`The two differ by a sign: Green's theorem applies to the counterclockwise loop, which is ${fmtDec(-lineVal,3)}.`
+         :`numerical difference = ${fmtDec(lineVal-areaVal,5)}`);
+  }
+  const rBox=$('#gRegions'),fBox=$('#gFields');
+  REGIONS.forEach((r,i)=>{const b=el('button',{class:'btn small'},r.name);b.onclick=()=>{ri=i;mark();recompute();};rBox.appendChild(b);});
+  FIELDS.forEach((f,i)=>{const b=el('button',{class:'btn small'},M(f.tex));b.onclick=()=>{fi=i;mark();recompute();};fBox.appendChild(b);});
+  function mark(){$$('.btn',rBox).forEach((b,i)=>b.classList.toggle('on',i===ri));$$('.btn',fBox).forEach((b,i)=>b.classList.toggle('on',i===fi));}
+  $('#gCW').onchange=e=>{cw=e.target.checked;recompute();};
+  mark();typeset(fBox);
+  recompute();
+  redrawOnShow('green',()=>{recompute();});
+  (function loop(){
+    if(snap&&sec.classList.contains('active')&&p.c.isConnected){
+      sPos=(sPos+0.0022)%1;
+      try{p.ctx.putImageData(snap,0,0);marker();}catch(e){}
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  new Drill({mount:'#drill-green',section:'green',goal:6,
+    ...mixDrill([Q.greenRect,Q.greenRect,Q.greenDisk,Q.greenDisk,Q.greenTri,Q.greenArea,Q.greenOrient,Q.greenClose,Q.greenClose,Q.greenOrderTrap,Q.greenIntegrand])});
+})();
+
+/* ============================================================ step-by-step walkthroughs */
+function makeWalk(pfx,build){
+  let st=0,data=null;
+  const gEl=$('#'+pfx+'Given'),sEl=$('#'+pfx+'Steps'),stat=$('#'+pfx+'Status');
+  function draw(){
+    gEl.innerHTML=data.given;
+    sEl.innerHTML=data.steps.map((s,i)=>`<li class="${i===st?'now':i>st?'dim':''}">${i>st?`<span class="muted">${s.title}</span>`:s.html}</li>`).join('');
+    stat.textContent=`Step ${st+1} of ${data.steps.length}`;
+    $('#'+pfx+'Prev').disabled=st===0;$('#'+pfx+'Next').disabled=st===data.steps.length-1;
+    typeset(gEl);typeset(sEl);
+  }
+  function fresh(){data=build();st=0;draw();}
+  $('#'+pfx+'Prev').onclick=()=>{st=Math.max(0,st-1);draw();};
+  $('#'+pfx+'Next').onclick=()=>{st=Math.min(data.steps.length-1,st+1);draw();};
+  $('#'+pfx+'New').onclick=fresh;
+  fresh();
+}
+
+/* ============================================================ chapter 2: parametric surface explorer */
+const PSURF=[
+  {label:'cylinder',tex:R`\langle 2\cos u,\,2\sin u,\,v\rangle`,r:(u,v)=>[2*Math.cos(u),2*Math.sin(u),v],
+   U:[0,2*PI],V:[-2,2],rng:3.2},
+  {label:'sphere',tex:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle`,
+   r:(u,v)=>[2*Math.sin(u)*Math.cos(v),2*Math.sin(u)*Math.sin(v),2*Math.cos(u)],U:[0,PI],V:[0,2*PI],rng:3},
+  {label:'cone',tex:R`\langle u\cos v,\,u\sin v,\,u\rangle`,r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),u],
+   U:[0,2.4],V:[0,2*PI],rng:3},
+  {label:'helicoid',tex:R`\langle u\cos v,\,u\sin v,\,v\rangle`,r:(u,v)=>[u*Math.cos(v),u*Math.sin(v),v],
+   U:[0,2],V:[0,2*PI],rng:3.4},
+  {label:'torus',tex:R`\langle (2+\cos u)\cos v,\,(2+\cos u)\sin v,\,\sin u\rangle`,
+   r:(u,v)=>[(2+Math.cos(u))*Math.cos(v),(2+Math.cos(u))*Math.sin(v),Math.sin(u)],U:[0,2*PI],V:[0,2*PI],rng:3.4},
+  {label:'graph  z = x² − y²',tex:R`\langle u,\,v,\,u^2-v^2\rangle`,r:(u,v)=>[u,v,u*u-v*v],
+   U:[-1.6,1.6],V:[-1.6,1.6],rng:3},
+  {label:'plane',tex:R`\langle 1+u,\,v,\,2-u+v\rangle`,r:(u,v)=>[1+u,v,2-u+v],U:[-2,2],V:[-2,2],rng:3.4}
+];
+(function(){
+  const scene=new Scene3D('#pScene',{range:3.2});
+  let cur=0,u0=0,v0=0,su=null,sv=null;
+  const sel=$('#pSel');PSURF.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
+  function build(i){
+    cur=i;const P=PSURF[i];scene.o.range=P.rng;scene.o.zoom=1;
+    u0=P.U[0]+(P.U[1]-P.U[0])*0.35;v0=P.V[0]+(P.V[1]-P.V[0])*0.3;
+    const box=$('#pSliders');box.innerHTML='';
+    su=sliderRow(box,{label:'u',min:P.U[0],max:P.U[1],step:(P.U[1]-P.U[0])/60,value:u0,onInput:x=>{u0=x;draw();}});
+    sv=sliderRow(box,{label:'v',min:P.V[0],max:P.V[1],step:(P.V[1]-P.V[0])/60,value:v0,onInput:x=>{v0=x;draw();}});
+    draw();
+  }
+  function draw(){
+    const P=PSURF[cur],r=P.r;
+    scene.clear();
+    scene.param(r,P.U,P.V,{n:34,m:34,base:SURF.blue,alpha:0.22,stroke:'rgba(30,40,80,.16)'});
+    scene.curve(t=>r(u0,t),P.V[0],P.V[1],{color:'#7c3aed',width:2.2,n:160});
+    scene.curve(t=>r(t,v0),P.U[0],P.U[1],{color:'#a78bfa',width:2.2,n:160});
+    const p=r(u0,v0),ru=RU(r,u0,v0),rv=RV(r,u0,v0),n=cross(ru,rv);
+    const L=Math.max(norm(ru),norm(rv),1e-9),sc=1.3/L;
+    if(norm(ru)>1e-7)scene.vector(p,vadd(p,vscale(sc,ru)),{color:'#d97706',width:3,label:'r_u'});
+    if(norm(rv)>1e-7)scene.vector(p,vadd(p,vscale(sc,rv)),{color:'#2563eb',width:3,label:'r_v'});
+    if(norm(n)>1e-7)scene.vector(p,vadd(p,vscale(1.4/norm(n),n)),{color:'#16a34a',width:3,label:'r_u × r_v'});
+    scene.point(p,{color:'#7c3aed',r:5});
+    scene.render();
+    $('#pOut').innerHTML=`r(u, v) = <b>${fv(p)}</b><br>r<sub>u</sub> = ${fv(ru)}<br>r<sub>v</sub> = ${fv(rv)}<br>`+
+      `r<sub>u</sub> × r<sub>v</sub> = <b>${fv(n)}</b><br>|r<sub>u</sub> × r<sub>v</sub>| = <b>${fmtDec(norm(n),3)}</b>`+
+      (norm(n)<1e-6?' &nbsp;<span style="color:#dc2626">not smooth here</span>':'');
+  }
+  sel.onchange=()=>build(+sel.value);
+  build(0);
+  redrawOnShow('param',draw);
+  new Drill({mount:'#drill-param',section:'param',goal:6,
+    ...mixDrill([Q.idSurface,Q.normalPlane,Q.normalParam,Q.normalParam,Q.tangentPlane,Q.surfArea,Q.surfArea,Q.chooseParam,Q.intersectTangent,Q.spherePiece])});
+})();
+
+/* ============================================================ chapter 3: walkthrough + cell explorer */
+makeWalk('w1',()=>{
+  const [a,b]=pick(PLANE_AB);const c=rint(0,3),p=rint(1,3),q=rint(1,3);
+  const Dv=1+a*a+b*b,zz=texLin([a,b],['u','v'],{constant:c});
+  const t1=a*p*p*q/2,t2=b*p*q*q/2,t3=c*p*q,I=t1+t2+t3;
+  return {given:`Compute ${M(R`\displaystyle\iint_S z\,dS`)} where ${M('S')} is the part of the plane ${M(`z=${texLin([a,b],['x','y'],{constant:c})}`)} above the rectangle ${M(`0\\le x\\le ${p}`)}, ${M(`0\\le y\\le ${q}`)}.`,
+    steps:[
+      {title:'Parametrize the surface.',
+       html:`<b>Parametrize.</b> It is a graph, so the parameters are just ${M('x')} and ${M('y')}: ${M(R`\mathbf r(u,v)=\langle u,\,v,\,${zz}\rangle`)} on ${M(`0\\le u\\le ${p},\\; 0\\le v\\le ${q}`)}.`},
+      {title:'Find the stretch factor |r_u × r_v|.',
+       html:`<b>Stretch factor.</b> ${M(R`\mathbf r_u=\langle 1,0,${a}\rangle`)}, ${M(R`\mathbf r_v=\langle 0,1,${b}\rangle`)}, so ${M(R`\mathbf r_u\times\mathbf r_v=\langle ${-a},\,${-b},\,1\rangle`)} and ${M(R`|\mathbf r_u\times\mathbf r_v|=\sqrt{1+${a*a}+${b*b}}=\sqrt{${Dv}}`)}. It is constant, because a plane stretches the same way everywhere.`},
+      {title:'Write the integrand on the surface.',
+       html:`<b>Substitute.</b> On ${M('S')}, ${M(`z=${zz}`)}. Every ${M('z')} in the integrand is now gone: ${M(R`f(\mathbf r(u,v))=${zz}`)}.`},
+      {title:'Set up the double integral.',
+       html:`<b>Set up.</b> ${D(R`\iint_S z\,dS=\int_0^{${q}}\!\!\int_0^{${p}}\big(${zz}\big)\sqrt{${Dv}}\;du\,dv`)} The constant ${M(R`\sqrt{${Dv}}`)} pulls out front.`},
+      {title:'Evaluate.',
+       html:`<b>Evaluate.</b> ${M(R`\int_0^{${q}}\!\!\int_0^{${p}}(${zz})\,du\,dv=${a===0?'0':R`${a}\tfrac{(${p})^2}{2}(${q})`}+${b===0?'0':R`${b}(${p})\tfrac{(${q})^2}{2}`}+${c}(${p})(${q})=${texNum(I)}`)}, so the answer is ${M(R`\sqrt{${Dv}}\cdot ${texNum(I)}=${radTex(I,Dv)}\approx ${fmtDec(Math.sqrt(Dv)*I,3)}`)}.`}
+    ]};
+});
+
+const SSURF=[
+  {label:'sphere,  f = z²',tex:R`\langle 2\sin u\cos v,\,2\sin u\sin v,\,2\cos u\rangle`,fTex:R`f=z^2`,
+   r:(u,v)=>[2*Math.sin(u)*Math.cos(v),2*Math.sin(u)*Math.sin(v),2*Math.cos(u)],f:p=>p[2]*p[2],U:[0,PI],V:[0,2*PI],rng:3},
+  {label:'cylinder,  f = z',tex:R`\langle 2\cos u,\,2\sin u,\,v\rangle`,fTex:R`f=z`,
+   r:(u,v)=>[2*Math.cos(u),2*Math.sin(u),v],f:p=>p[2],U:[0,2*PI],V:[0,3],rng:3.2},
+  {label:'plane,  f = x + y + z',tex:R`\langle u,\,v,\,3-u-v\rangle`,fTex:R`f=x+y+z`,
+   r:(u,v)=>[u,v,3-u-v],f:p=>p[0]+p[1]+p[2],U:[0,2],V:[0,2],rng:3.2}
+];
+(function(){
+  const scene=new Scene3D('#sScene',{range:3,azim:-58,elev:22});
+  let cur=0,u0=0,v0=0,frac=0.18,lo=0,hi=1;
+  const sel=$('#sSel');SSURF.forEach((s,i)=>sel.appendChild(el('option',{value:String(i)},s.label)));
+  function build(i){
+    cur=i;const P=SSURF[i];scene.o.range=P.rng;scene.o.zoom=1;
+    lo=Infinity;hi=-Infinity;
+    for(let a=0;a<=20;a++)for(let b=0;b<=20;b++){const w=P.f(P.r(P.U[0]+(P.U[1]-P.U[0])*a/20,P.V[0]+(P.V[1]-P.V[0])*b/20));if(w<lo)lo=w;if(w>hi)hi=w;}
+    if(hi-lo<1e-9)hi=lo+1;
+    u0=P.U[0]+(P.U[1]-P.U[0])*0.3;v0=P.V[0]+(P.V[1]-P.V[0])*0.25;
+    const box=$('#sSliders');box.innerHTML='';
+    sliderRow(box,{label:'u',min:P.U[0],max:P.U[1]-(P.U[1]-P.U[0])*frac,step:(P.U[1]-P.U[0])/60,value:u0,onInput:x=>{u0=x;draw();}});
+    sliderRow(box,{label:'v',min:P.V[0],max:P.V[1]-(P.V[1]-P.V[0])*frac,step:(P.V[1]-P.V[0])/60,value:v0,onInput:x=>{v0=x;draw();}});
+    draw();
+  }
+  const mixCol=(t,sh)=>{const c0=[59,91,219],c1=[217,119,6];const c=c0.map((x,k)=>x+(c1[k]-x)*clamp(t,0,1));
+    return `rgba(${c.map(x=>Math.round(x*sh+255*(1-sh)*0.45)).join(',')},0.85)`;};
+  function draw(){
+    const P=SSURF[cur],r=P.r;
+    const du=(P.U[1]-P.U[0])*frac,dv=(P.V[1]-P.V[0])*frac;
+    scene.clear();
+    scene.param(r,P.U,P.V,{n:30,m:30,colorFn:(p,sh)=>mixCol((P.f(p)-lo)/(hi-lo),sh),stroke:'rgba(30,40,80,.10)'});
+    const corners=[[u0,v0],[u0+du,v0],[u0+du,v0+dv],[u0,v0+dv],[u0,v0]];
+    scene.polyline(corners.map(([u,v])=>r(u,v)),{color:'#7c3aed',width:3.4});
+    const p=r(u0,v0),ru=RU(r,u0,v0),rv=RV(r,u0,v0),n=cross(ru,rv);
+    scene.vector(p,vadd(p,vscale(du,ru)),{color:'#d97706',width:3});
+    scene.vector(p,vadd(p,vscale(dv,rv)),{color:'#2563eb',width:3});
+    scene.point(p,{color:'#7c3aed',r:4});
+    scene.render();
+    const cell=du*dv,str=norm(n),patch=str*cell,fval=P.f(p);
+    $('#sOut').innerHTML=`Δu Δv = ${fmtDec(du,3)} × ${fmtDec(dv,3)} = <b>${fmtDec(cell,4)}</b> &nbsp;(flat parameter cell)<br>`+
+      `|r<sub>u</sub> × r<sub>v</sub>| = <b>${fmtDec(str,3)}</b> &nbsp;(stretch factor here)<br>`+
+      `patch area ≈ |r<sub>u</sub> × r<sub>v</sub>| Δu Δv = <b>${fmtDec(patch,4)}</b><br>`+
+      `f at this point = ${fmtDec(fval,3)} → contribution f·dS ≈ <b>${fmtDec(fval*patch,4)}</b><br>`+
+      `total ∫∫ f dS ≈ ${fmtDec(scalarNum(P.f,r,P.U,P.V),3)}, &nbsp; area ≈ ${fmtDec(areaNum(r,P.U,P.V),3)}`;
+  }
+  function scalarNum(f,r,U,V,n=40){let s=0;const du=(U[1]-U[0])/n,dv=(V[1]-V[0])/n;
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){const u=U[0]+(i+0.5)*du,v=V[0]+(j+0.5)*dv;const w=f(r(u,v))*norm(NRM(r,u,v));if(Number.isFinite(w))s+=w*du*dv;}return s;}
+  sel.onchange=()=>build(+sel.value);
+  build(0);
+  redrawOnShow('scalar',draw);
+  new Drill({mount:'#drill-scalar',section:'scalar',goal:5,
+    ...mixDrill([Q.scalarPlane,Q.scalarPlane,Q.scalarSphere,Q.scalarSphere,Q.scalarCylinder,Q.scalarMass,Q.funnelMass])});
+})();
+
+/* ============================================================ quiz */
+makeQuiz('#quizBox',{n:12,pass:10,section:'quiz',types:[
+  Q.greenRect,Q.greenDisk,Q.greenTri,Q.greenArea,Q.greenOrient,Q.greenClose,Q.greenOrderTrap,Q.greenIntegrand,
+  Q.idSurface,Q.normalParam,Q.tangentPlane,Q.surfArea,Q.scalarPlane,Q.scalarSphere,Q.intersectTangent,Q.spherePiece]});
+
+/* ============================================================ test hook */
+window.__solvers={
+  'Green over a rectangle':q=>({v:String(q.val)}),
+  'Green over a disk':q=>({v:String(q.val)}),
+  'Green over a triangle':q=>({v:String(q.val)}),
+  'area from a parametrized boundary':q=>({ar:String(q.area)}),
+  'reversing the orientation':q=>({v:String(q.ans)}),
+  'close the path, then use Green':q=>({v:String(q.ans)}),
+  'orientation from the vertex order':q=>({v:String(q.ans)}),
+  'the Green integrand':q=>({g:q.gstr}),
+  'identify the surface':q=>({_btn:q.ai}),
+  'normal vector to a parametrized plane':q=>({n:'<'+q.n.join(',')+'>'}),
+  'cross product r_u x r_v':q=>({n:q.ans}),
+  'tangent plane to a parametric surface':q=>({p:q.ans}),
+  'surface area':q=>({a:String(q.val)}),
+  'choose the parametrization':q=>({_btn:q.ai}),
+  'surface integral over a plane piece':q=>({v:String(q.val)}),
+  'surface integral over a sphere':q=>({v:String(q.val)}),
+  'surface integral over a cylinder':q=>({v:String(q.val)}),
+  'mass of a thin sheet':q=>({m:String(q.val)}),
+  'tangent line where two surfaces meet':q=>({L:'<'+q.P.map((x,i)=>x+'+('+q.v[i]+')t').join(',')+'>'}),
+  'a piece of a sphere: bounds and area':q=>({p1:String(q.p1),p2:String(q.p2),t1:String(q.t1),t2:String(q.t2),A:String(q.area)}),
+  'mass of a funnel':q=>({m:String(q.val)}),
+};
+
+initModule({key:'greens-surfaces',title:"Green's Theorem and Parametric Surfaces",sub:'Module 10 · Stewart 16.4, 16.6, 16.7',hub:'math212.html'});
+</script>
+</body>
+</html>
